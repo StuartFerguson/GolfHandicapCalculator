@@ -7,13 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9B44A9C4-109
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3E17981A-8644-430C-AA84-6A46EEA68830}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging", "src\Logging\Logging.csproj", "{DEA0A310-9D22-4FEF-A8BE-9629C43CFFFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging.Tests", "test\Logging.Tests\Logging.Tests.csproj", "{C16E840C-1901-415A-8537-2280E7589809}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.Tests", "test\Logging.Tests\Logging.Tests.csproj", "{C16E840C-1901-415A-8537-2280E7589809}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "src\EventSourcing\Shared.csproj", "{9D387215-4DA0-49C3-8CD4-E5E2845CF92E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "src\EventSourcing\Shared.csproj", "{9D387215-4DA0-49C3-8CD4-E5E2845CF92E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Tests", "test\Shared.Tests\Shared.Tests.csproj", "{D5C6EE0F-70A6-4AD4-B1CF-6E062C8FFC24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Tests", "test\Shared.Tests\Shared.Tests.csproj", "{D5C6EE0F-70A6-4AD4-B1CF-6E062C8FFC24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DEA0A310-9D22-4FEF-A8BE-9629C43CFFFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DEA0A310-9D22-4FEF-A8BE-9629C43CFFFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DEA0A310-9D22-4FEF-A8BE-9629C43CFFFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DEA0A310-9D22-4FEF-A8BE-9629C43CFFFD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C16E840C-1901-415A-8537-2280E7589809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C16E840C-1901-415A-8537-2280E7589809}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C16E840C-1901-415A-8537-2280E7589809}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -42,7 +36,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{DEA0A310-9D22-4FEF-A8BE-9629C43CFFFD} = {9B44A9C4-109E-497C-9503-B38959C7DD32}
 		{C16E840C-1901-415A-8537-2280E7589809} = {3E17981A-8644-430C-AA84-6A46EEA68830}
 		{9D387215-4DA0-49C3-8CD4-E5E2845CF92E} = {9B44A9C4-109E-497C-9503-B38959C7DD32}
 		{D5C6EE0F-70A6-4AD4-B1CF-6E062C8FFC24} = {3E17981A-8644-430C-AA84-6A46EEA68830}

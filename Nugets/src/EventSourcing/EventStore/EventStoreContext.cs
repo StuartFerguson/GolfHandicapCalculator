@@ -42,11 +42,6 @@ namespace Shared.EventStore
         /// </summary>
         private readonly UserCredentials UserCredentials;
 
-        /// <summary>
-        /// The serialiser
-        /// </summary>
-        private readonly ISerialiser Serialiser;
-
         #endregion
 
         #region Public Events
@@ -80,14 +75,13 @@ namespace Shared.EventStore
         /// </summary>
         /// <param name="eventStoreConnectionSettings">The event store connection settings.</param>
         /// <param name="connectionResolver">The connection resolver.</param>
-        public EventStoreContext(EventStoreConnectionSettings eventStoreConnectionSettings, Func<EventStoreConnectionSettings, IEventStoreConnection> connectionResolver, ISerialiser serialiser)
+        public EventStoreContext(EventStoreConnectionSettings eventStoreConnectionSettings, Func<EventStoreConnectionSettings, IEventStoreConnection> connectionResolver)
         {
             Guard.ThrowIfNull(eventStoreConnectionSettings, nameof(eventStoreConnectionSettings));
             
             // Cache the settings
             this.EventStoreConnectionSettings = eventStoreConnectionSettings;
             this.ConnectionResolver = connectionResolver;
-            this.Serialiser = serialiser;
 
             // Create a set of Cached User Credentials
             this.UserCredentials = new UserCredentials(eventStoreConnectionSettings.UserName, eventStoreConnectionSettings.Password);
@@ -458,8 +452,6 @@ namespace Shared.EventStore
                 // Check the event data has been received
                 if (this.EventAppeared != null)
                 {
-                    // Serialise the event data
-                    //String serialisedData = this.Serialiser.Serialise(resolvedEvent);
                     // Get the event data from the resolved Event
                     var serialisedData = Encoding.UTF8.GetString(resolvedEvent.Event.Data);
 

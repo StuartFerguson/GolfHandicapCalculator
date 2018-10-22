@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using Shared.General;
 using Shouldly;
 using Xunit;
 
@@ -13,7 +14,7 @@ namespace Logging.Tests
         [Fact]
         public void Logger_Initialise_IsInitialised()
         {
-            ILogger logger = NullLogger.Instance;
+            ILogger logger = Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance;
             Logger.Initialise(logger);
 
             Logger.IsInitialised.ShouldBeTrue();
