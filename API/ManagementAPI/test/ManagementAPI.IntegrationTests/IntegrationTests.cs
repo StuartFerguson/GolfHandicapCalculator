@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,18 +15,25 @@ namespace ManagementAPI.IntegrationTests
         [Fact]
         public async Task ManagementAPI_Values_GetValues()
         {
-            using (HttpClient client = new HttpClient())
+            using (StreamWriter sw = new StreamWriter("c:\\temp\\inttestslog"))
             {
-                client.BaseAddress = new Uri(BaseURI);
-                var response = await client.GetAsync("/api/Values", CancellationToken.None);
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(BaseURI);
 
-                response.EnsureSuccessStatusCode();
+                    sw.WriteLine($"request address is {BaseURI}/api/Values");
 
-                var content = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<String[]>(content);
+                    var response = await client.GetAsync("/api/Values", CancellationToken.None);
 
-                Assert.NotEmpty(result);
+                    sw.WriteLine($"Status code is {response.StatusCode}");
+                    response.EnsureSuccessStatusCode();
+                    
+                    var content = await response.Content.ReadAsStringAsync();
+                    sw.WriteLine($"content is {response.StatusCode}");
+                    var result = JsonConvert.DeserializeObject<String[]>(content);
 
+                    Assert.NotEmpty(result);
+                }
             }
         }
     }
