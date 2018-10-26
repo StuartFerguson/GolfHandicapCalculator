@@ -38,11 +38,7 @@ namespace ManagementAPI.IntegrationTests
                     }
                     catch (Exception e)
                     {
-                        sw.WriteLine(e.Message);
-                        if (e.InnerException != null)
-                        {
-                            sw.WriteLine(e.InnerException.Message);
-                        }
+                        sw.WriteLine(e);
                     }
 
                     
