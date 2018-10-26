@@ -23,16 +23,30 @@ namespace ManagementAPI.IntegrationTests
 
                     sw.WriteLine($"request address is {BaseURI}/api/Values");
 
-                    var response = await client.GetAsync("/api/Values", CancellationToken.None);
+                    try
+                    {
+                        var response = await client.GetAsync("/api/Values", CancellationToken.None);
 
-                    sw.WriteLine($"Status code is {response.StatusCode}");
-                    response.EnsureSuccessStatusCode();
+                        sw.WriteLine($"Status code is {response.StatusCode}");
+                        response.EnsureSuccessStatusCode();
                     
-                    var content = await response.Content.ReadAsStringAsync();
-                    sw.WriteLine($"content is {response.StatusCode}");
-                    var result = JsonConvert.DeserializeObject<String[]>(content);
+                        var content = await response.Content.ReadAsStringAsync();
+                        sw.WriteLine($"content is {response.StatusCode}");
+                        var result = JsonConvert.DeserializeObject<String[]>(content);
 
-                    Assert.NotEmpty(result);
+                        Assert.NotEmpty(result);
+                    }
+                    catch (Exception e)
+                    {
+                        sw.WriteLine(e.Message);
+                        if (e.InnerException != null)
+                        {
+                            sw.WriteLine(e.InnerException.Message);
+                        }
+                    }
+
+                    
+
                 }
             }
         }
