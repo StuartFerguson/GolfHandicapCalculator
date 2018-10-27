@@ -31,7 +31,11 @@ namespace ManagementtAPI.Service
                 .Build();
  
  
-            IWebHost host = new WebHostBuilder().UseKestrel().UseConfiguration(config).UseContentRoot(Directory.GetCurrentDirectory()).UseStartup<Startup>().Build();
+            IWebHost host = new WebHostBuilder().UseKestrel()
+                .UseConfiguration(config)
+                //.UseUrls("http://*:5000")
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseStartup<Startup>().Build();
  
             return host;
         }

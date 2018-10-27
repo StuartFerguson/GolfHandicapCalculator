@@ -2,7 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <DockerTargetOS>Linux</DockerTargetOS>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="docker-compose.integration.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="docker-compose.integration.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Bootstrapper\" />
@@ -14,6 +25,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.1916590" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.3.0" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="3.0.0" />
