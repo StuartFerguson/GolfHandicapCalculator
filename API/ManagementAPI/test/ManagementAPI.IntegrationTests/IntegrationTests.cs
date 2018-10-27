@@ -15,35 +15,18 @@ namespace ManagementAPI.IntegrationTests
         [Fact]
         public async Task ManagementAPI_Values_GetValues()
         {
-            using (StreamWriter sw = new StreamWriter("c:\\temp\\inttestslog"))
+            using (HttpClient client = new HttpClient())
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri(BaseURI);
+                client.BaseAddress = new Uri(BaseURI);
 
-                    sw.WriteLine($"request address is {BaseURI}/api/Values");
+                var response = await client.GetAsync("/api/Values", CancellationToken.None);
 
-                    try
-                    {
-                        var response = await client.GetAsync("/api/Values", CancellationToken.None);
+                response.EnsureSuccessStatusCode();
 
-                        sw.WriteLine($"Status code is {response.StatusCode}");
-                        response.EnsureSuccessStatusCode();
-                    
-                        var content = await response.Content.ReadAsStringAsync();
-                        sw.WriteLine($"content is {response.StatusCode}");
-                        var result = JsonConvert.DeserializeObject<String[]>(content);
+                var content = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<String[]>(content);
 
-                        Assert.NotEmpty(result);
-                    }
-                    catch (Exception e)
-                    {
-                        sw.WriteLine(e);
-                    }
-
-                    
-
-                }
+                Assert.NotEmpty(result);
             }
         }
     }
