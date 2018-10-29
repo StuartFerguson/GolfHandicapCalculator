@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
-namespace ManagementtAPI.Service
+namespace ManagementAPI.Service
 {
     public class Program
     {
-        #region Methods
- 
+
         public static void Main(String[] args)
         {
             Console.Title = "Golf Handicapping Management API";
@@ -33,13 +27,10 @@ namespace ManagementtAPI.Service
  
             IWebHost host = new WebHostBuilder().UseKestrel()
                 .UseConfiguration(config)
-                //.UseUrls("http://*:5000")
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>().Build();
  
             return host;
         }
- 
-        #endregion
     }
 }

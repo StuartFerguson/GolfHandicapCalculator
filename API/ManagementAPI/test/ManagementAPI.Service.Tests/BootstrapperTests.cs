@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using ManagementtAPI.Service;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Moq;
+using Shared.EventStore;
 using StructureMap;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace ManagementAPI.Service.Tests
 
             IContainer container = Startup.GetConfiguredContainer(servicesCollection, hostingEnvironment.Object);
 
-            //AddTestRegistrations(container);
+            AddTestRegistrations(container);
 
             container.AssertConfigurationIsValid();
         }
@@ -41,7 +42,7 @@ namespace ManagementAPI.Service.Tests
 
             IContainer container = Startup.GetConfiguredContainer(servicesCollection, hostingEnvironment.Object);
 
-            //AddTestRegistrations(container);
+            AddTestRegistrations(container);
 
             container.AssertConfigurationIsValid();
         }
@@ -51,6 +52,11 @@ namespace ManagementAPI.Service.Tests
             Dictionary<String, String> configuration = new Dictionary<String, String>();
 
             IConfigurationBuilder builder = new ConfigurationBuilder();
+
+            configuration.Add("EventStoreSettings:ConnectionString", "ConnectTo=tcp://admin:changeit@127.0.0.1:1112;VerboseLogging=true;");
+            configuration.Add("EventStoreSettings:ConnectionName", "UnitTestConnection");
+            configuration.Add("EventStoreSettings:HttpPort", "2113");
+
             builder.AddInMemoryCollection(configuration);
 
             return builder.Build();
@@ -58,7 +64,8 @@ namespace ManagementAPI.Service.Tests
 
         private void AddTestRegistrations(IContainer container)
         {
-
+            container.Configure(c => c.For<IOptions<EventStoreConnectionSettings>>().Use<OptionsManager<EventStoreConnectionSettings>>()); 
+            container.Configure(c => c.For<IOptionsFactory<EventStoreConnectionSettings>>().Use<OptionsFactory<EventStoreConnectionSettings>>());
         }
 
     }
