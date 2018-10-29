@@ -1,30 +1,25 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Builder;
-//using Microsoft.AspNetCore.Hosting;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.DependencyInjection;
-//using Microsoft.Extensions.Logging;
-//using Microsoft.Extensions.Options;
-//using StructureMap;
-
-using System;
+﻿using System;
+using System.IO;
+using ManagementAPI.Service.Bootstrapper;
+using ManagementAPI.Service.CommandHandlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using NLog.Extensions.Logging;
+using Shared.CommandHandling;
+using Shared.EventStore;
+using Shared.General;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
+using ESLogger = EventStore.ClientAPI;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace ManagementtAPI.Service
+namespace ManagementAPI.Service
 {
     public class Startup
     {
@@ -45,7 +40,15 @@ namespace ManagementtAPI.Service
         /// The hosting environment.
         /// </value>
         public static IHostingEnvironment HostingEnvironment { get; set; }
- 
+
+        /// <summary>
+        /// Gets or sets the container.
+        /// </summary>
+        /// <value>
+        /// The container.
+        /// </value>
+        public static IContainer Container { get; private set; }
+
         #endregion
 
         #region Constructors
@@ -79,6 +82,20 @@ namespace ManagementtAPI.Service
         /// <param name="loggerFactory">The logger factory.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            String nlogConfigFilename = $"nlog.config";
+            if (String.Compare(HostingEnvironment.EnvironmentName, "Development", true) == 0)
+            {
+                nlogConfigFilename = $"nlog.{HostingEnvironment.EnvironmentName}.config";
+            }
+
+            loggerFactory.AddConsole();
+            loggerFactory.ConfigureNLog(Path.Combine(HostingEnvironment.ContentRootPath, nlogConfigFilename));
+            loggerFactory.AddNLog();
+
+            ILogger logger = loggerFactory.CreateLogger("GolfHandicapping");
+
+            Logger.Initialise(logger);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -102,11 +119,15 @@ namespace ManagementtAPI.Service
         /// <returns></returns>
         public static IContainer GetConfiguredContainer(IServiceCollection services, IHostingEnvironment hostingEnvironment)
         {
-            Registry registry = new Registry();
-
-            var container = new Container(registry);
+            var container = new Container();
             
-            container.Populate(services);
+            container.Configure(config =>
+            {
+                config.AddRegistry<CommonRegistry>();                
+                config.Populate(services);
+            });
+
+            Startup.Container = container;
 
             return container;
         }
@@ -121,9 +142,16 @@ namespace ManagementtAPI.Service
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             ConfigureMiddlewareServices(services);
+            
+            //services.AddSingleton<IEventStoreContext, EventStoreContext>();
+            //services.AddSingleton<ESLogger.ILogger, ESLogger.Common.Log.ConsoleLogger>();
+            //services.AddSingleton<ICommandRouter, CommandRouter>();
+            //services.AddSingleton<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>, AggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+
+            //services.Configure<EventStoreConnectionSettings>(Configuration.GetSection("EventStore"));
 
             IContainer container = GetConfiguredContainer(services, HostingEnvironment);
-
+            
             return container.GetInstance<IServiceProvider>();
         }
         #endregion
@@ -146,7 +174,7 @@ namespace ManagementtAPI.Service
                 options.SerializerSettings.Formatting = Formatting.Indented;
                 options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            });
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             
             services.AddMvcCore();
             
