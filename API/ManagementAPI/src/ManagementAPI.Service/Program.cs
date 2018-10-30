@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
 namespace ManagementAPI.Service
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
 

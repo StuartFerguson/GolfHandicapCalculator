@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Newtonsoft.Json;
 using Shared.EventSourcing;
@@ -14,6 +15,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <summary>
         /// Initializes a new instance of the <see cref="ClubConfigurationCreatedEvent" /> class.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public ClubConfigurationCreatedEvent()
         {
             //We need this for serialisation, so just embrace the DDD crime
@@ -58,6 +60,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The name.
         /// </value>
+        [JsonProperty]
         public String Name { get; private set; }
 
         /// <summary>
@@ -66,6 +69,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The address line1.
         /// </value>
+        [JsonProperty]
         public String AddressLine1 { get; private set; }
 
         /// <summary>
@@ -74,6 +78,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The address line2.
         /// </value>
+        [JsonProperty]
         public String AddressLine2 { get; private set; }
 
         /// <summary>
@@ -82,6 +87,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The town.
         /// </value>
+        [JsonProperty]
         public String Town { get; private set; }
 
         /// <summary>
@@ -90,6 +96,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The region.
         /// </value>
+        [JsonProperty]
         public String Region  { get; private set; }
 
         /// <summary>
@@ -98,6 +105,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The postal code.
         /// </value>
+        [JsonProperty]
         public String PostalCode { get; private set; }
 
         /// <summary>
@@ -106,6 +114,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The telephone number.
         /// </value>
+        [JsonProperty]
         public String TelephoneNumber { get; private set; }
 
         /// <summary>
@@ -114,6 +123,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The website.
         /// </value>
+        [JsonProperty]
         public String Website { get; private set; }
 
         /// <summary>
@@ -122,6 +132,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <value>
         /// The email address.
         /// </value>
+        [JsonProperty]
         public String EmailAddress { get; private set; }
 
         #endregion

@@ -43,5 +43,14 @@ namespace ManagementAPI.Service.Tests
 
             return aggregate;
         }
+
+        public static ClubConfigurationAggregate.ClubConfigurationAggregate GetCreatedClubConfigurationAggregate()
+        {
+            ClubConfigurationAggregate.ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.ClubConfigurationAggregate.Create(AggregateId);
+
+            aggregate.CreateClubConfiguration(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+
+            return aggregate;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using ManagementAPI.Service.Bootstrapper;
 using ManagementAPI.Service.CommandHandlers;
@@ -21,6 +22,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace ManagementAPI.Service
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         #region Properties
