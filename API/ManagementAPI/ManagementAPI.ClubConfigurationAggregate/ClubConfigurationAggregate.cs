@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using ManagementAPI.ClubConfiguration.DomainEvents;
 using Shared.EventSourcing;
 using Shared.EventStore;
@@ -13,6 +14,7 @@ namespace ManagementAPI.ClubConfigurationAggregate
         /// <summary>
         /// Initializes a new instance of the <see cref="ClubConfigurationAggregate"/> class.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public ClubConfigurationAggregate()
         {
 

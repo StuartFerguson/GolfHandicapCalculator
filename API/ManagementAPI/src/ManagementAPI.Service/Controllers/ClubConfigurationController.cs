@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
+using ManagementAPI.Service.Manager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.CommandHandling;
@@ -23,6 +24,11 @@ namespace ManagementAPI.Service.Controllers
         /// </summary>
         private readonly ICommandRouter CommmandRouter;
 
+        /// <summary>
+        /// The manager
+        /// </summary>
+        private readonly IManagmentAPIManager Manager;
+
         #endregion
 
         #region Constructors
@@ -31,9 +37,10 @@ namespace ManagementAPI.Service.Controllers
         /// Initializes a new instance of the <see cref="ClubConfigurationController"/> class.
         /// </summary>
         /// <param name="commmandRouter">The commmand router.</param>
-        public ClubConfigurationController(ICommandRouter commmandRouter)
+        public ClubConfigurationController(ICommandRouter commmandRouter,IManagmentAPIManager manager)
         {
             this.CommmandRouter = commmandRouter;
+            this.Manager = manager;
         }
 
         #endregion
@@ -48,6 +55,7 @@ namespace ManagementAPI.Service.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(CreateClubConfigurationResponse), 200)]
         public async Task<IActionResult> PostClubConfiguration([FromBody]CreateClubConfigurationRequest request, CancellationToken cancellationToken)
         {
             // Create the command
@@ -58,6 +66,23 @@ namespace ManagementAPI.Service.Controllers
 
             // return the result
             return this.Ok(command.Response);
+        }
+        #endregion
+
+        #region public async Task<IActionResult> GetClubConfiguration([FromQuery] Guid clubId,CancellationToken cancellationToken)        
+        /// <summary>
+        /// Gets the club configuration.
+        /// </summary>
+        /// <param name="clubId">The club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(GetClubConfigurationResponse), 200)]
+        public async Task<IActionResult> GetClubConfiguration([FromQuery] Guid clubId,CancellationToken cancellationToken)
+        {
+            var clubConfiguration = await this.Manager.GetClubConfiguration(clubId, cancellationToken);
+
+            return this.Ok(clubConfiguration);
         }
         #endregion
 
