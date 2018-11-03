@@ -23,5 +23,18 @@ namespace ManagementAPI.Service.Tests
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }
+
+        [Fact]
+        public void ClubConfigurationCommandHandler_HandleCommand_AddMeasuredCourseToClubCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> repository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+            repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
+            
+            ClubConfigurationCommandHandler handler = new ClubConfigurationCommandHandler(repository.Object);
+
+            AddMeasuredCourseToClubCommand command = ClubConfigurationTestData.GetAddMeasuredCourseToClubCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
     }
 }

@@ -19,5 +19,16 @@ namespace ManagementAPI.Service.Tests
             command.CreateClubConfigurationRequest.ShouldNotBeNull();
             command.CreateClubConfigurationRequest.ShouldBe(ClubConfigurationTestData.CreateClubConfigurationRequest);
         }
+
+        [Fact]
+        public void AddMeasuredCourseToClubCommand_CanBeCreated_IsCreated()
+        {
+            AddMeasuredCourseToClubCommand command = AddMeasuredCourseToClubCommand.Create(ClubConfigurationTestData.AddMeasuredCourseToClubRequest);
+
+            command.ShouldNotBeNull();
+            command.CommandId.ShouldNotBe(Guid.Empty);
+            command.AddMeasuredCourseToClubRequest.ShouldNotBeNull();
+            command.AddMeasuredCourseToClubRequest.ShouldBe(ClubConfigurationTestData.AddMeasuredCourseToClubRequest);
+        }
     }
 }

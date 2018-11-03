@@ -162,8 +162,5 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         }
 
         #endregion
-
-
-
     }
 }

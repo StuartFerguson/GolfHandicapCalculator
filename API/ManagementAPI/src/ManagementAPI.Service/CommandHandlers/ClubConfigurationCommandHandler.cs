@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ManagementAPI.ClubConfigurationAggregate;
 using ClubConfigAggregate = ManagementAPI.ClubConfigurationAggregate.ClubConfigurationAggregate;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Shared.CommandHandling;
 using Shared.EventStore;
+using HoleDataTransferObject = ManagementAPI.ClubConfigurationAggregate.HoleDataTransferObject;
 
 namespace ManagementAPI.Service.CommandHandlers
 {
@@ -88,6 +90,41 @@ namespace ManagementAPI.Service.CommandHandlers
             command.Response = new CreateClubConfigurationResponse {ClubConfigurationId = clubAggregateId } ;
         }
         #endregion
+
+        private async Task HandleCommand(AddMeasuredCourseToClubCommand command, CancellationToken cancellationToken)
+        {
+            // Rehydrate the aggregate
+            var club = await this.ClubConfigurationRepository.GetLatestVersion(command.AddMeasuredCourseToClubRequest.ClubAggregateId, cancellationToken);
+
+            // Translate the request to the input for AddMeasuredCourse
+            MeasuredCourseDataTransferObject measuredCourse = new MeasuredCourseDataTransferObject
+            {
+                Name = command.AddMeasuredCourseToClubRequest.Name,
+                StandardScratchScore = command.AddMeasuredCourseToClubRequest.StandardScratchScore,
+                TeeColour = command.AddMeasuredCourseToClubRequest.TeeColour,
+                Holes = new List<HoleDataTransferObject>()
+            };
+
+            foreach (var holeDataTransferObject in command.AddMeasuredCourseToClubRequest.Holes)
+            {
+                measuredCourse.Holes.Add(new HoleDataTransferObject
+                {
+                    HoleNumber = holeDataTransferObject.HoleNumber,
+                    Par = holeDataTransferObject.Par,
+                    StrokeIndex = holeDataTransferObject.StrokeIndex,
+                    LengthInYards = holeDataTransferObject.LengthInYards,
+                    LengthInMeters = holeDataTransferObject.LengthInMeters
+                });
+            }
+
+            // Add the measured course
+            club.AddMeasuredCourse(measuredCourse);
+
+            // Save the changes
+            await this.ClubConfigurationRepository.SaveChanges(club, cancellationToken);
+
+            // No Response to set
+        }
 
         #endregion
     }

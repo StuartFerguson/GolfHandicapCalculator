@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using ManagementAPI.ClubConfiguration.DomainEvents;
 using Shared.EventSourcing;
 using Shared.EventStore;
@@ -117,6 +120,15 @@ namespace ManagementAPI.ClubConfigurationAggregate
 
         #endregion
 
+        #region Fields
+
+        /// <summary>
+        /// The measured courses
+        /// </summary>
+        private List<MeasuredCourse> MeasuredCourses;
+
+        #endregion
+
         #region Public Methods
 
         #region public static ClubConfigurationAggregate Create(Guid aggregateId)        
@@ -131,7 +143,7 @@ namespace ManagementAPI.ClubConfigurationAggregate
         }
         #endregion
 
-        #region public void CreateClubConfiguration()
+        #region public void CreateClubConfiguration(String name, String addressLine1, String addressLine2, String town, String region, String postalCode, String telephoneNumber, String website, String emailAddress)
         /// <summary>
         /// Creates the club configuration.
         /// </summary>
@@ -155,7 +167,7 @@ namespace ManagementAPI.ClubConfigurationAggregate
             Guard.ThrowIfNullOrEmpty(postalCode, typeof(ArgumentNullException), "A club must have a postal code to be created");
             Guard.ThrowIfNullOrEmpty(telephoneNumber, typeof(ArgumentNullException), "A club must have a telephone number to be created");
 
-            CheckHasClubConfigurationAlreadyBeenCreated();
+            this.CheckHasClubConfigurationHasNotAlreadyBeenCreated();
 
             // Now create the domain event
             ClubConfigurationCreatedEvent clubConfigurationCreatedEvent = ClubConfigurationCreatedEvent.Create(
@@ -164,6 +176,87 @@ namespace ManagementAPI.ClubConfigurationAggregate
 
             // Apply and Pend the event
             this.ApplyAndPend(clubConfigurationCreatedEvent);
+        }
+        #endregion
+
+        #region public void AddMeasuredCourse(MeasuredCourseDataTransferObject measuredCourse)
+        /// <summary>
+        /// Adds the measured course.
+        /// </summary>
+        /// <param name="measuredCourse">The measured course.</param>
+        public void AddMeasuredCourse(MeasuredCourseDataTransferObject measuredCourse)
+        {
+            // Allocate the measured course id 
+            measuredCourse.MeasuredCourseId = Guid.NewGuid();
+
+            // Apply the business rules here
+            // Check club has been created
+            this.CheckHasClubConfigurationAlreadyBeenCreated();
+
+            // Check for a duplicate measured course addition
+            this.CheckNotDuplicateMeasuredCourse(measuredCourse);
+
+            // Validate the measured course data
+            this.ValidateMeasuredCourse(measuredCourse);
+
+            // Now apply and pend the required events
+
+            // First the measured course added event
+            MeasuredCourseAddedEvent measuredCourseAddedEvent = MeasuredCourseAddedEvent.Create(this.AggregateId, measuredCourse.MeasuredCourseId, measuredCourse.Name, measuredCourse.TeeColour, measuredCourse.StandardScratchScore);
+            this.ApplyAndPend(measuredCourseAddedEvent);
+
+            // Now add an event for each hole
+            foreach (var holeDataTransferObject in measuredCourse.Holes)
+            {
+                HoleAddedToMeasuredCourseEvent holeAddedToMeasuredCourseEvent = HoleAddedToMeasuredCourseEvent.Create(this.AggregateId,measuredCourse.MeasuredCourseId, holeDataTransferObject.HoleNumber,
+                                                                                                                      holeDataTransferObject.LengthInYards, holeDataTransferObject.LengthInMeters,
+                                                                                                                      holeDataTransferObject.Par, holeDataTransferObject.StrokeIndex);
+                this.ApplyAndPend(holeAddedToMeasuredCourseEvent);
+            }
+
+        }
+        #endregion
+
+        #region public MeasuredCourseDataTransferObject GetMeasuredCourse(Guid measuredCourseId)
+        /// <summary>
+        /// Gets the measured course.
+        /// </summary>
+        /// <param name="measuredCourseId">The measured course identifier.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException"></exception>
+        public MeasuredCourseDataTransferObject GetMeasuredCourse(Guid measuredCourseId)
+        {
+            var measuredCourseFound = this.MeasuredCourses.Any(m => m.MeasuredCourseId == measuredCourseId);
+
+            if (!measuredCourseFound)
+            {
+                throw new NotFoundException($"No measured course found for Club {this.Name} with Measured Course Id {measuredCourseId}");
+            }
+
+            var measuredCourse = this.MeasuredCourses.Where(m => m.MeasuredCourseId == measuredCourseId).Single();
+
+            MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject
+            {
+                Name = measuredCourse.Name,
+                MeasuredCourseId = measuredCourse.MeasuredCourseId,
+                StandardScratchScore = measuredCourse.StandardScratchScore,
+                TeeColour = measuredCourse.TeeColour,   
+                Holes = new List<HoleDataTransferObject>()
+            };
+
+            foreach (var measuredCourseHole in measuredCourse.Holes)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                {
+                    HoleNumber = measuredCourseHole.HoleNumber,
+                    Par = measuredCourseHole.Par,
+                    LengthInYards = measuredCourseHole.LengthInYards,
+                    StrokeIndex = measuredCourseHole.StrokeIndex,
+                    LengthInMeters = measuredCourseHole.LengthInMeters
+                });
+            }
+
+            return result;
         }
         #endregion
 
@@ -204,6 +297,32 @@ namespace ManagementAPI.ClubConfigurationAggregate
             this.Website = domainEvent.Website;
             this.EmailAddress = domainEvent.EmailAddress;
             this.HasBeenCreated = true;
+            this.MeasuredCourses = new List<MeasuredCourse>();
+        }
+        #endregion
+
+        #region private void PlayEvent(MeasuredCourseAddedEvent domainEvent)
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(MeasuredCourseAddedEvent domainEvent)
+        {
+            MeasuredCourse measuredCourse = MeasuredCourse.Create(domainEvent.MeasuredCourseId, domainEvent.Name, domainEvent.TeeColour,domainEvent.StandardScratchScore);
+            this.MeasuredCourses.Add(measuredCourse);
+        }
+        #endregion
+
+        #region private void PlayEvent(HoleAddedToMeasuredCourseEvent domainEvent)
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(HoleAddedToMeasuredCourseEvent domainEvent)
+        {
+            // Find the measured course
+            var measuredCourse = this.MeasuredCourses.Single(m => m.MeasuredCourseId == domainEvent.MeasuredCourseId);
+            measuredCourse.AddHole(Hole.Create(domainEvent.HoleNumber, domainEvent.LengthInYards, domainEvent.LengthInMeters, domainEvent.Par, domainEvent.StrokeIndex));
         }
         #endregion
 
@@ -211,18 +330,104 @@ namespace ManagementAPI.ClubConfigurationAggregate
 
         #region Private Methods
 
-        #region private void CheckHasClubConfigurationAlreadyBeenCreated()
+        #region private void CheckHasClubConfigurationHasNotAlreadyBeenCreated()
         /// <summary>
-        /// Checks the has club configuration already been created.
+        /// Checks the has club configuration has not already been created.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">This operation cannot be performed on a Club that already has configuration created</exception>
-        private void CheckHasClubConfigurationAlreadyBeenCreated()
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a Club that already has configuration created</exception>
+        private void CheckHasClubConfigurationHasNotAlreadyBeenCreated()
         {
             if (this.HasBeenCreated)
             {
                 throw new InvalidOperationException("This operation cannot be performed on a Club that already has configuration created");
             }
         }
+        #endregion
+
+        #region private void CheckHasClubConfigurationBeenCreated()
+        /// <summary>
+        /// Checks the has club configuration already been created.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">This operation cannot be performed on a Club that already has configuration created</exception>
+        private void CheckHasClubConfigurationAlreadyBeenCreated()
+        {
+            if (!this.HasBeenCreated)
+            {
+                throw new InvalidOperationException("This operation cannot be performed on a Club that already has not had itsconfiguration created");
+            }
+        }
+        #endregion
+
+        #region private void CheckNotDuplicateMeasuredCourse(MeasuredCourseDataTransferObject measuredCourse)        
+        /// <summary>
+        /// Checks the not duplicate measured course.
+        /// </summary>
+        /// <param name="measuredCourse">The measured course.</param>
+        /// <exception cref="InvalidOperationException">Unable to add measured course as this has a duplicate Course Id</exception>
+        private void CheckNotDuplicateMeasuredCourse(MeasuredCourseDataTransferObject measuredCourse)
+        {
+            if (this.MeasuredCourses.Any(m => m.MeasuredCourseId == measuredCourse.MeasuredCourseId))
+            {
+                throw new InvalidOperationException("Unable to add measured course as this has a duplicate Course Id");
+            }
+        }
+        #endregion
+
+        #region private void ValidateMeasuredCourse(MeasuredCourseDataTransferObject measuredCourse)        
+        /// <summary>
+        /// Validates the measured course.
+        /// </summary>
+        /// <param name="measuredCourse">The measured course.</param>
+        private void ValidateMeasuredCourse(MeasuredCourseDataTransferObject measuredCourse)
+        {
+            Guard.ThrowIfNullOrEmpty(measuredCourse.Name, typeof(ArgumentNullException), "A measured course must have a name");
+            Guard.ThrowIfNullOrEmpty(measuredCourse.TeeColour, typeof(ArgumentNullException), "A measured course must have a tee colour");
+            Guard.ThrowIfNegative(measuredCourse.StandardScratchScore, typeof(ArgumentNullException), "A measured course must have a non negative Standard Scratch Score");
+            Guard.ThrowIfZero(measuredCourse.StandardScratchScore, typeof(ArgumentNullException), "A measured course must have a non zero Standard Scratch Score");
+
+            // Only validate the holes if the have been populated
+            if (measuredCourse.Holes.Count != 18)
+            {
+                throw new InvalidDataException("A measured course must have 18 holes");
+            }
+
+            // Check there are no missing hole numbers
+            var holeNumberList = measuredCourse.Holes.Select(h => h.HoleNumber);
+            var missingHoleNumbers = Enumerable.Range(holeNumberList.Min(), holeNumberList.Max() - holeNumberList.Min() + 1).Except(holeNumberList).ToList();
+
+            if (missingHoleNumbers.Count > 0)
+            {
+                // there are missing hole numbers
+                throw new InvalidDataException($"Hole numbers {String.Join(",", holeNumberList)} are missing from the measured course");
+            }
+
+            // Check there are no missing stroke indexes
+            var strokeIndexList = measuredCourse.Holes.Select(h => h.StrokeIndex);
+            var missingStrokeIndexes = Enumerable.Range(strokeIndexList.Min(), strokeIndexList.Max() - strokeIndexList.Min() + 1).Except(strokeIndexList).ToList();
+
+            if (missingStrokeIndexes.Count > 0)
+            {
+                // there are missing stroke indexes
+                throw new InvalidDataException($"Hole with Stroke Indexes {String.Join(",", missingStrokeIndexes)} are missing from the measured course");
+            }
+
+            // Check all holes have a valid length in yards
+            var holesWithInvalidLengthInYards = measuredCourse.Holes.Where(h => h.LengthInYards <= 0).Select(h => h.HoleNumber);
+
+            if (holesWithInvalidLengthInYards.Any())
+            {
+                throw  new InvalidDataException($"All holes must have a length in yards, hole numbers {String.Join(",", holesWithInvalidLengthInYards)} are missing a valid length in yards");
+            }
+
+            // Check all holes have a valid par
+            var holesWithInvalidPar = measuredCourse.Holes.Where(h => h.Par != 3 && h.Par != 4 && h.Par != 5).Select(h => h.HoleNumber);
+
+            if (holesWithInvalidPar.Any())
+            {
+                throw  new InvalidDataException($"All holes must have a valid Par of 3,4 or 5, hole numbers {String.Join(",", holesWithInvalidPar)} are missing a valid Par");
+            }
+        }
+
         #endregion
 
         #endregion

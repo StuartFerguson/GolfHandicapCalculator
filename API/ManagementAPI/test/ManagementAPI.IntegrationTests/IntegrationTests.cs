@@ -15,7 +15,7 @@ namespace ManagementAPI.IntegrationTests
         public const String BaseURI = "http://localhost:5000";        
 
         [Fact]
-        public async Task ManagementAPI_CreateClubConfiguration_SuccessfulReponse()
+        public async Task ManagementAPI_CreateClubConfiguration_SuccessfulResponse()
         {
             // Construct the request 
             var request = IntegrationTestsTestData.CreateClubConfigurationRequest;
@@ -39,7 +39,7 @@ namespace ManagementAPI.IntegrationTests
         }
 
         [Fact]
-        public async Task ManagementAPI_GetClubConfiguration_SuccessfulReponse()
+        public async Task ManagementAPI_GetClubConfiguration_SuccessfulResponse()
         {
             // Construct the request 
             var request = IntegrationTestsTestData.CreateClubConfigurationRequest;
@@ -51,17 +51,17 @@ namespace ManagementAPI.IntegrationTests
                 String requestSerialised = JsonConvert.SerializeObject(request);
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+                var createClubResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
 
-                response.EnsureSuccessStatusCode();
+                createClubResponse.EnsureSuccessStatusCode();
 
-                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await response.Content.ReadAsStringAsync());
+                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await createClubResponse.Content.ReadAsStringAsync());
 
-                var getResponse = await client.GetAsync($"/api/ClubConfiguration?clubId={responseData.ClubConfigurationId}", CancellationToken.None);
+                var getClubResponse = await client.GetAsync($"/api/ClubConfiguration?clubId={responseData.ClubConfigurationId}", CancellationToken.None);
 
-                getResponse.EnsureSuccessStatusCode();
+                getClubResponse.EnsureSuccessStatusCode();
 
-                var getResponseData = JsonConvert.DeserializeObject<GetClubConfigurationResponse>(await getResponse.Content.ReadAsStringAsync());
+                var getResponseData = JsonConvert.DeserializeObject<GetClubConfigurationResponse>(await getClubResponse.Content.ReadAsStringAsync());
 
                 Assert.NotNull(getResponseData);
                 Assert.Equal(getResponseData.Id, responseData.ClubConfigurationId);
@@ -74,6 +74,37 @@ namespace ManagementAPI.IntegrationTests
                 Assert.Equal(getResponseData.TelephoneNumber, request.TelephoneNumber);
                 Assert.Equal(getResponseData.Website, request.Website);
                 Assert.Equal(getResponseData.EmailAddress, request.EmailAddress);
+            }
+        }
+
+        [Fact]
+        public async Task ManagementAPI_AddMeasuredCourse_SuccessfulResponse()
+        {
+            // Construct the request 
+            var createClubConfigurationRequest = IntegrationTestsTestData.CreateClubConfigurationRequest;
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(BaseURI);
+
+                String requestSerialised = JsonConvert.SerializeObject(createClubConfigurationRequest);
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                var createClubResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+
+                createClubResponse.EnsureSuccessStatusCode();
+
+                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await createClubResponse.Content.ReadAsStringAsync());
+
+                var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
+                addMeasuredCourseToClubRequest.ClubAggregateId = responseData.ClubConfigurationId;
+
+                requestSerialised = JsonConvert.SerializeObject(addMeasuredCourseToClubRequest);
+                httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                var addMeasuredCourseResponse = await client.PutAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+
+                addMeasuredCourseResponse.EnsureSuccessStatusCode();
             }
         }
     }
