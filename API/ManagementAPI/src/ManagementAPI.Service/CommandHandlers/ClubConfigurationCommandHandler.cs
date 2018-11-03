@@ -91,6 +91,13 @@ namespace ManagementAPI.Service.CommandHandlers
         }
         #endregion
 
+        #region private async Task HandleCommand(AddMeasuredCourseToClubCommand command, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Handles the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         private async Task HandleCommand(AddMeasuredCourseToClubCommand command, CancellationToken cancellationToken)
         {
             // Rehydrate the aggregate
@@ -99,6 +106,7 @@ namespace ManagementAPI.Service.CommandHandlers
             // Translate the request to the input for AddMeasuredCourse
             MeasuredCourseDataTransferObject measuredCourse = new MeasuredCourseDataTransferObject
             {
+                MeasuredCourseId = Guid.NewGuid(),
                 Name = command.AddMeasuredCourseToClubRequest.Name,
                 StandardScratchScore = command.AddMeasuredCourseToClubRequest.StandardScratchScore,
                 TeeColour = command.AddMeasuredCourseToClubRequest.TeeColour,
@@ -125,6 +133,7 @@ namespace ManagementAPI.Service.CommandHandlers
 
             // No Response to set
         }
+        #endregion
 
         #endregion
     }

@@ -186,9 +186,6 @@ namespace ManagementAPI.ClubConfigurationAggregate
         /// <param name="measuredCourse">The measured course.</param>
         public void AddMeasuredCourse(MeasuredCourseDataTransferObject measuredCourse)
         {
-            // Allocate the measured course id 
-            measuredCourse.MeasuredCourseId = Guid.NewGuid();
-
             // Apply the business rules here
             // Check club has been created
             this.CheckHasClubConfigurationAlreadyBeenCreated();
