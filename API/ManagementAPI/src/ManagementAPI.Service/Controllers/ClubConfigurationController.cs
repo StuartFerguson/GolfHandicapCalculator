@@ -86,6 +86,27 @@ namespace ManagementAPI.Service.Controllers
         }
         #endregion
 
+        #region public async Task<IActionResult> PutClubConfiguration(AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Puts the club configuration.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> PutClubConfiguration(AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)
+        {
+            // Create the command
+            var command = AddMeasuredCourseToClubCommand.Create(request);
+
+            // Route the command
+            await this.CommmandRouter.Route(command,CancellationToken.None);
+
+            // return the result
+            return this.Ok(command.Response);
+        }
+        #endregion
+
         #endregion
     }
 }

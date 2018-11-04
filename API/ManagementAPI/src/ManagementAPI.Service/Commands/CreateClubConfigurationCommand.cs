@@ -34,7 +34,7 @@ namespace ManagementAPI.Service.Commands
         }
         #endregion
 
-        #region public static CreateClubCommand Create()        
+        #region public static CreateClubConfigurationCommand Create()        
         /// <summary>
         /// Creates this instance.
         /// </summary>
