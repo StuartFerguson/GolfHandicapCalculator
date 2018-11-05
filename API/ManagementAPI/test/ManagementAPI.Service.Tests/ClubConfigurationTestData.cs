@@ -65,13 +65,12 @@ namespace ManagementAPI.Service.Tests
 
             return aggregate;
         }
-
         
-
         public static MeasuredCourseDataTransferObject GetMeasuredCourseToAdd(Int32 numberHoles = 18)
         {
             MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject();
 
+            result.MeasuredCourseId = MeasuredCourseId;
             result.Name = MeasuredCourseName;
             result.MeasuredCourseId = MeasuredCourseId;
             result.StandardScratchScore = StandardScratchScore;

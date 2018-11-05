@@ -107,5 +107,54 @@ namespace ManagementAPI.IntegrationTests
                 addMeasuredCourseResponse.EnsureSuccessStatusCode();
             }
         }
+
+        [Fact]
+        public async Task ManagementAPI_CreateTournament_SuccessfulResponse()
+        {
+            // Construct the request 
+            var createClubConfigurationRequest = IntegrationTestsTestData.CreateClubConfigurationRequest;
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(BaseURI);
+
+                String requestSerialised = JsonConvert.SerializeObject(createClubConfigurationRequest);
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                var createClubResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+
+                createClubResponse.EnsureSuccessStatusCode();
+
+                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await createClubResponse.Content.ReadAsStringAsync());
+
+                var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
+                addMeasuredCourseToClubRequest.ClubAggregateId = responseData.ClubConfigurationId;
+
+                requestSerialised = JsonConvert.SerializeObject(addMeasuredCourseToClubRequest);
+                httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                var addMeasuredCourseResponse = await client.PutAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+
+                addMeasuredCourseResponse.EnsureSuccessStatusCode();
+
+                var createTournamentRequest = IntegrationTestsTestData.CreateTournamentRequest;
+                createTournamentRequest.ClubConfigurationId = responseData.ClubConfigurationId;
+                createTournamentRequest.MeasuredCourseId = addMeasuredCourseToClubRequest.MeasuredCourseId;
+
+                requestSerialised = JsonConvert.SerializeObject(createTournamentRequest);
+                httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                var createTournamentResponse =
+                    await client.PostAsync("/api/Tournament", httpContent, CancellationToken.None);
+                
+                createTournamentResponse.EnsureSuccessStatusCode();
+
+                var responseData1 = JsonConvert.DeserializeObject<CreateTournamentResponse>(await createTournamentResponse.Content.ReadAsStringAsync());
+
+                Assert.NotNull(responseData1);
+                Assert.NotEqual(responseData1.TournamentId, Guid.Empty);
+
+            }
+        }
     }
 }

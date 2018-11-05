@@ -14,6 +14,14 @@ namespace ManagementAPI.IntegrationTests.DataTransferObjects
         public Guid ClubAggregateId { get; set; }
         
         /// <summary>
+        /// Gets or sets the measured course identifier.
+        /// </summary>
+        /// <value>
+        /// The measured course identifier.
+        /// </value>
+        public Guid MeasuredCourseId { get; set; }
+
+        /// <summary>
         /// Gets the name.
         /// </summary>
         /// <value>

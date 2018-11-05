@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using ManagementAPI.Service.Commands;
 using Shared.CommandHandling;
 using Shared.EventStore;
-using ClubConfigAggregate = ManagementAPI.ClubConfigurationAggregate.ClubConfigurationAggregate;
 namespace ManagementAPI.Service.CommandHandlers
 {
     public class CommandRouter : ICommandRouter
@@ -16,19 +15,27 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The club aggregate repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigAggregate> ClubAggregateRepository;
+        private readonly IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> ClubAggregateRepository;
+
+        /// <summary>
+        /// The tournament repository
+        /// </summary>
+        private readonly IAggregateRepository<TournamentAggregate.TournamentAggregate> TournamentRepository;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandRouter"/> class.
+        /// Initializes a new instance of the <see cref="CommandRouter" /> class.
         /// </summary>
         /// <param name="clubAggregateRepository">The club aggregate repository.</param>
-        public CommandRouter(IAggregateRepository<ClubConfigAggregate> clubAggregateRepository)
+        /// <param name="tournamentRepository">The tournament repository.</param>
+        public CommandRouter(IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> clubAggregateRepository,
+            IAggregateRepository<TournamentAggregate.TournamentAggregate> tournamentRepository)
         {
             this.ClubAggregateRepository = clubAggregateRepository;
+            this.TournamentRepository = tournamentRepository;
         }
 
         #endregion
@@ -73,6 +80,18 @@ namespace ManagementAPI.Service.CommandHandlers
         private ICommandHandler CreateHandler(AddMeasuredCourseToClubCommand command)
         {
             return new ClubConfigurationCommandHandler(this.ClubAggregateRepository);
+        }
+        #endregion
+
+        #region private ICommandHandler CreateHandler(AddMeasuredCourseToClubCommand command)        
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(CreateTournamentCommand command)
+        {
+            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository);
         }
         #endregion
 

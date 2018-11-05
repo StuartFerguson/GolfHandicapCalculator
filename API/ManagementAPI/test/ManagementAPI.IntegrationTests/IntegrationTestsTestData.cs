@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using ManagementAPI.IntegrationTests.DataTransferObjects;
 
@@ -22,6 +23,7 @@ namespace ManagementAPI.IntegrationTests
         public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest =
             new AddMeasuredCourseToClubRequest()
             {
+                MeasuredCourseId = Guid.Parse("47708163-7E3A-4C61-B1C3-64C2CDFC1170"),
                 Name = "Test Course",
                 StandardScratchScore = 70,
                 TeeColour = "White",
@@ -48,5 +50,13 @@ namespace ManagementAPI.IntegrationTests
                 }
 
             };
+
+        public static CreateTournamentRequest CreateTournamentRequest = new CreateTournamentRequest
+        {
+            Name = "Test Competition",
+            MemberCategory = 1,
+            TournamentDate = DateTime.Today,
+            Format = 1
+        };
     }
 }

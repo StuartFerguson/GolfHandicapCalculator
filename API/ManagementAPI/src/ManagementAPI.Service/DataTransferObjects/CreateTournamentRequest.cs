@@ -5,24 +5,32 @@ using System.Threading.Tasks;
 
 namespace ManagementAPI.Service.DataTransferObjects
 {
-    public class AddMeasuredCourseToClubRequest
+    public class CreateTournamentRequest
     {
         /// <summary>
-        /// Gets or sets the club identifier.
+        /// Gets the tournament date.
         /// </summary>
         /// <value>
-        /// The club identifier.
+        /// The tournament date.
         /// </value>
-        public Guid ClubAggregateId { get; set; }
+        public DateTime TournamentDate { get; set; }
 
         /// <summary>
-        /// Gets or sets the measured course identifier.
+        /// Gets the club configuration identifier.
+        /// </summary>
+        /// <value>
+        /// The club configuration identifier.
+        /// </value>
+        public Guid ClubConfigurationId { get; set; }
+
+        /// <summary>
+        /// Gets the measured course identifier.
         /// </summary>
         /// <value>
         /// The measured course identifier.
         /// </value>
         public Guid MeasuredCourseId { get; set; }
-        
+
         /// <summary>
         /// Gets the name.
         /// </summary>
@@ -30,29 +38,21 @@ namespace ManagementAPI.Service.DataTransferObjects
         /// The name.
         /// </value>
         public String Name { get; set; }
-        
-        /// <summary>
-        /// Gets the tee colour.
-        /// </summary>
-        /// <value>
-        /// The tee colour.
-        /// </value>
-        public String TeeColour { get; set; }
 
         /// <summary>
-        /// Gets the standard scratch score.
+        /// Gets the member category.
         /// </summary>
         /// <value>
-        /// The standard scratch score.
+        /// The member category.
         /// </value>
-        public Int32 StandardScratchScore { get; set; }
+        public Int32 MemberCategory { get; set; }
 
         /// <summary>
-        /// Gets the holes.
+        /// Gets the format.
         /// </summary>
         /// <value>
-        /// The holes.
+        /// The format.
         /// </value>
-        public List<HoleDataTransferObject> Holes { get; set; }
+        public Int32 Format { get; set; }
     }
 }
