@@ -83,13 +83,25 @@ namespace ManagementAPI.Service.CommandHandlers
         }
         #endregion
 
-        #region private ICommandHandler CreateHandler(AddMeasuredCourseToClubCommand command)        
+        #region private ICommandHandler CreateHandler(CreateTournamentCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
         private ICommandHandler CreateHandler(CreateTournamentCommand command)
+        {
+            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository);
+        }
+        #endregion
+
+        #region private ICommandHandler CreateHandler(RecordMemberTournamentScoreCommand command)        
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(RecordMemberTournamentScoreCommand command)
         {
             return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository);
         }

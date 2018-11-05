@@ -1,6 +1,7 @@
 ﻿using ManagementAPI.TournamentAggregate;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Shouldly;
 using Xunit;
@@ -86,6 +87,153 @@ namespace ManagementAPI.Service.Tests
                     TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
             });
         }
+
+        #endregion
+
+        #region Record Member Scores Tests
+
+        [Fact]
+        public void TournamentAggregate_RecordMemberScore_MemberScoreRecorded()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+
+            Should.NotThrow(() =>
+            {
+                aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScores);
+            });
+        }
+
+        [Theory]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        public void TournamentAggregate_RecordMemberScore_InvalidData_ErrorThrown(Boolean validMemberId, Boolean validHoleScores)
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+
+            Guid memberId = validMemberId ? TournamentTestData.MemberId : Guid.Empty;
+            Dictionary<Int32, Int32> holeScores = validHoleScores ? TournamentTestData.HoleScores : null;
+            
+            Should.Throw<ArgumentNullException>(() =>
+            {
+                aggregate.RecordMemberScore(memberId, holeScores);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordMemberScore_MemberScoreAlreadyRecorded_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+
+            aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScores);
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScores);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordMemberScore_TournamentNotCreated_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScores);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordMemberScore_InvalidData_NotAllHoleScores_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+
+            Should.Throw<InvalidDataException>(() =>
+            {
+                aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScoresNotAllPresent);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordMemberScore_InvalidData_MissinHoleScores_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+
+            Should.Throw<InvalidDataException>(() =>
+            {
+                aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScoresMissingHoles);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordMemberScore_InvalidData_ExtraHoleScores_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+
+            Should.Throw<InvalidDataException>(() =>
+            {
+                aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScoresExtraScores);
+            });
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(5)]
+        [InlineData(6)]
+        [InlineData(7)]
+        [InlineData(8)]
+        [InlineData(9)]
+        [InlineData(10)]
+        [InlineData(11)]
+        [InlineData(12)]
+        [InlineData(13)]
+        [InlineData(14)]
+        [InlineData(15)]
+        [InlineData(16)]
+        [InlineData(17)]
+        [InlineData(18)]
+        public void TournamentAggregate_RecordMemberScore_InvalidData_MissingHoleScores_ErrorThrown(Int32 holeNumber)
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+
+            Should.Throw<InvalidDataException>(() =>
+            {
+                aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScoresMissingHole(holeNumber));
+            });
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(5)]
+        [InlineData(6)]
+        [InlineData(7)]
+        [InlineData(8)]
+        [InlineData(9)]
+        [InlineData(10)]
+        [InlineData(11)]
+        [InlineData(12)]
+        [InlineData(13)]
+        [InlineData(14)]
+        [InlineData(15)]
+        [InlineData(16)]
+        [InlineData(17)]
+        [InlineData(18)]
+        public void TournamentAggregate_RecordMemberScore_InvalidData_NegativeHoleScores_ErrorThrown(Int32 holeNumber)
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+
+            Should.Throw<InvalidDataException>(() =>
+            {
+                aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.HoleScoresNegativeScore(holeNumber));
+            });
+        }
+        
 
         #endregion
     }

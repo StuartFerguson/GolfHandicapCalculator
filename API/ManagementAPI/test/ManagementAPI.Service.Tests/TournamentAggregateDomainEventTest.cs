@@ -25,7 +25,20 @@ namespace ManagementAPI.Service.Tests
             tournamentCreatedEvent.Format.ShouldBe(TournamentTestData.TournamentFormat);
             tournamentCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             tournamentCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
-            tournamentCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
+        }
+
+        [Fact]
+        public void MemberScoreRecordedEvent_CanBeCreated_IsCreated()
+        {
+            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.MemberId,
+                TournamentTestData.HoleScores);
+
+            memberScoreRecordedEvent.ShouldNotBeNull();
+            memberScoreRecordedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            memberScoreRecordedEvent.MemberId.ShouldBe(TournamentTestData.MemberId);
+            memberScoreRecordedEvent.HoleScores.ShouldBe(TournamentTestData.HoleScores);            
+            memberScoreRecordedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            memberScoreRecordedEvent.EventId.ShouldNotBe(Guid.Empty);
         }
     }
 }

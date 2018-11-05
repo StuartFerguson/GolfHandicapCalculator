@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Newtonsoft.Json;
 using Shared.EventSourcing;
@@ -9,7 +9,17 @@ namespace ManagementAPI.Tournament.DomainEvents
     [JsonObject]
     public class TournamentCreatedEvent : DomainEvent
     {
-        #region Constructors        
+        #region Constructors 
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TournamentCreatedEvent" /> class.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        public TournamentCreatedEvent()
+        {
+            //We need this for serialisation, so just embrace the DDD crime
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TournamentCreatedEvent" /> class.
         /// </summary>

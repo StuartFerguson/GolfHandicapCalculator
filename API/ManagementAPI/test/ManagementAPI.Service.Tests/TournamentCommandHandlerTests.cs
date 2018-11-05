@@ -30,5 +30,21 @@ namespace ManagementAPI.Service.Tests
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }
+
+        [Fact]
+        public void ClubConfigurationCommandHandler_HandleCommand_RecordMemberTournamentScoreCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+
+            Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>>();
+            tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregate);
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+
+            RecordMemberTournamentScoreCommand command = TournamentTestData.GetRecordMemberTournamentScoreCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
     }
 }

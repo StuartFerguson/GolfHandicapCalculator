@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Text;
 using ManagementAPI.Tournament.DomainEvents;
 using Newtonsoft.Json;
@@ -19,8 +21,7 @@ namespace ManagementAPI.TournamentAggregate
         /// </summary>
         [ExcludeFromCodeCoverage]
         public TournamentAggregate()
-        {
-
+        {            
         }
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace ManagementAPI.TournamentAggregate
         {
             Guard.ThrowIfInvalidGuid(aggregateId, "Aggregate Id cannot be an Empty Guid");
 
-            this.AggregateId = aggregateId;
+            this.AggregateId = aggregateId;            
         }
 
         #endregion
@@ -114,6 +115,21 @@ namespace ManagementAPI.TournamentAggregate
 
         #region Fields
 
+        /// <summary>
+        /// The member score records
+        /// </summary>
+        private List<MemberScoreRecord> MemberScoreRecords;
+
+        /// <summary>
+        /// The minimum hole number
+        /// </summary>
+        private const Int32 MinimumHoleNumber = 1;
+
+        /// <summary>
+        /// The maximum hole number
+        /// </summary>
+        private const Int32 MaximumHoleNumber = 18;
+        
         #endregion
 
         #region Public Methods
@@ -163,6 +179,41 @@ namespace ManagementAPI.TournamentAggregate
         }
         #endregion
 
+        #region public void RecordMemberScore(Guid memberId, Dictionary<Int32, Int32> scores)        
+        /// <summary>
+        /// Records the member score.
+        /// </summary>
+        /// <param name="memberId">The member identifier.</param>
+        /// <param name="holeScores">The hole scores.</param>
+        public void RecordMemberScore(Guid memberId, Dictionary<Int32, Int32> holeScores)
+        {
+            Guard.ThrowIfInvalidGuid(memberId, typeof(ArgumentNullException), "Member Id must be provided to record a score");
+            Guard.ThrowIfNull(holeScores, typeof(ArgumentNullException), "Hole Scores must be provided to record a score");
+
+            // Check tournament has been created
+            this.CheckTournamentHasBeenCreated();
+
+            // Tournament is not completed
+            this.CheckTournamentNotAlreadyCompleted();
+
+            // Tournament is not cancelled
+            this.CheckTournamentNotAlreadyCancelled();
+
+            // Member must not have already entered a score
+            this.CheckForDuplicateMemberScoreRecord(memberId);
+
+            // Must have 18 hole scores
+            this.ValidateHoleScores(holeScores);
+            
+            // Crete the event to record the score
+            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(this.AggregateId, memberId, holeScores);
+
+            // Apply and Pend
+            this.ApplyAndPend(memberScoreRecordedEvent);
+        }
+        
+        #endregion
+
         #endregion
 
         #region Protected Methods
@@ -197,12 +248,40 @@ namespace ManagementAPI.TournamentAggregate
             this.MeasuredCourseId = domainEvent.MeasuredCourseId;
             this.MemberCategory = (MemberCategory) domainEvent.MemberCategory;
             this.TournamentDate = domainEvent.TournamentDate;
+            this.MemberScoreRecords = new List<MemberScoreRecord>();
+        }
+        #endregion
+
+        #region private void PlayEvent(MemberScoreRecordedEvent domainEvent)        
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(MemberScoreRecordedEvent domainEvent)
+        {
+            MemberScoreRecord memberScoreRecord = MemberScoreRecord.Create(domainEvent.MemberId, domainEvent.HoleScores);    
+
+            this.MemberScoreRecords.Add(memberScoreRecord);
         }
         #endregion
 
         #endregion
 
         #region Private Methods
+
+        #region private void CheckTournamentHasBeenCreated()
+        /// <summary>
+        /// Checks the tournament has been created.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a tournament that has not been created</exception>
+        private void CheckTournamentHasBeenCreated()
+        {
+            if (!this.HasBeenCreated)
+            {
+                throw  new InvalidOperationException("This operation cannot be performed on a tournament that has not been created");
+            }
+        }
+        #endregion
 
         #region private void CheckTournamentNotAlreadyCreated()        
         /// <summary>
@@ -239,9 +318,56 @@ namespace ManagementAPI.TournamentAggregate
         /// <exception cref="System.InvalidOperationException">This operation cannot be performed on a tournament that has already been cancelled</exception>
         private void CheckTournamentNotAlreadyCancelled()
         {
-            if (this.HasBeenCompleted)
+            if (this.HasBeenCancelled)
             {
                 throw  new InvalidOperationException("This operation cannot be performed on a tournament that has already been cancelled");
+            }
+        }
+        #endregion
+
+        #region private void CheckForDuplicateMemberScoreRecord(Guid memberId)
+        /// <summary>
+        /// Checks for duplicate member score record.
+        /// </summary>
+        /// <param name="memberId">The member identifier.</param>
+        /// <exception cref="InvalidOperationException">Member Id {} has already recorded a score for this competition</exception>
+        private void CheckForDuplicateMemberScoreRecord(Guid memberId)
+        {
+            if (this.MemberScoreRecords.Any(m => m.MemberId == memberId))
+            {
+                throw new InvalidOperationException("Member Id {} has already recorded a score for this competition");
+            }
+        }
+        #endregion
+
+        #region private void ValidateHoleScores(Dictionary<Int32, Int32> holeScores)
+        /// <summary>
+        /// Validates the hole scores.
+        /// </summary>
+        /// <param name="holeScores">The hole scores.</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void ValidateHoleScores(Dictionary<Int32, Int32> holeScores)
+        {
+            // Check we have 18 scores
+            if (holeScores.Count != 18)
+            {
+                throw new InvalidDataException("A score to record must have 18 individual scores");
+            }
+            
+            var missingHoleNumbers = Enumerable.Range(MinimumHoleNumber, MaximumHoleNumber- MinimumHoleNumber + 1).Except(holeScores.Keys).ToList();
+
+            if (missingHoleNumbers.Count > 0)
+            {
+                // there are missing scores
+                throw new InvalidDataException($"Hole numbers {String.Join(",", missingHoleNumbers)} are missing a score");
+            }
+
+            var holesWithNegativeScore = holeScores.Any(h => h.Value < 0);
+
+            if (holesWithNegativeScore)
+            {
+                // there are negative scores
+                throw new InvalidDataException($"Hole numbers {String.Join(",", missingHoleNumbers)} have a negative score");
             }
         }
         #endregion
