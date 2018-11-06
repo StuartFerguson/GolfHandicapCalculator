@@ -60,19 +60,69 @@ namespace ManagementAPI.Service.Controllers
         }
         #endregion
 
-        #region public async Task<IActionResult> PostTournament([FromBody]RecordMemberTournamentScoreRequest request, CancellationToken cancellationToken)        
+        #region public async Task<IActionResult> PostTournament([FromRoute] Guid tournamentId, [FromBody]RecordMemberTournamentScoreRequest request, CancellationToken cancellationToken)        
         /// <summary>
         /// Posts the tournament.
         /// </summary>
+        /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPut]      
         [ProducesResponseType(204)]
-        public async Task<IActionResult> PutTournament([FromBody]RecordMemberTournamentScoreRequest request, CancellationToken cancellationToken)
+        [Route("{tournamentId}/RecordMemberScore")]
+        public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId, [FromBody]RecordMemberTournamentScoreRequest request, CancellationToken cancellationToken)
         {
             // Create the command
-            var command = RecordMemberTournamentScoreCommand.Create(request);
+            var command = RecordMemberTournamentScoreCommand.Create(tournamentId, request);
+
+            // Route the command
+            await this.CommmandRouter.Route(command,CancellationToken.None);
+
+            // return the result
+            return this.Ok(command.Response);
+        }
+        #endregion
+
+        #region public async Task<IActionResult> PostTournament([FromRoute] Guid tournamentId, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Posts the tournament.
+        /// </summary>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpPut]      
+        [ProducesResponseType(204)]
+        [Route("{tournamentId}/Complete")]
+        public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId, CancellationToken cancellationToken)
+        {
+            // Create the command
+            var command = CompleteTournamentCommand.Create(tournamentId);
+
+            // Route the command
+            await this.CommmandRouter.Route(command,CancellationToken.None);
+
+            // return the result
+            return this.Ok(command.Response);
+        }
+        #endregion
+
+        #region public async Task<IActionResult> PostTournament([FromRoute] Guid tournamentId, [FromBody]CancelTournamentRequest request, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Posts the tournament.
+        /// </summary>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpPut]      
+        [ProducesResponseType(204)]
+        [Route("{tournamentId}/Cancel")]
+        public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId, [FromBody]CancelTournamentRequest request, CancellationToken cancellationToken)
+        {
+            // Create the command
+            var command = CancelTournamentCommand.Create(tournamentId, request);
 
             // Route the command
             await this.CommmandRouter.Route(command,CancellationToken.None);

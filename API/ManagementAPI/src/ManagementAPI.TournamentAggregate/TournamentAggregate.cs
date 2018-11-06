@@ -104,12 +104,36 @@ namespace ManagementAPI.TournamentAggregate
         public Boolean HasBeenCompleted { get; private set; }
 
         /// <summary>
+        /// Gets the completed date time.
+        /// </summary>
+        /// <value>
+        /// The completed date time.
+        /// </value>
+        public DateTime CompletedDateTime { get; private set; }
+
+        /// <summary>
         /// Gets a value indicating whether this instance has been cancelled.
         /// </summary>
         /// <value>
         ///   <c>true</c> if this instance has been cancelled; otherwise, <c>false</c>.
         /// </value>
         public Boolean HasBeenCancelled { get; private set; }
+
+        /// <summary>
+        /// Gets the cancelled date time.
+        /// </summary>
+        /// <value>
+        /// The cancelled date time.
+        /// </value>
+        public DateTime CancelledDateTime { get; private set; }
+        
+        /// <summary>
+        /// Gets the cancelled reason.
+        /// </summary>
+        /// <value>
+        /// The cancelled reason.
+        /// </value>
+        public String CancelledReason { get; private set; }
 
         #endregion
 
@@ -211,7 +235,49 @@ namespace ManagementAPI.TournamentAggregate
             // Apply and Pend
             this.ApplyAndPend(memberScoreRecordedEvent);
         }
-        
+
+        #endregion
+
+        #region public void CompleteTournament(DateTime completedDateTime)
+        /// <summary>
+        /// Completes the tournament.
+        /// </summary>
+        /// <param name="completedDateTime">The completed date time.</param>
+        public void CompleteTournament(DateTime completedDateTime)
+        {
+            Guard.ThrowIfInvalidDate(completedDateTime, typeof(ArgumentNullException), "A completed date time must be provided to complete a tournament");
+
+            this.CheckTournamentHasBeenCreated();
+
+            this.CheckTournamentNotAlreadyCompleted();
+
+            this.CheckTournamentNotAlreadyCancelled();
+
+            TournamentCompletedEvent tournamentCompletedEvent = TournamentCompletedEvent.Create(this.AggregateId, completedDateTime);
+            this.ApplyAndPend(tournamentCompletedEvent);
+        }
+        #endregion
+
+        #region public void CancelTournament(DateTime cancelledDateTime, String cancellationReason)
+        /// <summary>
+        /// Cancels the tournament.
+        /// </summary>
+        /// <param name="cancelledDateTime">The cancelled date time.</param>
+        /// <param name="cancellationReason">The cancellation reason.</param>
+        public void CancelTournament(DateTime cancelledDateTime, String cancellationReason)
+        {
+            Guard.ThrowIfInvalidDate(cancelledDateTime, typeof(ArgumentNullException), "A completed date time must be provided to cancel a tournament");
+            Guard.ThrowIfNullOrEmpty(cancellationReason, typeof(ArgumentNullException), "A cancellation reason time must be provided to cancel a tournament");
+
+            this.CheckTournamentHasBeenCreated();
+
+            this.CheckTournamentNotAlreadyCompleted();
+
+            this.CheckTournamentNotAlreadyCancelled();
+
+            TournamentCancelledEvent tournamentCancelledEvent = TournamentCancelledEvent.Create(this.AggregateId, cancelledDateTime, cancellationReason);
+            this.ApplyAndPend(tournamentCancelledEvent);
+        }
         #endregion
 
         #endregion
@@ -262,6 +328,31 @@ namespace ManagementAPI.TournamentAggregate
             MemberScoreRecord memberScoreRecord = MemberScoreRecord.Create(domainEvent.MemberId, domainEvent.HoleScores);    
 
             this.MemberScoreRecords.Add(memberScoreRecord);
+        }
+        #endregion
+
+        #region private void PlayEvent(TournamentCompletedEvent domainEvent)
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(TournamentCompletedEvent domainEvent)
+        {
+            this.HasBeenCompleted = true;
+            this.CompletedDateTime = domainEvent.CompletedDate;
+        }
+        #endregion
+
+        #region private void PlayEvent(TournamentCancelledEvent domainEvent)
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(TournamentCancelledEvent domainEvent)
+        {
+            this.HasBeenCancelled = true;
+            this.CancelledDateTime = domainEvent.CancelledDate;
+            this.CancelledReason = domainEvent.CancellationReason;
         }
         #endregion
 

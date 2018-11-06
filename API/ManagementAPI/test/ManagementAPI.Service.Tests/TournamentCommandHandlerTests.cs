@@ -46,5 +46,37 @@ namespace ManagementAPI.Service.Tests
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }
+
+        [Fact]
+        public void ClubConfigurationCommandHandler_HandleCommand_CompleteTournamentCommand_WithScores_CommandHandled()
+        {
+            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+
+            Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>>();
+            tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate);
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+
+            CompleteTournamentCommand command = TournamentTestData.GetCompleteTournamentCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+        [Fact]
+        public void ClubConfigurationCommandHandler_HandleCommand_CancelTournamentCommand_WithScores_CommandHandled()
+        {
+            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+
+            Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>>();
+            tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate);
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+
+            CancelTournamentCommand command = TournamentTestData.GetCancelTournamentCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
     }
 }

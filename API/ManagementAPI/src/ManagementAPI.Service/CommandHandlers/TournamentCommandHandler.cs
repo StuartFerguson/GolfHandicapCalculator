@@ -111,9 +111,51 @@ namespace ManagementAPI.Service.CommandHandlers
         private async Task HandleCommand(RecordMemberTournamentScoreCommand command, CancellationToken cancellationToken)
         {            
             // Rehydrate the aggregate
-            var tournament = await this.TournamentRepository.GetLatestVersion(command.RecordMemberTournamentScoreRequest.TournamentId, cancellationToken);
+            var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
             tournament.RecordMemberScore(command.RecordMemberTournamentScoreRequest.MemberId, command.RecordMemberTournamentScoreRequest.HoleScores);
+            
+            // Save the changes
+            await this.TournamentRepository.SaveChanges(tournament, cancellationToken);
+        }
+        #endregion
+
+        #region private async Task HandleCommand(CompleteTournamentCommand command, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Handles the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleCommand(CompleteTournamentCommand command, CancellationToken cancellationToken)
+        {            
+            // Rehydrate the aggregate
+            var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
+
+            DateTime completedDateTime = DateTime.Now;
+
+            tournament.CompleteTournament(completedDateTime);
+            
+            // Save the changes
+            await this.TournamentRepository.SaveChanges(tournament, cancellationToken);
+        }
+        #endregion
+
+        #region private async Task HandleCommand(CompleteTournamentCommand command, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Handles the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleCommand(CancelTournamentCommand command, CancellationToken cancellationToken)
+        {            
+            // Rehydrate the aggregate
+            var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
+
+            DateTime cancelledDateTime = DateTime.Now;
+
+            tournament.CancelTournament(cancelledDateTime, command.CancelTournamentRequest.CancellationReason);
             
             // Save the changes
             await this.TournamentRepository.SaveChanges(tournament, cancellationToken);

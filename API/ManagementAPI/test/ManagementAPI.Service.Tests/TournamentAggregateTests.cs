@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ManagementAPI.Service.Commands;
 using Shouldly;
 using Xunit;
 
@@ -234,6 +235,133 @@ namespace ManagementAPI.Service.Tests
             });
         }
         
+
+        #endregion
+
+        #region Complete Tournament Tests
+
+        [Fact]
+        public void TournamentAggregate_CompleteTournament_TournamentComplete()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+
+            aggregate.CompleteTournament(TournamentTestData.CompletedDateTime);
+
+            aggregate.HasBeenCompleted.ShouldBeTrue();
+            aggregate.CompletedDateTime.ShouldBe(TournamentTestData.CompletedDateTime);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        public void TournamentAggregate_CompleteTournament_InvalidData_ErrorThrown(Boolean validCompleteDate)
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+
+            DateTime completeDateTime = validCompleteDate ? TournamentTestData.CompletedDateTime : DateTime.MinValue;
+
+            Should.Throw<ArgumentNullException>(() =>
+            {
+                aggregate.CompleteTournament(completeDateTime);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_CompleteTournament_TournamentNotCreated_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.CompleteTournament(TournamentTestData.CompletedDateTime);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_CompleteTournament_TournamentAlreadyCompleted_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.CompleteTournament(TournamentTestData.CompletedDateTime);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_CompleteTournament_TournamentAlreadyCancelled_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCancelledTournament();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.CompleteTournament(TournamentTestData.CompletedDateTime);
+            });
+        }
+
+        #endregion
+
+        #region Cancel Tournament Tests
+
+        [Fact]
+        public void TournamentAggregate_CancelTournament_TournamentComplete()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+
+            aggregate.CancelTournament(TournamentTestData.CancelledDateTime, TournamentTestData.CancellationReason);
+
+            aggregate.HasBeenCancelled.ShouldBeTrue();
+            aggregate.CancelledDateTime.ShouldBe(TournamentTestData.CancelledDateTime);
+            aggregate.CancelledReason.ShouldBe(TournamentTestData.CancellationReason);
+        }
+
+        [Theory]
+        [InlineData(false,"reason")]
+        [InlineData(true,"")]
+        [InlineData(true,null)]
+        public void TournamentAggregate_CancelTournament_InvalidData_ErrorThrown(Boolean validCancellationDate, String cancellationReason)
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+
+            DateTime cancellationDateTime = validCancellationDate ? TournamentTestData.CancelledDateTime : DateTime.MinValue;
+
+            Should.Throw<ArgumentNullException>(() =>
+            {
+                aggregate.CancelTournament(cancellationDateTime, cancellationReason);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_CancelTournament_TournamentNotCreated_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.CancelTournament(TournamentTestData.CancelledDateTime, TournamentTestData.CancellationReason);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_CancelTournament_TournamentAlreadyCompleted_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.CancelTournament(TournamentTestData.CancelledDateTime, TournamentTestData.CancellationReason);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_CancelTournament_TournamentAlreadyCancelled_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCancelledTournament();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.CancelTournament(TournamentTestData.CancelledDateTime, TournamentTestData.CancellationReason);
+            });
+        }
 
         #endregion
     }

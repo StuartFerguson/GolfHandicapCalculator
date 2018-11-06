@@ -9,6 +9,14 @@ namespace ManagementAPI.Service.Commands
         #region Properties
 
         /// <summary>
+        /// Gets the tournament identifier.
+        /// </summary>
+        /// <value>
+        /// The tournament identifier.
+        /// </value>
+        public Guid TournamentId { get; private set; }
+
+        /// <summary>
         /// Gets or sets the record member tournament score request.
         /// </summary>
         /// <value>
@@ -20,13 +28,15 @@ namespace ManagementAPI.Service.Commands
 
         #region Constructor        
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecordMemberTournamentScoreCommand"/> class.
+        /// Initializes a new instance of the <see cref="RecordMemberTournamentScoreCommand" /> class.
         /// </summary>
+        /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="recordMemberTournamentScoreRequest">The record member tournament score request.</param>
         /// <param name="commandId">The command identifier.</param>
-        private RecordMemberTournamentScoreCommand(RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest, Guid commandId) : base(commandId)
+        private RecordMemberTournamentScoreCommand(Guid tournamentId, RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest, Guid commandId) : base(commandId)
         {
             this.RecordMemberTournamentScoreRequest = recordMemberTournamentScoreRequest;
+            this.TournamentId = tournamentId;
         }
         #endregion
 
@@ -34,11 +44,12 @@ namespace ManagementAPI.Service.Commands
         /// <summary>
         /// Creates the specified record member tournament score request.
         /// </summary>
+        /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="recordMemberTournamentScoreRequest">The record member tournament score request.</param>
         /// <returns></returns>
-        public static RecordMemberTournamentScoreCommand Create(RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest)
+        public static RecordMemberTournamentScoreCommand Create(Guid tournamentId, RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest)
         {
-            return new RecordMemberTournamentScoreCommand(recordMemberTournamentScoreRequest, Guid.NewGuid());
+            return new RecordMemberTournamentScoreCommand(tournamentId, recordMemberTournamentScoreRequest, Guid.NewGuid());
         }
         #endregion
     }

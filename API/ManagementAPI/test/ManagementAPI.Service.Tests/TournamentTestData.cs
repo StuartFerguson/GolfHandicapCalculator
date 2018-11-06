@@ -71,6 +71,10 @@ namespace ManagementAPI.Service.Tests
             return holeScores;
         }
 
+        public static DateTime CompletedDateTime = new DateTime(2018,11,5);
+
+        public static DateTime CancelledDateTime = new DateTime(2018,11,6);
+        public static String CancellationReason = "Cancelled";
 
 
         public static TournamentAggregate.TournamentAggregate GetEmptyTournamentAggregate()
@@ -85,6 +89,43 @@ namespace ManagementAPI.Service.Tests
             TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
 
             aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, Name, MemberCategoryEnum, TournamentFormatEnum);
+
+            return aggregate;
+        }
+
+        public static TournamentAggregate.TournamentAggregate GetCreatedTournamentWithScoresRecordedAggregate()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+
+            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, Name, MemberCategoryEnum, TournamentFormatEnum);
+
+            aggregate.RecordMemberScore(MemberId, HoleScores);
+
+            return aggregate;
+        }
+
+        public static TournamentAggregate.TournamentAggregate GetCompletedTournamentAggregate()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+
+            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, Name, MemberCategoryEnum, TournamentFormatEnum);
+
+            aggregate.RecordMemberScore(MemberId, HoleScores);
+
+            aggregate.CompleteTournament(CompletedDateTime);
+
+            return aggregate;
+        }
+
+        public static TournamentAggregate.TournamentAggregate GetCancelledTournament()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+
+            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, Name, MemberCategoryEnum, TournamentFormatEnum);
+
+            aggregate.RecordMemberScore(MemberId, HoleScores);
+
+            aggregate.CancelTournament(CancelledDateTime, CancellationReason);
 
             return aggregate;
         }
@@ -107,13 +148,27 @@ namespace ManagementAPI.Service.Tests
         public static RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest = new RecordMemberTournamentScoreRequest
         {
             MemberId = MemberId,
-            HoleScores = HoleScores,
-            TournamentId = AggregateId
+            HoleScores = HoleScores
         };
 
         public static RecordMemberTournamentScoreCommand GetRecordMemberTournamentScoreCommand()
         {
-            return RecordMemberTournamentScoreCommand.Create(RecordMemberTournamentScoreRequest);
+            return RecordMemberTournamentScoreCommand.Create(AggregateId, RecordMemberTournamentScoreRequest);
+        }
+        
+        public static CompleteTournamentCommand GetCompleteTournamentCommand()
+        {
+            return CompleteTournamentCommand.Create(AggregateId);
+        }
+
+        public static CancelTournamentRequest CancelTournamentRequest = new CancelTournamentRequest
+        {
+            CancellationReason = CancellationReason
+        };
+
+        public static CancelTournamentCommand GetCancelTournamentCommand()
+        {
+            return CancelTournamentCommand.Create(AggregateId, CancelTournamentRequest);
         }
     }
 }

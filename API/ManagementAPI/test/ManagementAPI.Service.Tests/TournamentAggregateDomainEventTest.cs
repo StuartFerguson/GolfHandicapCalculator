@@ -40,5 +40,30 @@ namespace ManagementAPI.Service.Tests
             memberScoreRecordedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             memberScoreRecordedEvent.EventId.ShouldNotBe(Guid.Empty);
         }
+
+        [Fact]
+        public void TournamentCompletedEvent_CanBeCreated_IsCreated()
+        {
+            TournamentCompletedEvent tournamentCompletedEvent = TournamentCompletedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.CompletedDateTime);
+
+            tournamentCompletedEvent.ShouldNotBeNull();
+            tournamentCompletedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            tournamentCompletedEvent.CompletedDate.ShouldBe(TournamentTestData.CompletedDateTime);
+            tournamentCompletedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            tournamentCompletedEvent.EventId.ShouldNotBe(Guid.Empty);
+        }
+
+        [Fact]
+        public void TournamentCancelledEvent_CanBeCreated_IsCreated()
+        {
+            TournamentCancelledEvent tournamentCancelledEvent = TournamentCancelledEvent.Create(TournamentTestData.AggregateId, TournamentTestData.CancelledDateTime, TournamentTestData.CancellationReason);
+
+            tournamentCancelledEvent.ShouldNotBeNull();
+            tournamentCancelledEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            tournamentCancelledEvent.CancelledDate.ShouldBe(TournamentTestData.CancelledDateTime);
+            tournamentCancelledEvent.CancellationReason.ShouldBe(TournamentTestData.CancellationReason);
+            tournamentCancelledEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            tournamentCancelledEvent.EventId.ShouldNotBe(Guid.Empty);
+        }
     }
 }

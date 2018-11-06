@@ -70,5 +70,10 @@ namespace ManagementAPI.IntegrationTests
                     {10, 4}, {11, 4}, {12, 4}, {13, 5}, {14, 3}, {15, 4}, {16, 4}, {17, 4}, {18, 4}
                 }
             };
+
+        public static CancelTournamentRequest CancelTournamentRequest = new CancelTournamentRequest
+        {
+            CancellationReason = "Test Reason"
+        };
     }
 }
