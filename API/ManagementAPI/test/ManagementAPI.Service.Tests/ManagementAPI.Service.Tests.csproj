@@ -25,6 +25,8 @@
     <ProjectReference Include="..\..\ManagementAPI.ClubConfiguration.DomainEvents\ManagementAPI.ClubConfiguration.DomainEvents.csproj" />
     <ProjectReference Include="..\..\ManagementAPI.ClubConfigurationAggregate\ManagementAPI.ClubConfigurationAggregate.csproj" />
     <ProjectReference Include="..\..\src\ManagementAPI.Service\ManagementAPI.Service.csproj" />
+    <ProjectReference Include="..\..\src\ManagementAPI.Tournament.DomainEvents\ManagementAPI.Tournament.DomainEvents.csproj" />
+    <ProjectReference Include="..\..\src\ManagementAPI.TournamentAggregate\ManagementAPI.TournamentAggregate.csproj" />
   </ItemGroup>
 
   <ItemGroup>

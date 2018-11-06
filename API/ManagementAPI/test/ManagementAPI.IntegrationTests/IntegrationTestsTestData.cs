@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using ManagementAPI.IntegrationTests.DataTransferObjects;
+using ManagementAPI.Service.DataTransferObjects;
 
 namespace ManagementAPI.IntegrationTests
 {
@@ -22,6 +24,7 @@ namespace ManagementAPI.IntegrationTests
         public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest =
             new AddMeasuredCourseToClubRequest()
             {
+                MeasuredCourseId = Guid.Parse("47708163-7E3A-4C61-B1C3-64C2CDFC1170"),
                 Name = "Test Course",
                 StandardScratchScore = 70,
                 TeeColour = "White",
@@ -48,5 +51,29 @@ namespace ManagementAPI.IntegrationTests
                 }
 
             };
+
+        public static CreateTournamentRequest CreateTournamentRequest = new CreateTournamentRequest
+        {
+            Name = "Test Competition",
+            MemberCategory = 1,
+            TournamentDate = DateTime.Today,
+            Format = 1
+        };
+
+        public static RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest =
+            new RecordMemberTournamentScoreRequest
+            {
+                MemberId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6"),
+                HoleScores = new Dictionary<Int32, Int32>()
+                {
+                    {1, 4}, {2, 4}, {3, 3}, {4, 4}, {5, 4}, {6, 5}, {7, 3}, {8, 4}, {9, 3},
+                    {10, 4}, {11, 4}, {12, 4}, {13, 5}, {14, 3}, {15, 4}, {16, 4}, {17, 4}, {18, 4}
+                }
+            };
+
+        public static CancelTournamentRequest CancelTournamentRequest = new CancelTournamentRequest
+        {
+            CancellationReason = "Test Reason"
+        };
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.ClubConfigurationAggregate;
-using ClubConfigAggregate = ManagementAPI.ClubConfigurationAggregate.ClubConfigurationAggregate;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -21,7 +20,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The club configuration repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigAggregate> ClubConfigurationRepository;
+        private readonly IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> ClubConfigurationRepository;
 
         #endregion
 
@@ -31,7 +30,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// Initializes a new instance of the <see cref="ClubConfigurationCommandHandler"/> class.
         /// </summary>
         /// <param name="clubConfigurationRepository">The club configuration repository.</param>
-        public ClubConfigurationCommandHandler(IAggregateRepository<ClubConfigAggregate> clubConfigurationRepository)
+        public ClubConfigurationCommandHandler(IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> clubConfigurationRepository)
         {
             this.ClubConfigurationRepository = clubConfigurationRepository;
         }
@@ -106,7 +105,7 @@ namespace ManagementAPI.Service.CommandHandlers
             // Translate the request to the input for AddMeasuredCourse
             MeasuredCourseDataTransferObject measuredCourse = new MeasuredCourseDataTransferObject
             {
-                MeasuredCourseId = Guid.NewGuid(),
+                MeasuredCourseId = command.AddMeasuredCourseToClubRequest.MeasuredCourseId,
                 Name = command.AddMeasuredCourseToClubRequest.Name,
                 StandardScratchScore = command.AddMeasuredCourseToClubRequest.StandardScratchScore,
                 TeeColour = command.AddMeasuredCourseToClubRequest.TeeColour,

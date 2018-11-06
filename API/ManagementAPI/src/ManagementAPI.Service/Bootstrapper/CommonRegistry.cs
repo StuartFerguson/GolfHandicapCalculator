@@ -50,6 +50,8 @@ namespace ManagementAPI.Service.Bootstrapper
             For<ICommandRouter>().Use<CommandRouter>().Singleton();
             For<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>()
                 .Use<AggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>().Singleton();
+            For<IAggregateRepository<TournamentAggregate.TournamentAggregate>>()
+                .Use<AggregateRepository<TournamentAggregate.TournamentAggregate>>().Singleton();
 
             For<IManagmentAPIManager>().Use<ManagmentAPIManager>().Singleton();
         }

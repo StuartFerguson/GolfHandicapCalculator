@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ManagementAPI.ClubConfigurationAggregate\ManagementAPI.ClubConfigurationAggregate.csproj" />
+    <ProjectReference Include="..\ManagementAPI.TournamentAggregate\ManagementAPI.TournamentAggregate.csproj" />
   </ItemGroup>
 
   <ItemGroup>

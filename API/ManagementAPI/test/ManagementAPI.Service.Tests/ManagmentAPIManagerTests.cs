@@ -59,5 +59,20 @@ namespace ManagementAPI.Service.Tests
                 await manager.GetClubConfiguration(Guid.Empty, CancellationToken.None);
             });
         }
+
+        [Fact]
+        public void ManagmentAPIManager_GetClubConfiguration_ClubConfigurationNotCreated_ErrorThrown()
+        {
+            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+            clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate());
+
+            var manager = new ManagmentAPIManager(clubRepository.Object);
+
+            Should.ThrowAsync<NotFoundException>(async () => 
+            {
+                await manager.GetClubConfiguration(Guid.Empty, CancellationToken.None);
+            });
+        }
     }
 }

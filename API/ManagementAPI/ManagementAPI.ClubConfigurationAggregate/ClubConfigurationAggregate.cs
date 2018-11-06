@@ -127,6 +127,26 @@ namespace ManagementAPI.ClubConfigurationAggregate
         /// </summary>
         private List<MeasuredCourse> MeasuredCourses;
 
+        /// <summary>
+        /// The minimum hole number
+        /// </summary>
+        private const Int32 MinimumHoleNumber = 1;
+
+        /// <summary>
+        /// The maximum hole number
+        /// </summary>
+        private const Int32 MaximumHoleNumber = 18;
+
+        /// <summary>
+        /// The minimum stroke index
+        /// </summary>
+        private const Int32 MinimumStrokeIndex = 1;
+
+        /// <summary>
+        /// The maximum stroke index
+        /// </summary>
+        private const Int32 MaximumStrokeIndex = 18;
+
         #endregion
 
         #region Public Methods
@@ -390,12 +410,12 @@ namespace ManagementAPI.ClubConfigurationAggregate
 
             // Check there are no missing hole numbers
             var holeNumberList = measuredCourse.Holes.Select(h => h.HoleNumber);
-            var missingHoleNumbers = Enumerable.Range(holeNumberList.Min(), holeNumberList.Max() - holeNumberList.Min() + 1).Except(holeNumberList).ToList();
+            var missingHoleNumbers = Enumerable.Range(MinimumHoleNumber, MaximumHoleNumber - MinimumHoleNumber + 1).Except(holeNumberList).ToList();
 
             if (missingHoleNumbers.Count > 0)
             {
                 // there are missing hole numbers
-                throw new InvalidDataException($"Hole numbers {String.Join(",", holeNumberList)} are missing from the measured course");
+                throw new InvalidDataException($"Hole numbers {String.Join(",", missingHoleNumbers)} are missing from the measured course");
             }
 
             // Check there are no missing stroke indexes

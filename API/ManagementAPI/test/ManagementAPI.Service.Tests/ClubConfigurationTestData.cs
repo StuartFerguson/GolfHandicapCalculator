@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Composition.Convention;
+using System.Linq;
 using ManagementAPI.ClubConfigurationAggregate;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
@@ -65,13 +66,12 @@ namespace ManagementAPI.Service.Tests
 
             return aggregate;
         }
-
         
-
         public static MeasuredCourseDataTransferObject GetMeasuredCourseToAdd(Int32 numberHoles = 18)
         {
             MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject();
 
+            result.MeasuredCourseId = MeasuredCourseId;
             result.Name = MeasuredCourseName;
             result.MeasuredCourseId = MeasuredCourseId;
             result.StandardScratchScore = StandardScratchScore;
@@ -102,7 +102,7 @@ namespace ManagementAPI.Service.Tests
             return result;
         }
 
-        public static MeasuredCourseDataTransferObject GetMeasuredCourseToAddWithMissingHoles()
+        public static MeasuredCourseDataTransferObject GetMeasuredCourseToAddWithMissingHoles(Int32 holeNumber)
         {
             MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject();
 
@@ -118,7 +118,7 @@ namespace ManagementAPI.Service.Tests
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 3, LengthInYards = 207, Par = 3, StrokeIndex = 14});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 4, LengthInYards = 405, Par = 4, StrokeIndex = 8});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 5, LengthInYards = 428, Par = 4, StrokeIndex = 2});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 5, LengthInYards = 477, Par = 5, StrokeIndex = 12});
+            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 6, LengthInYards = 477, Par = 5, StrokeIndex = 12});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 7, LengthInYards = 186, Par = 4, StrokeIndex = 16});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 8, LengthInYards = 397, Par = 4, StrokeIndex = 6});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 9, LengthInYards = 130, Par = 3, StrokeIndex = 18});
@@ -130,12 +130,14 @@ namespace ManagementAPI.Service.Tests
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 15, LengthInYards = 355, Par = 4, StrokeIndex = 7});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 16, LengthInYards = 243, Par = 4, StrokeIndex = 15});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 17, LengthInYards = 286, Par = 4, StrokeIndex = 17});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9});            
+            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9});
+
+            result.Holes.Remove(result.Holes.Where(h => h.HoleNumber == holeNumber).Single());
             
             return result;
         }
 
-        public static MeasuredCourseDataTransferObject GetMeasuredCourseToAddWithMissingStrokeIndex()
+        public static MeasuredCourseDataTransferObject GetMeasuredCourseToAddWithMissingStrokeIndex(Int32 strokeIndex)
         {
             MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject();
 
@@ -151,7 +153,7 @@ namespace ManagementAPI.Service.Tests
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 3, LengthInYards = 207, Par = 3, StrokeIndex = 14});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 4, LengthInYards = 405, Par = 4, StrokeIndex = 8});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 5, LengthInYards = 428, Par = 4, StrokeIndex = 2});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 6, LengthInYards = 477, Par = 5, StrokeIndex = 1});
+            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 6, LengthInYards = 477, Par = 5, StrokeIndex = 12});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 7, LengthInYards = 186, Par = 4, StrokeIndex = 16});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 8, LengthInYards = 397, Par = 4, StrokeIndex = 6});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 9, LengthInYards = 130, Par = 3, StrokeIndex = 18});
@@ -165,6 +167,8 @@ namespace ManagementAPI.Service.Tests
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 17, LengthInYards = 286, Par = 4, StrokeIndex = 17});
             result.Holes.Add(new HoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9});            
             
+            result.Holes.Remove(result.Holes.Where(h => h.StrokeIndex == strokeIndex).Single());
+
             return result;
         }
 
