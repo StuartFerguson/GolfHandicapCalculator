@@ -82,12 +82,16 @@ namespace ManagementAPI.Service.CommandHandlers
             var club = await this.ClubConfigurationRepository.GetLatestVersion(
                 command.CreateTournamentRequest.ClubConfigurationId, cancellationToken);
 
-            if (club.HasBeenCreated)
+            // bug #29 fixes (throw exception if club not created)
+            if (!club.HasBeenCreated)
             {
-                // Club is valid, now check the measured course, this will throw exception if not found
-                club.GetMeasuredCourse(command.CreateTournamentRequest.MeasuredCourseId);                
+                throw new NotFoundException(
+                    $"No created club found with Id {command.CreateTournamentRequest.ClubConfigurationId}");
             }
 
+            // Club is valid, now check the measured course, this will throw exception if not found
+            club.GetMeasuredCourse(command.CreateTournamentRequest.MeasuredCourseId);                
+        
             tournament.CreateTournament(command.CreateTournamentRequest.TournamentDate, command.CreateTournamentRequest.ClubConfigurationId,
                 command.CreateTournamentRequest.MeasuredCourseId, command.CreateTournamentRequest.Name,
                 (MemberCategory)command.CreateTournamentRequest.MemberCategory,
