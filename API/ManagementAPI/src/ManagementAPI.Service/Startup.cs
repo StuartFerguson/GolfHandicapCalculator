@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using ManagementAPI.Service.Bootstrapper;
 using ManagementAPI.Service.CommandHandlers;
+using ManagementAPI.Service.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -104,6 +105,7 @@ namespace ManagementAPI.Service
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
