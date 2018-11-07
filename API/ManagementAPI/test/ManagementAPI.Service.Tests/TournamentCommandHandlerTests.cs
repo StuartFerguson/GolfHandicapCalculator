@@ -32,6 +32,44 @@ namespace ManagementAPI.Service.Tests
         }
 
         [Fact]
+        public void ClubConfigurationCommandHandler_HandleCommand_CreateTournamentCommand_ClubNotFound_ErrorThrown()
+        {
+            // test added as part of bug #29 fixes
+            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+            clubConfigurationRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate);
+
+            Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>>();
+            tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(TournamentTestData.GetEmptyTournamentAggregate);
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+
+            CreateTournamentCommand command = TournamentTestData.GetCreateTournamentCommand();
+
+            Should.Throw<NotFoundException>(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+        [Fact]
+        public void ClubConfigurationCommandHandler_HandleCommand_CreateTournamentCommand_MeasuredCourseNotFound_ErrorThrown()
+        {
+            // test added as part of bug #29 fixes
+            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+            clubConfigurationRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
+
+            Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>>();
+            tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(TournamentTestData.GetEmptyTournamentAggregate);
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+
+            CreateTournamentCommand command = TournamentTestData.GetCreateTournamentCommand();
+
+            Should.Throw<NotFoundException>(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+        [Fact]
         public void ClubConfigurationCommandHandler_HandleCommand_RecordMemberTournamentScoreCommand_CommandHandled()
         {
             Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
