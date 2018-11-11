@@ -26,10 +26,12 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="eventId">The event identifier.</param>
         /// <param name="memberId">The member identifier.</param>
+        /// <param name="playingHandicap">The playing handicap.</param>
         /// <param name="holeScores">The hole scores.</param>
-        private MemberScoreRecordedEvent(Guid aggregateId,Guid eventId, Guid memberId, Dictionary<Int32, Int32> holeScores) : base(aggregateId, eventId)
+        private MemberScoreRecordedEvent(Guid aggregateId,Guid eventId, Guid memberId, Int32 playingHandicap, Dictionary<Int32, Int32> holeScores) : base(aggregateId, eventId)
         {
             this.MemberId = memberId;
+            this.PlayingHandicap = playingHandicap;
             this.HoleScores = holeScores;
         }
         #endregion
@@ -44,6 +46,9 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// </value>
         [JsonProperty]
         public Guid MemberId { get; private set; }
+
+        [JsonProperty]
+        public Int32 PlayingHandicap { get; private set; }
 
         /// <summary>
         /// Gets the hole scores.
@@ -63,11 +68,12 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="memberId">The member identifier.</param>
+        /// <param name="playingHandicap">The playing handicap.</param>
         /// <param name="holeScores">The hole scores.</param>
         /// <returns></returns>
-        public static MemberScoreRecordedEvent Create(Guid aggregateId, Guid memberId, Dictionary<Int32, Int32> holeScores)
+        public static MemberScoreRecordedEvent Create(Guid aggregateId, Guid memberId, Int32 playingHandicap,  Dictionary<Int32, Int32> holeScores)
         {
-            return new MemberScoreRecordedEvent(aggregateId, Guid.NewGuid(), memberId, holeScores);
+            return new MemberScoreRecordedEvent(aggregateId, Guid.NewGuid(), memberId, playingHandicap, holeScores);
         }
 
         #endregion

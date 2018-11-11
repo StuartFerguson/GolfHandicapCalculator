@@ -12,14 +12,15 @@ namespace ManagementAPI.Service.Tests
         public void TournamentCreatedEvent_CanBeCreated_IsCreated()
         {
             TournamentCreatedEvent tournamentCreatedEvent = TournamentCreatedEvent.Create(TournamentTestData.AggregateId,TournamentTestData.TournamentDate,
-                TournamentTestData.ClubConfigurationId, TournamentTestData.MeasuredCourseId,TournamentTestData.Name, TournamentTestData.MemberCategory,
-                TournamentTestData.TournamentFormat);
+                TournamentTestData.ClubConfigurationId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, 
+                TournamentTestData.MemberCategory, TournamentTestData.TournamentFormat);
 
             tournamentCreatedEvent.ShouldNotBeNull();
             tournamentCreatedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
             tournamentCreatedEvent.TournamentDate.ShouldBe(TournamentTestData.TournamentDate);
             tournamentCreatedEvent.ClubConfigurationId.ShouldBe(TournamentTestData.ClubConfigurationId);
             tournamentCreatedEvent.MeasuredCourseId.ShouldBe(TournamentTestData.MeasuredCourseId);
+            tournamentCreatedEvent.MeasuredCourseSSS.ShouldBe(TournamentTestData.MeasuredCourseSSS);
             tournamentCreatedEvent.Name.ShouldBe(TournamentTestData.Name);
             tournamentCreatedEvent.MemberCategory.ShouldBe(TournamentTestData.MemberCategory);
             tournamentCreatedEvent.Format.ShouldBe(TournamentTestData.TournamentFormat);
@@ -30,12 +31,15 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void MemberScoreRecordedEvent_CanBeCreated_IsCreated()
         {
-            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.MemberId,
+            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(TournamentTestData.AggregateId,                
+                TournamentTestData.MemberId,
+                TournamentTestData.PlayingHandicap,
                 TournamentTestData.HoleScores);
 
             memberScoreRecordedEvent.ShouldNotBeNull();
             memberScoreRecordedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
             memberScoreRecordedEvent.MemberId.ShouldBe(TournamentTestData.MemberId);
+            memberScoreRecordedEvent.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
             memberScoreRecordedEvent.HoleScores.ShouldBe(TournamentTestData.HoleScores);            
             memberScoreRecordedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             memberScoreRecordedEvent.EventId.ShouldNotBe(Guid.Empty);
@@ -64,6 +68,21 @@ namespace ManagementAPI.Service.Tests
             tournamentCancelledEvent.CancellationReason.ShouldBe(TournamentTestData.CancellationReason);
             tournamentCancelledEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             tournamentCancelledEvent.EventId.ShouldNotBe(Guid.Empty);
+        }
+
+        [Fact]
+        public void TournamentCSSCalculatedEvent_CanBeCreated_IsCreated()
+        {
+            TournamentCSSCalculatedEvent tournamentCssCalculatedEvent =
+                TournamentCSSCalculatedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.Adjustment,
+                    TournamentTestData.CSS);
+
+            tournamentCssCalculatedEvent.ShouldNotBeNull();
+            tournamentCssCalculatedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            tournamentCssCalculatedEvent.Adjustment.ShouldBe(TournamentTestData.Adjustment);
+            tournamentCssCalculatedEvent.CSS.ShouldBe(TournamentTestData.CSS);
+            tournamentCssCalculatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            tournamentCssCalculatedEvent.EventId.ShouldNotBe(Guid.Empty);
         }
     }
 }

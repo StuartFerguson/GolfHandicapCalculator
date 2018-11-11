@@ -16,6 +16,14 @@ namespace ManagementAPI.Service.DataTransferObjects
         public Guid MemberId { get; set; }
 
         /// <summary>
+        /// Gets or sets the playing handicap.
+        /// </summary>
+        /// <value>
+        /// The playing handicap.
+        /// </value>
+        public Int32 PlayingHandicap { get; set; }
+
+        /// <summary>
         /// Gets or sets the hole scores.
         /// </summary>
         /// <value>
