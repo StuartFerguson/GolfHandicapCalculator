@@ -257,6 +257,16 @@ namespace ManagementAPI.IntegrationTests
 
                 httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
 
+                var recordMemberTournamentScoreRequest = IntegrationTestsTestData.RecordMemberTournamentScoreRequest;
+
+                requestSerialised = JsonConvert.SerializeObject(recordMemberTournamentScoreRequest);
+                httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                var recordMemberTournamentScoreResponse =
+                    await client.PutAsync($"api/Tournament/{createTournamentResponseData.TournamentId}/RecordMemberScore", httpContent, CancellationToken.None);
+
+                recordMemberTournamentScoreResponse.EnsureSuccessStatusCode();
+
                 var completeTournamentResponse =
                     await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Complete", httpContent, CancellationToken.None);
 
