@@ -28,15 +28,17 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// <param name="tournamentDate">The tournament date.</param>
         /// <param name="clubConfigurationId">The club configuration identifier.</param>
         /// <param name="measuredCourseId">The measured course identifier.</param>
+        /// <param name="measuredCourseSSS">The measured course SSS.</param>
         /// <param name="name">The name.</param>
         /// <param name="memberCategory">The member category.</param>
         /// <param name="format">The format.</param>
         private TournamentCreatedEvent(Guid aggregateId,Guid eventId, DateTime tournamentDate, Guid clubConfigurationId, Guid measuredCourseId,
-            String name, Int32 memberCategory, Int32 format) : base(aggregateId, eventId)
+            Int32 measuredCourseSSS, String name, Int32 memberCategory, Int32 format) : base(aggregateId, eventId)
         {
             this.TournamentDate = tournamentDate;
             this.ClubConfigurationId = clubConfigurationId;
             this.MeasuredCourseId = measuredCourseId;
+            this.MeasuredCourseSSS = measuredCourseSSS;
             this.Name = name;
             this.MemberCategory = memberCategory;
             this.Format = format;
@@ -71,6 +73,9 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// </value>
         [JsonProperty]
         public Guid MeasuredCourseId { get; private set; }
+
+        [JsonProperty]
+        public Int32 MeasuredCourseSSS { get; private set; }
 
         /// <summary>
         /// Gets the name.
@@ -110,14 +115,15 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// <param name="tournamentDate">The tournament date.</param>
         /// <param name="clubConfigurationId">The club configuration identifier.</param>
         /// <param name="measuredCourseId">The measured course identifier.</param>
+        /// <param name="measuredCourseSSS">The measured course SSS.</param>
         /// <param name="name">The name.</param>
         /// <param name="memberCategory">The member category.</param>
         /// <param name="format">The format.</param>
         /// <returns></returns>
         public static TournamentCreatedEvent Create(Guid aggregateId, DateTime tournamentDate, Guid clubConfigurationId, Guid measuredCourseId,
-                                                     String name, Int32 memberCategory, Int32 format)
+            Int32 measuredCourseSSS, String name, Int32 memberCategory, Int32 format)
         {
-            return new TournamentCreatedEvent(aggregateId, Guid.NewGuid(), tournamentDate, clubConfigurationId,measuredCourseId, name,memberCategory, format);
+            return new TournamentCreatedEvent(aggregateId, Guid.NewGuid(), tournamentDate, clubConfigurationId,measuredCourseId, measuredCourseSSS, name,memberCategory, format);
         }
 
         #endregion

@@ -90,10 +90,10 @@ namespace ManagementAPI.Service.CommandHandlers
             }
 
             // Club is valid, now check the measured course, this will throw exception if not found
-            club.GetMeasuredCourse(command.CreateTournamentRequest.MeasuredCourseId);                
+            var measuredCourse = club.GetMeasuredCourse(command.CreateTournamentRequest.MeasuredCourseId);                
         
             tournament.CreateTournament(command.CreateTournamentRequest.TournamentDate, command.CreateTournamentRequest.ClubConfigurationId,
-                command.CreateTournamentRequest.MeasuredCourseId, command.CreateTournamentRequest.Name,
+                command.CreateTournamentRequest.MeasuredCourseId, measuredCourse.StandardScratchScore, command.CreateTournamentRequest.Name,
                 (MemberCategory)command.CreateTournamentRequest.MemberCategory,
                 (TournamentFormat)command.CreateTournamentRequest.Format);
 
@@ -117,7 +117,9 @@ namespace ManagementAPI.Service.CommandHandlers
             // Rehydrate the aggregate
             var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
-            tournament.RecordMemberScore(command.RecordMemberTournamentScoreRequest.MemberId, command.RecordMemberTournamentScoreRequest.HoleScores);
+            tournament.RecordMemberScore(command.RecordMemberTournamentScoreRequest.MemberId, 
+                command.RecordMemberTournamentScoreRequest.PlayingHandicap,
+                command.RecordMemberTournamentScoreRequest.HoleScores);
             
             // Save the changes
             await this.TournamentRepository.SaveChanges(tournament, cancellationToken);
@@ -139,6 +141,8 @@ namespace ManagementAPI.Service.CommandHandlers
             DateTime completedDateTime = DateTime.Now;
 
             tournament.CompleteTournament(completedDateTime);
+
+            tournament.CalculateCSS();
             
             // Save the changes
             await this.TournamentRepository.SaveChanges(tournament, cancellationToken);

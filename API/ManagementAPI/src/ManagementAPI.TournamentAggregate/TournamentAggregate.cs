@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using ManagementAPI.Tournament.DomainEvents;
 using Newtonsoft.Json;
@@ -62,6 +63,14 @@ namespace ManagementAPI.TournamentAggregate
         /// The measured course identifier.
         /// </value>
         public Guid MeasuredCourseId { get; private set; }
+
+        /// <summary>
+        /// Gets the measured course SSS.
+        /// </summary>
+        /// <value>
+        /// The measured course SSS.
+        /// </value>
+        public Int32 MeasuredCourseSSS { get; private set; }
 
         /// <summary>
         /// Gets the name.
@@ -135,6 +144,30 @@ namespace ManagementAPI.TournamentAggregate
         /// </value>
         public String CancelledReason { get; private set; }
 
+        /// <summary>
+        /// Gets the adjustment.
+        /// </summary>
+        /// <value>
+        /// The adjustment.
+        /// </value>
+        public Int32 Adjustment  { get; private set; }
+
+        /// <summary>
+        /// Gets the CSS.
+        /// </summary>
+        /// <value>
+        /// The CSS.
+        /// </value>
+        public Int32 CSS  { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether [CSS has been calculated].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [CSS has been calculated]; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean CSSHasBeenCalculated { get; private set; }
+        
         #endregion
 
         #region Fields
@@ -153,6 +186,11 @@ namespace ManagementAPI.TournamentAggregate
         /// The maximum hole number
         /// </summary>
         private const Int32 MaximumHoleNumber = 18;
+
+        /// <summary>
+        /// The maximum playing handicap
+        /// </summary>
+        private const Int32 MaximumPlayingHandicap = 36;
         
         #endregion
 
@@ -170,24 +208,27 @@ namespace ManagementAPI.TournamentAggregate
         }
         #endregion
 
-        #region public void CreateTournament(DateTime tournamentDate, Guid clubConfigurationId, Guid measuredCourseId,String name, MemberCategory memberCategory, TournamentFormat format)
+        #region public void CreateTournament()
         /// <summary>
         /// Creates the tournament.
         /// </summary>
         /// <param name="tournamentDate">The tournament date.</param>
         /// <param name="clubConfigurationId">The club configuration identifier.</param>
         /// <param name="measuredCourseId">The measured course identifier.</param>
+        /// <param name="measuredCourseSSS">The measured course SSS.</param>
         /// <param name="name">The name.</param>
         /// <param name="memberCategory">The member category.</param>
         /// <param name="tournamentFormat">The tournament format.</param>
-        public void CreateTournament(DateTime tournamentDate, Guid clubConfigurationId, Guid measuredCourseId,String name, MemberCategory memberCategory, TournamentFormat tournamentFormat)
+        public void CreateTournament(DateTime tournamentDate, Guid clubConfigurationId, Guid measuredCourseId, Int32 measuredCourseSSS, String name, MemberCategory memberCategory, TournamentFormat tournamentFormat)
         {
             Guard.ThrowIfInvalidDate(tournamentDate, typeof(ArgumentNullException), " A tournament requires a valid date to be created");
             Guard.ThrowIfInvalidGuid(clubConfigurationId, typeof(ArgumentNullException), " A tournament requires a valid Club Configuration Id to be created");
             Guard.ThrowIfInvalidGuid(measuredCourseId, typeof(ArgumentNullException), " A tournament requires a valid Measured Course Id to be created");
+            Guard.ThrowIfZero(measuredCourseSSS, typeof(ArgumentOutOfRangeException), "Measured Course SS must not be zero");
+            Guard.ThrowIfNegative(measuredCourseSSS, typeof(ArgumentOutOfRangeException), "Measured Course SS must not be negative");
             Guard.ThrowIfNullOrEmpty(name, typeof(ArgumentNullException), " A tournament requires a valid Name to be created");
-            Guard.ThrowIfInvalidEnum(typeof(MemberCategory), memberCategory, typeof(ArgumentNullException), " A tournament requires a valid member category to be created");
-            Guard.ThrowIfInvalidEnum(typeof(TournamentFormat), tournamentFormat, typeof(ArgumentNullException), " A tournament requires a valid tournament format to be created");
+            Guard.ThrowIfInvalidEnum(typeof(MemberCategory), memberCategory, typeof(ArgumentOutOfRangeException), " A tournament requires a valid member category to be created");
+            Guard.ThrowIfInvalidEnum(typeof(TournamentFormat), tournamentFormat, typeof(ArgumentOutOfRangeException), " A tournament requires a valid tournament format to be created");
 
             this.CheckTournamentNotAlreadyCreated();
 
@@ -196,7 +237,7 @@ namespace ManagementAPI.TournamentAggregate
             this.CheckTournamentNotAlreadyCancelled();
 
             TournamentCreatedEvent tournamentCreatedEvent = TournamentCreatedEvent.Create(this.AggregateId,
-                tournamentDate, clubConfigurationId, measuredCourseId,
+                tournamentDate, clubConfigurationId, measuredCourseId, measuredCourseSSS,
                 name, (Int32) memberCategory, (Int32) tournamentFormat);
 
             this.ApplyAndPend(tournamentCreatedEvent);
@@ -208,11 +249,18 @@ namespace ManagementAPI.TournamentAggregate
         /// Records the member score.
         /// </summary>
         /// <param name="memberId">The member identifier.</param>
+        /// <param name="playingHandicap">The playing handicap.</param>
         /// <param name="holeScores">The hole scores.</param>
-        public void RecordMemberScore(Guid memberId, Dictionary<Int32, Int32> holeScores)
+        public void RecordMemberScore(Guid memberId, Int32 playingHandicap, Dictionary<Int32, Int32> holeScores)
         {
             Guard.ThrowIfInvalidGuid(memberId, typeof(ArgumentNullException), "Member Id must be provided to record a score");
             Guard.ThrowIfNull(holeScores, typeof(ArgumentNullException), "Hole Scores must be provided to record a score");
+
+            // Check the members playing handicap is valid
+            if (playingHandicap > 36)
+            {
+                throw new InvalidDataException($"{playingHandicap} is greater than the Maximum Playing handicap of {MaximumPlayingHandicap}");
+            }
 
             // Check tournament has been created
             this.CheckTournamentHasBeenCreated();
@@ -230,7 +278,7 @@ namespace ManagementAPI.TournamentAggregate
             this.ValidateHoleScores(holeScores);
             
             // Crete the event to record the score
-            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(this.AggregateId, memberId, holeScores);
+            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(this.AggregateId, memberId, playingHandicap, holeScores);
 
             // Apply and Pend
             this.ApplyAndPend(memberScoreRecordedEvent);
@@ -280,6 +328,82 @@ namespace ManagementAPI.TournamentAggregate
         }
         #endregion
 
+        #region public void CalculateCSS()        
+        /// <summary>
+        /// Calculates the CSS.
+        /// </summary>
+        public void CalculateCSS()
+        {
+            this.CheckTournamentHasBeenCreated();
+
+            this.CheckTournamentHasBeenCompleted();
+
+            this.CheckTournamentNotAlreadyCancelled();
+
+            this.CheckTournamentCSSNotAlreadyCalculated();
+            
+            // Filter out category 5 players scores
+            var filteredScores = this.MemberScoreRecords.Where(m => m.PlayingHandicap <= 28).ToList();
+
+            // Get the total score count 
+            var totalScoreCount = filteredScores.Count();
+
+            // Get a per category score count (including NRs and DQ's)
+            var category1ScoreCount = filteredScores.Count(f => f.PlayingHandicap <= 5);
+            var category2ScoreCount = filteredScores.Count(f => f.PlayingHandicap >= 6 && f.PlayingHandicap <= 12);
+            var category3And4ScoreCount = filteredScores.Count(f => f.PlayingHandicap >= 13 && f.PlayingHandicap <= 28);
+
+            // Now to get the number of buffers or better (by category excluding NRs)
+            var cat1Scores = filteredScores.Where(s => s.PlayingHandicap <=5 && s.NetScore != 0);
+            var cat2Scores = filteredScores.Where(s => s.PlayingHandicap >= 6 && s.PlayingHandicap <=12 && s.NetScore != 0);
+            var cat3Scores = filteredScores.Where(s => s.PlayingHandicap >= 13 && s.PlayingHandicap <= 20 && s.NetScore != 0);
+            var cat4Scores = filteredScores.Where(s => s.PlayingHandicap >= 21 && s.PlayingHandicap <= 28 && s.NetScore != 0);
+
+            var cat1BufferorbetterCount = cat1Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 1);
+            var cat2BufferorbetterCount = cat2Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 2);
+            var cat3BufferorbetterCount = cat3Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 3);
+            var cat4BufferorbetterCount = cat4Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 4);
+
+            // Get count of total buffer or better
+            var totalBufferOrBetter = cat1BufferorbetterCount + cat2BufferorbetterCount + cat3BufferorbetterCount +
+                    cat4BufferorbetterCount;
+
+            // Get percentage of category 1 scores (to nearest 10%)
+            var cat1ScorePercentage = ((category1ScoreCount * 100) / totalScoreCount).RoundOff();
+
+            // Get percentage of category 2 scores (to nearest 10%)
+            var cat2ScorePercentage = ((category2ScoreCount * 100) / totalScoreCount).RoundOff();
+
+            // Remainder is category 3 & 4
+            var cat3ScorePercentage = 100 - (cat1ScorePercentage + cat2ScorePercentage);
+
+            // Calculate percentage of scores at buffer or better
+            var scoresAtBufferOrBetterPercentage =
+                Math.Round(Convert.ToDecimal((totalBufferOrBetter * 100) / totalScoreCount));
+
+            // Get the required table entry
+            var cssScoreTableEntry =
+                this.GetCSSScoreTableEntry(cat1ScorePercentage, cat2ScorePercentage, cat3ScorePercentage);
+
+            Int32 adjustment = 0;
+            // Get the adjustment based on net scores buffer or better
+            foreach (var adjustmentRange in cssScoreTableEntry.AdjustmentRanges)
+            {
+                if (scoresAtBufferOrBetterPercentage >= adjustmentRange.RangeStart &&
+                    scoresAtBufferOrBetterPercentage <= adjustmentRange.RangeEnd)
+                {
+                    adjustment = adjustmentRange.Adjustment;
+                    break;
+                }
+            }
+
+            // Record the CSS Calculated Event
+            TournamentCSSCalculatedEvent tournamentCssCalculatedEvent= TournamentCSSCalculatedEvent.Create(this.AggregateId, adjustment, MeasuredCourseSSS + adjustment);
+            
+            this.ApplyAndPend(tournamentCssCalculatedEvent);
+        }
+        #endregion
+
         #endregion
 
         #region Protected Methods
@@ -312,6 +436,7 @@ namespace ManagementAPI.TournamentAggregate
             this.Format = (TournamentFormat) domainEvent.Format;
             this.HasBeenCreated = true;
             this.MeasuredCourseId = domainEvent.MeasuredCourseId;
+            this.MeasuredCourseSSS = domainEvent.MeasuredCourseSSS;
             this.MemberCategory = (MemberCategory) domainEvent.MemberCategory;
             this.TournamentDate = domainEvent.TournamentDate;
             this.MemberScoreRecords = new List<MemberScoreRecord>();
@@ -325,7 +450,7 @@ namespace ManagementAPI.TournamentAggregate
         /// <param name="domainEvent">The domain event.</param>
         private void PlayEvent(MemberScoreRecordedEvent domainEvent)
         {
-            MemberScoreRecord memberScoreRecord = MemberScoreRecord.Create(domainEvent.MemberId, domainEvent.HoleScores);    
+            MemberScoreRecord memberScoreRecord = MemberScoreRecord.Create(domainEvent.MemberId, domainEvent.PlayingHandicap, domainEvent.HoleScores);    
 
             this.MemberScoreRecords.Add(memberScoreRecord);
         }
@@ -353,6 +478,19 @@ namespace ManagementAPI.TournamentAggregate
             this.HasBeenCancelled = true;
             this.CancelledDateTime = domainEvent.CancelledDate;
             this.CancelledReason = domainEvent.CancellationReason;
+        }
+        #endregion
+
+        #region private void PlayEvent(TournamentCSSCalculatedEvent domainEvent)
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(TournamentCSSCalculatedEvent domainEvent)
+        {
+            this.CSS = domainEvent.CSS;
+            this.Adjustment = domainEvent.Adjustment;
+            this.CSSHasBeenCalculated = true;
         }
         #endregion
 
@@ -416,6 +554,32 @@ namespace ManagementAPI.TournamentAggregate
         }
         #endregion
 
+        #region private void CheckTournamentCSSNotAlreadyCalculated()                        
+        /// <summary>
+        /// Checks the tournament CSS not already calculated.
+        /// </summary>
+        private void CheckTournamentCSSNotAlreadyCalculated()
+        {
+            if (this.CSSHasBeenCalculated)
+            {
+                throw new InvalidOperationException("This operation cannot be performed on a tournament that has the CSS Calculated");
+            }
+        }
+        #endregion
+
+        #region private void CheckTournamentHasBeenCompleted()                        
+        /// <summary>
+        /// Checks the tournament has been completed.
+        /// </summary>
+        private void CheckTournamentHasBeenCompleted()
+        {
+            if (!this.HasBeenCompleted)
+            {
+                throw new InvalidOperationException("This operation cannot be performed on a tournament that has not already been completed");
+            }
+        }
+        #endregion
+
         #region private void CheckForDuplicateMemberScoreRecord(Guid memberId)
         /// <summary>
         /// Checks for duplicate member score record.
@@ -462,7 +626,2926 @@ namespace ManagementAPI.TournamentAggregate
             }
         }
         #endregion
+        
+        public static Int32 RoundOff (Int32 i)
+        {
+            return ((Int32)Math.Round(i / 10.0)) * 10;
+        }
+
+        #region Private Methods
+
+        #region private List<CSSScoreTableEntry> GetCSSScoreTable()        
+        /// <summary>
+        /// Gets the CSS score table.
+        /// </summary>
+        /// <returns></returns>
+        private CSSScoreTableEntry GetCSSScoreTableEntry(Int32 category1Percentage, Int32 category2Percentage,Int32 category3And4Percentage)
+        {
+            List<CSSScoreTableEntry> cssScoreTableEntries = new List<CSSScoreTableEntry>();
+            
+            #region Category 1 Zero
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 0, Category3And4Percentage = 100, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 9,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 15,
+                        RangeStart = 10
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 22,
+                        RangeStart = 16
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 45,
+                        RangeStart = 23
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 46
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 10, Category3And4Percentage = 90, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 9,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 15,
+                        RangeStart = 10
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 22,
+                        RangeStart = 16
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 45,
+                        RangeStart = 23
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 46
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 20, Category3And4Percentage = 80, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 9,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 15,
+                        RangeStart = 10
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 22,
+                        RangeStart = 16
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 45,
+                        RangeStart = 23
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 46
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 30, Category3And4Percentage = 70, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 40, Category3And4Percentage = 60, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 50, Category3And4Percentage = 50, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 60, Category3And4Percentage = 40, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 70, Category3And4Percentage = 30, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 80, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 90, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 0, Category2Percentage = 100, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            #endregion
+
+            #region Category 1 Ten
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 0, Category3And4Percentage = 90, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 9,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 15,
+                        RangeStart = 10
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 22,
+                        RangeStart = 16
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 45,
+                        RangeStart = 23
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 46
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 10, Category3And4Percentage = 80, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 20, Category3And4Percentage = 70, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 30, Category3And4Percentage = 60, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 40, Category3And4Percentage = 50, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 50, Category3And4Percentage = 40, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 60, Category3And4Percentage = 30, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 70, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 80, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 10, Category2Percentage = 90, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            #endregion
+
+            #region Category 1 20
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 0, Category3And4Percentage = 80, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 10, Category3And4Percentage = 70, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 20, Category3And4Percentage = 60, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 30, Category3And4Percentage = 50, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 40, Category3And4Percentage = 40, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 50, Category3And4Percentage = 30, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 60, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 70, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 20, Category2Percentage = 80, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            #endregion
+            
+            #region Category 1 30
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 30, Category2Percentage = 0, Category3And4Percentage = 70, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 10,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 16,
+                        RangeStart = 11
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 23,
+                        RangeStart = 17
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 47,
+                        RangeStart = 24
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 48
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 30, Category2Percentage = 10, Category3And4Percentage = 60, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 30, Category2Percentage = 20, Category3And4Percentage = 50, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 30, Category2Percentage = 30, Category3And4Percentage = 40, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 30, Category2Percentage = 40, Category3And4Percentage = 30, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 30, Category2Percentage = 50, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 30, Category2Percentage = 60, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 30, Category2Percentage = 70, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            #endregion
+
+            #region Category 1 40
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 40, Category2Percentage = 0, Category3And4Percentage = 60, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 40, Category2Percentage = 10, Category3And4Percentage = 50, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 17,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 25,
+                        RangeStart = 18
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 49,
+                        RangeStart = 26
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 50
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 40, Category2Percentage = 20, Category3And4Percentage = 40, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 40, Category2Percentage = 30, Category3And4Percentage = 30, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 40, Category2Percentage = 40, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 40, Category2Percentage = 50, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 40, Category2Percentage = 60, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+
+            #endregion
+            
+            #region Category 1 50
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 50, Category2Percentage = 0, Category3And4Percentage = 50, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 50, Category2Percentage = 10, Category3And4Percentage = 40, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 50, Category2Percentage = 20, Category3And4Percentage = 30, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 50, Category2Percentage = 30, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 51,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 50, Category2Percentage = 40, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 50, Category2Percentage = 50, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+
+            #endregion
+
+            #region Category 1 60
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 60, Category2Percentage = 0, Category3And4Percentage = 40, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 57,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 60, Category2Percentage = 10, Category3And4Percentage = 30, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 6,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 11,
+                        RangeStart = 7
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 18,
+                        RangeStart = 12
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 26,
+                        RangeStart = 19
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 57,
+                        RangeStart = 27
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 52
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 60, Category2Percentage = 20, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 60, Category2Percentage = 30, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 60, Category2Percentage = 40, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            #endregion
+
+            #region Category 1 70
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 70, Category2Percentage = 0, Category3And4Percentage = 30, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 70, Category2Percentage = 10, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 70, Category2Percentage = 20, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 70, Category2Percentage = 30, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 29,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 57,
+                        RangeStart = 30
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 58
+                    }
+                },                
+            });
+            #endregion
+            
+            #region Category 1 80
+
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 80, Category2Percentage = 0, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 80, Category2Percentage = 10, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 28,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 55,
+                        RangeStart = 29
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 56
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 80, Category2Percentage = 20, Category3And4Percentage = 20, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 29,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 57,
+                        RangeStart = 30
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 58
+                    }
+                },                
+            });
+
+            #endregion
+
+            #region Category 1 90
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 90, Category2Percentage = 0, Category3And4Percentage = 10, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 29,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 57,
+                        RangeStart = 30
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 58
+                    }
+                },                
+            });
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 90, Category2Percentage = 10, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 29,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 57,
+                        RangeStart = 30
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 58
+                    }
+                },                
+            });
+            #endregion
+
+            #region Category 1 100
+            cssScoreTableEntries.Add(new CSSScoreTableEntry
+            {
+                Category1Percentage = 100, Category2Percentage = 0, Category3And4Percentage = 0, AdjustmentRanges = new List<AdjustmentRange>()
+                {
+                    new AdjustmentRange
+                    {
+                        Adjustment = 4,
+                        RangeEnd = 7,
+                        RangeStart = 0
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 3,
+                        RangeEnd = 12,
+                        RangeStart = 8
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 2,
+                        RangeEnd = 19,
+                        RangeStart = 13
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 1,
+                        RangeEnd = 29,
+                        RangeStart = 20
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = 0,
+                        RangeEnd = 57,
+                        RangeStart = 30
+                    },
+                    new AdjustmentRange
+                    {
+                        Adjustment = -1,
+                        RangeEnd = 100,
+                        RangeStart = 58
+                    }
+                },                
+            });
+            #endregion
+
+            // Get the required table entry
+            var cssScoreTableEntry = cssScoreTableEntries.Where(e => e.Category1Percentage == category1Percentage
+                                                                     && e.Category2Percentage == category2Percentage
+                                                                     && e.Category3And4Percentage ==
+                                                                     category3And4Percentage).Single();
+
+            return cssScoreTableEntry;
+
+        }
+        #endregion
 
         #endregion
+
+        #endregion
+    }
+
+    internal class CSSScoreTableEntry
+    {
+        /// <summary>
+        /// Gets or sets the category1 percentage.
+        /// </summary>
+        /// <value>
+        /// The category1 percentage.
+        /// </value>
+        public Decimal Category1Percentage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the category2 percentage.
+        /// </summary>
+        /// <value>
+        /// The category2 percentage.
+        /// </value>
+        public Decimal Category2Percentage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the category3 and4 percentage.
+        /// </summary>
+        /// <value>
+        /// The category3 and4 percentage.
+        /// </value>
+        public Decimal Category3And4Percentage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the adjustment ranges.
+        /// </summary>
+        /// <value>
+        /// The adjustment ranges.
+        /// </value>
+        public List<AdjustmentRange> AdjustmentRanges { get; set; }        
+    }
+
+    internal class AdjustmentRange
+    {
+        /// <summary>
+        /// Gets or sets the adjustment.
+        /// </summary>
+        /// <value>
+        /// The adjustment.
+        /// </value>
+        public Int32 Adjustment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the range start.
+        /// </summary>
+        /// <value>
+        /// The range start.
+        /// </value>
+        public Int32 RangeStart { get; set; }
+
+        /// <summary>
+        /// Gets or sets the range end.
+        /// </summary>
+        /// <value>
+        /// The range end.
+        /// </value>
+        public Int32 RangeEnd { get; set; }
     }
 }
