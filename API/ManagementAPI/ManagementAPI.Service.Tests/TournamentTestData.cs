@@ -642,12 +642,6 @@ namespace ManagementAPI.Service.Tests
 
                 indicies.Add(index);
             }
-
-            using (StreamWriter sw = new StreamWriter("C:\\Temp\\Test.log", true))
-            {
-                sw.WriteLine(String.Join(",", indicies));
-            }
-
             return scores;
         }
     }
