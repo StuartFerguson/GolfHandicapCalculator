@@ -20,6 +20,28 @@ namespace ManagementAPI.TournamentAggregate
             this.MemberId = memberId;
             this.HoleScores = holeScores;
             this.PlayingHandicap = playingHandicap;
+
+            if (PlayingHandicap <= 5)
+            {
+                this.HandicapCategory = 1;
+            }
+            else if (PlayingHandicap >= 6 && PlayingHandicap <= 12)
+            {
+                this.HandicapCategory = 2;
+            }
+            else if (PlayingHandicap >= 13 && PlayingHandicap <= 20)
+            {
+                this.HandicapCategory = 3;
+            }
+            else if (PlayingHandicap >= 21 && PlayingHandicap <= 12)
+            {
+                this.HandicapCategory = 4;
+            }
+            else
+            {
+                this.HandicapCategory = 5;
+            }
+
             if (this.HoleScores.Values.Contains(0))
             {
                 // this an NR so record gross and net scores as 0
@@ -30,6 +52,7 @@ namespace ManagementAPI.TournamentAggregate
             {
                 this.GrossScore = this.HoleScores.Values.Sum();
                 this.NetScore = this.GrossScore - this.PlayingHandicap;
+
             }
         }
         #endregion
@@ -51,6 +74,14 @@ namespace ManagementAPI.TournamentAggregate
         /// The playing handicap.
         /// </value>
         internal Int32 PlayingHandicap { get; private set; }
+
+        /// <summary>
+        /// Gets the handicap category.
+        /// </summary>
+        /// <value>
+        /// The handicap category.
+        /// </value>
+        internal Int32 HandicapCategory { get; private set; }
 
         /// <summary>
         /// Gets the gross score.

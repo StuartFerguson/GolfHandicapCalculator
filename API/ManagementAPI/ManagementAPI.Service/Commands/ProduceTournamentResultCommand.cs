@@ -1,10 +1,9 @@
 ﻿using System;
-using ManagementAPI.Service.DataTransferObjects;
 using Shared.CommandHandling;
 
 namespace ManagementAPI.Service.Commands
 {
-    public class CompleteTournamentCommand : Command<String>
+    public class ProduceTournamentResultCommand : Command<String>
     {
         #region Properties
 
@@ -20,25 +19,25 @@ namespace ManagementAPI.Service.Commands
 
         #region Constructor        
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompleteTournamentCommand" /> class.
+        /// Initializes a new instance of the <see cref="ProduceTournamentResultCommand" /> class.
         /// </summary>
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="commandId">The command identifier.</param>
-        private CompleteTournamentCommand(Guid tournamentId, Guid commandId) : base(commandId)
+        private ProduceTournamentResultCommand(Guid tournamentId, Guid commandId) : base(commandId)
         {
             this.TournamentId = tournamentId;
         }
         #endregion
 
-        #region public static CompleteTournamentCommand Create(Guid tournamentId)                        
+        #region public static ProduceTournamentResultCommand Create(Guid tournamentId)                        
         /// <summary>
         /// Creates this instance.
         /// </summary>
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <returns></returns>
-        public static CompleteTournamentCommand Create(Guid tournamentId)
+        public static ProduceTournamentResultCommand Create(Guid tournamentId)
         {
-            return new CompleteTournamentCommand(tournamentId, Guid.NewGuid());
+            return new ProduceTournamentResultCommand(tournamentId, Guid.NewGuid());
         }
         #endregion
     }

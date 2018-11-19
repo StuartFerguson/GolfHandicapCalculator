@@ -131,6 +131,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CreateTournament.feature</DependentUpon>
     </Compile>
+    <Compile Include="Tournament\ProduceTournamentResult.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProduceTournamentResult.feature</DependentUpon>
+    </Compile>
     <Compile Include="Tournament\RecordMemberScore.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -164,6 +169,10 @@
     <None Include="Tournament\CreateTournament.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>CreateTournament.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Tournament\ProduceTournamentResult.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>ProduceTournamentResult.feature.cs</LastGenOutput>
     </None>
     <None Include="Tournament\RecordMemberScore.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>

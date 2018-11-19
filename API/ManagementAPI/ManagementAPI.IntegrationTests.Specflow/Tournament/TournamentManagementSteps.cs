@@ -256,7 +256,49 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
         }
 
+        [Given(@"the tournament is completed")]
+        public async Task GivenTheTournamentIsCompleted()
+        {
+            var createTournamentResponseData =
+                this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+
+                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+
+                var httpResponse  =
+                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Complete", httpContent, CancellationToken.None);
+
+                httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+            }
+        }
+        
+        [When(@"I request to produce a tournament result")]
+        public async Task WhenIRequestToProduceATournamentResult()
+        {
+            var createTournamentResponseData =
+                this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+
+                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+
+                this.ScenarioContext["ProduceResultHttpResponse"] =
+                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/ProduceResult", httpContent, CancellationToken.None);
+            }
+        }
+        
+        [Then(@"the results are produced")]
+        public void ThenTheResultsAreProduced()
+        {
+            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("ProduceResultHttpResponse");
+
+            httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        }
 
     }
 }

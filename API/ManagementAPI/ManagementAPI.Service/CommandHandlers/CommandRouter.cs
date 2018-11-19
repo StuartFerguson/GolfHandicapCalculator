@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Commands;
+using ManagementAPI.Service.Services;
 using Shared.CommandHandling;
 using Shared.EventStore;
 namespace ManagementAPI.Service.CommandHandlers
@@ -22,6 +23,11 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         private readonly IAggregateRepository<TournamentAggregate.TournamentAggregate> TournamentRepository;
 
+        /// <summary>
+        /// The handicap adjustment calculator service
+        /// </summary>
+        private readonly IHandicapAdjustmentCalculatorService HandicapAdjustmentCalculatorService;
+
         #endregion
 
         #region Constructors
@@ -31,11 +37,14 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         /// <param name="clubAggregateRepository">The club aggregate repository.</param>
         /// <param name="tournamentRepository">The tournament repository.</param>
+        /// <param name="handicapAdjustmentCalculatorService">The handicap adjustment calculator service.</param>
         public CommandRouter(IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> clubAggregateRepository,
-            IAggregateRepository<TournamentAggregate.TournamentAggregate> tournamentRepository)
+            IAggregateRepository<TournamentAggregate.TournamentAggregate> tournamentRepository,
+            IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService)
         {
             this.ClubAggregateRepository = clubAggregateRepository;
             this.TournamentRepository = tournamentRepository;
+            this.HandicapAdjustmentCalculatorService = handicapAdjustmentCalculatorService;
         }
 
         #endregion
@@ -91,7 +100,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(CreateTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository);
+            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
         }
         #endregion
 
@@ -103,7 +112,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(RecordMemberTournamentScoreCommand command)
         {
-            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository);
+            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
         }
         #endregion
 
@@ -115,7 +124,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(CompleteTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository);
+            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
         }
         #endregion
 
@@ -127,7 +136,19 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(CancelTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository);
+            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
+        }
+        #endregion
+
+        #region private ICommandHandler CreateHandler(ProduceTournamentResultCommand command)        
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(ProduceTournamentResultCommand command)
+        {
+            return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
         }
         #endregion
 
