@@ -54,5 +54,16 @@ namespace ManagementAPI.Service.Tests
             command.CancelTournamentRequest.ShouldNotBeNull();
             command.CancelTournamentRequest.ShouldBe(TournamentTestData.CancelTournamentRequest); 
         }
+
+        [Fact]
+        public void ProduceTournamentResultCommand_CanBeCreated_IsCreated()
+        {
+            ProduceTournamentResultCommand command =
+                ProduceTournamentResultCommand.Create(TournamentTestData.AggregateId);
+
+            command.ShouldNotBeNull();
+            command.CommandId.ShouldNotBe(Guid.Empty);
+            command.TournamentId.ShouldBe(TournamentTestData.AggregateId);
+        }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using ManagementAPI.Tournament.DomainEvents;
+using ManagementAPI.TournamentAggregate.DataTransferObjects;
 using Newtonsoft.Json;
 using Shared.EventSourcing;
 using Shared.General;
@@ -191,7 +192,12 @@ namespace ManagementAPI.TournamentAggregate
         /// The maximum playing handicap
         /// </summary>
         private const Int32 MaximumPlayingHandicap = 36;
-        
+
+        /// <summary>
+        /// The handicap adjustments
+        /// </summary>
+        private List<HandicapAdjustment> HandicapAdjustments;
+
         #endregion
 
         #region Public Methods
@@ -404,6 +410,66 @@ namespace ManagementAPI.TournamentAggregate
         }
         #endregion
 
+        #region public void RecordHandicapAdjustment(Guid memberId, List<Decimal> adjustments)
+        /// <summary>
+        /// Records the handicap adjustment.
+        /// </summary>
+        /// <param name="memberId">The member identifier.</param>
+        /// <param name="adjustments">The adjustments.</param>
+        public void RecordHandicapAdjustment(Guid memberId, List<Decimal> adjustments)
+        {
+            Guard.ThrowIfInvalidGuid(memberId, typeof(ArgumentNullException), "A valid member Id must be provided to record a handicap adjustment");
+
+            if (!adjustments.Any())
+            {
+                throw new InvalidDataException("At least one adjustment has to be provided to record a handicap adjustment");
+            }
+            
+            this.CheckTournamentHasBeenCreated();
+
+            this.CheckTournamentHasBeenCompleted();
+
+            this.CheckTournamentCSSHasBeenCalculated();
+
+            this.CheckMemberHasRecordedScore(memberId);
+
+            // Get the members score
+            var memberScore = this.MemberScoreRecords.Single(s => s.MemberId == memberId);
+
+            HandicapAdjustmentRecordedEvent handicapAdjustmentRecordedEvent = HandicapAdjustmentRecordedEvent.Create(this.AggregateId,memberId, memberScore.GrossScore, memberScore.NetScore, 
+                this.CSS, memberScore.PlayingHandicap, adjustments, adjustments.Sum());
+
+            this.ApplyAndPend(handicapAdjustmentRecordedEvent);
+        }        
+
+        #endregion
+
+        #region public List<MemberScoreRecordDataTransferObject> GetScores()
+        /// <summary>
+        /// Gets the scores.
+        /// </summary>
+        /// <returns></returns>
+        public List<MemberScoreRecordDataTransferObject> GetScores()
+        {
+            List<MemberScoreRecordDataTransferObject> result = new List<MemberScoreRecordDataTransferObject>();
+
+            foreach (var memberScoreRecord in this.MemberScoreRecords)
+            {
+                result.Add(new MemberScoreRecordDataTransferObject
+                {
+                    PlayingHandicap = memberScoreRecord.PlayingHandicap,
+                    HoleScores = memberScoreRecord.HoleScores,
+                    NetScore = memberScoreRecord.NetScore,
+                    MemberId = memberScoreRecord.MemberId,
+                    GrossScore = memberScoreRecord.GrossScore,
+                    HandicapCategory = memberScoreRecord.HandicapCategory
+                });
+            }
+
+            return result;
+        }
+        #endregion
+        
         #endregion
 
         #region Protected Methods
@@ -440,6 +506,7 @@ namespace ManagementAPI.TournamentAggregate
             this.MemberCategory = (MemberCategory) domainEvent.MemberCategory;
             this.TournamentDate = domainEvent.TournamentDate;
             this.MemberScoreRecords = new List<MemberScoreRecord>();
+            this.HandicapAdjustments = new List<HandicapAdjustment>();
         }
         #endregion
 
@@ -491,6 +558,19 @@ namespace ManagementAPI.TournamentAggregate
             this.CSS = domainEvent.CSS;
             this.Adjustment = domainEvent.Adjustment;
             this.CSSHasBeenCalculated = true;
+        }
+        #endregion
+
+        #region private void PlayEvent(HandicapAdjustmentRecordedEvent domainEvent)        
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(HandicapAdjustmentRecordedEvent domainEvent)
+        {
+            HandicapAdjustment handicapAdjustment = HandicapAdjustment.Create(domainEvent.MemberId,domainEvent.Adjustments, domainEvent.TotalAdjustment);
+
+            this.HandicapAdjustments.Add(handicapAdjustment);
         }
         #endregion
 
@@ -567,6 +647,20 @@ namespace ManagementAPI.TournamentAggregate
         }
         #endregion
 
+        #region private void CheckTournamentCSSHasBeenCalculated()   
+        /// <summary>
+        /// Checks the tournament CSS has been calculated.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a tournament that has not had a CSS Calculated</exception>
+        private void CheckTournamentCSSHasBeenCalculated()
+        {
+            if (!this.CSSHasBeenCalculated)
+            {
+                throw new InvalidOperationException("This operation cannot be performed on a tournament that has not had a CSS Calculated");
+            }
+        }
+        #endregion
+
         #region private void CheckTournamentHasBeenCompleted()                        
         /// <summary>
         /// Checks the tournament has been completed.
@@ -591,6 +685,21 @@ namespace ManagementAPI.TournamentAggregate
             if (this.MemberScoreRecords.Any(m => m.MemberId == memberId))
             {
                 throw new InvalidOperationException("Member Id {} has already recorded a score for this competition");
+            }
+        }
+        #endregion
+
+        #region private void CheckMemberHasRecordedScore(Guid memberId)        
+        /// <summary>
+        /// Checks the member has recorded score.
+        /// </summary>
+        /// <param name="memberId">The member identifier.</param>
+        /// <exception cref="NotFoundException"></exception>
+        private void CheckMemberHasRecordedScore(Guid memberId)
+        {
+            if (!this.MemberScoreRecords.Any(m => m.MemberId == memberId))
+            {
+                throw new NotFoundException($"No scored record found for {memberId}");
             }
         }
         #endregion
@@ -625,15 +734,8 @@ namespace ManagementAPI.TournamentAggregate
                 throw new InvalidDataException($"Hole numbers {String.Join(",", missingHoleNumbers)} have a negative score");
             }
         }
-        #endregion
+        #endregion        
         
-        public static Int32 RoundOff (Int32 i)
-        {
-            return ((Int32)Math.Round(i / 10.0)) * 10;
-        }
-
-        #region Private Methods
-
         #region private List<CSSScoreTableEntry> GetCSSScoreTable()        
         /// <summary>
         /// Gets the CSS score table.
@@ -3481,71 +3583,7 @@ namespace ManagementAPI.TournamentAggregate
 
         }
         #endregion
-
+        
         #endregion
-
-        #endregion
-    }
-
-    internal class CSSScoreTableEntry
-    {
-        /// <summary>
-        /// Gets or sets the category1 percentage.
-        /// </summary>
-        /// <value>
-        /// The category1 percentage.
-        /// </value>
-        public Decimal Category1Percentage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the category2 percentage.
-        /// </summary>
-        /// <value>
-        /// The category2 percentage.
-        /// </value>
-        public Decimal Category2Percentage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the category3 and4 percentage.
-        /// </summary>
-        /// <value>
-        /// The category3 and4 percentage.
-        /// </value>
-        public Decimal Category3And4Percentage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the adjustment ranges.
-        /// </summary>
-        /// <value>
-        /// The adjustment ranges.
-        /// </value>
-        public List<AdjustmentRange> AdjustmentRanges { get; set; }        
-    }
-
-    internal class AdjustmentRange
-    {
-        /// <summary>
-        /// Gets or sets the adjustment.
-        /// </summary>
-        /// <value>
-        /// The adjustment.
-        /// </value>
-        public Int32 Adjustment { get; set; }
-
-        /// <summary>
-        /// Gets or sets the range start.
-        /// </summary>
-        /// <value>
-        /// The range start.
-        /// </value>
-        public Int32 RangeStart { get; set; }
-
-        /// <summary>
-        /// Gets or sets the range end.
-        /// </summary>
-        /// <value>
-        /// The range end.
-        /// </value>
-        public Int32 RangeEnd { get; set; }
     }
 }

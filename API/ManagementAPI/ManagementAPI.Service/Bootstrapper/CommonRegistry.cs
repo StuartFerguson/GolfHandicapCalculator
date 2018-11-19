@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Manager;
+using ManagementAPI.Service.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
@@ -52,7 +53,7 @@ namespace ManagementAPI.Service.Bootstrapper
                 .Use<AggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>().Singleton();
             For<IAggregateRepository<TournamentAggregate.TournamentAggregate>>()
                 .Use<AggregateRepository<TournamentAggregate.TournamentAggregate>>().Singleton();
-
+            For<IHandicapAdjustmentCalculatorService>().Use<HandicapAdjustmentCalculatorService>();
             For<IManagmentAPIManager>().Use<ManagmentAPIManager>().Singleton();
         }
     }

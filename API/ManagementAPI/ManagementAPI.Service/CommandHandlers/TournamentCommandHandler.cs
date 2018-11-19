@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
+using ManagementAPI.Service.Services;
 using ManagementAPI.TournamentAggregate;
 using Shared.CommandHandling;
 using Shared.EventStore;
@@ -26,20 +27,28 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         private readonly IAggregateRepository<TournamentAggregate.TournamentAggregate> TournamentRepository;
 
+        /// <summary>
+        /// The handicap adjustment calculator service
+        /// </summary>
+        private readonly IHandicapAdjustmentCalculatorService HandicapAdjustmentCalculatorService;
+
         #endregion
 
         #region Contructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TournamentCommandHandler"/> class.
+        /// Initializes a new instance of the <see cref="TournamentCommandHandler" /> class.
         /// </summary>
         /// <param name="clubConfigurationRepository">The club configuration repository.</param>
         /// <param name="tournamentRepository">The tournament repository.</param>
+        /// <param name="handicapAdjustmentCalculatorService">The handicap adjustment calculator service.</param>
         public TournamentCommandHandler(IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> clubConfigurationRepository,
-                                        IAggregateRepository<TournamentAggregate.TournamentAggregate> tournamentRepository)
+                                        IAggregateRepository<TournamentAggregate.TournamentAggregate> tournamentRepository,
+                                        IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService)
         {
             this.ClubConfigurationRepository = clubConfigurationRepository;
             this.TournamentRepository = tournamentRepository;
+            this.HandicapAdjustmentCalculatorService = handicapAdjustmentCalculatorService;
         }
 
         #endregion
@@ -149,7 +158,7 @@ namespace ManagementAPI.Service.CommandHandlers
         }
         #endregion
 
-        #region private async Task HandleCommand(CompleteTournamentCommand command, CancellationToken cancellationToken)        
+        #region private async Task HandleCommand(CancelTournamentCommand command, CancellationToken cancellationToken)        
         /// <summary>
         /// Handles the command.
         /// </summary>
@@ -165,6 +174,41 @@ namespace ManagementAPI.Service.CommandHandlers
 
             tournament.CancelTournament(cancelledDateTime, command.CancelTournamentRequest.CancellationReason);
             
+            // Save the changes
+            await this.TournamentRepository.SaveChanges(tournament, cancellationToken);
+        }
+        #endregion
+
+        #region private async Task HandleCommand(ProduceTournamentResultCommand command, CancellationToken cancellationToken)
+        /// <summary>
+        /// Handles the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleCommand(ProduceTournamentResultCommand command, CancellationToken cancellationToken)
+        {
+            // Rehydrate the aggregate
+            var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
+
+            // Get the scores from the tournament
+            var scoreRecords = tournament.GetScores();
+
+            // Now process each score
+            foreach (var memberScoreRecordDataTransferObject in scoreRecords)
+            {
+                // Lookup the member record to get the exact handicap
+                // TODO:
+
+                // Calculate the adjustments
+                var adjustments = this.HandicapAdjustmentCalculatorService.CalculateHandicapAdjustment(
+                    Convert.ToDecimal(memberScoreRecordDataTransferObject.PlayingHandicap),
+                    tournament.CSS, memberScoreRecordDataTransferObject.HoleScores);
+
+                // Record the adjustments
+                tournament.RecordHandicapAdjustment(memberScoreRecordDataTransferObject.MemberId, adjustments);
+            }
+
             // Save the changes
             await this.TournamentRepository.SaveChanges(tournament, cancellationToken);
         }

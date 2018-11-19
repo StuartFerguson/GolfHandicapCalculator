@@ -44,11 +44,11 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
                 String requestSerialised = JsonConvert.SerializeObject(request);
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
-                var httpResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+                var httpResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None).ConfigureAwait(false);
 
                 httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync());
+                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
 
                 this.ScenarioContext["ClubConfigurationId"] = responseData.ClubConfigurationId;
             }
@@ -70,7 +70,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
                 var requestSerialised = JsonConvert.SerializeObject(addMeasuredCourseToClubRequest);
                 var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
-                var httpResponse = await client.PutAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+                var httpResponse = await client.PutAsync("/api/ClubConfiguration", httpContent, CancellationToken.None).ConfigureAwait(false);
 
                 httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
             }
@@ -101,7 +101,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
                 var requestSerialised = JsonConvert.SerializeObject(createTournamentRequest);
                 var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
-                this.ScenarioContext["CreateTournamentHttpResponse"] = await client.PostAsync("/api/Tournament", httpContent, CancellationToken.None);
+                this.ScenarioContext["CreateTournamentHttpResponse"] = await client.PostAsync("/api/Tournament", httpContent, CancellationToken.None).ConfigureAwait(false);
             }
         }
         
@@ -117,7 +117,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         {
             var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("CreateTournamentHttpResponse");
 
-            var responseData = JsonConvert.DeserializeObject<CreateTournamentResponse>(await httpResponse.Content.ReadAsStringAsync());
+            var responseData = JsonConvert.DeserializeObject<CreateTournamentResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
 
             responseData.TournamentId.ShouldNotBe(Guid.Empty);
         }
@@ -143,7 +143,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
 
                 httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-                var createTournamentResponseData = JsonConvert.DeserializeObject<CreateTournamentResponse>(await httpResponse.Content.ReadAsStringAsync());
+                var createTournamentResponseData = JsonConvert.DeserializeObject<CreateTournamentResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
 
                 this.ScenarioContext["CreateTournamentResponse"] = createTournamentResponseData;
             }
@@ -165,7 +165,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
 
                 this.ScenarioContext["RecordMemberTournamentScoreHttpResponse"] =
                     await client.PutAsync($"api/Tournament/{createTournamentResponseData.TournamentId}/RecordMemberScore", httpContent,
-                        CancellationToken.None);
+                        CancellationToken.None).ConfigureAwait(false);
             }
         }
         
@@ -193,7 +193,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
                 var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 this.ScenarioContext["CancelTournamentHttpResponse"] =
-                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Cancel", httpContent, CancellationToken.None);
+                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Cancel", httpContent, CancellationToken.None).ConfigureAwait(false);
             }
         }
         
@@ -224,7 +224,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
 
                     var httpResponse =
                         await client.PutAsync($"api/Tournament/{createTournamentResponseData.TournamentId}/RecordMemberScore", httpContent,
-                            CancellationToken.None);
+                            CancellationToken.None).ConfigureAwait(false);
 
                     httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
                 }
@@ -244,7 +244,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
                 var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
 
                 this.ScenarioContext["CompleteTournamentHttpResponse"] =
-                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Complete", httpContent, CancellationToken.None);
+                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Complete", httpContent, CancellationToken.None).ConfigureAwait(false);
             }
         }
         
@@ -256,7 +256,49 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
         }
 
+        [Given(@"the tournament is completed")]
+        public async Task GivenTheTournamentIsCompleted()
+        {
+            var createTournamentResponseData =
+                this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+
+                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+
+                var httpResponse  =
+                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Complete", httpContent, CancellationToken.None).ConfigureAwait(false);
+
+                httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+            }
+        }
+        
+        [When(@"I request to produce a tournament result")]
+        public async Task WhenIRequestToProduceATournamentResult()
+        {
+            var createTournamentResponseData =
+                this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+
+                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+
+                this.ScenarioContext["ProduceResultHttpResponse"] =
+                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/ProduceResult", httpContent, CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+        
+        [Then(@"the results are produced")]
+        public void ThenTheResultsAreProduced()
+        {
+            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("ProduceResultHttpResponse");
+
+            httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        }
 
     }
 }

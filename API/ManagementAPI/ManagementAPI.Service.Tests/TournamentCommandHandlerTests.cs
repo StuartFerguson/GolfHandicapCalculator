@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Commands;
+using ManagementAPI.Service.Services;
 using Moq;
 using Shared.EventStore;
 using Shouldly;
@@ -14,7 +15,7 @@ namespace ManagementAPI.Service.Tests
     public class TournamentCommandHandlerTests
     {
         [Fact]
-        public void ClubConfigurationCommandHandler_HandleCommand_CreateTournamentCommand_CommandHandled()
+        public void TournamentCommandHandler_HandleCommand_CreateTournamentCommand_CommandHandled()
         {
             Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
             clubConfigurationRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -24,7 +25,9 @@ namespace ManagementAPI.Service.Tests
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TournamentTestData.GetEmptyTournamentAggregate);
 
-            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object, handicapAdjustmentCalculatorService.Object);
 
             CreateTournamentCommand command = TournamentTestData.GetCreateTournamentCommand();
 
@@ -32,7 +35,7 @@ namespace ManagementAPI.Service.Tests
         }
 
         [Fact]
-        public void ClubConfigurationCommandHandler_HandleCommand_CreateTournamentCommand_ClubNotFound_ErrorThrown()
+        public void TournamentCommandHandler_HandleCommand_CreateTournamentCommand_ClubNotFound_ErrorThrown()
         {
             // test added as part of bug #29 fixes
             Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
@@ -43,7 +46,9 @@ namespace ManagementAPI.Service.Tests
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TournamentTestData.GetEmptyTournamentAggregate);
 
-            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object, handicapAdjustmentCalculatorService.Object);
 
             CreateTournamentCommand command = TournamentTestData.GetCreateTournamentCommand();
 
@@ -51,7 +56,7 @@ namespace ManagementAPI.Service.Tests
         }
 
         [Fact]
-        public void ClubConfigurationCommandHandler_HandleCommand_CreateTournamentCommand_MeasuredCourseNotFound_ErrorThrown()
+        public void TournamentCommandHandler_HandleCommand_CreateTournamentCommand_MeasuredCourseNotFound_ErrorThrown()
         {
             // test added as part of bug #29 fixes
             Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
@@ -62,7 +67,9 @@ namespace ManagementAPI.Service.Tests
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TournamentTestData.GetEmptyTournamentAggregate);
 
-            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object, handicapAdjustmentCalculatorService.Object);
 
             CreateTournamentCommand command = TournamentTestData.GetCreateTournamentCommand();
 
@@ -70,7 +77,7 @@ namespace ManagementAPI.Service.Tests
         }
 
         [Fact]
-        public void ClubConfigurationCommandHandler_HandleCommand_RecordMemberTournamentScoreCommand_CommandHandled()
+        public void TournamentCommandHandler_HandleCommand_RecordMemberTournamentScoreCommand_CommandHandled()
         {
             Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
 
@@ -78,7 +85,9 @@ namespace ManagementAPI.Service.Tests
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregate);
 
-            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object, handicapAdjustmentCalculatorService.Object);
 
             RecordMemberTournamentScoreCommand command = TournamentTestData.GetRecordMemberTournamentScoreCommand();
 
@@ -86,7 +95,7 @@ namespace ManagementAPI.Service.Tests
         }
 
         [Fact]
-        public void ClubConfigurationCommandHandler_HandleCommand_CompleteTournamentCommand_WithScores_CommandHandled()
+        public void TournamentCommandHandler_HandleCommand_CompleteTournamentCommand_WithScores_CommandHandled()
         {
             Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
 
@@ -94,7 +103,9 @@ namespace ManagementAPI.Service.Tests
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate);
 
-            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object, handicapAdjustmentCalculatorService.Object);
 
             CompleteTournamentCommand command = TournamentTestData.GetCompleteTournamentCommand();
 
@@ -102,7 +113,7 @@ namespace ManagementAPI.Service.Tests
         }
 
         [Fact]
-        public void ClubConfigurationCommandHandler_HandleCommand_CancelTournamentCommand_WithScores_CommandHandled()
+        public void TournamentCommandHandler_HandleCommand_CancelTournamentCommand_WithScores_CommandHandled()
         {
             Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
 
@@ -110,11 +121,49 @@ namespace ManagementAPI.Service.Tests
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate);
 
-            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object);
+            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object, handicapAdjustmentCalculatorService.Object);
 
             CancelTournamentCommand command = TournamentTestData.GetCancelTournamentCommand();
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }
+
+        [Fact]
+        public void TournamentCommandHandler_HandleCommand_ProduceTournamentResultCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+
+            Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate.TournamentAggregate>>();
+            tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculated(1,2,2,2,5,3));
+
+            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
+            handicapAdjustmentCalculatorService.SetupSequence(h =>
+                    h.CalculateHandicapAdjustment(It.IsAny<Decimal>(), It.IsAny<Int32>(),
+                        It.IsAny<Dictionary<Int32, Int32>>()))
+                .Returns(new List<Decimal> {0.1m})
+                .Returns(new List<Decimal> {-0.1m})
+                .Returns(new List<Decimal> {0.1m})
+                .Returns(new List<Decimal> {-0.2m, -0.2m})
+                .Returns(new List<Decimal> {0.1m})
+                .Returns(new List<Decimal> {0.1m})
+                .Returns(new List<Decimal> {-0.4m})
+                .Returns(new List<Decimal> {0.1m})
+                .Returns(new List<Decimal> {0.1m})
+                .Returns(new List<Decimal> {0.1m})
+                .Returns(new List<Decimal> {-0.2m})
+                .Returns(new List<Decimal> {0.1m})
+                .Returns(new List<Decimal> {0.1m});
+
+            TournamentCommandHandler handler = new TournamentCommandHandler(clubConfigurationRepository.Object, tournamentRepository.Object, handicapAdjustmentCalculatorService.Object);
+
+            ProduceTournamentResultCommand command = TournamentTestData.GetProduceTournamentResultCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+
     }
 }

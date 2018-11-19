@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ManagementAPI.Service.Tests
 {
-    public class TournamentAggregateDomainEventTest
+    public class TournamentAggregateDomainEventTests
     {
         [Fact]
         public void TournamentCreatedEvent_CanBeCreated_IsCreated()
@@ -83,6 +83,28 @@ namespace ManagementAPI.Service.Tests
             tournamentCssCalculatedEvent.CSS.ShouldBe(TournamentTestData.CSS);
             tournamentCssCalculatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             tournamentCssCalculatedEvent.EventId.ShouldNotBe(Guid.Empty);
+        }
+
+        [Fact]
+        public void HandicapAdjustmentRecordedEvent_CanBeCreated_IsCreated()
+        {
+            HandicapAdjustmentRecordedEvent handicapAdjustmentRecordedEvent = HandicapAdjustmentRecordedEvent.Create(
+                TournamentTestData.AggregateId,
+                TournamentTestData.MemberId, TournamentTestData.GrossScore, TournamentTestData.NetScore,
+                TournamentTestData.CSS, TournamentTestData.PlayingHandicap, TournamentTestData.Adjustments,
+                TournamentTestData.Adjustments.Sum());
+
+            handicapAdjustmentRecordedEvent.ShouldNotBeNull();
+            handicapAdjustmentRecordedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            handicapAdjustmentRecordedEvent.MemberId.ShouldBe(TournamentTestData.MemberId);
+            handicapAdjustmentRecordedEvent.GrossScore.ShouldBe(TournamentTestData.GrossScore);
+            handicapAdjustmentRecordedEvent.NetScore.ShouldBe(TournamentTestData.NetScore);
+            handicapAdjustmentRecordedEvent.CSS.ShouldBe(TournamentTestData.CSS);
+            handicapAdjustmentRecordedEvent.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
+            handicapAdjustmentRecordedEvent.Adjustments.ShouldBe(TournamentTestData.Adjustments);            
+            handicapAdjustmentRecordedEvent.TotalAdjustment.ShouldBe(TournamentTestData.Adjustments.Sum());            
+            handicapAdjustmentRecordedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            handicapAdjustmentRecordedEvent.EventId.ShouldNotBe(Guid.Empty);
         }
     }
 }

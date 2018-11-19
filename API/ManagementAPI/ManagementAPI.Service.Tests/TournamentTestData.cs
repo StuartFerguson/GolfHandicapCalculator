@@ -26,6 +26,12 @@ namespace ManagementAPI.Service.Tests
         public static Int32 PlayingHandicap = 6;
         public static Int32 Adjustment = 1;
         public static Int32 CSS = 71;
+        public static Int32 GrossScore = 76;
+        public static Int32 NetScore = 70;
+        public static List<Decimal> Adjustments = new List<Decimal>
+        {
+            -0.2m
+        };
 
         public static Dictionary<Int32, Int32> HoleScores = new Dictionary<Int32, Int32>()
         {
@@ -111,8 +117,8 @@ namespace ManagementAPI.Service.Tests
             return aggregate;
         }
         
-        public static TournamentAggregate.TournamentAggregate GetCompletedTournamentAggregate(Int32 category1Scores, Int32 category2Scores, Int32 category3Scores,
-            Int32 category4Scores, Int32 category5Scores, Int32 bufferorbetter)
+        public static TournamentAggregate.TournamentAggregate GetCompletedTournamentAggregate(Int32 category1Scores = 1, Int32 category2Scores = 2, Int32 category3Scores = 7,
+            Int32 category4Scores = 20, Int32 category5Scores = 5, Int32 bufferorbetter=5)
         {
             TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
 
@@ -138,6 +144,26 @@ namespace ManagementAPI.Service.Tests
             aggregate.RecordMemberScore(MemberId, PlayingHandicap, HoleScores);
 
             aggregate.CancelTournament(CancelledDateTime, CancellationReason);
+
+            return aggregate;
+        }
+
+        public static TournamentAggregate.TournamentAggregate GetCompletedTournamentAggregateWithCSSCalculated(Int32 category1Scores = 1, Int32 category2Scores = 2, Int32 category3Scores = 7,
+            Int32 category4Scores = 20, Int32 category5Scores = 5, Int32 bufferorbetter=5)
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+
+            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
+
+            var scoresToRecord = GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
+            foreach (var memberScoreForTest in scoresToRecord)
+            {
+                aggregate.RecordMemberScore(memberScoreForTest.MemberId, memberScoreForTest.Handicap, memberScoreForTest.HoleScores);
+            }
+
+            aggregate.CompleteTournament(CompletedDateTime);
+
+            aggregate.CalculateCSS();
 
             return aggregate;
         }
@@ -181,6 +207,11 @@ namespace ManagementAPI.Service.Tests
         public static CancelTournamentCommand GetCancelTournamentCommand()
         {
             return CancelTournamentCommand.Create(AggregateId, CancelTournamentRequest);
+        }
+
+        public static ProduceTournamentResultCommand GetProduceTournamentResultCommand()
+        {
+            return ProduceTournamentResultCommand.Create(AggregateId);
         }
 
         //public static List<MemberScoreForTest> GetScoreForCSSTests()
@@ -611,12 +642,6 @@ namespace ManagementAPI.Service.Tests
 
                 indicies.Add(index);
             }
-
-            using (StreamWriter sw = new StreamWriter("C:\\Temp\\Test.log", true))
-            {
-                sw.WriteLine(String.Join(",", indicies));
-            }
-
             return scores;
         }
     }

@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ManagementAPI.Service.Commands;
+using Shared.EventStore;
 using Shouldly;
 using Xunit;
 
@@ -422,6 +424,97 @@ namespace ManagementAPI.Service.Tests
             aggregate.CalculateCSS();
 
             Should.Throw<InvalidOperationException>(() => { aggregate.CalculateCSS(); });
+        }
+
+        #endregion
+
+        #region Get Scores Tests
+
+        [Fact]
+        public void TournamentAggregate_GetScores_ScoresReturned()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+
+            var scores = aggregate.GetScores();
+
+            scores.ShouldNotBeNull();
+            scores.Count.ShouldBe(1);
+        }
+
+        #endregion
+
+        #region Record Handicap Adjustment Tests
+
+        [Fact]
+        public void TournamentAggregate_RecordHandicapAdjustment_HandicapAdjustmentRecorded()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculated();
+
+            var memberScore = aggregate.GetScores().First();
+            Should.NotThrow(() =>
+            {
+                aggregate.RecordHandicapAdjustment(memberScore.MemberId, TournamentTestData.Adjustments);
+            });
+        }
+
+        [Theory]
+        [InlineData(false, true, typeof(ArgumentNullException))]
+        [InlineData(true, false, typeof(InvalidDataException))]
+        public void TournamentAggregate_InvalidData_ErrorThrown(Boolean validMemberId, Boolean validAdjustments, Type exceptionType)
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+
+            Guid memberId = validMemberId ? TournamentTestData.MemberId : Guid.Empty;
+            List<Decimal> adjustments = validAdjustments ? TournamentTestData.Adjustments : new List<Decimal>();
+            
+            Should.Throw(() =>
+            {
+                aggregate.RecordHandicapAdjustment(memberId, adjustments);
+            }, exceptionType);
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordHandicapAdjustment_MemberNotFound_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculated();
+
+            Should.Throw<NotFoundException>(() =>
+            {
+                aggregate.RecordHandicapAdjustment(TournamentTestData.MemberId, TournamentTestData.Adjustments);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordHandicapAdjustment_TournamentNotCreated_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.RecordHandicapAdjustment(TournamentTestData.MemberId, TournamentTestData.Adjustments);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordHandicapAdjustment_TournamentNotCompleted_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.RecordHandicapAdjustment(TournamentTestData.MemberId, TournamentTestData.Adjustments);
+            });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordHandicapAdjustment_CSSNotCalculated_ErrorThrown()
+        {
+            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.RecordHandicapAdjustment(TournamentTestData.MemberId, TournamentTestData.Adjustments);
+            });
         }
 
         #endregion
