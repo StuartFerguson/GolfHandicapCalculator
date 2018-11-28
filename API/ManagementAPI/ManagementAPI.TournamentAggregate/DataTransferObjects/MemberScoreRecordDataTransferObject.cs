@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ManagementAPI.TournamentAggregate.DataTransferObjects
+namespace ManagementAPI.Tournament.DataTransferObjects
 {
     public class MemberScoreRecordDataTransferObject
     {        

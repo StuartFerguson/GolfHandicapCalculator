@@ -1,4 +1,4 @@
-﻿namespace ManagementAPI.TournamentAggregate
+﻿namespace ManagementAPI.Tournament
 {
     public enum MemberCategory
     {

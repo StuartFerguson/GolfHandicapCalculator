@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Service.Manager;
 using Moq;
 using Shared.EventStore;
@@ -16,7 +17,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public async Task ManagmentAPIManager_GetClubConfiguration_ClubConfigurationReturned()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate());
 
@@ -39,7 +40,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void ManagmentAPIManager_GetClubConfiguration_InvalidClubId_ErrorThrown()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
             var manager = new ManagmentAPIManager(clubRepository.Object);
 
             Should.ThrowAsync<ArgumentNullException>(async () => 
@@ -51,7 +52,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void ManagmentAPIManager_GetClubConfiguration_ClubConfigurationNotFound_ErrorThrown()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
             var manager = new ManagmentAPIManager(clubRepository.Object);
 
             Should.ThrowAsync<NotFoundException>(async () => 
@@ -63,7 +64,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void ManagmentAPIManager_GetClubConfiguration_ClubConfigurationNotCreated_ErrorThrown()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate());
 

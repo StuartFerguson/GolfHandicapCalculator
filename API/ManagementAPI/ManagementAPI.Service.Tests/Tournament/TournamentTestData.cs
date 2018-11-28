@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
-using ManagementAPI.TournamentAggregate;
+using ManagementAPI.Tournament;
 
 namespace ManagementAPI.Service.Tests
 {
@@ -19,9 +19,9 @@ namespace ManagementAPI.Service.Tests
         public static Int32 MeasuredCourseSSS = 70;
         public static String Name = "Test Tournament";
         public static Int32 MemberCategory = 2;
-        public static MemberCategory MemberCategoryEnum = TournamentAggregate.MemberCategory.Gents;
+        public static MemberCategory MemberCategoryEnum = Tournament.MemberCategory.Gents;
         public static Int32 TournamentFormat = 1;
-        public static TournamentFormat TournamentFormatEnum = TournamentAggregate.TournamentFormat.Strokeplay;
+        public static TournamentFormat TournamentFormatEnum = Tournament.TournamentFormat.Strokeplay;
         public static Guid MemberId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6");
         public static Int32 PlayingHandicap = 6;
         public static Int32 Adjustment = 1;
@@ -90,25 +90,25 @@ namespace ManagementAPI.Service.Tests
         public static String CancellationReason = "Cancelled";
 
 
-        public static TournamentAggregate.TournamentAggregate GetEmptyTournamentAggregate()
+        public static TournamentAggregate GetEmptyTournamentAggregate()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+            TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
             return aggregate;
         }
 
-        public static TournamentAggregate.TournamentAggregate GetCreatedTournamentAggregate()
+        public static TournamentAggregate GetCreatedTournamentAggregate()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+            TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
             aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
             return aggregate;
         }
 
-        public static TournamentAggregate.TournamentAggregate GetCreatedTournamentWithScoresRecordedAggregate()
+        public static TournamentAggregate GetCreatedTournamentWithScoresRecordedAggregate()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+            TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
             aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId,MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
@@ -117,10 +117,10 @@ namespace ManagementAPI.Service.Tests
             return aggregate;
         }
         
-        public static TournamentAggregate.TournamentAggregate GetCompletedTournamentAggregate(Int32 category1Scores = 1, Int32 category2Scores = 2, Int32 category3Scores = 7,
+        public static TournamentAggregate GetCompletedTournamentAggregate(Int32 category1Scores = 1, Int32 category2Scores = 2, Int32 category3Scores = 7,
             Int32 category4Scores = 20, Int32 category5Scores = 5, Int32 bufferorbetter=5)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+            TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
             aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
@@ -135,9 +135,9 @@ namespace ManagementAPI.Service.Tests
             return aggregate;
         }
 
-        public static TournamentAggregate.TournamentAggregate GetCancelledTournament()
+        public static TournamentAggregate GetCancelledTournamentAggregate()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+            TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
             aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
@@ -148,10 +148,10 @@ namespace ManagementAPI.Service.Tests
             return aggregate;
         }
 
-        public static TournamentAggregate.TournamentAggregate GetCompletedTournamentAggregateWithCSSCalculated(Int32 category1Scores = 1, Int32 category2Scores = 2, Int32 category3Scores = 7,
+        public static TournamentAggregate GetCompletedTournamentAggregateWithCSSCalculatedAggregate(Int32 category1Scores = 1, Int32 category2Scores = 2, Int32 category3Scores = 7,
             Int32 category4Scores = 20, Int32 category5Scores = 5, Int32 bufferorbetter=5)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(AggregateId);
+            TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
             aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 

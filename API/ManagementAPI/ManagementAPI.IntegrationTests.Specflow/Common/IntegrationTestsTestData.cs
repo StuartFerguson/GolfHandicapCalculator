@@ -73,5 +73,16 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
         {
             CancellationReason = "Test Reason"
         };
+
+        public static RegisterPlayerRequest RegisterPlayerRequest = new RegisterPlayerRequest
+        {
+            EmailAddress = "testemail@myemailaddress.com",
+            FirstName = "Test",
+            MiddleName = String.Empty,
+            LastName = "Player 1",
+            Age = 35,
+            Gender = "M",
+            ExactHandicap = 6.1m
+        };
     }
 }

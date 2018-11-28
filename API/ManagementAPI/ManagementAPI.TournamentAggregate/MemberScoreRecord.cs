@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ManagementAPI.TournamentAggregate
+namespace ManagementAPI.Tournament
 {
     internal class MemberScoreRecord
     {

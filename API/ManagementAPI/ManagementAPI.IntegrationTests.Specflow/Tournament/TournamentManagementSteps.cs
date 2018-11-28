@@ -24,7 +24,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         [Given(@"The Golf Handicapping System Is Running")]
         public void GivenTheGolfHandicappingSystemIsRunning()
         {
-            RunSystem();
+            RunSystem(this.ScenarioContext.ScenarioInfo.Title);
         }
 
         [AfterScenario()]

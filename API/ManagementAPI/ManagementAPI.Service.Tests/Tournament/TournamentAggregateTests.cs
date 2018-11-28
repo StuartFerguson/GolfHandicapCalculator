@@ -1,10 +1,11 @@
-﻿using ManagementAPI.TournamentAggregate;
+﻿using ManagementAPI.Tournament;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using ManagementAPI.Service.Commands;
+using ManagementAPI.Tournament;
 using Shared.EventStore;
 using Shouldly;
 using Xunit;
@@ -18,7 +19,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CanBeCreated_IsCreated()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(TournamentTestData.AggregateId);
+            TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
 
             aggregate.ShouldNotBeNull();
             aggregate.AggregateId.ShouldBe(TournamentTestData.AggregateId);
@@ -29,7 +30,7 @@ namespace ManagementAPI.Service.Tests
         {
             Should.Throw<ArgumentNullException>(() =>
             {
-                TournamentAggregate.TournamentAggregate aggregate = TournamentAggregate.TournamentAggregate.Create(Guid.Empty);
+                TournamentAggregate aggregate = TournamentAggregate.Create(Guid.Empty);
             });
         }
 
@@ -40,7 +41,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CreateTournament_TournamentCreated()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.ClubConfigurationId, TournamentTestData.MeasuredCourseId, 
                 TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
@@ -68,7 +69,7 @@ namespace ManagementAPI.Service.Tests
         public void TournamentAggregate_CreateTournament_InvalidData_ErrorThrown(Boolean validTournamentDate, Boolean validClubConfigurationId, Boolean validMeasuredCourseId,
             Int32 measuredCourseSSS, String name, MemberCategory memberCategory, TournamentFormat tournamentFormat, Type exceptionType)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             DateTime tournamentDate = validTournamentDate ? TournamentTestData.TournamentDate : DateTime.MinValue;
             Guid clubConfigurationId = validClubConfigurationId ? TournamentTestData.ClubConfigurationId : Guid.Empty;
@@ -84,7 +85,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CreateTournament_TournamentAlreadyCreated_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -101,7 +102,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordMemberScore_MemberScoreRecorded()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
 
             Should.NotThrow(() =>
             {
@@ -115,7 +116,7 @@ namespace ManagementAPI.Service.Tests
         [InlineData(true, 6, false, typeof(ArgumentNullException))]
         public void TournamentAggregate_RecordMemberScore_InvalidData_ErrorThrown(Boolean validMemberId, Int32 playingHandicap, Boolean validHoleScores, Type exceptionType)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             Guid memberId = validMemberId ? TournamentTestData.MemberId : Guid.Empty;
             Dictionary<Int32, Int32> holeScores = validHoleScores ? TournamentTestData.HoleScores : null;
@@ -129,7 +130,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordMemberScore_MemberScoreAlreadyRecorded_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
 
             aggregate.RecordMemberScore(TournamentTestData.MemberId, TournamentTestData.PlayingHandicap,TournamentTestData.HoleScores);
 
@@ -142,7 +143,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordMemberScore_TournamentNotCreated_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
             
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -153,7 +154,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordMemberScore_InvalidData_NotAllHoleScores_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
 
             Should.Throw<InvalidDataException>(() =>
             {
@@ -164,7 +165,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordMemberScore_InvalidData_MissinHoleScores_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
 
             Should.Throw<InvalidDataException>(() =>
             {
@@ -175,7 +176,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordMemberScore_InvalidData_ExtraHoleScores_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
 
             Should.Throw<InvalidDataException>(() =>
             {
@@ -204,7 +205,7 @@ namespace ManagementAPI.Service.Tests
         [InlineData(18)]
         public void TournamentAggregate_RecordMemberScore_InvalidData_MissingHoleScores_ErrorThrown(Int32 holeNumber)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
 
             Should.Throw<InvalidDataException>(() =>
             {
@@ -233,7 +234,7 @@ namespace ManagementAPI.Service.Tests
         [InlineData(18)]
         public void TournamentAggregate_RecordMemberScore_InvalidData_NegativeHoleScores_ErrorThrown(Int32 holeNumber)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
 
             Should.Throw<InvalidDataException>(() =>
             {
@@ -249,7 +250,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CompleteTournament_TournamentComplete()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             aggregate.CompleteTournament(TournamentTestData.CompletedDateTime);
 
@@ -261,7 +262,7 @@ namespace ManagementAPI.Service.Tests
         [InlineData(false)]
         public void TournamentAggregate_CompleteTournament_InvalidData_ErrorThrown(Boolean validCompleteDate)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             DateTime completeDateTime = validCompleteDate ? TournamentTestData.CompletedDateTime : DateTime.MinValue;
 
@@ -274,7 +275,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CompleteTournament_TournamentNotCreated_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -285,7 +286,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CompleteTournament_TournamentAlreadyCompleted_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate(1,2,7,20,5,5);
+            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate(1,2,7,20,5,5);
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -296,7 +297,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CompleteTournament_TournamentAlreadyCancelled_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCancelledTournament();
+            TournamentAggregate aggregate = TournamentTestData.GetCancelledTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -311,7 +312,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CancelTournament_TournamentComplete()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             aggregate.CancelTournament(TournamentTestData.CancelledDateTime, TournamentTestData.CancellationReason);
 
@@ -326,7 +327,7 @@ namespace ManagementAPI.Service.Tests
         [InlineData(true,null)]
         public void TournamentAggregate_CancelTournament_InvalidData_ErrorThrown(Boolean validCancellationDate, String cancellationReason)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             DateTime cancellationDateTime = validCancellationDate ? TournamentTestData.CancelledDateTime : DateTime.MinValue;
 
@@ -339,7 +340,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CancelTournament_TournamentNotCreated_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -350,7 +351,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CancelTournament_TournamentAlreadyCompleted_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate(1,2,7,20,5,5);
+            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate(1,2,7,20,5,5);
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -361,7 +362,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CancelTournament_TournamentAlreadyCancelled_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCancelledTournament();
+            TournamentAggregate aggregate = TournamentTestData.GetCancelledTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -383,7 +384,7 @@ namespace ManagementAPI.Service.Tests
         public void TournamentAggregate_CalculateCSS_CSSCalculated(Int32 category1Scores, Int32 category2Scores, Int32 category3Scores,
             Int32 category4Scores, Int32 category5Scores, Int32 bufferorbetter, Int32 expectedAdjustment, Int32 expectedCSS)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate(category1Scores, category2Scores, category3Scores,
+            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate(category1Scores, category2Scores, category3Scores,
                 category4Scores,category5Scores, bufferorbetter);
 
             aggregate.CalculateCSS();
@@ -395,7 +396,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CalculateCSS_TournamentNotCreated_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() => { aggregate.CalculateCSS(); });
         }
@@ -403,7 +404,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CalculateCSS_TournamentNotCompleted_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             Should.Throw<InvalidOperationException>(() => { aggregate.CalculateCSS(); });
         }
@@ -411,7 +412,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CalculateCSS_TournamentCancelled_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCancelledTournament();
+            TournamentAggregate aggregate = TournamentTestData.GetCancelledTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() => { aggregate.CalculateCSS(); });
         }
@@ -419,7 +420,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_CalculateCSS_CSSAlreadyCalculated_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate(1,2,7,20,5,5);
+            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate(1,2,7,20,5,5);
 
             aggregate.CalculateCSS();
 
@@ -433,7 +434,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_GetScores_ScoresReturned()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             var scores = aggregate.GetScores();
 
@@ -448,7 +449,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordHandicapAdjustment_HandicapAdjustmentRecorded()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculated();
+            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate();
 
             var memberScore = aggregate.GetScores().First();
             Should.NotThrow(() =>
@@ -462,7 +463,7 @@ namespace ManagementAPI.Service.Tests
         [InlineData(true, false, typeof(InvalidDataException))]
         public void TournamentAggregate_InvalidData_ErrorThrown(Boolean validMemberId, Boolean validAdjustments, Type exceptionType)
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             Guid memberId = validMemberId ? TournamentTestData.MemberId : Guid.Empty;
             List<Decimal> adjustments = validAdjustments ? TournamentTestData.Adjustments : new List<Decimal>();
@@ -476,7 +477,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordHandicapAdjustment_MemberNotFound_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculated();
+            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate();
 
             Should.Throw<NotFoundException>(() =>
             {
@@ -487,7 +488,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordHandicapAdjustment_TournamentNotCreated_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -498,7 +499,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordHandicapAdjustment_TournamentNotCompleted_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -509,7 +510,7 @@ namespace ManagementAPI.Service.Tests
         [Fact]
         public void TournamentAggregate_RecordHandicapAdjustment_CSSNotCalculated_ErrorThrown()
         {
-            TournamentAggregate.TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {

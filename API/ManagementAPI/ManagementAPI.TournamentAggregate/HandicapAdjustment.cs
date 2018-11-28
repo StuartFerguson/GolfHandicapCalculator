@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ManagementAPI.TournamentAggregate
+namespace ManagementAPI.Tournament
 {
     internal class HandicapAdjustment
     {

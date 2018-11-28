@@ -24,7 +24,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         [Given(@"The Golf Handicapping System Is Running")]
         public void GivenTheGolfHandicappingSystemIsRunning()
         {
-            RunSystem();
+            RunSystem(this.ScenarioContext.ScenarioInfo.Title);
         }
         
         [AfterScenario()]
@@ -51,7 +51,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 String requestSerialised = JsonConvert.SerializeObject(request);
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
-                this.ScenarioContext["CreateClubConfigurationHttpResponse"] = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+                this.ScenarioContext["CreateClubConfigurationHttpResponse"] = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None).ConfigureAwait(false);
             }
         }
         
@@ -67,7 +67,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         {
             var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("CreateClubConfigurationHttpResponse");
 
-            var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync());
+            var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
 
             responseData.ClubConfigurationId.ShouldNotBe(Guid.Empty);
         }
@@ -83,11 +83,11 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 String requestSerialised = JsonConvert.SerializeObject(request);
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
-                var httpResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+                var httpResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None).ConfigureAwait(false);
 
                 httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync());
+                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
 
                 responseData.ClubConfigurationId.ShouldNotBe(Guid.Empty);
 
@@ -106,7 +106,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
             {
                 client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
 
-                this.ScenarioContext["GetClubConfigurationHttpResponse"] = await client.GetAsync($"/api/ClubConfiguration?clubId={createClubConfigurationResponse.ClubConfigurationId}", CancellationToken.None);
+                this.ScenarioContext["GetClubConfigurationHttpResponse"] = await client.GetAsync($"/api/ClubConfiguration?clubId={createClubConfigurationResponse.ClubConfigurationId}", CancellationToken.None).ConfigureAwait(false);
             }
         }
         
@@ -122,7 +122,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         {
             var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("GetClubConfigurationHttpResponse");
 
-            var responseData = JsonConvert.DeserializeObject<GetClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync());
+            var responseData = JsonConvert.DeserializeObject<GetClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
 
             var originalRequest = IntegrationTestsTestData.CreateClubConfigurationRequest;
 
@@ -154,7 +154,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 var requestSerialised = JsonConvert.SerializeObject(addMeasuredCourseToClubRequest);
                 var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
-                this.ScenarioContext["AddMeasuredCourseToClubHttpResponse"] = await client.PutAsync("/api/ClubConfiguration", httpContent, CancellationToken.None);
+                this.ScenarioContext["AddMeasuredCourseToClubHttpResponse"] = await client.PutAsync("/api/ClubConfiguration", httpContent, CancellationToken.None).ConfigureAwait(false);
             }
         }
         

@@ -6,13 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using ManagementAPI.Tournament.DataTransferObjects;
 using ManagementAPI.Tournament.DomainEvents;
-using ManagementAPI.TournamentAggregate.DataTransferObjects;
 using Newtonsoft.Json;
 using Shared.EventSourcing;
 using Shared.General;
 
-namespace ManagementAPI.TournamentAggregate
+namespace ManagementAPI.Tournament
 {
     public class TournamentAggregate : Aggregate
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Service.DataTransferObjects;
 using Shared.EventStore;
 using Shared.General;
@@ -14,13 +15,13 @@ namespace ManagementAPI.Service.Manager
         /// <summary>
         /// The club repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> ClubRepository;
+        private readonly IAggregateRepository<ClubConfigurationAggregate> ClubRepository;
 
         #endregion
 
         #region Constructors
 
-        public ManagmentAPIManager(IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> clubRepository)
+        public ManagmentAPIManager(IAggregateRepository<ClubConfigurationAggregate> clubRepository)
         {
             this.ClubRepository = clubRepository;
         }

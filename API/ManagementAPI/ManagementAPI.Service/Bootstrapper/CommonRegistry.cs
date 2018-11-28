@@ -4,9 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
+using ManagementAPI.ClubConfiguration;
+using ManagementAPI.Player;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Manager;
 using ManagementAPI.Service.Services;
+using ManagementAPI.Tournament;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
@@ -49,10 +52,12 @@ namespace ManagementAPI.Service.Bootstrapper
 
             For<ESLogger.ILogger>().Use<ESLogger.Common.Log.ConsoleLogger>().Singleton();
             For<ICommandRouter>().Use<CommandRouter>().Singleton();
-            For<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>()
-                .Use<AggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>().Singleton();
-            For<IAggregateRepository<TournamentAggregate.TournamentAggregate>>()
-                .Use<AggregateRepository<TournamentAggregate.TournamentAggregate>>().Singleton();
+            For<IAggregateRepository<ClubConfigurationAggregate>>()
+                .Use<AggregateRepository<ClubConfigurationAggregate>>().Singleton();
+            For<IAggregateRepository<TournamentAggregate>>()
+                .Use<AggregateRepository<TournamentAggregate>>().Singleton();
+            For<IAggregateRepository<PlayerAggregate>>()
+                .Use<AggregateRepository<PlayerAggregate>>().Singleton();
             For<IHandicapAdjustmentCalculatorService>().Use<HandicapAdjustmentCalculatorService>();
             For<IManagmentAPIManager>().Use<ManagmentAPIManager>().Singleton();
         }

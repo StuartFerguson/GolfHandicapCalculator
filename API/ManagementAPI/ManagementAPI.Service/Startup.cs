@@ -99,6 +99,7 @@ namespace ManagementAPI.Service
             ILogger logger = loggerFactory.CreateLogger("GolfHandicapping");
 
             Logger.Initialise(logger);
+            Logger.LogInformation("Hello from Logger.");
 
             if (env.IsDevelopment())
             {
