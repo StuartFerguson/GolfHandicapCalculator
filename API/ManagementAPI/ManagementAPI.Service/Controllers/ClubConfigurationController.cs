@@ -20,9 +20,9 @@ namespace ManagementAPI.Service.Controllers
         #region Fields
 
         /// <summary>
-        /// The commmand router
+        /// The command router
         /// </summary>
-        private readonly ICommandRouter CommmandRouter;
+        private readonly ICommandRouter CommandRouter;
 
         /// <summary>
         /// The manager
@@ -36,10 +36,10 @@ namespace ManagementAPI.Service.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="ClubConfigurationController"/> class.
         /// </summary>
-        /// <param name="commmandRouter">The commmand router.</param>
-        public ClubConfigurationController(ICommandRouter commmandRouter,IManagmentAPIManager manager)
+        /// <param name="commandRouter">The command router.</param>
+        public ClubConfigurationController(ICommandRouter commandRouter,IManagmentAPIManager manager)
         {
-            this.CommmandRouter = commmandRouter;
+            this.CommandRouter = commandRouter;
             this.Manager = manager;
         }
 
@@ -62,7 +62,7 @@ namespace ManagementAPI.Service.Controllers
             var command = CreateClubConfigurationCommand.Create(request);
 
             // Route the command
-            await this.CommmandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,CancellationToken.None);
 
             // return the result
             return this.Ok(command.Response);
@@ -100,7 +100,7 @@ namespace ManagementAPI.Service.Controllers
             var command = AddMeasuredCourseToClubCommand.Create(request);
 
             // Route the command
-            await this.CommmandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,CancellationToken.None);
 
             // return the result
             return this.Ok(command.Response);

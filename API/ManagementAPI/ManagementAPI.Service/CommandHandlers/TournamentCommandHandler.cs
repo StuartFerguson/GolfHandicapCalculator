@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services;
-using ManagementAPI.TournamentAggregate;
+using ManagementAPI.Tournament;
 using Shared.CommandHandling;
 using Shared.EventStore;
 
@@ -20,12 +21,12 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The club configuration repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> ClubConfigurationRepository;
+        private readonly IAggregateRepository<ClubConfigurationAggregate> ClubConfigurationRepository;
 
         /// <summary>
         /// The tournament repository
         /// </summary>
-        private readonly IAggregateRepository<TournamentAggregate.TournamentAggregate> TournamentRepository;
+        private readonly IAggregateRepository<TournamentAggregate> TournamentRepository;
 
         /// <summary>
         /// The handicap adjustment calculator service
@@ -42,8 +43,8 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <param name="clubConfigurationRepository">The club configuration repository.</param>
         /// <param name="tournamentRepository">The tournament repository.</param>
         /// <param name="handicapAdjustmentCalculatorService">The handicap adjustment calculator service.</param>
-        public TournamentCommandHandler(IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> clubConfigurationRepository,
-                                        IAggregateRepository<TournamentAggregate.TournamentAggregate> tournamentRepository,
+        public TournamentCommandHandler(IAggregateRepository<ClubConfigurationAggregate> clubConfigurationRepository,
+                                        IAggregateRepository<TournamentAggregate> tournamentRepository,
                                         IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService)
         {
             this.ClubConfigurationRepository = clubConfigurationRepository;

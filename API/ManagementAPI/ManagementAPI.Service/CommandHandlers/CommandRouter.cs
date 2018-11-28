@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ManagementAPI.ClubConfiguration;
+using ManagementAPI.Player;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.Services;
+using ManagementAPI.Tournament;
 using Shared.CommandHandling;
 using Shared.EventStore;
 namespace ManagementAPI.Service.CommandHandlers
@@ -16,17 +19,22 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The club aggregate repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> ClubAggregateRepository;
+        private readonly IAggregateRepository<ClubConfigurationAggregate> ClubAggregateRepository;
 
         /// <summary>
         /// The tournament repository
         /// </summary>
-        private readonly IAggregateRepository<TournamentAggregate.TournamentAggregate> TournamentRepository;
+        private readonly IAggregateRepository<TournamentAggregate> TournamentRepository;
 
         /// <summary>
         /// The handicap adjustment calculator service
         /// </summary>
         private readonly IHandicapAdjustmentCalculatorService HandicapAdjustmentCalculatorService;
+
+        /// <summary>
+        /// The player repository
+        /// </summary>
+        private readonly IAggregateRepository<PlayerAggregate> PlayerRepository;
 
         #endregion
 
@@ -38,13 +46,16 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <param name="clubAggregateRepository">The club aggregate repository.</param>
         /// <param name="tournamentRepository">The tournament repository.</param>
         /// <param name="handicapAdjustmentCalculatorService">The handicap adjustment calculator service.</param>
-        public CommandRouter(IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> clubAggregateRepository,
-            IAggregateRepository<TournamentAggregate.TournamentAggregate> tournamentRepository,
-            IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService)
+        /// <param name="playerRepository">The player repository.</param>
+        public CommandRouter(IAggregateRepository<ClubConfigurationAggregate> clubAggregateRepository,
+            IAggregateRepository<TournamentAggregate> tournamentRepository,
+            IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService,
+            IAggregateRepository<PlayerAggregate> playerRepository)
         {
             this.ClubAggregateRepository = clubAggregateRepository;
             this.TournamentRepository = tournamentRepository;
             this.HandicapAdjustmentCalculatorService = handicapAdjustmentCalculatorService;
+            this.PlayerRepository = playerRepository;
         }
 
         #endregion
@@ -149,6 +160,18 @@ namespace ManagementAPI.Service.CommandHandlers
         private ICommandHandler CreateHandler(ProduceTournamentResultCommand command)
         {
             return new TournamentCommandHandler(this.ClubAggregateRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
+        }
+        #endregion
+
+        #region private ICommandHandler CreateHandler(ProduceTournamentResultCommand command)        
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(RegisterPlayerCommand command)
+        {
+            return new PlayerCommandHandler(this.PlayerRepository);
         }
         #endregion
 

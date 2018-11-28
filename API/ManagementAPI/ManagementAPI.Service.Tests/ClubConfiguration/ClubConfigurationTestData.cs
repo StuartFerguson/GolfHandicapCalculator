@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Composition.Convention;
 using System.Linq;
-using ManagementAPI.ClubConfigurationAggregate;
+using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
-using HoleDataTransferObject = ManagementAPI.ClubConfigurationAggregate.HoleDataTransferObject;
+using HoleDataTransferObject = ManagementAPI.ClubConfiguration.HoleDataTransferObject;
 using DTOHoleDataTransferObject = ManagementAPI.Service.DataTransferObjects.HoleDataTransferObject;
 
 namespace ManagementAPI.Service.Tests
@@ -38,25 +38,25 @@ namespace ManagementAPI.Service.Tests
         public static Int32 HolePar = 3;
         public static Int32 HoleStrokeIndex = 1;
         
-        public static ClubConfigurationAggregate.ClubConfigurationAggregate GetEmptyClubConfigurationAggregate()
+        public static ClubConfigurationAggregate GetEmptyClubConfigurationAggregate()
         {
-            ClubConfigurationAggregate.ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.ClubConfigurationAggregate.Create(AggregateId);
+            ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
 
             return aggregate;
         }
 
-        public static ClubConfigurationAggregate.ClubConfigurationAggregate GetCreatedClubConfigurationAggregate()
+        public static ClubConfigurationAggregate GetCreatedClubConfigurationAggregate()
         {
-            ClubConfigurationAggregate.ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.ClubConfigurationAggregate.Create(AggregateId);
+            ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
 
             aggregate.CreateClubConfiguration(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 
             return aggregate;
         }
 
-        public static ClubConfigurationAggregate.ClubConfigurationAggregate GetClubConfigurationAggregateWithMeasuredCourse()
+        public static ClubConfigurationAggregate GetClubConfigurationAggregateWithMeasuredCourse()
         {
-            ClubConfigurationAggregate.ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.ClubConfigurationAggregate.Create(AggregateId);
+            ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
 
             aggregate.CreateClubConfiguration(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 

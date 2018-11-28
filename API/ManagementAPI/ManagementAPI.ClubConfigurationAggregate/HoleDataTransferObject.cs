@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ManagementAPI.ClubConfigurationAggregate
+namespace ManagementAPI.ClubConfiguration
 {
     public class HoleDataTransferObject
     {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ductus.FluentDocker.Builders;
+using Ductus.FluentDocker.Model.Builders;
 using Ductus.FluentDocker.Services;
 using Ductus.FluentDocker.Services.Extensions;
 using TechTalk.SpecFlow;
@@ -26,7 +27,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
             this.ScenarioContext = scenarioContext;
         }
         
-        protected void RunSystem()
+        protected void RunSystem(String testFolder)
         {
             String managementAPIContainerName = $"managementApi{Guid.NewGuid()}";
             String eventStoreContainerName = $"eventstore{Guid.NewGuid()}";
@@ -45,6 +46,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
                 .ExposePort(5000)
                 .UseNetwork(this.TestNetwork)
                 .WaitForPort("5000/tcp", 30000)
+                .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)
                 .Build()
                 .Start();
 

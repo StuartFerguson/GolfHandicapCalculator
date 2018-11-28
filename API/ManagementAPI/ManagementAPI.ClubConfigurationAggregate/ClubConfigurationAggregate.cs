@@ -8,7 +8,7 @@ using Shared.EventSourcing;
 using Shared.EventStore;
 using Shared.General;
 
-namespace ManagementAPI.ClubConfigurationAggregate
+namespace ManagementAPI.ClubConfiguration
 {
     public class ClubConfigurationAggregate : Aggregate
     {

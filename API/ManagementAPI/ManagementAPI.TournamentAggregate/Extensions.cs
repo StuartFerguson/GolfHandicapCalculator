@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ManagementAPI.TournamentAggregate
+namespace ManagementAPI.Tournament
 {
     internal static class Extensions
     {

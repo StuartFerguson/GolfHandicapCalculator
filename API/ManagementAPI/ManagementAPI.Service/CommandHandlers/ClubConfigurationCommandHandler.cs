@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ManagementAPI.ClubConfigurationAggregate;
+using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Shared.CommandHandling;
 using Shared.EventStore;
-using HoleDataTransferObject = ManagementAPI.ClubConfigurationAggregate.HoleDataTransferObject;
+using HoleDataTransferObject = ManagementAPI.ClubConfiguration.HoleDataTransferObject;
 
 namespace ManagementAPI.Service.CommandHandlers
 {
@@ -20,7 +20,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The club configuration repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> ClubConfigurationRepository;
+        private readonly IAggregateRepository<ClubConfigurationAggregate> ClubConfigurationRepository;
 
         #endregion
 
@@ -30,7 +30,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// Initializes a new instance of the <see cref="ClubConfigurationCommandHandler"/> class.
         /// </summary>
         /// <param name="clubConfigurationRepository">The club configuration repository.</param>
-        public ClubConfigurationCommandHandler(IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate> clubConfigurationRepository)
+        public ClubConfigurationCommandHandler(IAggregateRepository<ClubConfigurationAggregate> clubConfigurationRepository)
         {
             this.ClubConfigurationRepository = clubConfigurationRepository;
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ManagementAPI.TournamentAggregate
+namespace ManagementAPI.Tournament
 {
     internal class AdjustmentRange
     {
