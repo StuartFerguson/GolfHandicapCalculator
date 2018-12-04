@@ -3,6 +3,9 @@ using System.Threading;
 using ManagementAPI.Player;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Commands;
+using ManagementAPI.Service.DataTransferObjects;
+using ManagementAPI.Service.Services;
+using ManagementAPI.Service.Services.DataTransferObjects;
 using Moq;
 using Shared.EventStore;
 using Shouldly;
@@ -18,8 +21,12 @@ namespace ManagementAPI.Service.Tests.Player
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             playerRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate());
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            oAuth2SecurityService
+                .Setup(o => o.RegisterPlayerUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(PlayerTestData.GetRegisterUserResponse());
 
-            PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object);
+            PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object);
 
             RegisterPlayerCommand command = PlayerTestData.GetRegisterPlayerCommand();
 

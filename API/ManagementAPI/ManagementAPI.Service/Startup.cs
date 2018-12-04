@@ -5,6 +5,7 @@ using System.Linq;
 using ManagementAPI.Service.Bootstrapper;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Middleware;
+using ManagementAPI.Service.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -100,6 +101,8 @@ namespace ManagementAPI.Service
 
             Logger.Initialise(logger);
             Logger.LogInformation("Hello from Logger.");
+
+            ConfigurationReader.Initialise(Startup.Configuration);
 
             if (env.IsDevelopment())
             {

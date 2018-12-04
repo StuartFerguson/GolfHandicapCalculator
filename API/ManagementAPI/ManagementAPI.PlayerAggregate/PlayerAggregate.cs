@@ -117,6 +117,22 @@ namespace ManagementAPI.Player
         /// </value>
         public Boolean HasBeenRegistered { get; private set; }
 
+        /// <summary>
+        /// Gets the security user identifier.
+        /// </summary>
+        /// <value>
+        /// The security user identifier.
+        /// </value>
+        public Guid SecurityUserId { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has security user been created.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has security user been created; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean HasSecurityUserBeenCreated { get; private set; }
+
         #endregion
 
         #region Fields
@@ -170,6 +186,26 @@ namespace ManagementAPI.Player
         }
         #endregion
 
+        #region public void CreateSecurityUser(Guid secuityUserId)        
+        /// <summary>
+        /// Creates the security user.
+        /// </summary>
+        /// <param name="securityUserId">The security user identifier.</param>
+        public void CreateSecurityUser(Guid securityUserId)
+        {
+            Guard.ThrowIfInvalidGuid(securityUserId, typeof(ArgumentNullException), "A security user id is required to create a players security user");
+
+            this.CheckIfPlayerHasBeenRegistered();
+            this.CheckIfSecurityUserAlreadyCreated();
+
+            // Create the domain event
+            SecurityUserCreatedEvent securityUserCreatedEvent = SecurityUserCreatedEvent.Create(this.AggregateId, securityUserId);
+
+            // Apply and pend
+            this.ApplyAndPend(securityUserCreatedEvent);
+        }
+        #endregion
+
         #endregion
 
         #region Protected Methods
@@ -207,6 +243,18 @@ namespace ManagementAPI.Player
             this.HasBeenRegistered = true;
             this.PlayingHandicap = this.CalculatePlayingHandicap(this.ExactHandicap);
             this.HandicapCategory = this.CalculateHandicapCategory(this.PlayingHandicap);
+        }
+        #endregion
+
+        #region private void PlayEvent(SecurityUserCreatedEvent securityUserCreatedEvent)        
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="securityUserCreatedEvent">The security user created event.</param>
+        private void PlayEvent(SecurityUserCreatedEvent securityUserCreatedEvent)
+        {
+            this.SecurityUserId = securityUserCreatedEvent.SecurityUserId;
+            this.HasSecurityUserBeenCreated = true;
         }
         #endregion
 
@@ -314,6 +362,33 @@ namespace ManagementAPI.Player
             {
                 throw new ArgumentOutOfRangeException(nameof(gender), "Gender must be either Male (M) or Female (F)");
 
+            }
+        }
+        #endregion
+
+        #region private void CheckIfPlayerHasBeenRegistered()                
+        /// <summary>
+        /// Checks if player has been registered.
+        /// </summary>
+        private void CheckIfPlayerHasBeenRegistered()
+        {
+            if (!this.HasBeenRegistered)
+            {
+                throw new InvalidOperationException("This operation is invalid for a player that has not been registered");
+            }
+        }
+        #endregion
+
+        #region private void CheckIfSecurityUserAlreadyCreated()        
+        /// <summary>
+        /// Checks if security user already created.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">This operation is invalid for a player that already has a created security user</exception>
+        private void CheckIfSecurityUserAlreadyCreated()
+        {
+            if (this.HasSecurityUserBeenCreated)
+            {
+                throw new InvalidOperationException("This operation is invalid for a player that already has a created security user");
             }
         }
         #endregion

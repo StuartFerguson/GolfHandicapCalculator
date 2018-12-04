@@ -4,6 +4,7 @@ using System.Text;
 using ManagementAPI.Player;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
+using ManagementAPI.Service.Services.DataTransferObjects;
 
 namespace ManagementAPI.Service.Tests.Player
 {
@@ -39,6 +40,8 @@ namespace ManagementAPI.Service.Tests.Player
 
         public static String EmailAddress = "test@email.com";
 
+        public static Guid SecurityUserId = Guid.Parse("A78FF418-1CEB-47AC-9A8E-78CA6933E183");
+
         public static PlayerAggregate GetEmptyPlayerAggregate()
         {
             PlayerAggregate playerAggregate = PlayerAggregate.Create(AggregateId);
@@ -52,6 +55,18 @@ namespace ManagementAPI.Service.Tests.Player
 
             playerAggregate.Register(FirstName, MiddleName, LastName, Gender,
                 Age, ExactHandicapCat1, EmailAddress);
+
+            return playerAggregate;
+        }
+
+        public static PlayerAggregate GetRegisteredPlayerWithSecurityUserCreatedAggregate()
+        {
+            PlayerAggregate playerAggregate = PlayerAggregate.Create(AggregateId);
+
+            playerAggregate.Register(FirstName, MiddleName, LastName, Gender,
+                Age, ExactHandicapCat1, EmailAddress);
+
+            playerAggregate.CreateSecurityUser(SecurityUserId);
 
             return playerAggregate;
         }
@@ -71,6 +86,13 @@ namespace ManagementAPI.Service.Tests.Player
         {
             return RegisterPlayerCommand.Create(RegisterPlayerRequest);
         }
-
+        
+        public static RegisterUserResponse GetRegisterUserResponse()
+        {
+            return new RegisterUserResponse()
+            {
+                UserId = SecurityUserId
+            };
+        }
     }
 }

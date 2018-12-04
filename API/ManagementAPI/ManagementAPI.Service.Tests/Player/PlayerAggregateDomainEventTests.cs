@@ -29,5 +29,17 @@ namespace ManagementAPI.Service.Tests.Player
             playerRegisteredEvent.EmailAddress.ShouldBe(PlayerTestData.EmailAddress);
         }
 
+        [Fact]
+        public void SecurityUserCreatedEvent_CanBeCreated_IsCreated()
+        {
+            SecurityUserCreatedEvent securityUserCreatedEvent =
+                SecurityUserCreatedEvent.Create(PlayerTestData.AggregateId, PlayerTestData.SecurityUserId);
+
+            securityUserCreatedEvent.ShouldNotBeNull();
+            securityUserCreatedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
+            securityUserCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
+            securityUserCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            securityUserCreatedEvent.SecurityUserId.ShouldBe(PlayerTestData.SecurityUserId);
+        }
     }
 }

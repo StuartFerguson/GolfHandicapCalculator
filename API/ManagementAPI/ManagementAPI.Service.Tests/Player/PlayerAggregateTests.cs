@@ -125,5 +125,53 @@ namespace ManagementAPI.Service.Tests.Player
         }
 
         #endregion
+
+        #region Create Security User Tests
+
+        [Fact]
+        public void PlayerAggregate_CreateSecurityUser_SecurityUserCreated()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
+
+            playerAggregate.CreateSecurityUser(PlayerTestData.SecurityUserId);
+
+            playerAggregate.SecurityUserId.ShouldBe(PlayerTestData.SecurityUserId);
+            playerAggregate.HasSecurityUserBeenCreated.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void PlayerAggregate_CreateSecurityUser_InvalidData_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
+
+            Should.Throw<ArgumentNullException>(() =>
+            {
+                playerAggregate.CreateSecurityUser(Guid.Empty);
+            });
+        }
+
+        [Fact]
+        public void PlayerAggregate_CreateSecurityUser_PlayerNotRegistered_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                playerAggregate.CreateSecurityUser(PlayerTestData.SecurityUserId);
+            });
+        }
+
+        [Fact]
+        public void PlayerAggregate_CreateSecurityUser_SecurityUserAlreadyAdded_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerWithSecurityUserCreatedAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                playerAggregate.CreateSecurityUser(PlayerTestData.SecurityUserId);
+            });
+        }
+
+        #endregion
     }
 }
