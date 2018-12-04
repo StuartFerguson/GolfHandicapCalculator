@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ManagementAPI.Player;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
+using ManagementAPI.Service.Services;
+using ManagementAPI.Service.Services.DataTransferObjects;
 using Shared.CommandHandling;
 using Shared.EventStore;
 
@@ -20,17 +22,24 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         private readonly IAggregateRepository<PlayerAggregate> PlayerRepository;
 
+        /// <summary>
+        /// The o auth2 security service
+        /// </summary>
+        private readonly IOAuth2SecurityService OAuth2SecurityService;
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PlayerCommandHandler"/> class.
+        /// Initializes a new instance of the <see cref="PlayerCommandHandler" /> class.
         /// </summary>
-        /// <param name="clubConfigurationRepository">The club configuration repository.</param>
-        public PlayerCommandHandler(IAggregateRepository<PlayerAggregate> playerRepository)
+        /// <param name="playerRepository">The player repository.</param>
+        /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
+        public PlayerCommandHandler(IAggregateRepository<PlayerAggregate> playerRepository, IOAuth2SecurityService oAuth2SecurityService)
         {
             this.PlayerRepository = playerRepository;
+            this.OAuth2SecurityService = oAuth2SecurityService;
         }
 
         #endregion
@@ -78,6 +87,20 @@ namespace ManagementAPI.Service.CommandHandlers
                 command.RegisterPlayerRequest.ExactHandicap,
                 command.RegisterPlayerRequest.EmailAddress);
 
+            // Now create a security user
+            RegisterUserRequest request = new RegisterUserRequest
+            {
+                EmailAddress = command.RegisterPlayerRequest.EmailAddress,
+                Claims = new Dictionary<String, String>(),
+                Password = "123456",
+                PhoneNumber = "123456789",
+                Roles = new List<String>()
+            };
+            var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterPlayerUser(request, cancellationToken);
+
+            // Record this in the aggregate
+            player.CreateSecurityUser(createSecurityUserResponse.UserId);
+
             // Save the changes
             await this.PlayerRepository.SaveChanges(player, cancellationToken);
 
@@ -88,5 +111,4 @@ namespace ManagementAPI.Service.CommandHandlers
 
         #endregion
     }
-    
 }

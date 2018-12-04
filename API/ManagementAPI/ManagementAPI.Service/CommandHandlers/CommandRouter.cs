@@ -36,6 +36,11 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         private readonly IAggregateRepository<PlayerAggregate> PlayerRepository;
 
+        /// <summary>
+        /// The o auth2 security service
+        /// </summary>
+        private readonly IOAuth2SecurityService OAuth2SecurityService;
+
         #endregion
 
         #region Constructors
@@ -47,15 +52,18 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <param name="tournamentRepository">The tournament repository.</param>
         /// <param name="handicapAdjustmentCalculatorService">The handicap adjustment calculator service.</param>
         /// <param name="playerRepository">The player repository.</param>
+        /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
         public CommandRouter(IAggregateRepository<ClubConfigurationAggregate> clubAggregateRepository,
             IAggregateRepository<TournamentAggregate> tournamentRepository,
             IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService,
-            IAggregateRepository<PlayerAggregate> playerRepository)
+            IAggregateRepository<PlayerAggregate> playerRepository,
+            IOAuth2SecurityService oAuth2SecurityService)
         {
             this.ClubAggregateRepository = clubAggregateRepository;
             this.TournamentRepository = tournamentRepository;
             this.HandicapAdjustmentCalculatorService = handicapAdjustmentCalculatorService;
             this.PlayerRepository = playerRepository;
+            this.OAuth2SecurityService = oAuth2SecurityService;
         }
 
         #endregion
@@ -171,7 +179,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(RegisterPlayerCommand command)
         {
-            return new PlayerCommandHandler(this.PlayerRepository);
+            return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService);
         }
         #endregion
 
