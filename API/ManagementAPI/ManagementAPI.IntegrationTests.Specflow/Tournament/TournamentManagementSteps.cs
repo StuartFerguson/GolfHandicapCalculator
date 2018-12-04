@@ -139,7 +139,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
                 var requestSerialised = JsonConvert.SerializeObject(createTournamentRequest);
                 var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
-                var httpResponse = await client.PostAsync("/api/Tournament", httpContent, CancellationToken.None);
+                var httpResponse = await client.PostAsync("/api/Tournament", httpContent, CancellationToken.None).ConfigureAwait(false);
 
                 httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 

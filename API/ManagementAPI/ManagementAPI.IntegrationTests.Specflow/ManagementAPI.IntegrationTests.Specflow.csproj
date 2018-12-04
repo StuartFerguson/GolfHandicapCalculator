@@ -188,6 +188,9 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>RecordMemberScore.feature.cs</LastGenOutput>
     </None>
+    <None Include="xunit.runner.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />

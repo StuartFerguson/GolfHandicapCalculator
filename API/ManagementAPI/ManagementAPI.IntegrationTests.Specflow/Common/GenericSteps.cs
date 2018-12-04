@@ -31,9 +31,9 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
         
         protected void RunSystem(String testFolder)
         {
-            String managementAPIContainerName = $"managementApi{Guid.NewGuid()}";
-            String eventStoreContainerName = $"eventstore{Guid.NewGuid()}";
-            String securityServiceContainerName = $"auth{Guid.NewGuid()}";
+            String managementAPIContainerName = $"managementApi{Guid.NewGuid():N}";
+            String eventStoreContainerName = $"eventstore{Guid.NewGuid():N}";
+            String securityServiceContainerName = $"auth{Guid.NewGuid():N}";
             
             // Build a network
             this.TestNetwork = new Builder().UseNetwork($"testnetwork{Guid.NewGuid()}").Build();
