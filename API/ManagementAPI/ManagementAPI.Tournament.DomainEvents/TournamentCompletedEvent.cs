@@ -42,8 +42,6 @@ namespace ManagementAPI.Tournament.DomainEvents
         [JsonProperty]
         public DateTime CompletedDate { get; private set; }
 
-
-
         #endregion
 
         #region Public Methods

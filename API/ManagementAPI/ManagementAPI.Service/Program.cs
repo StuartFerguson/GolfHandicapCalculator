@@ -9,7 +9,6 @@ namespace ManagementAPI.Service
     [ExcludeFromCodeCoverage]
     public class Program
     {
-
         public static void Main(String[] args)
         {
             Console.Title = "Golf Handicapping Management API";
@@ -25,7 +24,6 @@ namespace ManagementAPI.Service
                 .AddJsonFile("hosting.json", optional: false)
                 .AddJsonFile($"hosting.{environmentName}.json", optional: true)
                 .Build();
- 
  
             IWebHost host = new WebHostBuilder().UseKestrel()
                 .UseConfiguration(config)

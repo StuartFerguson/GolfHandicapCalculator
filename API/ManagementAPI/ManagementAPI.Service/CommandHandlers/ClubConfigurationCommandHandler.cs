@@ -108,7 +108,7 @@ namespace ManagementAPI.Service.CommandHandlers
             await this.ClubConfigurationRepository.SaveChanges(club, cancellationToken);
 
             // Setup the response
-            command.Response = new CreateClubConfigurationResponse {ClubConfigurationId = clubAggregateId } ;
+            command.Response = new CreateClubConfigurationResponse {ClubConfigurationId = clubAggregateId };
         }
         #endregion
 

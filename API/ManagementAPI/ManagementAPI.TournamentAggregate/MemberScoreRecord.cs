@@ -52,7 +52,6 @@ namespace ManagementAPI.Tournament
             {
                 this.GrossScore = this.HoleScores.Values.Sum();
                 this.NetScore = this.GrossScore - this.PlayingHandicap;
-
             }
         }
         #endregion
@@ -128,4 +127,3 @@ namespace ManagementAPI.Tournament
         #endregion
     }
 }
-

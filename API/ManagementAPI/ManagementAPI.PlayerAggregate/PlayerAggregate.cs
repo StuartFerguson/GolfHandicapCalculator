@@ -360,7 +360,6 @@ namespace ManagementAPI.Player
             if (gender != "M" && gender != "F")
             {
                 throw new ArgumentOutOfRangeException(nameof(gender), "Gender must be either Male (M) or Female (F)");
-
             }
         }
         #endregion

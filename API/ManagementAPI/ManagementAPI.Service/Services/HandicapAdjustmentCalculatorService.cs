@@ -71,8 +71,7 @@ namespace ManagementAPI.Service.Services
                     result.Add(adjustmentValue * -1);
                 }
             }
-
-
+            
             return result;
         }
         #endregion

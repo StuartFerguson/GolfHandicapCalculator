@@ -20,7 +20,7 @@ namespace ManagementAPI.ClubConfiguration
         [ExcludeFromCodeCoverage]
         public ClubConfigurationAggregate()
         {
-
+            // Nothing here
         }
 
         /// <summary>

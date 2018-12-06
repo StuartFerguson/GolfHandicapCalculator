@@ -38,8 +38,7 @@ namespace ManagementAPI.Service.Middleware
             }
             catch (Exception ex)
             {                
-                await HandleExceptionAsync(context, ex);
-                
+                await HandleExceptionAsync(context, ex);                
             }
         }
 
