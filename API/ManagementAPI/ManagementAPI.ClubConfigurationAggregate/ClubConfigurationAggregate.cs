@@ -33,7 +33,6 @@ namespace ManagementAPI.ClubConfiguration
 
             this.AggregateId = aggregateId;
         }
-
         #endregion
 
         #region Properties
@@ -246,7 +245,6 @@ namespace ManagementAPI.ClubConfiguration
                                                                                                                       holeDataTransferObject.Par, holeDataTransferObject.StrokeIndex);
                 this.ApplyAndPend(holeAddedToMeasuredCourseEvent);
             }
-
         }
         #endregion
 

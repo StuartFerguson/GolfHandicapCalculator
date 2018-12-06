@@ -19,7 +19,7 @@ namespace ManagementAPI.Player
         [ExcludeFromCodeCoverage]
         public PlayerAggregate()
         {
-
+            // Nothing here
         }
 
         /// <summary>
@@ -32,7 +32,6 @@ namespace ManagementAPI.Player
 
             this.AggregateId = aggregateId;
         }
-
         #endregion
 
         #region Properties
