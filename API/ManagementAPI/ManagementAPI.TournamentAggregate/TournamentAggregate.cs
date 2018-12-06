@@ -23,7 +23,8 @@ namespace ManagementAPI.Tournament
         /// </summary>
         [ExcludeFromCodeCoverage]
         public TournamentAggregate()
-        {            
+        {
+            // Nothing here
         }
 
         /// <summary>
@@ -3580,7 +3581,6 @@ namespace ManagementAPI.Tournament
                                                                      category3And4Percentage).Single();
 
             return cssScoreTableEntry;
-
         }
         #endregion
         

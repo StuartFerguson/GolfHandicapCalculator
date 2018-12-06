@@ -352,5 +352,53 @@ namespace ManagementAPI.Service.Tests
         }
 
         #endregion
+
+        #region Create Admin Security User Tests
+
+        [Fact]
+        public void ClubConfigurationAggregate_CreateAdminSecurityUser_AdminSecurityUserCreated()
+        {
+            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+
+            aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
+
+            aggregate.AdminSecurityUserId.ShouldBe(ClubConfigurationTestData.AdminSecurityUserId);
+            aggregate.HasAdminSecurityUserBeenCreated.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void ClubConfigurationAggregate_CreateAdminSecurityUser_InvalidData_ErrorThrown()
+        {
+            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+
+            Should.Throw<ArgumentNullException>(() =>
+            {
+                aggregate.CreateAdminSecurityUser(Guid.Empty);
+            });
+        }
+
+        [Fact]
+        public void ClubConfigurationAggregate_CreateAdminSecurityUser_ClubNotCreated_ErrorThrown()
+        {
+            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetEmptyClubConfigurationAggregate();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
+            });
+        }
+
+        [Fact]
+        public void ClubConfigurationAggregate_CreateAdminSecurityUser_AdminSecurityUserAlreadyCreated_ErrorThrown()
+        {
+            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregateWithAdminUser();
+
+            Should.Throw<InvalidOperationException>(() =>
+            {
+                aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
+            });
+        }
+
+        #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -15,6 +16,7 @@ namespace ManagementAPI.Service.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExcludeFromCodeCoverage]
     public class ClubConfigurationController : ControllerBase
     {
         #region Fields

@@ -6,6 +6,7 @@ using System.Linq;
 using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
+using ManagementAPI.Service.Services.DataTransferObjects;
 using HoleDataTransferObject = ManagementAPI.ClubConfiguration.HoleDataTransferObject;
 using DTOHoleDataTransferObject = ManagementAPI.Service.DataTransferObjects.HoleDataTransferObject;
 
@@ -13,8 +14,6 @@ namespace ManagementAPI.Service.Tests
 {
     public class ClubConfigurationTestData
     {
-        
-        
         public static Guid AggregateId = Guid.Parse("CD64A469-9593-49D6-988D-3842C532D23E");
         public static String Name = "Test Club Name";
         public static String AddressLine1 = "Address Line 1";
@@ -37,7 +36,9 @@ namespace ManagementAPI.Service.Tests
         public static Int32 LengthInMeters = 175;
         public static Int32 HolePar = 3;
         public static Int32 HoleStrokeIndex = 1;
-        
+            
+        public static Guid AdminSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
+
         public static ClubConfigurationAggregate GetEmptyClubConfigurationAggregate()
         {
             ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
@@ -54,11 +55,24 @@ namespace ManagementAPI.Service.Tests
             return aggregate;
         }
 
+        public static ClubConfigurationAggregate GetCreatedClubConfigurationAggregateWithAdminUser()
+        {
+            ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
+
+            aggregate.CreateClubConfiguration(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+
+            aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
+            
+            return aggregate;
+        }
+
         public static ClubConfigurationAggregate GetClubConfigurationAggregateWithMeasuredCourse()
         {
             ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
 
             aggregate.CreateClubConfiguration(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+
+            aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
 
@@ -225,5 +239,12 @@ namespace ManagementAPI.Service.Tests
             return AddMeasuredCourseToClubCommand.Create(ClubConfigurationTestData.AddMeasuredCourseToClubRequest);
         }
         
+        public static RegisterUserResponse GetRegisterUserResponse()
+        {
+            return new RegisterUserResponse()
+            {
+                UserId = AdminSecurityUserId
+            };
+        }
     }
 }

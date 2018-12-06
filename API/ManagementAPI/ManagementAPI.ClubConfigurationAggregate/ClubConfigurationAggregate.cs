@@ -118,6 +118,22 @@ namespace ManagementAPI.ClubConfiguration
         /// </value>
         public Boolean HasBeenCreated { get; private set; }
 
+        /// <summary>
+        /// Gets the admin security user identifier.
+        /// </summary>
+        /// <value>
+        /// The admin security user identifier.
+        /// </value>
+        public Guid AdminSecurityUserId { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has admin security user been created.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has admin security user been created; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean HasAdminSecurityUserBeenCreated { get; private set; }
+
         #endregion
 
         #region Fields
@@ -277,6 +293,26 @@ namespace ManagementAPI.ClubConfiguration
         }
         #endregion
 
+        #region public void CreateAdminSecurityUser(Guid adminSecurityUserId)                
+        /// <summary>
+        /// Creates the admin user.
+        /// </summary>
+        /// <param name="adminSecurityUserId">The admin security user identifier.</param>
+        public void CreateAdminSecurityUser(Guid adminSecurityUserId)
+        {
+            Guard.ThrowIfInvalidGuid(adminSecurityUserId, typeof(ArgumentNullException), "A security user id is required to create a club admin security user");
+
+            this.CheckHasClubConfigurationAlreadyBeenCreated();
+            this.CheckHasClubAdminSecurityUserAlreadyBeenCreated();
+
+            // Create the domain event
+            AdminSecurityUserCreatedEvent adminSecurityUserCreatedEvent = AdminSecurityUserCreatedEvent.Create(this.AggregateId, adminSecurityUserId);
+
+            // Apply and pend
+            this.ApplyAndPend(adminSecurityUserCreatedEvent);
+        }
+        #endregion
+
         #endregion
 
         #region Protected Methods
@@ -343,6 +379,18 @@ namespace ManagementAPI.ClubConfiguration
         }
         #endregion
 
+        #region private void PlayEvent(AdminSecurityUserCreatedEvent domainEvent)        
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(AdminSecurityUserCreatedEvent domainEvent)
+        {
+            this.HasAdminSecurityUserBeenCreated = true;
+            this.AdminSecurityUserId = domainEvent.AdminSecurityUserId;
+        }
+        #endregion
+
         #endregion
 
         #region Private Methods
@@ -370,7 +418,7 @@ namespace ManagementAPI.ClubConfiguration
         {
             if (!this.HasBeenCreated)
             {
-                throw new InvalidOperationException("This operation cannot be performed on a Club that already has not had itsconfiguration created");
+                throw new InvalidOperationException("This operation cannot be performed on a Club that already has not had its configuration created");
             }
         }
         #endregion
@@ -445,6 +493,20 @@ namespace ManagementAPI.ClubConfiguration
             }
         }
 
+        #endregion
+
+        #region private void CheckHasClubAdminSecurityUserAlreadyBeenCreated()        
+        /// <summary>
+        /// Checks the has club admin security user already been created.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a Club that already has had an admin security user created</exception>
+        private void CheckHasClubAdminSecurityUserAlreadyBeenCreated()
+        {
+            if (HasAdminSecurityUserBeenCreated)
+            {
+                throw new InvalidOperationException("This operation cannot be performed on a Club that already has had an admin security user created");
+            }
+        }
         #endregion
 
         #endregion
