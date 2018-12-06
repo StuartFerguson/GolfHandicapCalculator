@@ -57,7 +57,7 @@ namespace ManagementAPI.Service.Tests
 
             Should.ThrowAsync<NotFoundException>(async () => 
             {
-                await manager.GetClubConfiguration(Guid.Empty, CancellationToken.None);
+                await manager.GetClubConfiguration(ClubConfigurationTestData.AggregateId, CancellationToken.None);
             });
         }
 
@@ -72,7 +72,7 @@ namespace ManagementAPI.Service.Tests
 
             Should.ThrowAsync<NotFoundException>(async () => 
             {
-                await manager.GetClubConfiguration(Guid.Empty, CancellationToken.None);
+                await manager.GetClubConfiguration(ClubConfigurationTestData.AggregateId, CancellationToken.None);
             });
         }
     }

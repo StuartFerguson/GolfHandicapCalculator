@@ -52,9 +52,7 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// </value>
         [JsonProperty]
         public String CancellationReason { get; private set; }
-
-
-
+        
         #endregion
 
         #region Public Methods

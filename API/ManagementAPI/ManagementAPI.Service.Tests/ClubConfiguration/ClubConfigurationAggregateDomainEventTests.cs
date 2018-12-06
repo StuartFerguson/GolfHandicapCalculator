@@ -47,12 +47,12 @@ namespace ManagementAPI.Service.Tests
 
             measuredCourseAddedEvent.ShouldNotBeNull();
             measuredCourseAddedEvent.AggregateId.ShouldBe(ClubConfigurationTestData.AggregateId);
+            measuredCourseAddedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            measuredCourseAddedEvent.EventId.ShouldNotBe(Guid.Empty);
             measuredCourseAddedEvent.MeasuredCourseId.ShouldBe(ClubConfigurationTestData.MeasuredCourseId);
             measuredCourseAddedEvent.Name.ShouldBe(ClubConfigurationTestData.MeasuredCourseName);
             measuredCourseAddedEvent.TeeColour.ShouldBe(ClubConfigurationTestData.TeeColour);
-            measuredCourseAddedEvent.StandardScratchScore.ShouldBe(ClubConfigurationTestData.StandardScratchScore);
-            measuredCourseAddedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
-            measuredCourseAddedEvent.EventId.ShouldNotBe(Guid.Empty);
+            measuredCourseAddedEvent.StandardScratchScore.ShouldBe(ClubConfigurationTestData.StandardScratchScore);            
         }
 
         [Fact]
@@ -67,14 +67,28 @@ namespace ManagementAPI.Service.Tests
 
             holeAddedToMeasuredCourseEvent.ShouldNotBeNull();
             holeAddedToMeasuredCourseEvent.AggregateId.ShouldBe(ClubConfigurationTestData.AggregateId);
+            holeAddedToMeasuredCourseEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            holeAddedToMeasuredCourseEvent.EventId.ShouldNotBe(Guid.Empty);
             holeAddedToMeasuredCourseEvent.MeasuredCourseId.ShouldBe(ClubConfigurationTestData.MeasuredCourseId);
             holeAddedToMeasuredCourseEvent.HoleNumber.ShouldBe(ClubConfigurationTestData.HoleNumber);
             holeAddedToMeasuredCourseEvent.LengthInYards.ShouldBe(ClubConfigurationTestData.LengthInYards);
             holeAddedToMeasuredCourseEvent.LengthInMeters.ShouldBe(ClubConfigurationTestData.LengthInMeters);
             holeAddedToMeasuredCourseEvent.Par.ShouldBe(ClubConfigurationTestData.HolePar);
-            holeAddedToMeasuredCourseEvent.StrokeIndex.ShouldBe(ClubConfigurationTestData.HoleStrokeIndex);
-            holeAddedToMeasuredCourseEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
-            holeAddedToMeasuredCourseEvent.EventId.ShouldNotBe(Guid.Empty);
+            holeAddedToMeasuredCourseEvent.StrokeIndex.ShouldBe(ClubConfigurationTestData.HoleStrokeIndex);            
+        }
+
+        [Fact]
+        public void AdminSecurityUserCreatedEvent_CanBeCreated_IsCreated()
+        {
+            AdminSecurityUserCreatedEvent adminSecurityUserCreatedEvent = AdminSecurityUserCreatedEvent.Create(
+                ClubConfigurationTestData.AggregateId,
+                ClubConfigurationTestData.AdminSecurityUserId);
+
+            adminSecurityUserCreatedEvent.ShouldNotBeNull();
+            adminSecurityUserCreatedEvent.AggregateId.ShouldBe(ClubConfigurationTestData.AggregateId);
+            adminSecurityUserCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            adminSecurityUserCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
+            adminSecurityUserCreatedEvent.AdminSecurityUserId.ShouldBe(ClubConfigurationTestData.AdminSecurityUserId);
         }
     }
 }

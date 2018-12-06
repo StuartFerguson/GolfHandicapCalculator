@@ -95,7 +95,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(CreateClubConfigurationCommand command)
         {
-            return new ClubConfigurationCommandHandler(this.ClubAggregateRepository);
+            return new ClubConfigurationCommandHandler(this.ClubAggregateRepository, this.OAuth2SecurityService);
         }
         #endregion
 
@@ -107,7 +107,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(AddMeasuredCourseToClubCommand command)
         {
-            return new ClubConfigurationCommandHandler(this.ClubAggregateRepository);
+            return new ClubConfigurationCommandHandler(this.ClubAggregateRepository, this.OAuth2SecurityService);
         }
         #endregion
 
@@ -171,7 +171,7 @@ namespace ManagementAPI.Service.CommandHandlers
         }
         #endregion
 
-        #region private ICommandHandler CreateHandler(ProduceTournamentResultCommand command)        
+        #region private ICommandHandler CreateHandler(RegisterPlayerCommand command)
         /// <summary>
         /// Creates the handler.
         /// </summary>

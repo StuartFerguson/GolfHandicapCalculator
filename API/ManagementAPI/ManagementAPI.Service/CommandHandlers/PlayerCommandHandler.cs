@@ -105,7 +105,7 @@ namespace ManagementAPI.Service.CommandHandlers
             await this.PlayerRepository.SaveChanges(player, cancellationToken);
 
             // Setup the response
-            command.Response = new RegisterPlayerResponse {PlayerId = playerAggregateId } ;
+            command.Response = new RegisterPlayerResponse {PlayerId = playerAggregateId };
         }
         #endregion
 

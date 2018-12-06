@@ -11,7 +11,6 @@ using ManagementAPI.Tournament;
 using Shared.CommandHandling;
 using Shared.EventStore;
 
-
 namespace ManagementAPI.Service.CommandHandlers
 {
     public class TournamentCommandHandler : ICommandHandler
@@ -74,7 +73,7 @@ namespace ManagementAPI.Service.CommandHandlers
 
         #region Private Methods (Command Handling)
 
-        #region private async Task HandleCommand(CreateClubConfigurationCommand command, CancellationToken cancellationToken)        
+        #region private async Task HandleCommand(CreateTournamentCommand command, CancellationToken cancellationToken)
         /// <summary>
         /// Handles the command.
         /// </summary>
@@ -111,7 +110,7 @@ namespace ManagementAPI.Service.CommandHandlers
             await this.TournamentRepository.SaveChanges(tournament, cancellationToken);
 
             // Setup the response
-            command.Response = new CreateTournamentResponse {TournamentId= tournamentAggregateId } ;
+            command.Response = new CreateTournamentResponse {TournamentId= tournamentAggregateId };
         }
         #endregion
 

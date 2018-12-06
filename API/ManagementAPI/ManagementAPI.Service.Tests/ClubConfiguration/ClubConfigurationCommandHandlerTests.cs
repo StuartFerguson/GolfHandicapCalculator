@@ -3,6 +3,8 @@ using System.Threading;
 using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Commands;
+using ManagementAPI.Service.Services;
+using ManagementAPI.Service.Services.DataTransferObjects;
 using Moq;
 using Shared.EventStore;
 using Shouldly;
@@ -17,8 +19,12 @@ namespace ManagementAPI.Service.Tests
         {
             Mock<IAggregateRepository<ClubConfigurationAggregate>> repository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate());
-            
-            ClubConfigurationCommandHandler handler = new ClubConfigurationCommandHandler(repository.Object);
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            oAuth2SecurityService
+                .Setup(o => o.RegisterPlayerUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(ClubConfigurationTestData.GetRegisterUserResponse());
+
+            ClubConfigurationCommandHandler handler = new ClubConfigurationCommandHandler(repository.Object, oAuth2SecurityService.Object);
 
             CreateClubConfigurationCommand command = ClubConfigurationTestData.GetCreateClubConfigurationCommand();
 
@@ -30,8 +36,12 @@ namespace ManagementAPI.Service.Tests
         {
             Mock<IAggregateRepository<ClubConfigurationAggregate>> repository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
-            
-            ClubConfigurationCommandHandler handler = new ClubConfigurationCommandHandler(repository.Object);
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            oAuth2SecurityService
+                .Setup(o => o.RegisterPlayerUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(ClubConfigurationTestData.GetRegisterUserResponse());
+
+            ClubConfigurationCommandHandler handler = new ClubConfigurationCommandHandler(repository.Object, oAuth2SecurityService.Object);
 
             AddMeasuredCourseToClubCommand command = ClubConfigurationTestData.GetAddMeasuredCourseToClubCommand();
 
