@@ -91,12 +91,15 @@ namespace ManagementAPI.Service.CommandHandlers
             RegisterUserRequest request = new RegisterUserRequest
             {
                 EmailAddress = command.RegisterPlayerRequest.EmailAddress,
-                Claims = new Dictionary<String, String>(),
+                Claims = new Dictionary<String, String>
+                {
+                    {"PlayerId", playerAggregateId.ToString()}
+                },
                 Password = "123456",
                 PhoneNumber = "123456789",
                 Roles = new List<String>()
             };
-            var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterPlayerUser(request, cancellationToken);
+            var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);
 
             // Record this in the aggregate
             player.CreateSecurityUser(createSecurityUserResponse.UserId);

@@ -23,7 +23,7 @@ namespace ManagementAPI.Service.Tests.Player
                 .ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate());
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
             oAuth2SecurityService
-                .Setup(o => o.RegisterPlayerUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(PlayerTestData.GetRegisterUserResponse());
 
             PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object);

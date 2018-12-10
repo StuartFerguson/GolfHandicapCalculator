@@ -13,14 +13,14 @@ namespace ManagementAPI.Service.Services
 {
     public class OAuth2SecurityService : ClientProxyBase, IOAuth2SecurityService
     {
-        #region public async Task<RegisterUserResponse> RegisterPlayerUser(RegisterUserRequest request, CancellationToken cancellationToken)        
+        #region public async Task<RegisterUserResponse> RegisterUser(RegisterUserRequest request, CancellationToken cancellationToken)        
         /// <summary>
-        /// Registers the player user.
+        /// Registers the  user.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<RegisterUserResponse> RegisterPlayerUser(RegisterUserRequest request, CancellationToken cancellationToken)
+        public async Task<RegisterUserResponse> RegisterUser(RegisterUserRequest request, CancellationToken cancellationToken)
         {
             RegisterUserResponse response = null;
 
