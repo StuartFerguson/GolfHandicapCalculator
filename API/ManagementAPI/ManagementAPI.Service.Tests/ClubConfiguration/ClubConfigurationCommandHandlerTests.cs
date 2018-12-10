@@ -21,7 +21,7 @@ namespace ManagementAPI.Service.Tests
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate());
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
             oAuth2SecurityService
-                .Setup(o => o.RegisterPlayerUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetRegisterUserResponse());
 
             ClubConfigurationCommandHandler handler = new ClubConfigurationCommandHandler(repository.Object, oAuth2SecurityService.Object);
@@ -38,7 +38,7 @@ namespace ManagementAPI.Service.Tests
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
             oAuth2SecurityService
-                .Setup(o => o.RegisterPlayerUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetRegisterUserResponse());
 
             ClubConfigurationCommandHandler handler = new ClubConfigurationCommandHandler(repository.Object, oAuth2SecurityService.Object);

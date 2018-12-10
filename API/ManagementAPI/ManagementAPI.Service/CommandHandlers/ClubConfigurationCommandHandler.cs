@@ -94,12 +94,15 @@ namespace ManagementAPI.Service.CommandHandlers
             RegisterUserRequest request = new RegisterUserRequest
             {
                 EmailAddress = command.CreateClubConfigurationRequest.EmailAddress,
-                Claims = new Dictionary<String, String>(),
+                Claims = new Dictionary<String, String>
+                {
+                    {"ClubId", clubAggregateId.ToString()}
+                },
                 Password = "123456",
                 PhoneNumber = command.CreateClubConfigurationRequest.TelephoneNumber,
                 Roles = new List<String>()
             };
-            var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterPlayerUser(request, cancellationToken);
+            var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);
 
             // Record this in the aggregate
             club.CreateAdminSecurityUser(createSecurityUserResponse.UserId);

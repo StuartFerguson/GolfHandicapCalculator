@@ -8,11 +8,11 @@ namespace ManagementAPI.Service.Services
     public interface IOAuth2SecurityService
     {
         /// <summary>
-        /// Registers the player user.
+        /// Registers the user.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<RegisterUserResponse> RegisterPlayerUser(RegisterUserRequest request, CancellationToken cancellationToken);
+        Task<RegisterUserResponse> RegisterUser(RegisterUserRequest request, CancellationToken cancellationToken);
     }
 }
