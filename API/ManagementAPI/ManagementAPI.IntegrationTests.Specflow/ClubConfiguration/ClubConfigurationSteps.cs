@@ -109,7 +109,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
             {
                 client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
 
-                this.ScenarioContext["GetClubConfigurationHttpResponse"] = await client.GetAsync($"/api/ClubConfiguration?clubId={createClubConfigurationResponse.ClubConfigurationId}", CancellationToken.None).ConfigureAwait(false);
+                this.ScenarioContext["GetClubConfigurationHttpResponse"] = await client.GetAsync($"/api/ClubConfiguration/{createClubConfigurationResponse.ClubConfigurationId}", CancellationToken.None).ConfigureAwait(false);
             }
         }
         
@@ -275,6 +275,8 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
 
                 responseData.ClubConfigurationId.ShouldNotBe(Guid.Empty);
             }
+
+            Thread.Sleep(10000);
         }
         
         [When(@"I request the list of clubs")]
