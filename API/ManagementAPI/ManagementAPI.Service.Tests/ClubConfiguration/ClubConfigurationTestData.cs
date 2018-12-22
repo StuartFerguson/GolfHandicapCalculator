@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Composition.Convention;
 using System.Linq;
 using ManagementAPI.ClubConfiguration;
+using ManagementAPI.ClubConfiguration.DomainEvents;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services.DataTransferObjects;
@@ -245,6 +246,16 @@ namespace ManagementAPI.Service.Tests
             {
                 UserId = AdminSecurityUserId
             };
+        }
+
+        public static ClubConfigurationCreatedEvent GetClubConfigurationCreatedEvent()
+        {
+            ClubConfigurationCreatedEvent domainEvent = ClubConfigurationCreatedEvent.Create(ClubConfigurationTestData.AggregateId, ClubConfigurationTestData.Name,
+                ClubConfigurationTestData.AddressLine1, ClubConfigurationTestData.AddressLine2, ClubConfigurationTestData.Town,
+                ClubConfigurationTestData.Region, ClubConfigurationTestData.PostalCode, ClubConfigurationTestData.TelephoneNumber,
+                ClubConfigurationTestData.Website, ClubConfigurationTestData.EmailAddress);
+
+            return domainEvent;
         }
     }
 }

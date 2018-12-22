@@ -72,5 +72,14 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
             responseData.PlayerId.ShouldNotBe(Guid.Empty);
         }
 
+        protected override void SetupSubscriptionServiceConfig()
+        {
+            
+        }
+
+        protected override void CleanupSubscriptionServiceConfig()
+        {
+            
+        }
     }
 }
