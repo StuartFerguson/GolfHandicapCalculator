@@ -241,12 +241,7 @@ namespace ManagementAPI.Service
                 ManagementAPIReadModel managementApiReadModel = scope.ServiceProvider.GetRequiredService<ManagementAPIReadModel>();
 
                 var seedingType = Configuration.GetValue<SeedingType>("SeedingType");
-
-                if (seedingType == SeedingType.Production)
-                {
-                    throw new NotImplementedException("Production setup not complete yet");
-                }
-
+                
                 DatabaseSeeding.InitialiseDatabase(managementApiReadModel, seedingType);                
             }
         }
