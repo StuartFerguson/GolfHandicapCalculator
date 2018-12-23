@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -274,6 +275,8 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
 
                 responseData.ClubConfigurationId.ShouldNotBe(Guid.Empty);
+
+                this.ScenarioContext["ClubConfigurationId"] = responseData.ClubConfigurationId;
             }
 
             Thread.Sleep(10000);
@@ -294,10 +297,11 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         public async Task ThenAListOfClubsWillBeReturned()
         {
             var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("GetClubListHttpResponse");
+            var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
 
             var responseData = JsonConvert.DeserializeObject<List<GetClubConfigurationResponse>>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
 
-            responseData.Count.ShouldBe(1);
+            responseData.Any(r => r.Id == clubConfigurationId).ShouldBeTrue();
         }
 
     }
