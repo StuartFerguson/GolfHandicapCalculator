@@ -75,14 +75,31 @@ namespace ManagementAPI.Service.Controllers
         /// <summary>
         /// Gets the club configuration.
         /// </summary>
-        /// <param name="clubId">The club identifier.</param>
+        /// <param name="clubConfigurationId">The clubconfiguration.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(GetClubConfigurationResponse), 200)]
-        public async Task<IActionResult> GetClubConfiguration([FromQuery] Guid clubId,CancellationToken cancellationToken)
+        [Route("{clubConfigurationId}")]
+        public async Task<IActionResult> GetClubConfiguration([FromRoute] Guid clubConfigurationId,CancellationToken cancellationToken)
         {
-            var clubConfiguration = await this.Manager.GetClubConfiguration(clubId, cancellationToken);
+            var clubConfiguration = await this.Manager.GetClubConfiguration(clubConfigurationId, cancellationToken);
+
+            return this.Ok(clubConfiguration);
+        }
+        #endregion
+
+        #region public async Task<IActionResult> GetClubConfigurationList(CancellationToken cancellationToken)              
+        /// <summary>
+        /// Gets the club configuration list.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(List<GetClubConfigurationResponse>), 200)]
+        public async Task<IActionResult> GetClubConfigurationList(CancellationToken cancellationToken)
+        {
+            var clubConfiguration = await this.Manager.GetClubList(cancellationToken);
 
             return this.Ok(clubConfiguration);
         }

@@ -4,8 +4,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Ductus.FluentDocker.Services.Extensions;
 using ManagementAPI.IntegrationTests.Specflow.Common;
 using ManagementAPI.Service.DataTransferObjects;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Shouldly;
 using TechTalk.SpecFlow;
@@ -300,5 +302,14 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
         }
 
+        protected override void SetupSubscriptionServiceConfig()
+        {            
+
+        }
+
+        protected override void CleanupSubscriptionServiceConfig()
+        {
+            
+        }
     }
 }

@@ -2,6 +2,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using ManagementAPI.Database;
+using ManagementAPI.Database.SeedData;
 using ManagementAPI.Service.Bootstrapper;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Middleware;
@@ -9,6 +13,7 @@ using ManagementAPI.Service.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -54,6 +59,11 @@ namespace ManagementAPI.Service
         /// </value>
         public static IContainer Container { get; private set; }
 
+        /// <summary>
+        /// The management API read model connection string
+        /// </summary>
+        private static String ManagementAPIReadModelConnectionString;
+
         #endregion
 
         #region Constructors
@@ -72,6 +82,9 @@ namespace ManagementAPI.Service
  
             Startup.Configuration = builder.Build();
             Startup.HostingEnvironment = env;
+
+            // Get the DB Connection Strings
+            ManagementAPIReadModelConnectionString = Startup.Configuration.GetConnectionString(nameof(ManagementAPIReadModel));
         }
 
         #endregion
@@ -107,6 +120,12 @@ namespace ManagementAPI.Service
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+
+            // Setup the database
+            if (!HostingEnvironment.IsEnvironment("IntegrationTest"))
+            {
+                this.InitialiseDatabase(app, env).Wait();
             }
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
@@ -184,7 +203,22 @@ namespace ManagementAPI.Service
                 options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+
+            if (HostingEnvironment.IsEnvironment("IntegrationTest"))
+            {
+                services.AddDbContext<ManagementAPIReadModel>(builder =>
+                        builder.UseInMemoryDatabase("ManagementAPIReadModel"))
+                    .AddTransient<ManagementAPIReadModel>();
+            }
+            else
+            {
+                String migrationsAssembly = typeof(ManagementAPIReadModel).GetTypeInfo().Assembly.GetName().Name;
+
+                services.AddDbContext<ManagementAPIReadModel>(builder =>
+                        builder.UseMySql(ManagementAPIReadModelConnectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly)))
+                    .AddTransient<ManagementAPIReadModel>();;
+            }
+
             services.AddMvcCore();
             
             services.AddSwaggerGen(c =>
@@ -192,6 +226,31 @@ namespace ManagementAPI.Service
                 c.SwaggerDoc("v1", new Info { Title = "Golf Handicapping API", Version = "v1" });
             });
         }
+        #endregion
+
+        #region private async Task InitialiseDatabase(IApplicationBuilder app, IHostingEnvironment environment)
+        /// <summary>
+        /// Initialises the database.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <param name="environment">The environment.</param>
+        private async Task InitialiseDatabase(IApplicationBuilder app, IHostingEnvironment environment)
+        {
+            using(IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                ManagementAPIReadModel managementApiReadModel = scope.ServiceProvider.GetRequiredService<ManagementAPIReadModel>();
+
+                var seedingType = Configuration.GetValue<SeedingType>("SeedingType");
+
+                if (seedingType == SeedingType.Production)
+                {
+                    throw new NotImplementedException("Production setup not complete yet");
+                }
+
+                DatabaseSeeding.InitialiseDatabase(managementApiReadModel, seedingType);                
+            }
+        }
+
         #endregion
 
         #endregion

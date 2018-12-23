@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
@@ -25,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ManagementAPI.ClubConfiguration.DomainEvents\ManagementAPI.ClubConfiguration.DomainEvents.csproj" />
     <ProjectReference Include="..\ManagementAPI.ClubConfigurationAggregate\ManagementAPI.ClubConfigurationAggregate.csproj" />
+    <ProjectReference Include="..\ManagementAPI.Database\ManagementAPI.Database.csproj" />
     <ProjectReference Include="..\ManagementAPI.Player.DomainEvents\ManagementAPI.Player.DomainEvents.csproj" />
     <ProjectReference Include="..\ManagementAPI.PlayerAggregate\ManagementAPI.PlayerAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.Service\ManagementAPI.Service.csproj" />
