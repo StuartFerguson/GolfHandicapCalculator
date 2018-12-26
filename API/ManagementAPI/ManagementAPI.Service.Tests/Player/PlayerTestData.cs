@@ -59,7 +59,7 @@ namespace ManagementAPI.Service.Tests.Player
             return playerAggregate;
         }
 
-        public static PlayerAggregate GetRegisteredPlayerWithSecurityUserCreatedAggregate()
+        public static PlayerAggregate GetRegisteredPlayerAggregateWithSecurityUserCreated()
         {
             PlayerAggregate playerAggregate = PlayerAggregate.Create(AggregateId);
 
@@ -67,6 +67,20 @@ namespace ManagementAPI.Service.Tests.Player
                 Age, ExactHandicapCat1, EmailAddress);
 
             playerAggregate.CreateSecurityUser(SecurityUserId);
+
+            return playerAggregate;
+        }
+
+        public static PlayerAggregate GetRegisteredPlayerAggregateWithPendingMembershipRequest()
+        {
+            PlayerAggregate playerAggregate = PlayerAggregate.Create(AggregateId);
+
+            playerAggregate.Register(FirstName, MiddleName, LastName, Gender,
+                Age, ExactHandicapCat1, EmailAddress);
+
+            playerAggregate.CreateSecurityUser(SecurityUserId);
+
+            playerAggregate.RequestClubMembership(ClubId, MembershipRequestedDateAndTime);
 
             return playerAggregate;
         }
@@ -93,6 +107,15 @@ namespace ManagementAPI.Service.Tests.Player
             {
                 UserId = SecurityUserId
             };
+        }
+
+        public static Guid ClubId = Guid.Parse("3BDDB601-E08F-4B6C-A58A-1493D06E3A6C");
+
+        public static DateTime MembershipRequestedDateAndTime = new DateTime(2018,12,25);
+
+        public static PlayerClubMembershipRequestCommand GetPlayerClubMembershipRequestCommand()
+        {
+            return PlayerClubMembershipRequestCommand.Create(AggregateId,ClubId);
         }
     }
 }

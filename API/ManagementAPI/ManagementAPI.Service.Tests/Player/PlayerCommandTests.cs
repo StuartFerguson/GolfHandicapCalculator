@@ -19,5 +19,16 @@ namespace ManagementAPI.Service.Tests.Player
             command.RegisterPlayerRequest.ShouldNotBeNull();
             command.RegisterPlayerRequest.ShouldBe(PlayerTestData.RegisterPlayerRequest);
         }
+
+        [Fact]
+        public void PlayerClubMembershipRequestCommand_CanBeCreated_IsCreated()
+        {
+            PlayerClubMembershipRequestCommand command = PlayerClubMembershipRequestCommand.Create(PlayerTestData.AggregateId, PlayerTestData.ClubId);
+
+            command.ShouldNotBeNull();
+            command.CommandId.ShouldNotBe(Guid.Empty);
+            command.PlayerId.ShouldBe(PlayerTestData.AggregateId);
+            command.ClubId.ShouldBe(PlayerTestData.ClubId);
+        }
     }
 }

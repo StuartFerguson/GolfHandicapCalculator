@@ -142,6 +142,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RegisterPlayer.feature</DependentUpon>
     </Compile>
+    <Compile Include="Player\RequestClubMembership.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RequestClubMembership.feature</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tournament\CancelTournament.feature.cs">
       <AutoGen>True</AutoGen>
@@ -192,6 +197,10 @@
     <None Include="Player\RegisterPlayer.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>RegisterPlayer.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Player\RequestClubMembership.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>RequestClubMembership.feature.cs</LastGenOutput>
     </None>
     <None Include="Tournament\CancelTournament.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>

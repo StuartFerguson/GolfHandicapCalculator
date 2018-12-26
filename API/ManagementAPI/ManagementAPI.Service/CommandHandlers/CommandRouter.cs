@@ -183,6 +183,18 @@ namespace ManagementAPI.Service.CommandHandlers
         }
         #endregion
 
+        #region private ICommandHandler CreateHandler(PlayerClubMembershipRequestCommand command)
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(PlayerClubMembershipRequestCommand command)
+        {
+            return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService);
+        }
+        #endregion
+
         #endregion
     }
 }

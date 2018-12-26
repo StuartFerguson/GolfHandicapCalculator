@@ -112,6 +112,28 @@ namespace ManagementAPI.Service.CommandHandlers
         }
         #endregion
 
+        #region private async Task HandleCommand(PlayerClubMembershipRequestCommand command, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Handles the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleCommand(PlayerClubMembershipRequestCommand command, CancellationToken cancellationToken)
+        {
+            // Rehydrate the aggregate
+            var player = await this.PlayerRepository.GetLatestVersion(command.PlayerId, cancellationToken);
+
+            // TODO: Validate the club id
+            DateTime membershipRequestedDateAndTime = DateTime.Now;
+
+            player.RequestClubMembership(command.ClubId, membershipRequestedDateAndTime);
+
+            // Save the changes
+            await this.PlayerRepository.SaveChanges(player, cancellationToken);
+        }
+        #endregion
+
         #endregion
     }
 }

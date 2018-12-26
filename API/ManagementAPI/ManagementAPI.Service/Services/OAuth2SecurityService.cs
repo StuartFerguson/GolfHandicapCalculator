@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Services.DataTransferObjects;
-using ManagementAPI.Service.Shared;
 using Newtonsoft.Json;
 using Shared.General;
 
