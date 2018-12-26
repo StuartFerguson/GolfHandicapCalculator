@@ -306,10 +306,5 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         {            
             // Nothing in here
         }
-
-        protected override void CleanupSubscriptionServiceConfig()
-        {
-            // Nothing in here
-        }
     }
 }

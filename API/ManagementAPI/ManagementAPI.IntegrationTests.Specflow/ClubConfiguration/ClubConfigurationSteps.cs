@@ -193,67 +193,42 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
 
                 connection.Open();
 
+                Guid subscriptionStreamId = Guid.NewGuid();
+                Guid endpointId = Guid.NewGuid();
+                Guid subscriptonServiceGroup = Guid.NewGuid();
+                Guid subscriptonGroupId = Guid.NewGuid();
+
                 // Insert the Subscription Stream
                 String streamName = "$et-ManagementAPI.ClubConfiguration.DomainEvents.ClubConfigurationCreatedEvent";
                 String endpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent";
 
                 MySqlCommand streamInsert = connection.CreateCommand();
                 streamInsert.CommandText =
-                    $"insert into SubscriptionStream(Id, StreamName, SubscriptionType) select 'f47f87ce-fd4f-11e8-ac9e-00155d0d422e', '{streamName}', 0";
+                    $"insert into SubscriptionStream(Id, StreamName, SubscriptionType) select '{subscriptionStreamId}', '{streamName}', 0";
                 streamInsert.ExecuteNonQuery();
 
                 MySqlCommand endpointInsert = connection.CreateCommand();
                 endpointInsert.CommandText =
-                    $"insert into EndPoints(EndpointId, name, url) select 'a05ee7ce-fd4f-11e8-ac9e-00155d0d422e', 'ManagementAPI', '{endpointUrl}'";
+                    $"insert into EndPoints(EndpointId, name, url) select '{endpointId}', 'ManagementAPI', '{endpointUrl}'";
                 endpointInsert.ExecuteNonQuery();
 
                 MySqlCommand groupInsert = connection.CreateCommand();
                 groupInsert.CommandText =
-                    "insert into SubscriptionGroups(Id, BufferSize, EndpointId, Name, StreamPosition, SubscriptionStreamId) select uuid(), 10, 'a05ee7ce-fd4f-11e8-ac9e-00155d0d422e', 'ClubCreated', null, 'f47f87ce-fd4f-11e8-ac9e-00155d0d422e'";
+                    $"insert into SubscriptionGroups(Id, BufferSize, EndpointId, Name, StreamPosition, SubscriptionStreamId) select '{subscriptonGroupId}', 10, '{endpointId}', 'ClubCreated', null, '{subscriptionStreamId}'";
                 groupInsert.ExecuteNonQuery();
                 
+                // Insert the subscription service
+                MySqlCommand subscriptionServiceInsert = connection.CreateCommand();
+                subscriptionServiceInsert.CommandText =
+                    $"insert into SubscriptionServices(SubscriptionServiceId, Description) select '{this.SubscriberServiceId}', 'Test Service'";
+                subscriptionServiceInsert.ExecuteNonQuery();
+                
+                MySqlCommand subscriptonServiceGroupInsert = connection.CreateCommand();
+                subscriptonServiceGroupInsert.CommandText = $"insert into SubscriptionServiceGroups(SubscriptionServiceGroupId, SubscriptionGroupId, SubscriptionServiceId) select '{subscriptonServiceGroup}', '{subscriptonGroupId}', '{this.SubscriberServiceId}' ";
+                subscriptonServiceGroupInsert.ExecuteNonQuery();
+
                 connection.Close();
             }
-        }
-
-        protected override void CleanupSubscriptionServiceConfig()
-        {
-            var mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
-
-            // Try opening a connection
-            Int32 maxRetries = 10;
-            Int32 counter = 1;
-
-            String server = "127.0.0.1";
-            String database = "SubscriptionServiceConfiguration";
-            String user = "root";
-            String password = "Pa55word";
-            String port = mysqlEndpoint.Port.ToString();
-            String sslM = "none";
-
-            String connectionString =
-                $"server={server};port={port};user id={user}; password={password}; database={database}; SslMode={sslM}";
-
-            MySqlConnection connection = new MySqlConnection(connectionString);
-
-            connection.Open();
-
-            MySqlCommand streamDelete = connection.CreateCommand();
-            streamDelete.CommandText =
-                $"delete from SubscriptionStream";
-            streamDelete.ExecuteNonQuery();
-
-            MySqlCommand endpointDelete = connection.CreateCommand();
-            endpointDelete.CommandText =
-                $"delete from EndPoints";
-            endpointDelete.ExecuteNonQuery();
-
-            MySqlCommand groupDelete = connection.CreateCommand();
-            groupDelete.CommandText =
-                "delete from SubscriptionGroups";
-            groupDelete.ExecuteNonQuery();
-
-            connection.Close();
         }
 
         [Given(@"a club has already been created")]
@@ -278,7 +253,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 this.ScenarioContext["ClubConfigurationId"] = responseData.ClubConfigurationId;
             }
 
-            Thread.Sleep(10000);
+            Thread.Sleep(30000);
         }
         
         [When(@"I request the list of clubs")]
