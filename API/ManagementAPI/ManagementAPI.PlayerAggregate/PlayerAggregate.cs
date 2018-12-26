@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using ManagementAPI.Player.DomainEvents;
 using Shared.EventSourcing;
@@ -20,6 +21,7 @@ namespace ManagementAPI.Player
         public PlayerAggregate()
         {
             // Nothing here
+            this.Memberships = new List<ClubMembership>();
         }
 
         /// <summary>
@@ -31,6 +33,7 @@ namespace ManagementAPI.Player
             Guard.ThrowIfInvalidGuid(aggregateId, "Aggregate Id cannot be an Empty Guid");
 
             this.AggregateId = aggregateId;
+            this.Memberships = new List<ClubMembership>();
         }
         #endregion
 
@@ -135,6 +138,12 @@ namespace ManagementAPI.Player
         #endregion
 
         #region Fields
+
+        /// <summary>
+        /// The memberships
+        /// </summary>
+        private List<ClubMembership> Memberships;
+
         #endregion
 
         #region Public Methods
@@ -205,6 +214,53 @@ namespace ManagementAPI.Player
         }
         #endregion
 
+        #region public void RequestClubMembership(Guid clubId, DateTime membershipRequesteDateAndTime)        
+        /// <summary>
+        /// Requests the club membership.
+        /// </summary>
+        /// <param name="clubId">The club identifier.</param>
+        /// <param name="membershipRequestDateAndTime">The membership request date and time.</param>
+        public void RequestClubMembership(Guid clubId, DateTime membershipRequestDateAndTime)
+        {
+            Guard.ThrowIfInvalidGuid(clubId, typeof(ArgumentNullException), "Club Id must be provided to make a membership request");
+
+            this.CheckIfPlayerHasBeenRegistered();
+            
+            this.CheckForPendingMembershipRequest(clubId);
+
+            // TODO: Add in check when membership approval completed
+            //this.CheckIfAlreadyMemberOfClub(clubId);
+
+            // Create the domain event
+            ClubMembershipRequestedEvent clubMembershipRequestedEvent = ClubMembershipRequestedEvent.Create(this.AggregateId, clubId, membershipRequestDateAndTime);
+
+            // Apply and pend
+            this.ApplyAndPend(clubMembershipRequestedEvent);
+        }
+        #endregion
+
+        #region public List<ClubMembershipDataTransferObject> GetMemberships()        
+        /// <summary>
+        /// Gets the memberships.
+        /// </summary>
+        /// <returns></returns>
+        public List<ClubMembershipDataTransferObject> GetMemberships()
+        {
+            List<ClubMembershipDataTransferObject> result = new List<ClubMembershipDataTransferObject>();
+
+            foreach (var clubMembership in this.Memberships)
+            {
+                result.Add(new ClubMembershipDataTransferObject
+                {
+                    ClubId = clubMembership.ClubId,
+                    MembershipRequestedDateAndTime = clubMembership.MembershipRequestedDateAndTimeId
+                });
+            }
+
+            return result;
+        }
+        #endregion
+
         #endregion
 
         #region Protected Methods
@@ -254,6 +310,19 @@ namespace ManagementAPI.Player
         {
             this.SecurityUserId = securityUserCreatedEvent.SecurityUserId;
             this.HasSecurityUserBeenCreated = true;
+        }
+        #endregion
+
+        #region private void PlayEvent(ClubMembershipRequestedEvent clubMembershipRequestedEvent)        
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="clubMembershipRequestedEvent">The club membership requested event.</param>
+        private void PlayEvent(ClubMembershipRequestedEvent clubMembershipRequestedEvent)
+        {
+            ClubMembership clubMembership = ClubMembership.Create(clubMembershipRequestedEvent.ClubId, clubMembershipRequestedEvent.MembershipRequestedDateAndTime);
+
+            this.Memberships.Add(clubMembership);
         }
         #endregion
 
@@ -388,6 +457,31 @@ namespace ManagementAPI.Player
             {
                 throw new InvalidOperationException("This operation is invalid for a player that already has a created security user");
             }
+        }
+        #endregion
+
+        #region private void CheckForPendingMembershipRequest(Guid clubId)        
+        /// <summary>
+        /// Checks for pending membership request.
+        /// </summary>
+        /// <param name="clubId">The club identifier.</param>
+        private void CheckForPendingMembershipRequest(Guid clubId)
+        {
+            if (this.Memberships.Any(m => m.ClubId == clubId))
+            {
+                throw new InvalidOperationException($"A pending membership request already exists for Club Id {clubId}");
+            }
+        }
+        #endregion
+
+        #region private void CheckIfAlreadyMemberOfClub(Guid clubId)        
+        /// <summary>
+        /// Checks if already member of club.
+        /// </summary>
+        /// <param name="clubId">The club identifier.</param>
+        private void CheckIfAlreadyMemberOfClub(Guid clubId)
+        {
+            // TODO:
         }
         #endregion
 

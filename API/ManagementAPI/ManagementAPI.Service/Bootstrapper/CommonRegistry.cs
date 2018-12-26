@@ -58,6 +58,7 @@ namespace ManagementAPI.Service.Bootstrapper
                 .Use<AggregateRepository<TournamentAggregate>>().Singleton();
             For<IAggregateRepository<PlayerAggregate>>()
                 .Use<AggregateRepository<PlayerAggregate>>().Singleton();
+
             For<IHandicapAdjustmentCalculatorService>().Use<HandicapAdjustmentCalculatorService>();
             For<IManagmentAPIManager>().Use<ManagmentAPIManager>().Singleton();
             For<IOAuth2SecurityService>().Use<OAuth2SecurityService>().Singleton();

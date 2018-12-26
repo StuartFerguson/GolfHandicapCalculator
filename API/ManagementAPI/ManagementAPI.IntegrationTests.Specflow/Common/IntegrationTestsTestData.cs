@@ -47,7 +47,6 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
                     new HoleDataTransferObject {HoleNumber = 17, LengthInYards = 286, Par = 4, StrokeIndex = 17},
                     new HoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9}
                 }
-
             };
 
         public static CreateTournamentRequest CreateTournamentRequest = new CreateTournamentRequest

@@ -55,7 +55,7 @@ namespace ManagementAPI.Service.Controllers
             var command = CreateTournamentCommand.Create(request);
 
             // Route the command
-            await this.CommandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
@@ -79,7 +79,7 @@ namespace ManagementAPI.Service.Controllers
             var command = RecordMemberTournamentScoreCommand.Create(tournamentId, request);
 
             // Route the command
-            await this.CommandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
@@ -103,7 +103,7 @@ namespace ManagementAPI.Service.Controllers
             var command = CompleteTournamentCommand.Create(tournamentId);
 
             // Route the command
-            await this.CommandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
@@ -127,7 +127,7 @@ namespace ManagementAPI.Service.Controllers
             var command = CancelTournamentCommand.Create(tournamentId, request);
 
             // Route the command
-            await this.CommandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
@@ -150,7 +150,7 @@ namespace ManagementAPI.Service.Controllers
             var command = ProduceTournamentResultCommand.Create(tournamentId);
 
             // Route the command
-            await this.CommandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);

@@ -8,11 +8,10 @@ using ManagementAPI.Database;
 using ManagementAPI.Database.SeedData;
 using ManagementAPI.Service.Bootstrapper;
 using ManagementAPI.Service.CommandHandlers;
-using ManagementAPI.Service.Middleware;
-using ManagementAPI.Service.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +21,7 @@ using Newtonsoft.Json.Serialization;
 using NLog.Extensions.Logging;
 using Shared.CommandHandling;
 using Shared.EventStore;
+using Shared.Extensions;
 using Shared.General;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
@@ -128,7 +128,10 @@ namespace ManagementAPI.Service
                 this.InitialiseDatabase(app, env).Wait();
             }
 
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
+            app.AddExceptionHandler();
+            app.AddRequestLogging();
+            app.AddResponseLogging();
+
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -151,7 +154,13 @@ namespace ManagementAPI.Service
             
             container.Configure(config =>
             {
-                config.AddRegistry<CommonRegistry>();                
+                config.AddRegistry<CommonRegistry>();
+
+                if (HostingEnvironment.IsDevelopment())
+                {
+                    config.AddRegistry<DevelopmentRegistry>();
+                }
+
                 config.Populate(services);
             });
 
@@ -171,13 +180,6 @@ namespace ManagementAPI.Service
         {
             ConfigureMiddlewareServices(services);
             
-            //services.AddSingleton<IEventStoreContext, EventStoreContext>();
-            //services.AddSingleton<ESLogger.ILogger, ESLogger.Common.Log.ConsoleLogger>();
-            //services.AddSingleton<ICommandRouter, CommandRouter>();
-            //services.AddSingleton<IAggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>, AggregateRepository<ClubConfigurationAggregate.ClubConfigurationAggregate>>();
-
-            //services.Configure<EventStoreConnectionSettings>(Configuration.GetSection("EventStore"));
-
             IContainer container = GetConfiguredContainer(services, HostingEnvironment);
             
             return container.GetInstance<IServiceProvider>();
@@ -216,7 +218,7 @@ namespace ManagementAPI.Service
 
                 services.AddDbContext<ManagementAPIReadModel>(builder =>
                         builder.UseMySql(ManagementAPIReadModelConnectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly)))
-                    .AddTransient<ManagementAPIReadModel>();;
+                    .AddTransient<ManagementAPIReadModel>();
             }
 
             services.AddMvcCore();

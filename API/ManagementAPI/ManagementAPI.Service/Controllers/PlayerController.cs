@@ -55,12 +55,26 @@ namespace ManagementAPI.Service.Controllers
             var command = RegisterPlayerCommand.Create(request);
 
             // Route the command
-            await this.CommandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
         }
         #endregion
+
+        [HttpPut]
+        [Route("{playerId}/ClubMembershipRequest/{clubId}")]
+        public async Task<IActionResult> PutPlayer([FromRoute] Guid playerId, [FromRoute] Guid clubId, CancellationToken cancellationToken)
+        {
+            // Create the command
+            var command = PlayerClubMembershipRequestCommand.Create(playerId, clubId);
+
+            // Route the command
+            await this.CommandRouter.Route(command,cancellationToken);
+
+            // return the result
+            return this.Ok();
+        }
 
         #endregion
     }

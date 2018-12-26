@@ -41,5 +41,20 @@ namespace ManagementAPI.Service.Tests.Player
             securityUserCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             securityUserCreatedEvent.SecurityUserId.ShouldBe(PlayerTestData.SecurityUserId);
         }
+
+        [Fact]
+        public void ClubMembershipRequestedEvent_CanBeCreated_IsCreated()
+        {
+            ClubMembershipRequestedEvent clubMembershipRequestedEvent = ClubMembershipRequestedEvent.Create(
+                PlayerTestData.AggregateId, PlayerTestData.ClubId,
+                PlayerTestData.MembershipRequestedDateAndTime);
+
+            clubMembershipRequestedEvent.ShouldNotBeNull();
+            clubMembershipRequestedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
+            clubMembershipRequestedEvent.EventId.ShouldNotBe(Guid.Empty);
+            clubMembershipRequestedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            clubMembershipRequestedEvent.ClubId.ShouldBe(PlayerTestData.ClubId);
+            clubMembershipRequestedEvent.MembershipRequestedDateAndTime.ShouldBe(PlayerTestData.MembershipRequestedDateAndTime);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ManagementAPI.Player;
 using Shouldly;
@@ -164,12 +165,61 @@ namespace ManagementAPI.Service.Tests.Player
         [Fact]
         public void PlayerAggregate_CreateSecurityUser_SecurityUserAlreadyAdded_ErrorThrown()
         {
-            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerWithSecurityUserCreatedAggregate();
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregateWithSecurityUserCreated();
 
             Should.Throw<InvalidOperationException>(() =>
             {
                 playerAggregate.CreateSecurityUser(PlayerTestData.SecurityUserId);
             });
+        }
+
+        #endregion
+
+        #region Request Club Membership Tests
+
+        [Fact]
+        public void PlayerAggregate_RequestClubMembership_ClubMembershipRequested()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregateWithSecurityUserCreated();
+
+            playerAggregate.RequestClubMembership(PlayerTestData.ClubId, PlayerTestData.MembershipRequestedDateAndTime);
+
+            var memberships = playerAggregate.GetMemberships();
+            memberships.Count.ShouldBe(1);
+            memberships.First().ClubId.ShouldBe(PlayerTestData.ClubId);
+            memberships.First().MembershipRequestedDateAndTime.ShouldBe(PlayerTestData.MembershipRequestedDateAndTime);
+        }
+
+        [Fact]
+        public void PlayerAggregate_RequestClubMembership_InvalidClubId_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Should.Throw<ArgumentNullException>(() => { playerAggregate.RequestClubMembership(Guid.Empty, PlayerTestData.MembershipRequestedDateAndTime); });            
+        }
+
+        [Fact]
+        public void PlayerAggregate_RequestClubMembership_PlayerNotRegistered_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Should.Throw<InvalidOperationException>(() => { playerAggregate.RequestClubMembership(PlayerTestData.ClubId, PlayerTestData.MembershipRequestedDateAndTime); });            
+        }
+
+        [Fact]
+        public void PlayerAggregate_RequestClubMembership_PendingMembershipRequest_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregateWithPendingMembershipRequest();
+
+            Should.Throw<InvalidOperationException>(() => { playerAggregate.RequestClubMembership(PlayerTestData.ClubId, PlayerTestData.MembershipRequestedDateAndTime); });            
+        }
+
+        [Fact(Skip = "Incomplete")]
+        public void PlayerAggregate_RequestClubMembership_MembershipRequestForExistingClub_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregateWithPendingMembershipRequest();
+
+            Should.Throw<InvalidOperationException>(() => { playerAggregate.RequestClubMembership(PlayerTestData.ClubId, PlayerTestData.MembershipRequestedDateAndTime); });            
         }
 
         #endregion

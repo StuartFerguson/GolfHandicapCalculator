@@ -22,7 +22,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
     {
         public ClubConfigurationSteps(ScenarioContext scenarioContext) : base(scenarioContext)
         {
-
+            // Nothing in here
         }
         
         [Given(@"The Golf Handicapping System Is Running")]
@@ -150,8 +150,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
             using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
-
-
+                
                 var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
                 addMeasuredCourseToClubRequest.ClubAggregateId = createClubConfigurationResponse.ClubConfigurationId;
 

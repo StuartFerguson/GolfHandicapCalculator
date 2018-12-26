@@ -64,7 +64,7 @@ namespace ManagementAPI.Service.Controllers
             var command = CreateClubConfigurationCommand.Create(request);
 
             // Route the command
-            await this.CommandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
@@ -119,7 +119,7 @@ namespace ManagementAPI.Service.Controllers
             var command = AddMeasuredCourseToClubCommand.Create(request);
 
             // Route the command
-            await this.CommandRouter.Route(command,CancellationToken.None);
+            await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
