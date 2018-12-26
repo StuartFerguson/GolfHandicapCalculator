@@ -18,7 +18,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
     {
         public PlayerSteps(ScenarioContext scenarioContext) : base(scenarioContext)
         {
-
+            // Nothing in here
         }
 
         [Given(@"The Golf Handicapping System Is Running")]
@@ -74,12 +74,12 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
 
         protected override void SetupSubscriptionServiceConfig()
         {
-            
+            // Nothing in here
         }
 
         protected override void CleanupSubscriptionServiceConfig()
         {
-            
+            // Nothing in here
         }
 
         [Given(@"I am registered as a player")]
@@ -148,6 +148,5 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
 
             httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
-
     }
 }

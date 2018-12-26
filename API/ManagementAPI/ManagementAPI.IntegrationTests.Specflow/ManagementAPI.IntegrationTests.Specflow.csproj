@@ -136,6 +136,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GetClubConfiguration.feature</DependentUpon>
     </Compile>
+    <Compile Include="Common\Setup.cs" />
     <Compile Include="Player\PlayerSteps.cs" />
     <Compile Include="Player\RegisterPlayer.feature.cs">
       <AutoGen>True</AutoGen>

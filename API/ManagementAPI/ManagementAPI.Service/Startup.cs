@@ -218,7 +218,7 @@ namespace ManagementAPI.Service
 
                 services.AddDbContext<ManagementAPIReadModel>(builder =>
                         builder.UseMySql(ManagementAPIReadModelConnectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly)))
-                    .AddTransient<ManagementAPIReadModel>();;
+                    .AddTransient<ManagementAPIReadModel>();
             }
 
             services.AddMvcCore();

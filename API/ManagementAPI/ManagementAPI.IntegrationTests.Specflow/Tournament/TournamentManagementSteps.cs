@@ -304,12 +304,12 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
 
         protected override void SetupSubscriptionServiceConfig()
         {            
-
+            // Nothing in here
         }
 
         protected override void CleanupSubscriptionServiceConfig()
         {
-            
+            // Nothing in here
         }
     }
 }

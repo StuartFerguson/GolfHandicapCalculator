@@ -24,7 +24,6 @@ namespace ManagementAPI.Player.DomainEvents
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerRegisteredEvent" /> class.
         /// </summary>
-       
         private ClubMembershipRequestedEvent(Guid aggregateId, Guid eventId, Guid clubId, DateTime membershipRequestedDateAndTime) : base(aggregateId, eventId)
         {
             this.ClubId = clubId;

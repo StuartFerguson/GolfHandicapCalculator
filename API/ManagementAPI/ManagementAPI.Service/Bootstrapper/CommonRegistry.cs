@@ -64,13 +64,4 @@ namespace ManagementAPI.Service.Bootstrapper
             For<IOAuth2SecurityService>().Use<OAuth2SecurityService>().Singleton();
         }
     }
-
-    [ExcludeFromCodeCoverage]
-    public class DevelopmentRegistry : Registry
-    {
-        public DevelopmentRegistry()
-        {
-            For<IOAuth2SecurityService>().Use<MockOAuth2SecurityService>().Singleton();
-        }
-    }
 }
