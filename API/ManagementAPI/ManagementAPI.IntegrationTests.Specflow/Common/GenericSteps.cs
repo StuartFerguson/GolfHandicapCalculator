@@ -25,6 +25,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
         protected Int32 ManagementApiPort;
         protected Int32 EventStorePort;
         protected Int32 SecurityServicePort;
+        protected Guid SubscriberServiceId;
         
         protected GenericSteps(ScenarioContext scenarioContext) 
         {
@@ -38,7 +39,8 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
             String managementAPIContainerName = $"rest{Guid.NewGuid():N}";
             String eventStoreContainerName = $"eventstore{Guid.NewGuid():N}";
             String securityServiceContainerName = $"auth{Guid.NewGuid():N}";
-            String subscriptionServiceContainerName = $"subService{Guid.NewGuid():N}";
+            this.SubscriberServiceId = Guid.NewGuid();
+            String subscriptionServiceContainerName = $"subService{this.SubscriberServiceId:N}";
             
             // Build a network
             this.TestNetwork = new Builder().UseNetwork($"testnetwork{Guid.NewGuid()}").Build();
@@ -89,6 +91,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
                 .WithName(eventStoreContainerName)
                 .WithEnvironment("EVENTSTORE_RUN_PROJECTIONS=all", "EVENTSTORE_START_STANDARD_PROJECTIONS=true")
                 .UseNetwork(this.TestNetwork)
+                .Mount($"D:\\temp\\docker\\{testFolder}\\eventstore", "/var/log/eventstore", MountType.ReadWrite)
                 .Build()
                 .Start().WaitForPort("2113/tcp", 30000);
             #endregion
@@ -105,7 +108,11 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
             this.SubscriptionServiceContainer = new Builder()
                 .UseContainer()
                 .WithName(subscriptionServiceContainerName)
-                .WithEnvironment("ASPNETCORE_ENVIRONMENT=Development", subscriptionServiceConnectionString, eventStoreConnectionString, "EventStoreSettings:HttpPort=2113")
+                .WithEnvironment("ASPNETCORE_ENVIRONMENT=Development", 
+                    subscriptionServiceConnectionString, 
+                    eventStoreConnectionString, 
+                    "EventStoreSettings:HttpPort=2113",
+                    $"ServiceSettings:SubscriptionServiceId={this.SubscriberServiceId}")
                 .UseImage("subscriptionserviceservice")
                 .UseNetwork(new List<INetworkService> {this.TestNetwork, Setup.DatabaseServerNetwork}.ToArray()) 
                 .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)
@@ -145,12 +152,8 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
                 this.TestNetwork.Stop();
                 this.TestNetwork.Remove(true);
             }
-
-            CleanupSubscriptionServiceConfig();
         }
 
         protected abstract void SetupSubscriptionServiceConfig();
-
-        protected abstract void CleanupSubscriptionServiceConfig();
     }
 }

@@ -76,12 +76,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         {
             // Nothing in here
         }
-
-        protected override void CleanupSubscriptionServiceConfig()
-        {
-            // Nothing in here
-        }
-
+        
         [Given(@"I am registered as a player")]
         public async Task GivenIAmRegisteredAsAPlayer()
         {
