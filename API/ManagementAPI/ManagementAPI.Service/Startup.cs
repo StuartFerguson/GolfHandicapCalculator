@@ -8,6 +8,8 @@ using ManagementAPI.Database;
 using ManagementAPI.Database.SeedData;
 using ManagementAPI.Service.Bootstrapper;
 using ManagementAPI.Service.CommandHandlers;
+using ManagementAPI.Service.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -132,6 +134,8 @@ namespace ManagementAPI.Service
             app.AddRequestLogging();
             app.AddResponseLogging();
 
+            app.UseAuthentication();
+
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -156,10 +160,10 @@ namespace ManagementAPI.Service
             {
                 config.AddRegistry<CommonRegistry>();
 
-                if (HostingEnvironment.IsDevelopment())
-                {
-                    config.AddRegistry<DevelopmentRegistry>();
-                }
+                //if (HostingEnvironment.IsDevelopment())
+                //{
+                //    config.AddRegistry<DevelopmentRegistry>();
+                //}
 
                 config.Populate(services);
             });
@@ -221,6 +225,16 @@ namespace ManagementAPI.Service
                     .AddTransient<ManagementAPIReadModel>();
             }
 
+            services.AddAuthorization(ConfigurePolicies);
+
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = ConfigurationReader.GetValue("SecurityConfiguration", "Authority");
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = ConfigurationReader.GetValue("SecurityConfiguration", "ApiName");
+                });
+
             services.AddMvcCore();
             
             services.AddSwaggerGen(c =>
@@ -247,9 +261,81 @@ namespace ManagementAPI.Service
                 DatabaseSeeding.InitialiseDatabase(managementApiReadModel, seedingType);                
             }
         }
-
         #endregion
 
+        #region private static void ConfigurePolicies(AuthorizationOptions policies)        
+        /// <summary>
+        /// Configures the policies.
+        /// </summary>
+        /// <param name="policies">The policies.</param>
+        private static void ConfigurePolicies(AuthorizationOptions policies)
+        {
+            policies.AddPolicy(PolicyNames.GetClubListPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.ClubAdministrator, RoleNames.MatchSecretary, RoleNames.Player});
+            });
+
+            policies.AddPolicy(PolicyNames.GetSingleClubPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.ClubAdministrator, RoleNames.MatchSecretary, RoleNames.Player});
+            });
+            
+            policies.AddPolicy(PolicyNames.AddMeasuredCourseToClubPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.ClubAdministrator});
+                policy.RequireClaim(CustomClaims.ClubId);
+            });
+
+            policies.AddPolicy(PolicyNames.RequestClubMembershipForPlayerPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.Player});
+            });
+
+            policies.AddPolicy(PolicyNames.CreateTournamentPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.ClubAdministrator,RoleNames.MatchSecretary});
+            });
+
+            policies.AddPolicy(PolicyNames.RecordPlayerScoreForTournamentPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.Player});
+            });
+
+            policies.AddPolicy(PolicyNames.CompleteTournamentPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.ClubAdministrator,RoleNames.MatchSecretary});
+            });
+
+            policies.AddPolicy(PolicyNames.CancelTournamentPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.ClubAdministrator,RoleNames.MatchSecretary});
+            });
+
+            policies.AddPolicy(PolicyNames.ProduceTournamentResultPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[] {RoleNames.ClubAdministrator,RoleNames.MatchSecretary});
+            });
+        }
+        #endregion
+        
         #endregion
     }
 }

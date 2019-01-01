@@ -22,9 +22,9 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         }
 
         [Given(@"The Golf Handicapping System Is Running")]
-        public void GivenTheGolfHandicappingSystemIsRunning()
+        public async Task GivenTheGolfHandicappingSystemIsRunning()
         {
-            RunSystem(this.ScenarioContext.ScenarioInfo.Title);
+            await RunSystem(this.ScenarioContext.ScenarioInfo.Title).ConfigureAwait(false);
         }
 
         [AfterScenario()]
@@ -44,15 +44,10 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         public async Task WhenIRegisterMyDetailsOnTheSystem()
         {
             var request = this.ScenarioContext.Get<RegisterPlayerRequest>("RegisterPlayerRequest");
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
 
-                String requestSerialised = JsonConvert.SerializeObject(request);
-                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/Player";
 
-                this.ScenarioContext["RegisterPlayerHttpResponse"] = await client.PostAsync("/api/Player", httpContent, CancellationToken.None).ConfigureAwait(false);
-            }
+            this.ScenarioContext["RegisterPlayerHttpResponse"] = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
         }
         
         [Then(@"my details are registered")]
@@ -65,9 +60,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         [Then(@"my player id will be returned in the response")]
         public async Task ThenMyPlayerIdWillBeReturnedInTheResponse()
         {
-            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("RegisterPlayerHttpResponse");
-
-            var responseData = JsonConvert.DeserializeObject<RegisterPlayerResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
+            var responseData = await GetResponseObject<RegisterPlayerResponse>("RegisterPlayerHttpResponse").ConfigureAwait(false);
 
             responseData.PlayerId.ShouldNotBe(Guid.Empty);
         }
@@ -81,42 +74,24 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         public async Task GivenIAmRegisteredAsAPlayer()
         {
             var request = IntegrationTestsTestData.RegisterPlayerRequest;
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/Player";
 
-                String requestSerialised = JsonConvert.SerializeObject(request);
-                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
+            var responseData = await GetResponseObject<RegisterPlayerResponse>(httpResponse).ConfigureAwait(false);
 
-                var httpResponse = await client.PostAsync("/api/Player", httpContent, CancellationToken.None).ConfigureAwait(false);
-
-                httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-
-                var responseData = JsonConvert.DeserializeObject<RegisterPlayerResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
-
-                this.ScenarioContext["PlayerId"] = responseData.PlayerId;
-            }
+            this.ScenarioContext["PlayerId"] = responseData.PlayerId;
         }
         
         [Given(@"The club I want to register for is already created")]
         public async Task GivenTheClubIWantToRegisterForIsAlreadyCreated()
         {
             var request = IntegrationTestsTestData.CreateClubConfigurationRequest;
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
 
-                String requestSerialised = JsonConvert.SerializeObject(request);
-                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
+            var responseData = await GetResponseObject<CreateClubConfigurationResponse>(httpResponse).ConfigureAwait(false);
 
-                var httpResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None).ConfigureAwait(false);
-
-                httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-
-                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
-
-                this.ScenarioContext["ClubId"] = responseData.ClubConfigurationId;
-            }
+            this.ScenarioContext["ClubId"] = responseData.ClubConfigurationId;
         }
         
         [When(@"I request club membership")]
@@ -125,15 +100,13 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
             Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
             Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubId}";
 
-                //String requestSerialised = JsonConvert.SerializeObject(request);
-                StringContent httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+            String bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
 
-                this.ScenarioContext["ClubMembershipRequestHttpResponse"] = await client.PutAsync($"/api/Player/{playerId}/ClubMembershipRequest/{clubId}", httpContent, CancellationToken.None).ConfigureAwait(false);
-            }
+            Object resquestObject = null;
+            this.ScenarioContext["ClubMembershipRequestHttpResponse"] = await MakeHttpPut(requestUri, resquestObject,bearerToken).ConfigureAwait(false);
         }
         
         [Then(@"my request is successful")]
@@ -142,6 +115,15 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
             HttpResponseMessage httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("ClubMembershipRequestHttpResponse");
 
             httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+
+        [Given(@"I am logged in as a player")]
+        public async Task GivenIAmLoggedInAsAPlayer()
+        {
+            var tokenResponse = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
+                IntegrationTestsTestData.RegisterPlayerRequest.EmailAddress, "123456").ConfigureAwait(false);
+
+            this.ScenarioContext["PlayerToken"] = tokenResponse;
         }
     }
 }

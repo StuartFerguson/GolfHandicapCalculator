@@ -20,13 +20,13 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
     {
         public TournamentManagementSteps(ScenarioContext scenarioContext) : base(scenarioContext)
         {
-
+            // Nothing here
         }
         
         [Given(@"The Golf Handicapping System Is Running")]
-        public void GivenTheGolfHandicappingSystemIsRunning()
+        public async Task GivenTheGolfHandicappingSystemIsRunning()
         {
-            RunSystem(this.ScenarioContext.ScenarioInfo.Title);
+            await RunSystem(this.ScenarioContext.ScenarioInfo.Title).ConfigureAwait(false);
         }
 
         [AfterScenario()]
@@ -38,22 +38,13 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         [Given(@"My Club configuration has been already created")]
         public async Task GivenMyClubConfigurationHasBeenAlreadyCreated()
         {
-            var request = IntegrationTestsTestData.CreateClubConfigurationRequest; 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            var request = IntegrationTestsTestData.CreateClubConfigurationRequest;
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
 
-                String requestSerialised = JsonConvert.SerializeObject(request);
-                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
+            var responseData = await GetResponseObject<CreateClubConfigurationResponse>(httpResponse);
 
-                var httpResponse = await client.PostAsync("/api/ClubConfiguration", httpContent, CancellationToken.None).ConfigureAwait(false);
-
-                httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-
-                var responseData = JsonConvert.DeserializeObject<CreateClubConfigurationResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
-
-                this.ScenarioContext["ClubConfigurationId"] = responseData.ClubConfigurationId;
-            }
+            this.ScenarioContext["ClubConfigurationId"] = responseData.ClubConfigurationId;            
         }
         
         [Given(@"the club has a measured course")]
@@ -61,21 +52,16 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         {
             var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
+            addMeasuredCourseToClubRequest.ClubAggregateId = clubConfigurationId;
 
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
 
-                var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
-                addMeasuredCourseToClubRequest.ClubAggregateId = clubConfigurationId;
+            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
-                var requestSerialised = JsonConvert.SerializeObject(addMeasuredCourseToClubRequest);
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            var httpResponse = await MakeHttpPut(requestUri, addMeasuredCourseToClubRequest, bearerToken).ConfigureAwait(false);
 
-                var httpResponse = await client.PutAsync("/api/ClubConfiguration", httpContent, CancellationToken.None).ConfigureAwait(false);
-
-                httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-            }
+            httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);            
         }
         
         [Given(@"I have the details of the new tournament")]
@@ -96,15 +82,11 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         {
             var createTournamentRequest = this.ScenarioContext.Get<CreateTournamentRequest>("CreateTournamentRequest");
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament";
 
-                var requestSerialised = JsonConvert.SerializeObject(createTournamentRequest);
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
-                this.ScenarioContext["CreateTournamentHttpResponse"] = await client.PostAsync("/api/Tournament", httpContent, CancellationToken.None).ConfigureAwait(false);
-            }
+            this.ScenarioContext["CreateTournamentHttpResponse"] = await MakeHttpPost(requestUri, createTournamentRequest, bearerToken).ConfigureAwait(false);            
         }
         
         [Then(@"the tournament will be created")]
@@ -117,9 +99,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         [Then(@"I will get the new Tournament Id in the response")]
         public async Task ThenIWillGetTheNewTournamentIdInTheResponse()
         {
-            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("CreateTournamentHttpResponse");
-
-            var responseData = JsonConvert.DeserializeObject<CreateTournamentResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
+            var responseData = await GetResponseObject<CreateTournamentResponse>("CreateTournamentHttpResponse");
 
             responseData.TournamentId.ShouldNotBe(Guid.Empty);
         }
@@ -134,21 +114,15 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             createTournamentRequest.ClubConfigurationId = clubConfigurationId;
             createTournamentRequest.MeasuredCourseId = addMeasuredCourseToClubRequest.MeasuredCourseId;
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament";
 
-                var requestSerialised = JsonConvert.SerializeObject(createTournamentRequest);
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
-                var httpResponse = await client.PostAsync("/api/Tournament", httpContent, CancellationToken.None).ConfigureAwait(false);
+            var httpResponse = await MakeHttpPost(requestUri, createTournamentRequest, bearerToken).ConfigureAwait(false);
 
-                httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            var createTournamentResponseData = await GetResponseObject<CreateTournamentResponse>(httpResponse).ConfigureAwait(false);
 
-                var createTournamentResponseData = JsonConvert.DeserializeObject<CreateTournamentResponse>(await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false));
-
-                this.ScenarioContext["CreateTournamentResponse"] = createTournamentResponseData;
-            }
+            this.ScenarioContext["CreateTournamentResponse"] = createTournamentResponseData;
         }
         
         [When(@"a member records their score")]
@@ -159,16 +133,11 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
 
             var recordMemberTournamentScoreRequest = IntegrationTestsTestData.RecordMemberTournamentScoreRequest;
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
-                var requestSerialised = JsonConvert.SerializeObject(recordMemberTournamentScoreRequest);
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            var bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
 
-                this.ScenarioContext["RecordMemberTournamentScoreHttpResponse"] =
-                    await client.PutAsync($"api/Tournament/{createTournamentResponseData.TournamentId}/RecordMemberScore", httpContent,
-                        CancellationToken.None).ConfigureAwait(false);
-            }
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament/{createTournamentResponseData.TournamentId}/RecordMemberScore";
+            this.ScenarioContext["RecordMemberTournamentScoreHttpResponse"] = await MakeHttpPut(requestUri, recordMemberTournamentScoreRequest, bearerToken).ConfigureAwait(false);
         }
         
         [Then(@"the score is recorded against the tournament")]
@@ -187,16 +156,12 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
 
             var cancelTournamentRequest = IntegrationTestsTestData.CancelTournamentRequest;
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
-                var requestSerialised = JsonConvert.SerializeObject(cancelTournamentRequest);
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament/{createTournamentResponseData.TournamentId}/Cancel";
 
-                this.ScenarioContext["CancelTournamentHttpResponse"] =
-                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Cancel", httpContent, CancellationToken.None).ConfigureAwait(false);
-            }
+            this.ScenarioContext["CancelTournamentHttpResponse"] = await MakeHttpPut(requestUri, cancelTournamentRequest, bearerToken).ConfigureAwait(false);
         }
         
         [Then(@"the tournament is cancelled")]
@@ -218,18 +183,13 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
                 var recordMemberTournamentScoreRequest = IntegrationTestsTestData.RecordMemberTournamentScoreRequest;
                 recordMemberTournamentScoreRequest.MemberId = Guid.NewGuid();
 
-                using (HttpClient client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
-                    var requestSerialised = JsonConvert.SerializeObject(recordMemberTournamentScoreRequest);
-                    var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                var bearerToken = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
+                    "player@test.co.uk", "123456").ConfigureAwait(false);
 
-                    var httpResponse =
-                        await client.PutAsync($"api/Tournament/{createTournamentResponseData.TournamentId}/RecordMemberScore", httpContent,
-                            CancellationToken.None).ConfigureAwait(false);
+                String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament/{createTournamentResponseData.TournamentId}/RecordMemberScore";
+                var httpResponse = await MakeHttpPut(requestUri, recordMemberTournamentScoreRequest, bearerToken).ConfigureAwait(false);
 
-                    httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-                }
+                httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
             }
         }
         
@@ -239,15 +199,13 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             var createTournamentResponseData =
                 this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament/{createTournamentResponseData.TournamentId}/Complete";
 
-                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
-                this.ScenarioContext["CompleteTournamentHttpResponse"] =
-                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Complete", httpContent, CancellationToken.None).ConfigureAwait(false);
-            }
+            Object requestObject = null;
+            this.ScenarioContext["CompleteTournamentHttpResponse"] = await MakeHttpPut(requestUri, requestObject, bearerToken).ConfigureAwait(false);            
         }
         
         [Then(@"the tournament is completed")]
@@ -264,17 +222,14 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             var createTournamentResponseData =
                 this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament/{createTournamentResponseData.TournamentId}/Complete";
+            
+            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
-                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
-
-                var httpResponse  =
-                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/Complete", httpContent, CancellationToken.None).ConfigureAwait(false);
-
-                httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-            }
+            Object requestObject = null;
+            var httpResponse  = await MakeHttpPut(requestUri, requestObject, bearerToken).ConfigureAwait(false);  
+            httpResponse.StatusCode.ShouldBe(HttpStatusCode.NoContent);
         }
         
         [When(@"I request to produce a tournament result")]
@@ -283,15 +238,13 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             var createTournamentResponseData =
                 this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"http://127.0.0.1:{this.ManagementApiPort}");
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament/{createTournamentResponseData.TournamentId}/ProduceResult";
 
-                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
-                this.ScenarioContext["ProduceResultHttpResponse"] =
-                    await client.PutAsync($"/api/Tournament/{createTournamentResponseData.TournamentId}/ProduceResult", httpContent, CancellationToken.None).ConfigureAwait(false);
-            }
+            Object requestObject = null;
+            this.ScenarioContext["ProduceResultHttpResponse"] = await MakeHttpPut(requestUri, requestObject,bearerToken).ConfigureAwait(false);
         }
         
         [Then(@"the results are produced")]
@@ -305,6 +258,24 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         protected override void SetupSubscriptionServiceConfig()
         {            
             // Nothing in here
+        }
+
+        [Given(@"I am logged in as a club administrator")]
+        public async Task GivenIAmLoggedInAsAClubAdministrator()
+        {
+            var tokenResponse = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
+                IntegrationTestsTestData.CreateClubConfigurationRequest.EmailAddress, "123456").ConfigureAwait(false);
+
+            this.ScenarioContext["ClubAdministratorToken"] = tokenResponse;
+        }
+
+        [Given(@"I am logged in as a player")]
+        public async Task GivenIAmLoggedInAsAPlayer()
+        {
+            var tokenResponse = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
+                "player@test.co.uk", "123456").ConfigureAwait(false);
+
+            this.ScenarioContext["PlayerToken"] = tokenResponse;
         }
     }
 }

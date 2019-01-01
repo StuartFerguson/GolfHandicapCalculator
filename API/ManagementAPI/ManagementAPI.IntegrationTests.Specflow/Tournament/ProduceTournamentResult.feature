@@ -7,6 +7,7 @@ Feature: Produce Tournament Result
 Background: 
 	Given The Golf Handicapping System Is Running
 	And My Club configuration has been already created
+	And I am logged in as a club administrator
 	And the club has a measured course	
 
 Scenario: Produce Tournament Result

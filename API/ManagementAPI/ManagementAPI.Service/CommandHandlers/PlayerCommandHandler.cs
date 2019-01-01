@@ -97,7 +97,10 @@ namespace ManagementAPI.Service.CommandHandlers
                 },
                 Password = "123456",
                 PhoneNumber = "123456789",
-                Roles = new List<String>()
+                Roles = new List<String>
+                {
+                    "Player"
+                }
             };
             var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);
 

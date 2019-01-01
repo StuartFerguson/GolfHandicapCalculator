@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Commands;
+using ManagementAPI.Service.Common;
 using ManagementAPI.Service.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.CommandHandling;
 
@@ -14,6 +16,7 @@ namespace ManagementAPI.Service.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [ExcludeFromCodeCoverage]
+    [Authorize]
     public class PlayerController : ControllerBase
     {
         #region Fields
@@ -49,6 +52,7 @@ namespace ManagementAPI.Service.Controllers
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(RegisterPlayerResponse), 200)]
+        [AllowAnonymous]
         public async Task<IActionResult> PostPlayer([FromBody]RegisterPlayerRequest request, CancellationToken cancellationToken)
         {
             // Create the command
@@ -64,6 +68,7 @@ namespace ManagementAPI.Service.Controllers
 
         [HttpPut]
         [Route("{playerId}/ClubMembershipRequest/{clubId}")]
+        [Authorize(Policy = PolicyNames.RequestClubMembershipForPlayerPolicy)]
         public async Task<IActionResult> PutPlayer([FromRoute] Guid playerId, [FromRoute] Guid clubId, CancellationToken cancellationToken)
         {
             // Create the command
