@@ -6,8 +6,10 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Commands;
+using ManagementAPI.Service.Common;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Manager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.CommandHandling;
@@ -17,6 +19,7 @@ namespace ManagementAPI.Service.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [ExcludeFromCodeCoverage]
+    [Authorize]
     public class ClubConfigurationController : ControllerBase
     {
         #region Fields
@@ -58,6 +61,7 @@ namespace ManagementAPI.Service.Controllers
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(CreateClubConfigurationResponse), 200)]
+        [AllowAnonymous]
         public async Task<IActionResult> PostClubConfiguration([FromBody]CreateClubConfigurationRequest request, CancellationToken cancellationToken)
         {
             // Create the command
@@ -71,16 +75,17 @@ namespace ManagementAPI.Service.Controllers
         }
         #endregion
 
-        #region public async Task<IActionResult> GetClubConfiguration([FromQuery] Guid clubId,CancellationToken cancellationToken)        
+        #region public async Task<IActionResult> GetClubConfiguration([FromQuery] Guid clubConfigurationId,CancellationToken cancellationToken)        
         /// <summary>
         /// Gets the club configuration.
         /// </summary>
-        /// <param name="clubConfigurationId">The clubconfiguration.</param>
+        /// <param name="clubConfigurationId">The club configuration identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(GetClubConfigurationResponse), 200)]
         [Route("{clubConfigurationId}")]
+        [Authorize(Policy = PolicyNames.GetSingleClubPolicy)]
         public async Task<IActionResult> GetClubConfiguration([FromRoute] Guid clubConfigurationId,CancellationToken cancellationToken)
         {
             var clubConfiguration = await this.Manager.GetClubConfiguration(clubConfigurationId, cancellationToken);
@@ -96,7 +101,8 @@ namespace ManagementAPI.Service.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(List<GetClubConfigurationResponse>), 200)]
+        [ProducesResponseType(typeof(List<GetClubConfigurationResponse>), 200)]        
+        [Authorize(Policy = PolicyNames.GetClubListPolicy)]
         public async Task<IActionResult> GetClubConfigurationList(CancellationToken cancellationToken)
         {
             var clubConfiguration = await this.Manager.GetClubList(cancellationToken);
@@ -113,6 +119,7 @@ namespace ManagementAPI.Service.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPut]
+        [Authorize(Policy = PolicyNames.AddMeasuredCourseToClubPolicy)]
         public async Task<IActionResult> PutClubConfiguration(AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)
         {
             // Create the command

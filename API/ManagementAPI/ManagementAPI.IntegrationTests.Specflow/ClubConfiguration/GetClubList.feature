@@ -7,6 +7,7 @@ Feature: Get Club List
 Background: 
 	Given The Golf Handicapping System Is Running
 	And a club has already been created
+	And I am logged in as a player
 
 Scenario: Get Club List	
 	When I request the list of clubs

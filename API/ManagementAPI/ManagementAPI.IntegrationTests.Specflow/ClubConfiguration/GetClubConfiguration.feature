@@ -9,6 +9,7 @@ Background:
 
 Scenario: Get Created Club Configuration
 	Given My Club configuration has been created
+	And I am logged in as a club administrator
 	When I request the details of the club
 	Then the club configuration will be returned
 	And the club data returned is the correct club

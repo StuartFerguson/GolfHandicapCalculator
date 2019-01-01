@@ -100,7 +100,10 @@ namespace ManagementAPI.Service.CommandHandlers
                 },
                 Password = "123456",
                 PhoneNumber = command.CreateClubConfigurationRequest.TelephoneNumber,
-                Roles = new List<String>()
+                Roles = new List<String>
+                {
+                    "Club Administrator"
+                }
             };
             var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);
 

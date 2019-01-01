@@ -123,6 +123,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GetClubList.feature</DependentUpon>
     </Compile>
+    <Compile Include="Common\CreateRoleRequest.cs" />
     <Compile Include="Common\GenericSteps.cs" />
     <Compile Include="Common\IntegrationTestsTestData.cs" />
     <Compile Include="ClubConfiguration\CreateClubConfiguration.feature.cs">

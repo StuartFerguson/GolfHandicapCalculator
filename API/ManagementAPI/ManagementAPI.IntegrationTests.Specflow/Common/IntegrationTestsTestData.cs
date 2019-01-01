@@ -83,5 +83,12 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
             Gender = "M",
             ExactHandicap = 6.1m
         };
+        
+        public static List<CreateRoleRequest> RolesToCreateRequests = new List<CreateRoleRequest>
+        {
+            new CreateRoleRequest {RoleName = "Club Administrator"},
+            new CreateRoleRequest {RoleName = "Match Secretary"},
+            new CreateRoleRequest {RoleName = "Player"}
+        };
     }
 }

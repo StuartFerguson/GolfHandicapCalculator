@@ -25,7 +25,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
             DatabaseServerNetwork = new Builder().UseNetwork($"testnetwork{Guid.NewGuid()}").Build();
 
             // Start the Database Server here
-            DbConnectionStringWithNoDatabase = StartMySqlContainerWithOpenConnection();            
+            //DbConnectionStringWithNoDatabase = StartMySqlContainerWithOpenConnection();            
         }
 
         public static String GetConnectionString(String databaseName)
@@ -37,7 +37,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
         protected static void GlobalTearDown()
         {
             // Kill the DB Server 
-            DatabaseServerContainer?.Stop();
+            //DatabaseServerContainer?.Stop();
 
             // Kill the Network 
             DatabaseServerNetwork?.Stop();
