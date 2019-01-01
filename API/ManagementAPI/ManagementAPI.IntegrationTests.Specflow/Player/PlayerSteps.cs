@@ -125,6 +125,5 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
 
             this.ScenarioContext["PlayerToken"] = tokenResponse;
         }
-
     }
 }

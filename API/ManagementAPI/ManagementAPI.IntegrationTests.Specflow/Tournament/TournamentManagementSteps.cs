@@ -20,7 +20,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
     {
         public TournamentManagementSteps(ScenarioContext scenarioContext) : base(scenarioContext)
         {
-
+            // Nothing here
         }
         
         [Given(@"The Golf Handicapping System Is Running")]
@@ -277,7 +277,5 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
 
             this.ScenarioContext["PlayerToken"] = tokenResponse;
         }
-
-
     }
 }

@@ -261,10 +261,13 @@ namespace ManagementAPI.Service
                 DatabaseSeeding.InitialiseDatabase(managementApiReadModel, seedingType);                
             }
         }
-
         #endregion
 
-        #region private static void ConfigurePolicies(AuthorizationOptions policies)
+        #region private static void ConfigurePolicies(AuthorizationOptions policies)        
+        /// <summary>
+        /// Configures the policies.
+        /// </summary>
+        /// <param name="policies">The policies.</param>
         private static void ConfigurePolicies(AuthorizationOptions policies)
         {
             policies.AddPolicy(PolicyNames.GetClubListPolicy, policy =>
@@ -332,8 +335,7 @@ namespace ManagementAPI.Service
             });
         }
         #endregion
-
-
+        
         #endregion
     }
 }

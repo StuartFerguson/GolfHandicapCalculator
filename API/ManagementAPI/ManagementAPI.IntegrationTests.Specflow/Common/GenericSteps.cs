@@ -267,8 +267,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
                 .UseNetwork(new List<INetworkService> {this.TestNetwork, Setup.DatabaseServerNetwork}.ToArray())     
                 .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)
                 .Build()
-                .Start().WaitForPort("5000/tcp", 30000);
-      
+                .Start().WaitForPort("5000/tcp", 30000);      
         }
 
         private void SetupEventStoreContainer(String testFolder)
@@ -304,17 +303,5 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
                 .Build()
                 .Start();
         }        
-    }
-
-    public enum TokenType
-    {
-        Client,
-        Password
-    }
-
-    public class TokenResponse
-    {
-        [JsonProperty("access_token")]
-        public String AccessToken { get; set; }
     }
 }
