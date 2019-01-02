@@ -18,6 +18,14 @@ namespace ManagementAPI.Service.Commands
         /// The add measured course to club request.
         /// </value>
         public AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest { get; private set; }
+        
+        /// <summary>
+        /// Gets the club configuration identifier.
+        /// </summary>
+        /// <value>
+        /// The club configuration identifier.
+        /// </value>
+        public Guid ClubConfigurationId { get; private set; }
 
         #endregion
 
@@ -27,8 +35,9 @@ namespace ManagementAPI.Service.Commands
         /// </summary>
         /// <param name="addMeasuredCourseToClubRequest">The add measured course to club request.</param>
         /// <param name="commandId">The command identifier.</param>
-        private AddMeasuredCourseToClubCommand(AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest, Guid commandId) : base(commandId)
+        private AddMeasuredCourseToClubCommand(Guid clubConfigurationId, AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest, Guid commandId) : base(commandId)
         {
+            this.ClubConfigurationId = clubConfigurationId;
             this.AddMeasuredCourseToClubRequest = addMeasuredCourseToClubRequest;
         }
         #endregion
@@ -37,10 +46,12 @@ namespace ManagementAPI.Service.Commands
         /// <summary>
         /// Creates this instance.
         /// </summary>
+        /// <param name="clubConfigurationId">The club configuration identifier.</param>
+        /// <param name="addMeasuredCourseToClubRequest">The add measured course to club request.</param>
         /// <returns></returns>
-        public static AddMeasuredCourseToClubCommand Create(AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest)
+        public static AddMeasuredCourseToClubCommand Create(Guid clubConfigurationId, AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest)
         {
-            return new AddMeasuredCourseToClubCommand(addMeasuredCourseToClubRequest, Guid.NewGuid());
+            return new AddMeasuredCourseToClubCommand(clubConfigurationId, addMeasuredCourseToClubRequest, Guid.NewGuid());
         }
         #endregion
     }

@@ -111,25 +111,33 @@ namespace ManagementAPI.Service.Controllers
         }
         #endregion
 
-        #region public async Task<IActionResult> PutClubConfiguration(AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)        
+        #region public async Task<IActionResult> PutClubConfiguration([FromRoute] Guid clubConfigurationId, [FromBody] AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)
         /// <summary>
         /// Puts the club configuration.
         /// </summary>
+        /// <param name="clubConfigurationId">The club configuration identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPut]
         [Authorize(Policy = PolicyNames.AddMeasuredCourseToClubPolicy)]
-        public async Task<IActionResult> PutClubConfiguration(AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> PutClubConfiguration([FromRoute] Guid clubConfigurationId, [FromBody] AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)
         {
             // Create the command
-            var command = AddMeasuredCourseToClubCommand.Create(request);
+            var command = AddMeasuredCourseToClubCommand.Create(clubConfigurationId, request);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
+        }
+        #endregion
+
+        #region public async Task<IActionResult> GetPendingMembershipRequests([FromRoute] Guid clubConfigurationId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPendingMembershipRequests([FromRoute] Guid clubConfigurationId, CancellationToken cancellationToken)
+        {
+            return this.Ok();
         }
         #endregion
 

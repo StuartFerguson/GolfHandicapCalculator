@@ -289,7 +289,6 @@ namespace ManagementAPI.Service
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[] {RoleNames.ClubAdministrator});
-                policy.RequireClaim(CustomClaims.ClubId);
             });
 
             policies.AddPolicy(PolicyNames.RequestClubMembershipForPlayerPolicy, policy =>

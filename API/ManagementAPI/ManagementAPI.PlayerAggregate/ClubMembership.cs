@@ -16,7 +16,7 @@ namespace ManagementAPI.Player
         private ClubMembership(Guid clubId, DateTime membershipRequestedDateAndTime)
         {
             this.ClubId = clubId;
-            this.MembershipRequestedDateAndTimeId = membershipRequestedDateAndTime;
+            this.MembershipRequestedDateAndTime = membershipRequestedDateAndTime;
         }
 
         #endregion
@@ -32,12 +32,12 @@ namespace ManagementAPI.Player
         internal Guid ClubId { get; private set; }
 
         /// <summary>
-        /// Gets the membership requested date and time identifier.
+        /// Gets the membership requested date and time.
         /// </summary>
         /// <value>
-        /// The membership requested date and time identifier.
+        /// The membership requested date and time.
         /// </value>
-        internal DateTime MembershipRequestedDateAndTimeId { get; private set; }
+        internal DateTime MembershipRequestedDateAndTime { get; private set; }
 
         #endregion
 

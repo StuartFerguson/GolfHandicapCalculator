@@ -128,7 +128,7 @@ namespace ManagementAPI.Service.CommandHandlers
         private async Task HandleCommand(AddMeasuredCourseToClubCommand command, CancellationToken cancellationToken)
         {
             // Rehydrate the aggregate
-            var club = await this.ClubConfigurationRepository.GetLatestVersion(command.AddMeasuredCourseToClubRequest.ClubAggregateId, cancellationToken);
+            var club = await this.ClubConfigurationRepository.GetLatestVersion(command.ClubConfigurationId, cancellationToken);
 
             // Translate the request to the input for AddMeasuredCourse
             MeasuredCourseDataTransferObject measuredCourse = new MeasuredCourseDataTransferObject

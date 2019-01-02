@@ -22,7 +22,7 @@ namespace ManagementAPI.Database
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReadModelContext" /> class using the connection string passed in.
+        /// Initializes a new instance of the <see cref="ManagementAPIReadModel" /> class using the connection string passed in.
         /// </summary>
         /// <param name="connectionString">The connection string.</param>
         public ManagementAPIReadModel(String connectionString)
@@ -31,7 +31,7 @@ namespace ManagementAPI.Database
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SubscriptionServiceConfigurationContext"/> class.
+        /// Initializes a new instance of the <see cref="ManagementAPIReadModel"/> class.
         /// </summary>
         /// <param name="options">The options.</param>
         public ManagementAPIReadModel(DbContextOptions<ManagementAPIReadModel> options) : base(options)
@@ -72,6 +72,14 @@ namespace ManagementAPI.Database
         /// The club information
         /// </summary>
         public DbSet<ClubInformation> ClubInformation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the club membership request.
+        /// </summary>
+        /// <value>
+        /// The club membership request.
+        /// </value>
+        public DbSet<ClubMembershipRequest> ClubMembershipRequest { get; set; }
 
         #endregion
     }

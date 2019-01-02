@@ -203,7 +203,6 @@ namespace ManagementAPI.Service.Tests
         public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest =
             new AddMeasuredCourseToClubRequest()
             {
-                ClubAggregateId = AggregateId,
                 Name = MeasuredCourseName,
                 StandardScratchScore = StandardScratchScore,
                 TeeColour = TeeColour,
@@ -237,7 +236,7 @@ namespace ManagementAPI.Service.Tests
 
         public static AddMeasuredCourseToClubCommand GetAddMeasuredCourseToClubCommand()
         {
-            return AddMeasuredCourseToClubCommand.Create(ClubConfigurationTestData.AddMeasuredCourseToClubRequest);
+            return AddMeasuredCourseToClubCommand.Create(AggregateId, ClubConfigurationTestData.AddMeasuredCourseToClubRequest);
         }
         
         public static RegisterUserResponse GetRegisterUserResponse()

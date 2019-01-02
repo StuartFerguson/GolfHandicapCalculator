@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ManagementAPI.Player;
+using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services.DataTransferObjects;
@@ -116,6 +117,11 @@ namespace ManagementAPI.Service.Tests.Player
         public static PlayerClubMembershipRequestCommand GetPlayerClubMembershipRequestCommand()
         {
             return PlayerClubMembershipRequestCommand.Create(AggregateId,ClubId);
+        }
+
+        public static ClubMembershipRequestedEvent GetClubMembershipRequestedEvent()
+        {
+            return ClubMembershipRequestedEvent.Create(AggregateId, ClubId, MembershipRequestedDateAndTime);
         }
     }
 }

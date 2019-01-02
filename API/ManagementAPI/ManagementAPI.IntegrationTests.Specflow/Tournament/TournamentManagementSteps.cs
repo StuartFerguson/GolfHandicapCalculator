@@ -53,9 +53,9 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
 
             var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
-            addMeasuredCourseToClubRequest.ClubAggregateId = clubConfigurationId;
+            //addMeasuredCourseToClubRequest.ClubAggregateId = clubConfigurationId;
 
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration/{clubConfigurationId}";
 
             var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 

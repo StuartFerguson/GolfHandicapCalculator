@@ -133,12 +133,12 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 this.ScenarioContext.Get<CreateClubConfigurationResponse>("CreateClubConfigurationResponse");
 
             var request = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
-            request.ClubAggregateId = createClubConfigurationResponse.ClubConfigurationId;
+            //request.ClubAggregateId = createClubConfigurationResponse.ClubConfigurationId;
 
             // Get the token
             var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
             
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration/{createClubConfigurationResponse.ClubConfigurationId}";
 
             this.ScenarioContext["AddMeasuredCourseToClubHttpResponse"] = await MakeHttpPut(requestUri, request, bearerToken).ConfigureAwait(false);
         }
