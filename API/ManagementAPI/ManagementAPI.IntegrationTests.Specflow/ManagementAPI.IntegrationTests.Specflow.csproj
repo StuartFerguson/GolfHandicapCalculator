@@ -133,6 +133,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GetClubList.feature</DependentUpon>
     </Compile>
+    <Compile Include="ClubConfiguration\GetPendingClubMembershipRequests.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GetPendingClubMembershipRequests.feature</DependentUpon>
+    </Compile>
     <Compile Include="Common\CreateRoleRequest.cs" />
     <Compile Include="Common\GenericSteps.cs" />
     <Compile Include="Common\IntegrationTestsTestData.cs" />
@@ -196,6 +201,10 @@
     <None Include="ClubConfiguration\GetClubList.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>GetClubList.feature.cs</LastGenOutput>
+    </None>
+    <None Include="ClubConfiguration\GetPendingClubMembershipRequests.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>GetPendingClubMembershipRequests.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
     <None Include="Player\RegisterPlayer.feature">
