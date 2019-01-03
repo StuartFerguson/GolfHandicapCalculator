@@ -97,6 +97,11 @@ namespace ManagementAPI.Service.Tests.Player
             ExactHandicap = ExactHandicap
         };
 
+        public static RegisterPlayerResponse RegisterPlayerResponse = new RegisterPlayerResponse
+        {
+            PlayerId = AggregateId
+        };
+
         public static RegisterPlayerCommand GetRegisterPlayerCommand()
         {
             return RegisterPlayerCommand.Create(RegisterPlayerRequest);

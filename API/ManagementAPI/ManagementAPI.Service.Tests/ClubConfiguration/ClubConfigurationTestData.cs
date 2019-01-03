@@ -200,6 +200,12 @@ namespace ManagementAPI.Service.Tests
             AddressLine2 = AddressLine2
         };
 
+        public static CreateClubConfigurationResponse CreateClubConfigurationResponse =
+            new CreateClubConfigurationResponse
+            {
+                ClubConfigurationId = AggregateId
+            };
+
         public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest =
             new AddMeasuredCourseToClubRequest()
             {
@@ -256,5 +262,37 @@ namespace ManagementAPI.Service.Tests
 
             return domainEvent;
         }
+
+        public static List<GetClubConfigurationResponse> GetClubConfigurationListResponse = new List<GetClubConfigurationResponse>
+        {
+            new GetClubConfigurationResponse
+            {
+                Id = AggregateId,
+                AddressLine1 = AddressLine1,
+                Name = Name,
+                AddressLine2 = AddressLine2,
+                EmailAddress = EmailAddress,
+                PostalCode = PostalCode,
+                Region = Region,
+                TelephoneNumber = TelephoneNumber,
+                Town = Town,
+                Website = Website
+            }
+        };
+
+        public static Guid PlayerId = Guid.Parse("357B70E6-8810-40FB-A6AD-9D193D4F6376");
+        public static DateTime MembershipRequestedDateAndTime = new DateTime(2019,1,1);
+
+        public static List<GetClubMembershipRequestResponse> GetClubMembershipRequestResponse =
+            new List<GetClubMembershipRequestResponse>
+            {
+                new GetClubMembershipRequestResponse()
+                {
+                    ClubId = AggregateId,
+                    PlayerId = PlayerId,
+                    MembershipRequestedDateAndTime = MembershipRequestedDateAndTime,
+                    Status = 0 // Pending
+                }
+            };
     }
 }

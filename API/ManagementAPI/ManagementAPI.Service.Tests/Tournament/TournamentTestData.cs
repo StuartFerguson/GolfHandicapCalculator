@@ -178,6 +178,11 @@ namespace ManagementAPI.Service.Tests
             Format = TournamentFormat
         };
 
+        public static CreateTournamentResponse CreateTournamentResponse = new CreateTournamentResponse
+        {
+            TournamentId = AggregateId
+        };
+
         public static CreateTournamentCommand GetCreateTournamentCommand()
         {
             return CreateTournamentCommand.Create(CreateTournamentRequest);

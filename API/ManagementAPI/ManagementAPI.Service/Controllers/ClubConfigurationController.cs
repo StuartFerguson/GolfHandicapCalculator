@@ -134,10 +134,22 @@ namespace ManagementAPI.Service.Controllers
         }
         #endregion
 
-        #region public async Task<IActionResult> GetPendingMembershipRequests([FromRoute] Guid clubConfigurationId, CancellationToken cancellationToken)
+        #region public async Task<IActionResult> GetPendingMembershipRequests([FromRoute] Guid clubConfigurationId, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Gets the pending membership requests.
+        /// </summary>
+        /// <param name="clubConfigurationId">The club configuration identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(List<GetClubMembershipRequestResponse>), 200)]
+        [Route("{clubConfigurationId}/PendingMebershipRequests")]
+        //[Authorize(Policy = PolicyNames.GetClubListPolicy)]
         public async Task<IActionResult> GetPendingMembershipRequests([FromRoute] Guid clubConfigurationId, CancellationToken cancellationToken)
         {
-            return this.Ok();
+            var pendingMembershipRequests = await this.Manager.GetPendingMembershipRequests(clubConfigurationId, cancellationToken);
+
+            return this.Ok(pendingMembershipRequests);
         }
         #endregion
 
