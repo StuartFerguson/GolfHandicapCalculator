@@ -40,18 +40,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ductus.FluentDocker, Version=2.6.3.0, Culture=neutral, PublicKeyToken=961e8a38a128a442, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ductus.FluentDocker.2.6.3\lib\net452\Ductus.FluentDocker.dll</HintPath>
+    <Reference Include="Ductus.FluentDocker, Version=2.6.4.0, Culture=neutral, PublicKeyToken=961e8a38a128a442, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ductus.FluentDocker.2.6.4\lib\net452\Ductus.FluentDocker.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+    <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.6.1\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=8.0.13.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.8.0.13\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SharpCompress, Version=0.22.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpCompress.0.22.0\lib\net45\SharpCompress.dll</HintPath>
@@ -89,7 +89,7 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="TechTalk.SpecFlow, Version=2.4.0.0, Culture=neutral, PublicKeyToken=0778194805d6db41, processorArchitecture=MSIL">
-      <HintPath>..\packages\SpecFlow.2.4.0\lib\net45\TechTalk.SpecFlow.dll</HintPath>
+      <HintPath>..\packages\SpecFlow.2.4.1\lib\net45\TechTalk.SpecFlow.dll</HintPath>
     </Reference>
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\packages\xunit.abstractions.2.0.3\lib\net35\xunit.abstractions.dll</HintPath>
@@ -118,25 +118,30 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AddMeasuredCoursetoExistingClub.feature</DependentUpon>
     </Compile>
-    <Compile Include="ClubConfiguration\GetClubList.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GetClubList.feature</DependentUpon>
-    </Compile>
-    <Compile Include="Common\CreateRoleRequest.cs" />
-    <Compile Include="Common\GenericSteps.cs" />
-    <Compile Include="Common\IntegrationTestsTestData.cs" />
     <Compile Include="ClubConfiguration\CreateClubConfiguration.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CreateClubConfiguration.feature</DependentUpon>
     </Compile>
-    <Compile Include="ClubConfiguration\ClubConfigurationSteps.cs" />
     <Compile Include="ClubConfiguration\GetClubConfiguration.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>GetClubConfiguration.feature</DependentUpon>
     </Compile>
+    <Compile Include="ClubConfiguration\GetClubList.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GetClubList.feature</DependentUpon>
+    </Compile>
+    <Compile Include="ClubConfiguration\GetPendingClubMembershipRequests.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GetPendingClubMembershipRequests.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Common\CreateRoleRequest.cs" />
+    <Compile Include="Common\GenericSteps.cs" />
+    <Compile Include="Common\IntegrationTestsTestData.cs" />
+    <Compile Include="ClubConfiguration\ClubConfigurationSteps.cs" />
     <Compile Include="Common\Setup.cs" />
     <Compile Include="Common\TokenResponse.cs" />
     <Compile Include="Common\TokenType.cs" />
@@ -196,6 +201,10 @@
     <None Include="ClubConfiguration\GetClubList.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>GetClubList.feature.cs</LastGenOutput>
+    </None>
+    <None Include="ClubConfiguration\GetPendingClubMembershipRequests.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>GetPendingClubMembershipRequests.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
     <None Include="Player\RegisterPlayer.feature">
@@ -264,13 +273,13 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\SpecFlow.2.4.0\build\SpecFlow.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SpecFlow.2.4.0\build\SpecFlow.targets'))" />
     <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.props'))" />
     <Error Condition="!Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.4.1\build\xunit.core.targets'))" />
     <Error Condition="!Exists('..\packages\xunit.runner.visualstudio.2.4.1\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.visualstudio.2.4.1\build\net20\xunit.runner.visualstudio.props'))" />
+    <Error Condition="!Exists('..\packages\SpecFlow.2.4.1\build\SpecFlow.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SpecFlow.2.4.1\build\SpecFlow.targets'))" />
   </Target>
-  <Import Project="..\packages\SpecFlow.2.4.0\build\SpecFlow.targets" Condition="Exists('..\packages\SpecFlow.2.4.0\build\SpecFlow.targets')" />
   <Import Project="..\packages\xunit.core.2.4.1\build\xunit.core.targets" Condition="Exists('..\packages\xunit.core.2.4.1\build\xunit.core.targets')" />
+  <Import Project="..\packages\SpecFlow.2.4.1\build\SpecFlow.targets" Condition="Exists('..\packages\SpecFlow.2.4.1\build\SpecFlow.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

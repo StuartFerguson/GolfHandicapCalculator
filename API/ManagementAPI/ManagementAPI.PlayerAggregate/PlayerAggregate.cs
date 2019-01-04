@@ -253,7 +253,7 @@ namespace ManagementAPI.Player
                 result.Add(new ClubMembershipDataTransferObject
                 {
                     ClubId = clubMembership.ClubId,
-                    MembershipRequestedDateAndTime = clubMembership.MembershipRequestedDateAndTimeId
+                    MembershipRequestedDateAndTime = clubMembership.MembershipRequestedDateAndTime
                 });
             }
 

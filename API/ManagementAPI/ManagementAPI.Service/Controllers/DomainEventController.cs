@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventStore.ClientAPI.Exceptions;
 using ManagementAPI.ClubConfiguration.DomainEvents;
+using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.Manager;
 using Microsoft.AspNetCore.Mvc;
 using Shared.EventSourcing;
@@ -79,6 +80,19 @@ namespace ManagementAPI.Service.Controllers
         private async Task HandleEvent(ClubConfigurationCreatedEvent domainEvent, CancellationToken cancellationToken)
         {
             await this.Manager.InsertClubInformationToReadModel(domainEvent, cancellationToken);
+        }
+        #endregion
+
+        #region private async Task HandleEvent(ClubMembershipRequestedEvent domainEvent, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Handles the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleEvent(ClubMembershipRequestedEvent domainEvent, CancellationToken cancellationToken)
+        {
+            await this.Manager.InsertClubMembershipRequestToReadModel(domainEvent, cancellationToken);
         }
         #endregion
 

@@ -13,7 +13,7 @@ namespace ManagementAPI.Service.DataTransferObjects
         /// <value>
         /// The club identifier.
         /// </value>
-        public Guid ClubAggregateId { get; set; }
+        //public Guid ClubAggregateId { get; set; }
 
         /// <summary>
         /// Gets or sets the measured course identifier.

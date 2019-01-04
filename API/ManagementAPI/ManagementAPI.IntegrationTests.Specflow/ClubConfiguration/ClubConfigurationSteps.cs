@@ -133,12 +133,12 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 this.ScenarioContext.Get<CreateClubConfigurationResponse>("CreateClubConfigurationResponse");
 
             var request = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
-            request.ClubAggregateId = createClubConfigurationResponse.ClubConfigurationId;
+            //request.ClubAggregateId = createClubConfigurationResponse.ClubConfigurationId;
 
             // Get the token
             var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
             
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration/{createClubConfigurationResponse.ClubConfigurationId}";
 
             this.ScenarioContext["AddMeasuredCourseToClubHttpResponse"] = await MakeHttpPut(requestUri, request, bearerToken).ConfigureAwait(false);
         }
@@ -153,7 +153,20 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
 
         protected override void SetupSubscriptionServiceConfig()
         {
-            if (this.ScenarioContext.ScenarioInfo.Title == "Get Club List")
+            String streamName = String.Empty;
+
+            // Set the stream name
+            switch (this.ScenarioContext.ScenarioInfo.Title)
+            {
+                case "Get Club List":
+                    streamName = "$et-ManagementAPI.ClubConfiguration.DomainEvents.ClubConfigurationCreatedEvent";
+                    break;
+                case "Get Pending Membership Request List":
+                    streamName = "$et-ManagementAPI.Player.DomainEvents.ClubMembershipRequestedEvent";
+                    break;
+            }
+                        
+            if (!String.IsNullOrEmpty(streamName))
             {
                 var mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
 
@@ -177,11 +190,10 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
 
                 Guid subscriptionStreamId = Guid.NewGuid();
                 Guid endpointId = Guid.NewGuid();
-                Guid subscriptonServiceGroup = Guid.NewGuid();
-                Guid subscriptonGroupId = Guid.NewGuid();
+                Guid subscriptionServiceGroup = Guid.NewGuid();
+                Guid subscriptionGroupId = Guid.NewGuid();
 
                 // Insert the Subscription Stream
-                String streamName = "$et-ManagementAPI.ClubConfiguration.DomainEvents.ClubConfigurationCreatedEvent";
                 String endpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent";
 
                 MySqlCommand streamInsert = connection.CreateCommand();
@@ -196,7 +208,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
 
                 MySqlCommand groupInsert = connection.CreateCommand();
                 groupInsert.CommandText =
-                    $"insert into SubscriptionGroups(Id, BufferSize, EndpointId, Name, StreamPosition, SubscriptionStreamId) select '{subscriptonGroupId}', 10, '{endpointId}', 'ClubCreated', null, '{subscriptionStreamId}'";
+                    $"insert into SubscriptionGroups(Id, BufferSize, EndpointId, Name, StreamPosition, SubscriptionStreamId) select '{subscriptionGroupId}', 10, '{endpointId}', 'ClubCreated', null, '{subscriptionStreamId}'";
                 groupInsert.ExecuteNonQuery();
                 
                 // Insert the subscription service
@@ -206,7 +218,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 subscriptionServiceInsert.ExecuteNonQuery();
                 
                 MySqlCommand subscriptonServiceGroupInsert = connection.CreateCommand();
-                subscriptonServiceGroupInsert.CommandText = $"insert into SubscriptionServiceGroups(SubscriptionServiceGroupId, SubscriptionGroupId, SubscriptionServiceId) select '{subscriptonServiceGroup}', '{subscriptonGroupId}', '{this.SubscriberServiceId}' ";
+                subscriptonServiceGroupInsert.CommandText = $"insert into SubscriptionServiceGroups(SubscriptionServiceGroupId, SubscriptionGroupId, SubscriptionServiceId) select '{subscriptionServiceGroup}', '{subscriptionGroupId}', '{this.SubscriberServiceId}' ";
                 subscriptonServiceGroupInsert.ExecuteNonQuery();
 
                 connection.Close();
@@ -267,6 +279,61 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
                 "player@test.co.uk", "123456").ConfigureAwait(false);
 
             this.ScenarioContext["PlayerToken"] = tokenResponse;
+        }
+
+        [Given(@"a player has already registed")]
+        public async Task GivenAPlayerHasAlreadyRegisted()
+        {
+            var request = IntegrationTestsTestData.RegisterPlayerRequest;
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/Player";
+
+            var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
+            var responseData = await GetResponseObject<RegisterPlayerResponse>(httpResponse).ConfigureAwait(false);
+
+            this.ScenarioContext["PlayerId"] = responseData.PlayerId;
+        }
+        
+        [Given(@"a player has requested membership of the club")]
+        public async Task GivenAPlayerHasRequestedMembershipOfTheClub()
+        {
+            Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
+            Guid clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubConfigurationId}";
+
+            var bearerToken = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
+                "player@test.co.uk", "123456").ConfigureAwait(false);
+
+            Object resquestObject = null;
+            await MakeHttpPut(requestUri, resquestObject,bearerToken).ConfigureAwait(false);
+
+            Thread.Sleep(30000);
+        }
+        
+        [When(@"I request the list of pending membership requests")]
+        public async Task WhenIRequestTheListOfPendingMembershipRequests()
+        {
+            Guid clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration/{clubConfigurationId}/PendingMembershipRequests";
+
+            // Get the token
+            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+
+            this.ScenarioContext["GetPendingMembershipRequestsHttpResponse"] = await MakeHttpGet(requestUri, bearerToken);
+        }
+        
+        [Then(@"a list of pending membership requests will be returned")]
+        public async Task ThenAListOfPendingMembershipRequestsWillBeReturned()
+        {
+            var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+
+            var responseData = await GetResponseObject<List<GetClubMembershipRequestResponse>>("GetPendingMembershipRequestsHttpResponse")
+                .ConfigureAwait(false);
+
+            responseData.Any(r => r.ClubId == clubConfigurationId).ShouldBeTrue();
         }
 
     }
