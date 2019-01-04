@@ -121,6 +121,7 @@ namespace ManagementAPI.Service.Controllers
         /// <returns></returns>
         [HttpPut]
         [Authorize(Policy = PolicyNames.AddMeasuredCourseToClubPolicy)]
+        [Route("{clubConfigurationId}")]
         public async Task<IActionResult> PutClubConfiguration([FromRoute] Guid clubConfigurationId, [FromBody] AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)
         {
             // Create the command
