@@ -9,14 +9,11 @@ namespace ManagementAPI.Player
     {
         #region Constructor        
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubMembership"/> class.
+        /// Initializes a new instance of the <see cref="ClubMembership" /> class.
         /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        /// <param name="membershipRequestedDateAndTime">The membership requested date and time.</param>
-        private ClubMembership(Guid clubId, DateTime membershipRequestedDateAndTime)
+        private ClubMembership()
         {
-            this.ClubId = clubId;
-            this.MembershipRequestedDateAndTime = membershipRequestedDateAndTime;
+
         }
 
         #endregion
@@ -39,6 +36,35 @@ namespace ManagementAPI.Player
         /// </value>
         internal DateTime MembershipRequestedDateAndTime { get; private set; }
 
+        /// <summary>
+        /// Gets the membership approved date and time.
+        /// </summary>
+        /// <value>
+        /// The membership approved date and time.
+        /// </value>
+        internal DateTime MembershipApprovedDateAndTime { get; private set; }
+
+        /// <summary>
+        /// Gets the membership status.
+        /// </summary>
+        /// <value>
+        /// The membership status.
+        /// </value>
+        internal MembershipStatus Status { get; private set; }
+
+        #endregion
+
+        #region Internal Enums     
+        
+        /// <summary>
+        /// Membership Status Enum
+        /// </summary>
+        internal enum MembershipStatus
+        {
+            Pending = 0,
+            Approved = 1,
+            Rejected = 2
+        }
         #endregion
 
         #region Internal Methods
@@ -47,12 +73,36 @@ namespace ManagementAPI.Player
         /// <summary>
         /// Creates the specified club identifier.
         /// </summary>
+        /// <returns></returns>
+        internal static ClubMembership Create()
+        {
+            return new ClubMembership();
+        }
+        #endregion
+
+        #region internal void Request(Guid clubId, DateTime membershipRequestedDateAndTime)        
+        /// <summary>
+        /// Requests the specified club identifier.
+        /// </summary>
         /// <param name="clubId">The club identifier.</param>
         /// <param name="membershipRequestedDateAndTime">The membership requested date and time.</param>
-        /// <returns></returns>
-        internal static ClubMembership Create(Guid clubId, DateTime membershipRequestedDateAndTime)
+        internal void Request(Guid clubId, DateTime membershipRequestedDateAndTime)
         {
-            return new ClubMembership(clubId, membershipRequestedDateAndTime);
+            this.ClubId = clubId;
+            this.MembershipRequestedDateAndTime = membershipRequestedDateAndTime;
+            this.Status = MembershipStatus.Pending; 
+        }
+        #endregion
+
+        #region internal void Approve(DateTime membershipRequestApprovedDateAndTime)        
+        /// <summary>
+        /// Approves the specified membership request approved date and time.
+        /// </summary>
+        /// <param name="membershipRequestApprovedDateAndTime">The membership request approved date and time.</param>
+        internal void Approve(DateTime membershipRequestApprovedDateAndTime)
+        {
+            this.MembershipApprovedDateAndTime = membershipRequestApprovedDateAndTime;
+            this.Status = MembershipStatus.Approved;
         }
         #endregion
 

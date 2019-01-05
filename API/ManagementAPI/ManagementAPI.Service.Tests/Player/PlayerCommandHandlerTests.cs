@@ -47,5 +47,20 @@ namespace ManagementAPI.Service.Tests.Player
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }
+
+        [Fact]
+        public void PlayerCommandHandler_HandleCommand_ApprovePlayerMembershipRequestCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithSecurityUserCreated);
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            
+            PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object);
+
+            ApprovePlayerMembershipRequestCommand command = PlayerTestData.GetApprovePlayerMembershipRequestCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
     }
 }

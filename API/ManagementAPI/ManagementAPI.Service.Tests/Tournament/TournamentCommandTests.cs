@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq;
 using ManagementAPI.Service.Commands;
 using Shouldly;
 using Xunit;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.Tournament
 {
     public class TournamentCommandTests
     {

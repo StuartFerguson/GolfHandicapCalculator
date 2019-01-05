@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using System.Net;
+using ManagementAPI.Service.Tests.ClubConfiguration;
 using Newtonsoft.Json;
 using Shouldly;
 

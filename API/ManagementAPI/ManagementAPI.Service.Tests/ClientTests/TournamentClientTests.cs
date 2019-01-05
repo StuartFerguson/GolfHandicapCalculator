@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Client;
+using ManagementAPI.Service.Tests.Tournament;
 using Moq;
 using Newtonsoft.Json;
 using Shouldly;

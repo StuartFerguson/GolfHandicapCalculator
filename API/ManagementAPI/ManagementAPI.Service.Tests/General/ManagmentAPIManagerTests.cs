@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.ClubConfiguration;
@@ -11,6 +9,7 @@ using ManagementAPI.Database.Models;
 using ManagementAPI.Player;
 using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.Manager;
+using ManagementAPI.Service.Tests.ClubConfiguration;
 using ManagementAPI.Service.Tests.Player;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -19,7 +18,7 @@ using Shared.EventStore;
 using Shouldly;
 using Xunit;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.General
 {
     public class ManagmentAPIManagerTests
     {

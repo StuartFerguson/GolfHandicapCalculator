@@ -274,63 +274,118 @@ namespace ManagementAPI.Service
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.ClubAdministrator, RoleNames.MatchSecretary, RoleNames.Player});
+                policy.RequireRole(new[] 
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper(),
+                    RoleNames.Player, RoleNames.Player.ToUpper()
+                });
             });
 
             policies.AddPolicy(PolicyNames.GetSingleClubPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.ClubAdministrator, RoleNames.MatchSecretary, RoleNames.Player});
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper(),
+                    RoleNames.Player, RoleNames.Player.ToUpper()
+                });
             });
             
             policies.AddPolicy(PolicyNames.AddMeasuredCourseToClubPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.ClubAdministrator});
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper()
+                });
             });
 
             policies.AddPolicy(PolicyNames.RequestClubMembershipForPlayerPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.Player});
+                policy.RequireRole(new[]
+                {
+                    RoleNames.Player, RoleNames.Player.ToUpper()
+                });
             });
 
             policies.AddPolicy(PolicyNames.CreateTournamentPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.ClubAdministrator,RoleNames.MatchSecretary});
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
+                });
             });
 
             policies.AddPolicy(PolicyNames.RecordPlayerScoreForTournamentPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.Player});
+                policy.RequireRole(new[]
+                {
+                    RoleNames.Player, RoleNames.Player.ToUpper()
+                });
             });
 
             policies.AddPolicy(PolicyNames.CompleteTournamentPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.ClubAdministrator,RoleNames.MatchSecretary});
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
+                });
             });
 
             policies.AddPolicy(PolicyNames.CancelTournamentPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.ClubAdministrator,RoleNames.MatchSecretary});
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
+                });
             });
 
             policies.AddPolicy(PolicyNames.ProduceTournamentResultPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] {RoleNames.ClubAdministrator,RoleNames.MatchSecretary});
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
+                });
+            });
+
+            policies.AddPolicy(PolicyNames.GetPendingMembershipRequestsPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper()
+                });
+            });
+
+            policies.AddPolicy(PolicyNames.ApprovePlayerMembershipRequestPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper()
+                });
             });
         }
         #endregion

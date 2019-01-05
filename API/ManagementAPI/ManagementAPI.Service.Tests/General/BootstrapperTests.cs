@@ -9,7 +9,7 @@ using Shared.EventStore;
 using StructureMap;
 using Xunit;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.General
 {
     public class BootstrapperTests
     {

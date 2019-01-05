@@ -56,5 +56,24 @@ namespace ManagementAPI.Service.Tests.Player
             clubMembershipRequestedEvent.ClubId.ShouldBe(PlayerTestData.ClubId);
             clubMembershipRequestedEvent.MembershipRequestedDateAndTime.ShouldBe(PlayerTestData.MembershipRequestedDateAndTime);
         }
+
+        [Fact]
+        public void ClubMembershipApprovedEvent_CanBeCreated_IsCreated()
+        {
+            ClubMembershipApprovedEvent clubMembershipApprovedEvent = ClubMembershipApprovedEvent.Create(
+                PlayerTestData.AggregateId, PlayerTestData.ClubId,
+                PlayerTestData.MembershipApprovedDateAndTime);
+
+            clubMembershipApprovedEvent.ShouldNotBeNull();
+            clubMembershipApprovedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
+            clubMembershipApprovedEvent.EventId.ShouldNotBe(Guid.Empty);
+            clubMembershipApprovedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            clubMembershipApprovedEvent.ClubId.ShouldBe(PlayerTestData.ClubId);
+            clubMembershipApprovedEvent.MembershipApprovedDateAndTime.ShouldBe(PlayerTestData.MembershipApprovedDateAndTime);
+        }
+
+        
+
+
     }
 }

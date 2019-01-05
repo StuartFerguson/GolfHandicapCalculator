@@ -66,10 +66,11 @@ namespace ManagementAPI.Service.Controllers
         }
         #endregion
 
+        #region public async Task<IActionResult> RequestClubMembership([FromRoute] Guid playerId, [FromRoute] Guid clubId, CancellationToken cancellationToken)
         [HttpPut]
         [Route("{playerId}/ClubMembershipRequest/{clubId}")]
         [Authorize(Policy = PolicyNames.RequestClubMembershipForPlayerPolicy)]
-        public async Task<IActionResult> PutPlayer([FromRoute] Guid playerId, [FromRoute] Guid clubId, CancellationToken cancellationToken)
+        public async Task<IActionResult> RequestClubMembershipForPlayer([FromRoute] Guid playerId, [FromRoute] Guid clubId, CancellationToken cancellationToken)
         {
             // Create the command
             var command = PlayerClubMembershipRequestCommand.Create(playerId, clubId);
@@ -80,7 +81,32 @@ namespace ManagementAPI.Service.Controllers
             // return the result
             return this.Ok();
         }
+        #endregion
 
+        #region public async Task<IActionResult> ApprovePlayerMembershipRequest([FromRoute] Guid playerId, [FromRoute] Guid clubId, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Approves the player membership request.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="clubId">The club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{playerId}/ClubMembershipRequest/{clubId}/Approve")]
+        [Authorize(Policy = PolicyNames.ApprovePlayerMembershipRequestPolicy)]
+        public async Task<IActionResult> ApprovePlayerMembershipRequest([FromRoute] Guid playerId, [FromRoute] Guid clubId, CancellationToken cancellationToken)
+        {
+            // Create the command
+            var command = ApprovePlayerMembershipRequestCommand.Create(playerId, clubId);
+
+            // Route the command
+            await this.CommandRouter.Route(command,cancellationToken);
+
+            // return the result
+            return this.Ok();
+        }
+        #endregion
+        
         #endregion
     }
 }

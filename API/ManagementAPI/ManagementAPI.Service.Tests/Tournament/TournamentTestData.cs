@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Tournament;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.Tournament
 {
     public class TournamentTestData
     {
@@ -19,9 +16,9 @@ namespace ManagementAPI.Service.Tests
         public static Int32 MeasuredCourseSSS = 70;
         public static String Name = "Test Tournament";
         public static Int32 MemberCategory = 2;
-        public static MemberCategory MemberCategoryEnum = Tournament.MemberCategory.Gents;
+        public static MemberCategory MemberCategoryEnum = ManagementAPI.Tournament.MemberCategory.Gents;
         public static Int32 TournamentFormat = 1;
-        public static TournamentFormat TournamentFormatEnum = Tournament.TournamentFormat.Strokeplay;
+        public static TournamentFormat TournamentFormatEnum = ManagementAPI.Tournament.TournamentFormat.Strokeplay;
         public static Guid MemberId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6");
         public static Int32 PlayingHandicap = 6;
         public static Int32 Adjustment = 1;

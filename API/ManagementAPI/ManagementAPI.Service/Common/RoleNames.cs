@@ -7,16 +7,16 @@ namespace ManagementAPI.Service.Common
         /// <summary>
         /// The club administrator
         /// </summary>
-        public const String ClubAdministrator = "CLUB ADMINISTRATOR";
+        public const String ClubAdministrator = "Club Administrator";
 
         /// <summary>
         /// The match secretary
         /// </summary>
-        public const String MatchSecretary = "MATCH SECRETARY";
+        public const String MatchSecretary = "Match Secretary";
 
         /// <summary>
         /// The player
         /// </summary>
-        public const String Player = "PLAYER";
+        public const String Player = "Player";
     }
 }

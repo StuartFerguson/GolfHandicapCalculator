@@ -125,5 +125,55 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
 
             this.ScenarioContext["PlayerToken"] = tokenResponse;
         }
+
+        [Given(@"I have requested a club membership")]
+        public async Task GivenIHaveRequestedAClubMembership()
+        {
+            Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
+            Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
+
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubId}";
+
+            String bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
+
+            Object resquestObject = null;
+            await MakeHttpPut(requestUri, resquestObject,bearerToken).ConfigureAwait(false);
+        }
+        
+        [Given(@"I am logged in as a club administrator")]
+        public async Task GivenIAmLoggedInAsAClubAdministrator()
+        {
+            var tokenResponse = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
+                "clubadministrator@test.co.uk", "123456").ConfigureAwait(false);
+
+            this.ScenarioContext["ClubAdministratorToken"] = tokenResponse;
+        }
+        
+        [Given(@"I approve a club membership request")]
+        public async Task GivenIApproveAClubMembershipRequest()
+        {
+            var g = this.EventStorePort;
+
+            Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
+            Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
+
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubId}/Approve";
+
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+
+            Object resquestObject = null;
+            this.ScenarioContext["ClubMembershipRequestApprovalHttpResponse"] = await MakeHttpPut(requestUri, resquestObject,bearerToken).ConfigureAwait(false);
+        }
+        
+        [Then(@"my approval request is successful")]
+        public void ThenMyApprovalRequestIsSuccessful()
+        {
+            HttpResponseMessage httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("ClubMembershipRequestApprovalHttpResponse");
+
+            httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+
     }
 }
