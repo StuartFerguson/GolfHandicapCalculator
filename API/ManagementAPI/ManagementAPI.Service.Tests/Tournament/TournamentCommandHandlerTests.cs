@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.Services;
+using ManagementAPI.Service.Tests.ClubConfiguration;
 using ManagementAPI.Tournament;
 using Moq;
 using Shared.EventStore;
 using Shouldly;
 using Xunit;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.Tournament
 {
     public class TournamentCommandHandlerTests
     {

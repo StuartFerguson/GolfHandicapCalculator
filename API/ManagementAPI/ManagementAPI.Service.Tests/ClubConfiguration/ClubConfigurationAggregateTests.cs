@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using ManagementAPI.ClubConfiguration;
 using Shared.EventStore;
 using Shouldly;
 using Xunit;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.ClubConfiguration
 {
     public class ClubConfigurationAggregateTests
     {

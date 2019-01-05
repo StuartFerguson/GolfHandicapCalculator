@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Composition.Convention;
 using System.Linq;
 using ManagementAPI.ClubConfiguration;
 using ManagementAPI.ClubConfiguration.DomainEvents;
@@ -11,7 +9,7 @@ using ManagementAPI.Service.Services.DataTransferObjects;
 using HoleDataTransferObject = ManagementAPI.ClubConfiguration.HoleDataTransferObject;
 using DTOHoleDataTransferObject = ManagementAPI.Service.DataTransferObjects.HoleDataTransferObject;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.ClubConfiguration
 {
     public class ClubConfigurationTestData
     {

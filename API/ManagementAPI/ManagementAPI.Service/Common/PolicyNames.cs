@@ -61,5 +61,15 @@ namespace ManagementAPI.Service.Common
         /// The produce tournament result policy
         /// </summary>
         public const String ProduceTournamentResultPolicy = "ProduceTournamentResultPolicy";
+
+        /// <summary>
+        /// The get pending membership requests policy
+        /// </summary>
+        public const String GetPendingMembershipRequestsPolicy = "GetPendingMembershipRequestsPolicy";
+
+        /// <summary>
+        /// The approve player membership request policy
+        /// </summary>
+        public const String ApprovePlayerMembershipRequestPolicy = "ApprovePlayerMembershipRequestPolicy";
     }
 }

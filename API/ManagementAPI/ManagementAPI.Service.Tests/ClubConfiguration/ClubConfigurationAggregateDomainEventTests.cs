@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Linq;
 using ManagementAPI.ClubConfiguration.DomainEvents;
 using Shouldly;
 using Xunit;
-using Xunit.Sdk;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.ClubConfiguration
 {
     public class ClubConfigurationAggregateDomainEventTests
     {

@@ -86,6 +86,22 @@ namespace ManagementAPI.Service.Tests.Player
             return playerAggregate;
         }
 
+        public static PlayerAggregate GetRegisteredPlayerAggregateWithApprovedMembershipRequest()
+        {
+            PlayerAggregate playerAggregate = PlayerAggregate.Create(AggregateId);
+
+            playerAggregate.Register(FirstName, MiddleName, LastName, Gender,
+                Age, ExactHandicapCat1, EmailAddress);
+
+            playerAggregate.CreateSecurityUser(SecurityUserId);
+
+            playerAggregate.RequestClubMembership(ClubId, MembershipRequestedDateAndTime);
+
+            playerAggregate.ApproveClubMembershipRequest(ClubId, MembershipApprovedDateAndTime);
+
+            return playerAggregate;
+        }
+
         public static RegisterPlayerRequest RegisterPlayerRequest = new RegisterPlayerRequest
         {
             Age = Age,
@@ -119,9 +135,16 @@ namespace ManagementAPI.Service.Tests.Player
 
         public static DateTime MembershipRequestedDateAndTime = new DateTime(2018,12,25);
 
+        public static DateTime MembershipApprovedDateAndTime = new DateTime(2018,1,5);
+
         public static PlayerClubMembershipRequestCommand GetPlayerClubMembershipRequestCommand()
         {
             return PlayerClubMembershipRequestCommand.Create(AggregateId,ClubId);
+        }
+
+        public static ApprovePlayerMembershipRequestCommand GetApprovePlayerMembershipRequestCommand()
+        {
+            return ApprovePlayerMembershipRequestCommand.Create(AggregateId,ClubId);
         }
 
         public static ClubMembershipRequestedEvent GetClubMembershipRequestedEvent()

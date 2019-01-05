@@ -145,7 +145,7 @@ namespace ManagementAPI.Service.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<GetClubMembershipRequestResponse>), 200)]
         [Route("{clubConfigurationId}/PendingMembershipRequests")]
-        //[Authorize(Policy = PolicyNames.GetClubListPolicy)]
+        [Authorize(Policy = PolicyNames.GetPendingMembershipRequestsPolicy)]
         public async Task<IActionResult> GetPendingMembershipRequests([FromRoute] Guid clubConfigurationId, CancellationToken cancellationToken)
         {
             var pendingMembershipRequests = await this.Manager.GetPendingMembershipRequests(clubConfigurationId, cancellationToken);

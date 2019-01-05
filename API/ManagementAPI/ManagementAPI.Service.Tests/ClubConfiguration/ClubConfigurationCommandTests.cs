@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ManagementAPI.Service.Commands;
 using Shouldly;
 using Xunit;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.ClubConfiguration
 {
     public class ClubConfigurationCommandTests
     {

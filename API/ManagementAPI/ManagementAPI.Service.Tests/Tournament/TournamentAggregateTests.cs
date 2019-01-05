@@ -1,16 +1,13 @@
-﻿using ManagementAPI.Tournament;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using ManagementAPI.Service.Commands;
 using ManagementAPI.Tournament;
 using Shared.EventStore;
 using Shouldly;
 using Xunit;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.Tournament
 {
     public class TournamentAggregateTests
     {

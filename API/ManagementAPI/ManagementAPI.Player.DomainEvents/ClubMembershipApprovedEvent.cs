@@ -8,30 +8,30 @@ using Shared.EventSourcing;
 namespace ManagementAPI.Player.DomainEvents
 {
     [JsonObject]
-    public class ClubMembershipRequestedEvent : DomainEvent
+    public class ClubMembershipApprovedEvent : DomainEvent
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubMembershipRequestedEvent" /> class.
+        /// Initializes a new instance of the <see cref="ClubMembershipApprovedEvent" /> class.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        public ClubMembershipRequestedEvent()
+        public ClubMembershipApprovedEvent()
         {
             //We need this for serialisation, so just embrace the DDD crime
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubMembershipRequestedEvent"/> class.
+        /// Initializes a new instance of the <see cref="ClubMembershipApprovedEvent" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="eventId">The event identifier.</param>
         /// <param name="clubId">The club identifier.</param>
-        /// <param name="membershipRequestedDateAndTime">The membership requested date and time.</param>
-        private ClubMembershipRequestedEvent(Guid aggregateId, Guid eventId, Guid clubId, DateTime membershipRequestedDateAndTime) : base(aggregateId, eventId)
+        /// <param name="membershipApprovedDateAndTime">The membership approved date and time.</param>
+        private ClubMembershipApprovedEvent(Guid aggregateId, Guid eventId, Guid clubId, DateTime membershipApprovedDateAndTime) : base(aggregateId, eventId)
         {
             this.ClubId = clubId;
-            this.MembershipRequestedDateAndTime = membershipRequestedDateAndTime;
+            this.MembershipApprovedDateAndTime = membershipApprovedDateAndTime;
         }
 
         #endregion
@@ -46,31 +46,31 @@ namespace ManagementAPI.Player.DomainEvents
         /// </value>
         [JsonProperty]
         public Guid ClubId { get; private set; }
-
+        
         /// <summary>
-        /// Gets the membership requested date and time.
+        /// Gets the membership approved date and time.
         /// </summary>
         /// <value>
-        /// The membership requested date and time.
+        /// The membership approved date and time.
         /// </value>
         [JsonProperty]
-        public DateTime MembershipRequestedDateAndTime { get; private set; }
+        public DateTime MembershipApprovedDateAndTime { get; private set; }
 
         #endregion
 
         #region Public Methods
 
-        #region public static ClubMembershipRequestedEvent Create()
+        #region public static ClubMembershipApprovedEvent Create()
         /// <summary>
         /// Creates the specified aggregate identifier.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="clubId">The club identifier.</param>
-        /// <param name="membershipRequestedDateAndTime">The membership requested date and time.</param>
+        /// <param name="membershipApprovedDateAndTime">The membership approved date and time.</param>
         /// <returns></returns>
-        public static ClubMembershipRequestedEvent Create(Guid aggregateId, Guid clubId, DateTime membershipRequestedDateAndTime)
+        public static ClubMembershipApprovedEvent Create(Guid aggregateId, Guid clubId, DateTime membershipApprovedDateAndTime)
         {
-            return new ClubMembershipRequestedEvent(aggregateId, Guid.NewGuid(), clubId,membershipRequestedDateAndTime);
+            return new ClubMembershipApprovedEvent(aggregateId, Guid.NewGuid(), clubId, membershipApprovedDateAndTime);
         }
         #endregion
 

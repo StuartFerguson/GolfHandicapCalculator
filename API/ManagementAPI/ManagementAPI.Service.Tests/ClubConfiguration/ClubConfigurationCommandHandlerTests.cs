@@ -10,7 +10,7 @@ using Shared.EventStore;
 using Shouldly;
 using Xunit;
 
-namespace ManagementAPI.Service.Tests
+namespace ManagementAPI.Service.Tests.ClubConfiguration
 {
     public class ClubConfigurationCommandHandlerTests
     {

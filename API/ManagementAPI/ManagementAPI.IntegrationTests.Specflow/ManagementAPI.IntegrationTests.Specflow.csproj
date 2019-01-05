@@ -145,6 +145,11 @@
     <Compile Include="Common\Setup.cs" />
     <Compile Include="Common\TokenResponse.cs" />
     <Compile Include="Common\TokenType.cs" />
+    <Compile Include="Player\ApproveClubMembership.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ApproveClubMembership.feature</DependentUpon>
+    </Compile>
     <Compile Include="Player\PlayerSteps.cs" />
     <Compile Include="Player\RegisterPlayer.feature.cs">
       <AutoGen>True</AutoGen>
@@ -207,6 +212,10 @@
       <LastGenOutput>GetPendingClubMembershipRequests.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
+    <None Include="Player\ApproveClubMembership.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>ApproveClubMembership.feature.cs</LastGenOutput>
+    </None>
     <None Include="Player\RegisterPlayer.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>RegisterPlayer.feature.cs</LastGenOutput>
