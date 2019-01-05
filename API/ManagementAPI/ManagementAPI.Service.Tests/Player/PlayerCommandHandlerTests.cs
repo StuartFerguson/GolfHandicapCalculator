@@ -53,7 +53,7 @@ namespace ManagementAPI.Service.Tests.Player
         {
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithSecurityUserCreated);
+                .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithPendingMembershipRequest);
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
             
             PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object);
