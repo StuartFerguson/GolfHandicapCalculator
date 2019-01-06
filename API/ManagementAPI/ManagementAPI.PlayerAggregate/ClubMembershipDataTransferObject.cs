@@ -31,18 +31,27 @@ namespace ManagementAPI.Player
         public DateTime MembershipApprovedDateAndTime { get; set; }
 
         /// <summary>
+        /// Gets or sets the membership rejected date and time.
+        /// </summary>
+        /// <value>
+        /// The membership rejected date and time.
+        /// </value>
+        public DateTime MembershipRejectedDateAndTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rejection reason.
+        /// </summary>
+        /// <value>
+        /// The rejection reason.
+        /// </value>
+        public String RejectionReason { get; set; }
+
+        /// <summary>
         /// Gets or sets the membership status.
         /// </summary>
         /// <value>
         /// The membership status.
         /// </value>
         public MembershipStatus MembershipStatus { get; set; }
-    }
-
-    public enum MembershipStatus
-    {
-        Pending = 0,
-        Approved = 1,
-        Rejected = 2
     }
 }

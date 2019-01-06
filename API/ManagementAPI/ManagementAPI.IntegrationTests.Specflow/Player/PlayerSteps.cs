@@ -153,8 +153,6 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         [Given(@"I approve a club membership request")]
         public async Task GivenIApproveAClubMembershipRequest()
         {
-            var g = this.EventStorePort;
-
             Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
             Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
 
@@ -171,6 +169,33 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         public void ThenMyApprovalRequestIsSuccessful()
         {
             HttpResponseMessage httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("ClubMembershipRequestApprovalHttpResponse");
+
+            httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+
+        [Given(@"I reject a club membership request")]
+        public async Task GivenIRejectAClubMembershipRequest()
+        {
+            Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
+            Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
+
+            String requestUri =
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubId}/Approve";
+
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+
+            RejectMembershipRequestRequest requestObject = new RejectMembershipRequestRequest
+            {
+                RejectionReason = "Rejected"
+            };
+
+            this.ScenarioContext["ClubMembershipRequestRejectionHttpResponse"] = await MakeHttpPut(requestUri, requestObject,bearerToken).ConfigureAwait(false);
+        }
+        
+        [Then(@"my rejection request is successful")]
+        public void ThenMyRejectionRequestIsSuccessful()
+        {
+            HttpResponseMessage httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("ClubMembershipRequestRejectionHttpResponse");
 
             httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
         }

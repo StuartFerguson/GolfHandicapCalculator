@@ -254,6 +254,8 @@ namespace ManagementAPI.Player
                     ClubId = clubMembership.ClubId,
                     MembershipRequestedDateAndTime = clubMembership.MembershipRequestedDateAndTime,
                     MembershipApprovedDateAndTime = clubMembership.MembershipApprovedDateAndTime,
+                    MembershipRejectedDateAndTime = clubMembership.MembershipRejectedDateAndTime,
+                    RejectionReason = clubMembership.RejectionReason,
                     MembershipStatus = (MembershipStatus)clubMembership.Status
                 });
             }
@@ -279,6 +281,28 @@ namespace ManagementAPI.Player
             ClubMembershipApprovedEvent clubMembershipApprovedEvent = ClubMembershipApprovedEvent.Create(this.AggregateId, clubId, membershipApprovalDateAndTime);
 
             this.ApplyAndPend(clubMembershipApprovedEvent);
+        }
+        #endregion
+
+        #region public void ApproveClubMembershipRequest(Guid clubId, DateTime membershipApprovalDateAndTime)        
+        /// <summary>
+        /// Approves the club membership request.
+        /// </summary>
+        /// <param name="clubId">The club identifier.</param>
+        /// <param name="membershipRejectionDateAndTime">The membership rejection date and time.</param>
+        /// <param name="rejectionReason">The rejection reason.</param>
+        public void RejectClubMembershipRequest(Guid clubId, DateTime membershipRejectionDateAndTime, String rejectionReason)
+        {
+            Guard.ThrowIfInvalidGuid(clubId, typeof(ArgumentNullException), "Club Id must be provided to reject a membership request");
+            Guard.ThrowIfNullOrEmpty(rejectionReason, typeof(ArgumentNullException), "A rejection reason must be provided to reject a membership request");
+
+            this.CheckIfPlayerHasBeenRegistered();
+
+            this.CheckForPendingMembershipRequest(clubId);
+
+            ClubMembershipRejectedEvent clubMembershipRejectedEvent = ClubMembershipRejectedEvent.Create(this.AggregateId, clubId, membershipRejectionDateAndTime, rejectionReason);
+
+            this.ApplyAndPend(clubMembershipRejectedEvent);
         }
         #endregion
 
@@ -361,6 +385,21 @@ namespace ManagementAPI.Player
 
             // mark as approved
             membership.Approve(clubMembershipApprovedEvent.MembershipApprovedDateAndTime);
+        }
+        #endregion
+
+        #region private void PlayEvent(ClubMembershipRejectedEvent clubMembershipRejectedEvent)        
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="clubMembershipRejectedEvent">The club membership rejected event.</param>
+        private void PlayEvent(ClubMembershipRejectedEvent clubMembershipRejectedEvent)
+        {
+            // find the membership request
+            var membership = this.Memberships.Single(m => m.ClubId == clubMembershipRejectedEvent.ClubId);
+
+            // mark as approved
+            membership.Reject(clubMembershipRejectedEvent.MembershipRejectedDateAndTime, clubMembershipRejectedEvent.RejectionReason);
         }
         #endregion
 

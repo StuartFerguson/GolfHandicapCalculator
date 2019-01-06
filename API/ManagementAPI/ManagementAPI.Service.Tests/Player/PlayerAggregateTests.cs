@@ -267,5 +267,60 @@ namespace ManagementAPI.Service.Tests.Player
         }
 
         #endregion
+
+        #region Approve Club Membership Request Tests
+
+        [Fact]
+        public void PlayerAggregate_RejectClubMembershipRequest_ClubMembershipRequestRejected()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregateWithPendingMembershipRequest();
+
+            playerAggregate.RejectClubMembershipRequest(PlayerTestData.ClubId, PlayerTestData.MembershipRejectedDateAndTime, PlayerTestData.RejectionReason);
+
+            var memberships = playerAggregate.GetMemberships();
+            memberships.Count.ShouldBe(1);
+            memberships.First().ClubId.ShouldBe(PlayerTestData.ClubId);
+            memberships.First().MembershipRequestedDateAndTime.ShouldBe(PlayerTestData.MembershipRequestedDateAndTime);
+            memberships.First().MembershipApprovedDateAndTime.ShouldBe(DateTime.MinValue);
+            memberships.First().MembershipRejectedDateAndTime.ShouldBe(PlayerTestData.MembershipRejectedDateAndTime);
+            memberships.First().RejectionReason.ShouldBe(PlayerTestData.RejectionReason);
+            memberships.First().MembershipStatus.ShouldBe(MembershipStatus.Rejected);
+        }
+
+        [Fact]
+        public void PlayerAggregate_RejectClubMembershipRequest_InvalidClubId_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Should.Throw<ArgumentNullException>(() => { playerAggregate.RejectClubMembershipRequest(Guid.Empty, PlayerTestData.MembershipRejectedDateAndTime, PlayerTestData.RejectionReason); });            
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public void PlayerAggregate_RejectClubMembershipRequest_InvalidRejectionReason_ErrorThrown(String rejectionReason)
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Should.Throw<ArgumentNullException>(() => { playerAggregate.RejectClubMembershipRequest(PlayerTestData.ClubId, PlayerTestData.MembershipRejectedDateAndTime, rejectionReason); });            
+        }
+
+        [Fact]
+        public void PlayerAggregate_RejectClubMembershipRequest_PlayerNotRegistered_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Should.Throw<InvalidOperationException>(() => { playerAggregate.RejectClubMembershipRequest(PlayerTestData.ClubId, PlayerTestData.MembershipApprovedDateAndTime, PlayerTestData.RejectionReason); });            
+        }
+
+        [Fact]
+        public void PlayerAggregate_RejectClubMembershipRequest_NoPendingMembershipRequest_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
+
+            Should.Throw<InvalidOperationException>(() => { playerAggregate.RejectClubMembershipRequest(PlayerTestData.ClubId, PlayerTestData.MembershipApprovedDateAndTime, PlayerTestData.RejectionReason); });            
+        }
+
+        #endregion
     }
 }
