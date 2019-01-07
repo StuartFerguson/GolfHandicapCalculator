@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Shared.EventStore;
+using Shared.Exceptions;
 using Shouldly;
 using Xunit;
 
@@ -452,6 +453,180 @@ namespace ManagementAPI.Service.Tests.General
             var result = await manager.GetPendingMembershipRequests(PlayerTestData.ClubId, CancellationToken.None);
 
             result.ShouldBeEmpty();
+        }
+
+        #endregion
+
+        #region Remove Club Membership Request To Read Model Tests
+
+        [Fact]
+        public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Accept_RecordRemovedSuccessfully()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            
+            var context = GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            
+            context.ClubMembershipRequest.Add(new ClubMembershipRequest
+            {
+                ClubId = PlayerTestData.ClubId,
+                MembershipRequestedDateAndTime = PlayerTestData.MembershipRequestedDateAndTime,
+                PlayerId = PlayerTestData.AggregateId,
+                MembershipRequestId = Guid.NewGuid(),
+                HandicapCategory = 1,
+                Age = PlayerTestData.Age,
+                Gender = PlayerTestData.Gender,
+                Status = 0,
+                FirstName = PlayerTestData.FirstName,
+                MiddleName = PlayerTestData.MiddleName,
+                PlayingHandicap = PlayerTestData.PlayingHandicapCat1,
+                LastName = PlayerTestData.LastName,
+                ExactHandicap = PlayerTestData.ExactHandicapCat1
+            });
+            context.SaveChanges();
+
+
+            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
+
+            var domainEvent = PlayerTestData.GetClubMembershipApprovedEvent();
+
+            await manager.RemoveClubMembershipRequestFromReadModel(domainEvent, CancellationToken.None);
+
+            var verifyContext = GetContext(databaseName);
+            verifyContext.ClubMembershipRequest.Count().ShouldBe(0);
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Reject_RecordRemovedSuccessfully()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            
+            var context = GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            
+            context.ClubMembershipRequest.Add(new ClubMembershipRequest
+            {
+                ClubId = PlayerTestData.ClubId,
+                MembershipRequestedDateAndTime = PlayerTestData.MembershipRequestedDateAndTime,
+                PlayerId = PlayerTestData.AggregateId,
+                MembershipRequestId = Guid.NewGuid(),
+                HandicapCategory = 1,
+                Age = PlayerTestData.Age,
+                Gender = PlayerTestData.Gender,
+                Status = 0,
+                FirstName = PlayerTestData.FirstName,
+                MiddleName = PlayerTestData.MiddleName,
+                PlayingHandicap = PlayerTestData.PlayingHandicapCat1,
+                LastName = PlayerTestData.LastName,
+                ExactHandicap = PlayerTestData.ExactHandicapCat1
+            });
+            context.SaveChanges();
+
+
+            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
+
+            var domainEvent = PlayerTestData.GetClubMembershipRejectedEvent();
+
+            await manager.RemoveClubMembershipRequestFromReadModel(domainEvent, CancellationToken.None);
+
+            var verifyContext = GetContext(databaseName);
+            verifyContext.ClubMembershipRequest.Count().ShouldBe(0);
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Accept_NullEvent_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            
+            var context = GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            
+            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
+
+            ClubMembershipApprovedEvent domainEvent = null;
+
+            Should.Throw<ArgumentNullException>(async () =>
+            {
+                await manager.RemoveClubMembershipRequestFromReadModel(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Reject_NullEvent_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            
+            var context = GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            
+            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
+
+            ClubMembershipRejectedEvent domainEvent = null;
+
+            Should.Throw<ArgumentNullException>(async () =>
+            {
+                await manager.RemoveClubMembershipRequestFromReadModel(domainEvent, CancellationToken.None);
+            });
+        }
+        
+        [Fact]
+        public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Accept_RequestNotFound_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            
+            var context = GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            
+            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
+
+            ClubMembershipApprovedEvent domainEvent = PlayerTestData.GetClubMembershipApprovedEvent();
+
+            Should.Throw<NotFoundException>(async () =>
+            {
+                await manager.RemoveClubMembershipRequestFromReadModel(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Reject_RequestNotFound_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            
+            var context = GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            
+            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
+
+            ClubMembershipRejectedEvent domainEvent = PlayerTestData.GetClubMembershipRejectedEvent();
+
+            Should.Throw<NotFoundException>(async () =>
+            {
+                await manager.RemoveClubMembershipRequestFromReadModel(domainEvent, CancellationToken.None);
+            });
         }
 
         #endregion

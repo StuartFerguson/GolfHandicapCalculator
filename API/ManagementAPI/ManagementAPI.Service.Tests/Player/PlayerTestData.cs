@@ -165,5 +165,15 @@ namespace ManagementAPI.Service.Tests.Player
         {
             RejectionReason = RejectionReason
         };
+
+        public static ClubMembershipApprovedEvent GetClubMembershipApprovedEvent()
+        {
+            return ClubMembershipApprovedEvent.Create(AggregateId, ClubId, MembershipApprovedDateAndTime);
+        }
+
+        public static ClubMembershipRejectedEvent GetClubMembershipRejectedEvent()
+        {
+            return ClubMembershipRejectedEvent.Create(AggregateId, ClubId, MembershipRejectedDateAndTime, RejectionReason);
+        }
     }
 }

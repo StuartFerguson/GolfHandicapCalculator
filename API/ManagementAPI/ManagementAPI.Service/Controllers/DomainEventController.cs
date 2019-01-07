@@ -96,6 +96,32 @@ namespace ManagementAPI.Service.Controllers
         }
         #endregion
 
+        #region private async Task HandleEvent(ClubMembershipApprovedEvent domainEvent, CancellationToken cancellationToken)
+        /// <summary>
+        /// Handles the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleEvent(ClubMembershipApprovedEvent domainEvent, CancellationToken cancellationToken)
+        {
+            await this.Manager.RemoveClubMembershipRequestFromReadModel(domainEvent, cancellationToken);
+        }
+        #endregion
+
+        #region private async Task HandleEvent(ClubMembershipRejectedEvent domainEvent, CancellationToken cancellationToken)
+        /// <summary>
+        /// Handles the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleEvent(ClubMembershipRejectedEvent domainEvent, CancellationToken cancellationToken)
+        {
+            await this.Manager.RemoveClubMembershipRequestFromReadModel(domainEvent, cancellationToken);
+        }
+        #endregion
+
         #endregion
     }
 }

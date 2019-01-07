@@ -49,5 +49,21 @@ namespace ManagementAPI.Service.Manager
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(Guid clubId, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Removes the club membership request from read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task RemoveClubMembershipRequestFromReadModel(ClubMembershipApprovedEvent domainEvent, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Removes the club membership request from read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task RemoveClubMembershipRequestFromReadModel(ClubMembershipRejectedEvent domainEvent, CancellationToken cancellationToken);
     }
 }

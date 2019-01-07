@@ -6,6 +6,7 @@ using System.Linq;
 using ManagementAPI.ClubConfiguration.DomainEvents;
 using Shared.EventSourcing;
 using Shared.EventStore;
+using Shared.Exceptions;
 using Shared.General;
 
 namespace ManagementAPI.ClubConfiguration

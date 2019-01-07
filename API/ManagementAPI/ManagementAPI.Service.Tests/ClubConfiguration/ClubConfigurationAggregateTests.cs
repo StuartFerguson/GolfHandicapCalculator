@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using ManagementAPI.ClubConfiguration;
 using Shared.EventStore;
+using Shared.Exceptions;
 using Shouldly;
 using Xunit;
 

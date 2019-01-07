@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using ManagementAPI.Tournament;
 using Shared.EventStore;
+using Shared.Exceptions;
 using Shouldly;
 using Xunit;
 
