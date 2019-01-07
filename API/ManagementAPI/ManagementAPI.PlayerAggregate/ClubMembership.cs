@@ -45,6 +45,22 @@ namespace ManagementAPI.Player
         internal DateTime MembershipApprovedDateAndTime { get; private set; }
 
         /// <summary>
+        /// Gets the membership rejected date and time.
+        /// </summary>
+        /// <value>
+        /// The membership rejected date and time.
+        /// </value>
+        internal DateTime MembershipRejectedDateAndTime { get; private set; }
+
+        /// <summary>
+        /// Gets the rejection reason.
+        /// </summary>
+        /// <value>
+        /// The rejection reason.
+        /// </value>
+        internal String RejectionReason { get; private set; }
+
+        /// <summary>
         /// Gets the membership status.
         /// </summary>
         /// <value>
@@ -103,6 +119,20 @@ namespace ManagementAPI.Player
         {
             this.MembershipApprovedDateAndTime = membershipRequestApprovedDateAndTime;
             this.Status = MembershipStatus.Approved;
+        }
+        #endregion
+
+        #region internal void Reject(DateTime membershipRejectedDateAndTime, String rejectionReason)        
+        /// <summary>
+        /// Rejects the specified membership rejected date and time.
+        /// </summary>
+        /// <param name="membershipRejectedDateAndTime">The membership rejected date and time.</param>
+        /// <param name="rejectionReason">The rejection reason.</param>
+        internal void Reject(DateTime membershipRejectedDateAndTime, String rejectionReason)
+        {
+            this.MembershipRejectedDateAndTime = membershipRejectedDateAndTime;
+            this.RejectionReason = rejectionReason;
+            this.Status = MembershipStatus.Rejected;
         }
         #endregion
 

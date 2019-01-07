@@ -72,8 +72,21 @@ namespace ManagementAPI.Service.Tests.Player
             clubMembershipApprovedEvent.MembershipApprovedDateAndTime.ShouldBe(PlayerTestData.MembershipApprovedDateAndTime);
         }
 
-        
+        [Fact]
+        public void ClubMembershipRejectedEvent_CanBeCreated_IsCreated()
+        {
+            ClubMembershipRejectedEvent clubMembershipRejectedEvent = ClubMembershipRejectedEvent.Create(
+                PlayerTestData.AggregateId, PlayerTestData.ClubId,
+                PlayerTestData.MembershipRejectedDateAndTime,
+                PlayerTestData.RejectionReason);
 
-
+            clubMembershipRejectedEvent.ShouldNotBeNull();
+            clubMembershipRejectedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
+            clubMembershipRejectedEvent.EventId.ShouldNotBe(Guid.Empty);
+            clubMembershipRejectedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            clubMembershipRejectedEvent.ClubId.ShouldBe(PlayerTestData.ClubId);
+            clubMembershipRejectedEvent.MembershipRejectedDateAndTime.ShouldBe(PlayerTestData.MembershipRejectedDateAndTime);
+            clubMembershipRejectedEvent.RejectionReason.ShouldBe(PlayerTestData.RejectionReason);
+        }
     }
 }

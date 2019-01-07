@@ -41,5 +41,17 @@ namespace ManagementAPI.Service.Tests.Player
             command.PlayerId.ShouldBe(PlayerTestData.AggregateId);
             command.ClubId.ShouldBe(PlayerTestData.ClubId);
         }
+
+        [Fact]
+        public void RejectPlayerMembershipRequestCommand_CanBeCreated_IsCreated()
+        {
+            RejectPlayerMembershipRequestCommand command = RejectPlayerMembershipRequestCommand.Create(PlayerTestData.AggregateId, PlayerTestData.ClubId, PlayerTestData.RejectMembershipRequestRequest);
+
+            command.ShouldNotBeNull();
+            command.CommandId.ShouldNotBe(Guid.Empty);
+            command.PlayerId.ShouldBe(PlayerTestData.AggregateId);
+            command.ClubId.ShouldBe(PlayerTestData.ClubId);
+            command.RejectMembershipRequestRequest.ShouldBe(PlayerTestData.RejectMembershipRequestRequest);
+        }
     }
 }

@@ -106,6 +106,31 @@ namespace ManagementAPI.Service.Controllers
             return this.Ok();
         }
         #endregion
+
+        #region public async Task<IActionResult> ApprovePlayerMembershipRequest([FromRoute] Guid playerId, [FromRoute] Guid clubId, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Approves the player membership request.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="clubId">The club identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{playerId}/ClubMembershipRequest/{clubId}/Reject")]
+        //[Authorize(Policy = PolicyNames.ApprovePlayerMembershipRequestPolicy)]
+        public async Task<IActionResult> RejectPlayerMembershipRequest([FromRoute] Guid playerId, [FromRoute] Guid clubId, [FromBody] RejectMembershipRequestRequest request, CancellationToken cancellationToken)
+        {
+            // Create the command
+            var command = RejectPlayerMembershipRequestCommand.Create(playerId, clubId, request);
+
+            // Route the command
+            await this.CommandRouter.Route(command,cancellationToken);
+
+            // return the result
+            return this.Ok();
+        }
+        #endregion
         
         #endregion
     }
