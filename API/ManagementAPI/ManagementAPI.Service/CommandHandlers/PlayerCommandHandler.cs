@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ManagementAPI.ClubConfiguration;
 using ManagementAPI.Player;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
@@ -10,6 +11,7 @@ using ManagementAPI.Service.Services;
 using ManagementAPI.Service.Services.DataTransferObjects;
 using Shared.CommandHandling;
 using Shared.EventStore;
+using Shared.Exceptions;
 
 namespace ManagementAPI.Service.CommandHandlers
 {
@@ -27,6 +29,11 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         private readonly IOAuth2SecurityService OAuth2SecurityService;
 
+        /// <summary>
+        /// The club repository
+        /// </summary>
+        private readonly IAggregateRepository<ClubConfigurationAggregate> clubRepository;
+
         #endregion
 
         #region Constructors
@@ -36,10 +43,12 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         /// <param name="playerRepository">The player repository.</param>
         /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
-        public PlayerCommandHandler(IAggregateRepository<PlayerAggregate> playerRepository, IOAuth2SecurityService oAuth2SecurityService)
+        /// <param name="clubRepository">The club repository.</param>
+        public PlayerCommandHandler(IAggregateRepository<PlayerAggregate> playerRepository, IOAuth2SecurityService oAuth2SecurityService, IAggregateRepository<ClubConfigurationAggregate> clubRepository)
         {
             this.PlayerRepository = playerRepository;
             this.OAuth2SecurityService = oAuth2SecurityService;
+            this.clubRepository = clubRepository;
         }
 
         #endregion
@@ -127,7 +136,14 @@ namespace ManagementAPI.Service.CommandHandlers
             // Rehydrate the aggregate
             var player = await this.PlayerRepository.GetLatestVersion(command.PlayerId, cancellationToken);
 
-            // TODO: Validate the club id
+            // Validate the club
+            var club = await this.clubRepository.GetLatestVersion(command.ClubId, cancellationToken);
+
+            if (!club.HasBeenCreated)
+            {
+                throw new NotFoundException($"No club with Id {command.ClubId} found for membership request");
+            }
+
             DateTime membershipRequestedDateAndTime = DateTime.Now;
 
             player.RequestClubMembership(command.ClubId, membershipRequestedDateAndTime);
@@ -172,7 +188,7 @@ namespace ManagementAPI.Service.CommandHandlers
 
             DateTime membershipRequestRejectedDateAndTime = DateTime.Now;
 
-            //player.ApproveClubMembershipRequest(command.ClubId, membershipRequestApprovedDateAndTime);
+            player.RejectClubMembershipRequest(command.ClubId, membershipRequestRejectedDateAndTime, command.RejectMembershipRequestRequest.RejectionReason);
 
             // Save the changes
             await this.PlayerRepository.SaveChanges(player, cancellationToken);
