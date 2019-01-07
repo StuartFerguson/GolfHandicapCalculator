@@ -9,6 +9,7 @@ using ManagementAPI.Service.Tests.ClubConfiguration;
 using ManagementAPI.Tournament;
 using Moq;
 using Shared.EventStore;
+using Shared.Exceptions;
 using Shouldly;
 using Xunit;
 

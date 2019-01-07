@@ -10,6 +10,7 @@ using ManagementAPI.Service.Services;
 using ManagementAPI.Tournament;
 using Shared.CommandHandling;
 using Shared.EventStore;
+using Shared.Exceptions;
 
 namespace ManagementAPI.Service.CommandHandlers
 {

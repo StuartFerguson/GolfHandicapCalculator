@@ -10,6 +10,7 @@ using ManagementAPI.Tournament.DataTransferObjects;
 using ManagementAPI.Tournament.DomainEvents;
 using Newtonsoft.Json;
 using Shared.EventSourcing;
+using Shared.Exceptions;
 using Shared.General;
 
 namespace ManagementAPI.Tournament
@@ -700,7 +701,7 @@ namespace ManagementAPI.Tournament
         {
             if (!this.MemberScoreRecords.Any(m => m.MemberId == memberId))
             {
-                throw new NotFoundException($"No scored record found for {memberId}");
+                throw new NotFoundException($"No score record found for {memberId}");
             }
         }
         #endregion

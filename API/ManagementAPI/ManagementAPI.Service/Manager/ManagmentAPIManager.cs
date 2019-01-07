@@ -12,6 +12,7 @@ using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.DataTransferObjects;
 using Microsoft.EntityFrameworkCore;
 using Shared.EventStore;
+using Shared.Exceptions;
 using Shared.General;
 
 namespace ManagementAPI.Service.Manager
@@ -263,6 +264,68 @@ namespace ManagementAPI.Service.Manager
             }
 
             return result;
+        }
+        #endregion
+
+        #region public async Task RemoveClubMembershipRequestFromReadModel(ClubMembershipApprovedEvent domainEvent, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Removes the club membership request from read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">No pending membership request found for Club Id {domainEvent.ClubId} and Player Id {domainEvent.AggregateId}</exception>
+        public async Task RemoveClubMembershipRequestFromReadModel(ClubMembershipApprovedEvent domainEvent, CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (var context = this.ReadModelResolver())
+            {
+                // find the pending membership request
+                var pendingRequest = await context.ClubMembershipRequest.Where(c => c.ClubId == domainEvent.ClubId && 
+                                                                              c.PlayerId == domainEvent.AggregateId &&
+                                                                              c.Status == 0).SingleOrDefaultAsync(cancellationToken); // Pending
+                
+                if (pendingRequest == null)
+                {
+                    throw new NotFoundException($"No pending membership request found for Club Id {domainEvent.ClubId} and Player Id {domainEvent.AggregateId}");
+                }
+
+                context.ClubMembershipRequest.Remove(pendingRequest);
+
+                await context.SaveChangesAsync(cancellationToken);                
+            }
+        }
+        #endregion
+
+        #region public async Task RemoveClubMembershipRequestFromReadModel(ClubMembershipRejectedEvent domainEvent, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Removes the club membership request from read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">No pending membership request found for Club Id {domainEvent.ClubId} and Player Id {domainEvent.AggregateId}</exception>
+        public async Task RemoveClubMembershipRequestFromReadModel(ClubMembershipRejectedEvent domainEvent, CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (var context = this.ReadModelResolver())
+            {
+                // find the pending membership request
+                var pendingRequest = await context.ClubMembershipRequest.Where(c => c.ClubId == domainEvent.ClubId && 
+                                                                                    c.PlayerId == domainEvent.AggregateId &&
+                                                                                    c.Status == 0).SingleOrDefaultAsync(cancellationToken); // Pending
+                
+                if (pendingRequest == null)
+                {
+                    throw new NotFoundException($"No pending membership request found for Club Id {domainEvent.ClubId} and Player Id {domainEvent.AggregateId}");
+                }
+
+                context.ClubMembershipRequest.Remove(pendingRequest);
+
+                await context.SaveChangesAsync(cancellationToken);                
+            }
         }
         #endregion
 
