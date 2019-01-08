@@ -8,34 +8,34 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using System.Net;
-using ManagementAPI.Service.Tests.ClubConfiguration;
+using ManagementAPI.Service.Tests.GolfClub;
 using Newtonsoft.Json;
 using Shouldly;
 
 namespace ManagementAPI.Service.Tests.ClientTests
 {
-    public class ClubConfigurationClientTests
+    public class GolfClubClientTests
     {
         [Fact]
-        public async Task ClubConfigurationClient_CreateClubConfiguration_SuccessfulResponse()
+        public async Task GolfClubClient_CreateGolfClub_SuccessfulResponse()
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content =new StringContent(JsonConvert.SerializeObject(ClubConfigurationTestData.CreateClubConfigurationResponse))
+                Content =new StringContent(JsonConvert.SerializeObject(GolfClubTestData.CreateGolfClubResponse))
             });
 
             var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            var response = await client.CreateClubConfiguration(ClubConfigurationTestData.CreateClubConfigurationRequest,
+            var response = await client.CreateGolfClub(GolfClubTestData.CreateGolfClubRequest,
                 CancellationToken.None);
 
             response.ShouldNotBeNull();
-            response.ClubConfigurationId.ShouldBe(ClubConfigurationTestData.AggregateId);
+            response.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
         }
 
         [Theory]
@@ -45,7 +45,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
-        public async Task ClubConfigurationClient_CreateClubConfiguration_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        public async Task GolfClubClient_CreateGolfClub_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
@@ -57,11 +57,11 @@ namespace ManagementAPI.Service.Tests.ClientTests
             var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
             var exception = Should.Throw(async () =>
             {
-                await client.CreateClubConfiguration(ClubConfigurationTestData.CreateClubConfigurationRequest,
+                await client.CreateGolfClub(GolfClubTestData.CreateGolfClubRequest,
                     CancellationToken.None);
             }, exceptionType);
 
@@ -69,25 +69,25 @@ namespace ManagementAPI.Service.Tests.ClientTests
         }
 
         [Fact]
-        public async Task ClubConfigurationClient_GetClubConfigurationList_SuccessfulResponse()
+        public async Task GolfClubClient_GetGolfClubList_SuccessfulResponse()
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content =new StringContent(JsonConvert.SerializeObject(ClubConfigurationTestData.GetClubConfigurationListResponse))
+                Content =new StringContent(JsonConvert.SerializeObject(GolfClubTestData.GetGolfClubListResponse))
             });
 
             var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "mypasswordtoken";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            var response = await client.GetClubConfigurationList(passwordToken, CancellationToken.None);
+            var response = await client.GetGolfClubList(passwordToken, CancellationToken.None);
 
             response.ShouldNotBeNull();
-            response.Count.ShouldBe(ClubConfigurationTestData.GetClubConfigurationListResponse.Count);
+            response.Count.ShouldBe(GolfClubTestData.GetGolfClubListResponse.Count);
         }
 
         [Theory]
@@ -97,7 +97,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
-        public async Task ClubConfigurationClient_GetClubConfigurationList_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        public async Task GolfClubClient_GetGolfClubList_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
@@ -110,45 +110,45 @@ namespace ManagementAPI.Service.Tests.ClientTests
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "mypasswordtoken";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
             
             var exception = Should.Throw(async () =>
             {
-                await client.GetClubConfigurationList(passwordToken, CancellationToken.None);
+                await client.GetGolfClubList(passwordToken, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);
         }
 
         [Fact]
-        public async Task ClubConfigurationClient_GetSingleClubConfiguration_SuccessfulResponse()
+        public async Task GolfClubClient_GetSingleGolfClub_SuccessfulResponse()
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content =new StringContent(JsonConvert.SerializeObject(ClubConfigurationTestData.GetClubConfigurationListResponse.First()))
+                Content =new StringContent(JsonConvert.SerializeObject(GolfClubTestData.GetGolfClubListResponse.First()))
             });
 
             var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "mypasswordtoken";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            var response = await client.GetSingleClubConfiguration(passwordToken, ClubConfigurationTestData.AggregateId, CancellationToken.None);
+            var response = await client.GetSingleGolfClub(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
 
             response.ShouldNotBeNull();
-            response.AddressLine1.ShouldBe(ClubConfigurationTestData.AddressLine1);
-            response.AddressLine2.ShouldBe(ClubConfigurationTestData.AddressLine2);
-            response.EmailAddress.ShouldBe(ClubConfigurationTestData.EmailAddress);
-            response.Id.ShouldBe(ClubConfigurationTestData.AggregateId);
-            response.Name.ShouldBe(ClubConfigurationTestData.Name);
-            response.PostalCode.ShouldBe(ClubConfigurationTestData.PostalCode);
-            response.Region.ShouldBe(ClubConfigurationTestData.Region);
-            response.TelephoneNumber.ShouldBe(ClubConfigurationTestData.TelephoneNumber);
-            response.Town.ShouldBe(ClubConfigurationTestData.Town);
-            response.Website.ShouldBe(ClubConfigurationTestData.Website);
+            response.AddressLine1.ShouldBe(GolfClubTestData.AddressLine1);
+            response.AddressLine2.ShouldBe(GolfClubTestData.AddressLine2);
+            response.EmailAddress.ShouldBe(GolfClubTestData.EmailAddress);
+            response.Id.ShouldBe(GolfClubTestData.AggregateId);
+            response.Name.ShouldBe(GolfClubTestData.Name);
+            response.PostalCode.ShouldBe(GolfClubTestData.PostalCode);
+            response.Region.ShouldBe(GolfClubTestData.Region);
+            response.TelephoneNumber.ShouldBe(GolfClubTestData.TelephoneNumber);
+            response.Town.ShouldBe(GolfClubTestData.Town);
+            response.Website.ShouldBe(GolfClubTestData.Website);
         }
 
         [Theory]
@@ -158,7 +158,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
-        public async Task ClubConfigurationClient_GetSingleClubConfiguration_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        public async Task GolfClubClient_GetSingleGolfClub_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
@@ -171,18 +171,18 @@ namespace ManagementAPI.Service.Tests.ClientTests
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "mypasswordtoken";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
             var exception = Should.Throw(async () =>
             {
-                await client.GetSingleClubConfiguration(passwordToken, ClubConfigurationTestData.AggregateId, CancellationToken.None);
+                await client.GetSingleGolfClub(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);
         }
 
         [Fact]
-        public async Task ClubConfigurationClient_AddMeasuredCourseToClubConfiguration_SuccessfulResponse()
+        public async Task GolfClubClient_AddMeasuredCourseToGolfClub_SuccessfulResponse()
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
@@ -195,9 +195,9 @@ namespace ManagementAPI.Service.Tests.ClientTests
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "mypasswordtoken";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            await client.AddMeasuredCourseToClubConfiguration(passwordToken, ClubConfigurationTestData.AggregateId, ClubConfigurationTestData.AddMeasuredCourseToClubRequest, CancellationToken.None);
+            await client.AddMeasuredCourseToGolfClub(passwordToken, GolfClubTestData.AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest, CancellationToken.None);
         }
 
         [Theory]
@@ -207,7 +207,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
-        public async Task ClubConfigurationClient_AddMeasuredCourseToClubConfiguration_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        public async Task GolfClubClient_AddMeasuredCourseToGolfClub_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
@@ -220,36 +220,36 @@ namespace ManagementAPI.Service.Tests.ClientTests
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "mypasswordtoken";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
             
             var exception = Should.Throw(async () =>
             {
-                await client.AddMeasuredCourseToClubConfiguration(passwordToken, ClubConfigurationTestData.AggregateId, ClubConfigurationTestData.AddMeasuredCourseToClubRequest, CancellationToken.None);
+                await client.AddMeasuredCourseToGolfClub(passwordToken, GolfClubTestData.AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);
         }
 
         [Fact]
-        public async Task ClubConfigurationClient_GetPendingMembershipRequests_SuccessfulResponse()
+        public async Task GolfClubClient_GetPendingMembershipRequests_SuccessfulResponse()
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content =new StringContent(JsonConvert.SerializeObject(ClubConfigurationTestData.GetClubMembershipRequestResponse))
+                Content =new StringContent(JsonConvert.SerializeObject(GolfClubTestData.GetClubMembershipRequestResponse))
             });
 
             var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "mypasswordtoken";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            var response = await client.GetPendingMembershipRequests(passwordToken, ClubConfigurationTestData.AggregateId, CancellationToken.None);
+            var response = await client.GetPendingMembershipRequests(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
 
             response.ShouldNotBeNull();
-            response.Count.ShouldBe(ClubConfigurationTestData.GetClubMembershipRequestResponse.Count);
+            response.Count.ShouldBe(GolfClubTestData.GetClubMembershipRequestResponse.Count);
         }
 
         [Theory]
@@ -259,7 +259,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
-        public async Task ClubConfigurationClient_GetPendingMembershipRequests_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        public async Task GolfClubClient_GetPendingMembershipRequests_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
@@ -272,11 +272,11 @@ namespace ManagementAPI.Service.Tests.ClientTests
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "mypasswordtoken";
 
-            ClubConfigurationClient client = new ClubConfigurationClient(resolver, httpClient);
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
             var exception = Should.Throw(async () =>
             {
-                await client.GetPendingMembershipRequests(passwordToken, ClubConfigurationTestData.AggregateId, CancellationToken.None);
+                await client.GetPendingMembershipRequests(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);

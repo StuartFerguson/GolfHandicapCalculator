@@ -11,7 +11,7 @@ namespace ManagementAPI.Service.Tests.Tournament
     {
         public static Guid AggregateId = Guid.Parse("15650BE2-4F7F-40D9-B5F8-A099A713E959");
         public static DateTime TournamentDate = new DateTime(2018,4,1);
-        public static Guid ClubConfigurationId = Guid.Parse("CD64A469-9593-49D6-988D-3842C532D23E");
+        public static Guid GolfClubId = Guid.Parse("CD64A469-9593-49D6-988D-3842C532D23E");
         public static Guid MeasuredCourseId= Guid.Parse("B2F334C2-03D3-48DB-9C6F-45FB1133F071");
         public static Int32 MeasuredCourseSSS = 70;
         public static String Name = "Test Tournament";
@@ -98,7 +98,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
-            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentDate, GolfClubId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
             return aggregate;
         }
@@ -107,7 +107,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
-            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId,MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentDate, GolfClubId, MeasuredCourseId,MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
             aggregate.RecordMemberScore(MemberId, PlayingHandicap, HoleScores);
 
@@ -119,7 +119,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
-            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentDate, GolfClubId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
             var scoresToRecord = GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
             foreach (var memberScoreForTest in scoresToRecord)
@@ -136,7 +136,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
-            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentDate, GolfClubId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
             aggregate.RecordMemberScore(MemberId, PlayingHandicap, HoleScores);
 
@@ -150,7 +150,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(AggregateId);
 
-            aggregate.CreateTournament(TournamentDate, ClubConfigurationId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentDate, GolfClubId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
             var scoresToRecord = GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
             foreach (var memberScoreForTest in scoresToRecord)
@@ -170,7 +170,7 @@ namespace ManagementAPI.Service.Tests.Tournament
             Name = Name,
             MemberCategory = MemberCategory,
             MeasuredCourseId = MeasuredCourseId,
-            ClubConfigurationId = ClubConfigurationId,
+            GolfClubId = GolfClubId,
             TournamentDate = TournamentDate,
             Format = TournamentFormat
         };

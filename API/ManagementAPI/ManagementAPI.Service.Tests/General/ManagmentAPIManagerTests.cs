@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ManagementAPI.ClubConfiguration;
-using ManagementAPI.ClubConfiguration.DomainEvents;
 using ManagementAPI.Database;
 using ManagementAPI.Database.Models;
+using ManagementAPI.GolfClub;
+using ManagementAPI.GolfClub.DomainEvents;
 using ManagementAPI.Player;
 using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.Manager;
-using ManagementAPI.Service.Tests.ClubConfiguration;
+using ManagementAPI.Service.Tests.GolfClub;
 using ManagementAPI.Service.Tests.Player;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -35,11 +35,11 @@ namespace ManagementAPI.Service.Tests.General
 
         #region Get Club Configuration Tests
         [Fact]
-        public async Task ManagmentAPIManager_GetClubConfiguration_ClubConfigurationReturned()
+        public async Task ManagmentAPIManager_GetGolfClub_GolfClubReturned()
         {
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate());
+                .ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate());
 
             var context = GetContext(Guid.NewGuid().ToString("N"));
 
@@ -49,22 +49,22 @@ namespace ManagementAPI.Service.Tests.General
 
             var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object);
 
-            var result = await manager.GetClubConfiguration(ClubConfigurationTestData.AggregateId, CancellationToken.None);
+            var result = await manager.GetGolfClub(GolfClubTestData.AggregateId, CancellationToken.None);
 
             result.ShouldNotBeNull();
-            result.Name.ShouldBe(ClubConfigurationTestData.Name);
-            result.AddressLine1.ShouldBe(ClubConfigurationTestData.AddressLine1);
-            result.AddressLine2.ShouldBe(ClubConfigurationTestData.AddressLine2);
-            result.Town.ShouldBe(ClubConfigurationTestData.Town);
-            result.Region.ShouldBe(ClubConfigurationTestData.Region);
-            result.PostalCode.ShouldBe(ClubConfigurationTestData.PostalCode);
-            result.TelephoneNumber.ShouldBe(ClubConfigurationTestData.TelephoneNumber);
-            result.Website.ShouldBe(ClubConfigurationTestData.Website);
-            result.EmailAddress.ShouldBe(ClubConfigurationTestData.EmailAddress);
+            result.Name.ShouldBe(GolfClubTestData.Name);
+            result.AddressLine1.ShouldBe(GolfClubTestData.AddressLine1);
+            result.AddressLine2.ShouldBe(GolfClubTestData.AddressLine2);
+            result.Town.ShouldBe(GolfClubTestData.Town);
+            result.Region.ShouldBe(GolfClubTestData.Region);
+            result.PostalCode.ShouldBe(GolfClubTestData.PostalCode);
+            result.TelephoneNumber.ShouldBe(GolfClubTestData.TelephoneNumber);
+            result.Website.ShouldBe(GolfClubTestData.Website);
+            result.EmailAddress.ShouldBe(GolfClubTestData.EmailAddress);
         }
 
         [Fact]
-        public void ManagmentAPIManager_GetClubConfiguration_InvalidClubId_ErrorThrown()
+        public void ManagmentAPIManager_GetGolfClub_InvalidGolfClubId_ErrorThrown()
         {
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(Guid.NewGuid().ToString("N"));
@@ -77,12 +77,12 @@ namespace ManagementAPI.Service.Tests.General
 
             Should.ThrowAsync<ArgumentNullException>(async () => 
             {
-                await manager.GetClubConfiguration(Guid.Empty, CancellationToken.None);
+                await manager.GetGolfClub(Guid.Empty, CancellationToken.None);
             });
         }
 
         [Fact]
-        public void ManagmentAPIManager_GetClubConfiguration_ClubConfigurationNotFound_ErrorThrown()
+        public void ManagmentAPIManager_GetGolfClub_GolfClubNotFound_ErrorThrown()
         {
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(Guid.NewGuid().ToString("N"));
@@ -95,16 +95,16 @@ namespace ManagementAPI.Service.Tests.General
 
             Should.ThrowAsync<NotFoundException>(async () => 
             {
-                await manager.GetClubConfiguration(ClubConfigurationTestData.AggregateId, CancellationToken.None);
+                await manager.GetGolfClub(GolfClubTestData.AggregateId, CancellationToken.None);
             });
         }
 
         [Fact]
-        public void ManagmentAPIManager_GetClubConfiguration_ClubConfigurationNotCreated_ErrorThrown()
+        public void ManagmentAPIManager_GetGolfClub_GolfClubNotCreated_ErrorThrown()
         {
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate());
+                .ReturnsAsync(GolfClubTestData.GetEmptyGolfClubAggregate());
 
             var context = GetContext(Guid.NewGuid().ToString("N"));
 
@@ -116,7 +116,7 @@ namespace ManagementAPI.Service.Tests.General
 
             Should.ThrowAsync<NotFoundException>(async () => 
             {
-                await manager.GetClubConfiguration(ClubConfigurationTestData.AggregateId, CancellationToken.None);
+                await manager.GetGolfClub(GolfClubTestData.AggregateId, CancellationToken.None);
             });
         }
         #endregion
@@ -138,12 +138,12 @@ namespace ManagementAPI.Service.Tests.General
 
             
 
-            var domainEvent = ClubConfigurationTestData.GetClubConfigurationCreatedEvent();
+            var domainEvent = GolfClubTestData.GetGolfClubCreatedEvent();
 
-            await manager.InsertClubInformationToReadModel(domainEvent, CancellationToken.None);
+            await manager.InsertGolfClubToReadModel(domainEvent, CancellationToken.None);
 
             var verifyContext = GetContext(databaseName);
-            verifyContext.ClubInformation.Count().ShouldBe(1);
+            verifyContext.GolfClub.Count().ShouldBe(1);
         }
 
         [Fact]
@@ -159,11 +159,11 @@ namespace ManagementAPI.Service.Tests.General
 
             var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
 
-            ClubConfigurationCreatedEvent domainEvent = null;
+            GolfClubCreatedEvent domainEvent = null;
 
             Should.Throw<ArgumentNullException>(async () =>
             {
-                await manager.InsertClubInformationToReadModel(domainEvent, CancellationToken.None);
+                await manager.InsertGolfClubToReadModel(domainEvent, CancellationToken.None);
             });
         }
 
@@ -173,18 +173,18 @@ namespace ManagementAPI.Service.Tests.General
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(databaseName);
-            context.ClubInformation.Add(new ClubInformation
+            context.GolfClub.Add(new Database.Models.GolfClub
             {
-                EmailAddress = ClubConfigurationTestData.EmailAddress,
-                Name = ClubConfigurationTestData.Name,
-                AddressLine1 = ClubConfigurationTestData.AddressLine1,
-                Town = ClubConfigurationTestData.Town,
-                Region = ClubConfigurationTestData.Region,
-                TelephoneNumber = ClubConfigurationTestData.TelephoneNumber,
-                PostalCode = ClubConfigurationTestData.PostalCode,
-                AddressLine2 = ClubConfigurationTestData.AddressLine2,
-                ClubConfigurationId = ClubConfigurationTestData.AggregateId,
-                WebSite = ClubConfigurationTestData.Website
+                EmailAddress = GolfClubTestData.EmailAddress,
+                Name = GolfClubTestData.Name,
+                AddressLine1 = GolfClubTestData.AddressLine1,
+                Town = GolfClubTestData.Town,
+                Region = GolfClubTestData.Region,
+                TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                PostalCode = GolfClubTestData.PostalCode,
+                AddressLine2 = GolfClubTestData.AddressLine2,
+                GolfClubId = GolfClubTestData.AggregateId,
+                WebSite = GolfClubTestData.Website
             });
             context.SaveChanges();
 
@@ -194,11 +194,11 @@ namespace ManagementAPI.Service.Tests.General
 
             var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
 
-            ClubConfigurationCreatedEvent domainEvent = ClubConfigurationTestData.GetClubConfigurationCreatedEvent();
+            GolfClubCreatedEvent domainEvent = GolfClubTestData.GetGolfClubCreatedEvent();
 
             Should.NotThrow(async () =>
             {
-                await manager.InsertClubInformationToReadModel(domainEvent, CancellationToken.None);
+                await manager.InsertGolfClubToReadModel(domainEvent, CancellationToken.None);
             });
         }
 
@@ -213,18 +213,18 @@ namespace ManagementAPI.Service.Tests.General
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
-            context.ClubInformation.Add(new ClubInformation
+            context.GolfClub.Add(new Database.Models.GolfClub
             {
-                EmailAddress = ClubConfigurationTestData.EmailAddress,
-                Name = ClubConfigurationTestData.Name,
-                AddressLine1 = ClubConfigurationTestData.AddressLine1,
-                Town = ClubConfigurationTestData.Town,
-                Region = ClubConfigurationTestData.Region,
-                TelephoneNumber = ClubConfigurationTestData.TelephoneNumber,
-                PostalCode = ClubConfigurationTestData.PostalCode,
-                AddressLine2 = ClubConfigurationTestData.AddressLine2,
-                ClubConfigurationId = ClubConfigurationTestData.AggregateId,
-                WebSite = ClubConfigurationTestData.Website
+                EmailAddress = GolfClubTestData.EmailAddress,
+                Name = GolfClubTestData.Name,
+                AddressLine1 = GolfClubTestData.AddressLine1,
+                Town = GolfClubTestData.Town,
+                Region = GolfClubTestData.Region,
+                TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                PostalCode = GolfClubTestData.PostalCode,
+                AddressLine2 = GolfClubTestData.AddressLine2,
+                GolfClubId = GolfClubTestData.AggregateId,
+                WebSite = GolfClubTestData.Website
             });
             context.SaveChanges();
 
@@ -234,7 +234,7 @@ namespace ManagementAPI.Service.Tests.General
 
             var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
 
-            var result = await manager.GetClubList(CancellationToken.None);
+            var result = await manager.GetGolfClubList(CancellationToken.None);
 
             result.ShouldNotBeEmpty();
             result.Count.ShouldBe(1);
@@ -254,7 +254,7 @@ namespace ManagementAPI.Service.Tests.General
 
             var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver,playerRepository.Object);
 
-            var result = await manager.GetClubList(CancellationToken.None);
+            var result = await manager.GetGolfClubList(CancellationToken.None);
 
             result.ShouldBeEmpty();
         }
@@ -269,7 +269,7 @@ namespace ManagementAPI.Service.Tests.General
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
+                .ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate);
 
             var context = GetContext(databaseName);
 
@@ -295,7 +295,7 @@ namespace ManagementAPI.Service.Tests.General
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate);
+                .ReturnsAsync(GolfClubTestData.GetEmptyGolfClubAggregate);
 
             var context = GetContext(databaseName);
 
@@ -319,7 +319,7 @@ namespace ManagementAPI.Service.Tests.General
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
+                .ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate);
 
             var context = GetContext(databaseName);
 
@@ -366,7 +366,7 @@ namespace ManagementAPI.Service.Tests.General
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
+                .ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate);
 
             var context = GetContext(databaseName);
 

@@ -12,13 +12,13 @@ namespace ManagementAPI.Service.Tests.Tournament
         public void TournamentCreatedEvent_CanBeCreated_IsCreated()
         {
             TournamentCreatedEvent tournamentCreatedEvent = TournamentCreatedEvent.Create(TournamentTestData.AggregateId,TournamentTestData.TournamentDate,
-                TournamentTestData.ClubConfigurationId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, 
+                TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, 
                 TournamentTestData.MemberCategory, TournamentTestData.TournamentFormat);
 
             tournamentCreatedEvent.ShouldNotBeNull();
             tournamentCreatedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
             tournamentCreatedEvent.TournamentDate.ShouldBe(TournamentTestData.TournamentDate);
-            tournamentCreatedEvent.ClubConfigurationId.ShouldBe(TournamentTestData.ClubConfigurationId);
+            tournamentCreatedEvent.GolfClubId.ShouldBe(TournamentTestData.GolfClubId);
             tournamentCreatedEvent.MeasuredCourseId.ShouldBe(TournamentTestData.MeasuredCourseId);
             tournamentCreatedEvent.MeasuredCourseSSS.ShouldBe(TournamentTestData.MeasuredCourseSSS);
             tournamentCreatedEvent.Name.ShouldBe(TournamentTestData.Name);

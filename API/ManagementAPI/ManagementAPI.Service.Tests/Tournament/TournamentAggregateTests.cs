@@ -41,11 +41,11 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
-            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.ClubConfigurationId, TournamentTestData.MeasuredCourseId, 
+            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, 
                 TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
             aggregate.TournamentDate.ShouldBe(TournamentTestData.TournamentDate);
-            aggregate.ClubConfigurationId.ShouldBe(TournamentTestData.ClubConfigurationId);
+            aggregate.GolfClubId.ShouldBe(TournamentTestData.GolfClubId);
             aggregate.MeasuredCourseId.ShouldBe(TournamentTestData.MeasuredCourseId);
             aggregate.MeasuredCourseSSS.ShouldBe(TournamentTestData.MeasuredCourseSSS);
             aggregate.Name.ShouldBe(TournamentTestData.Name);
@@ -64,18 +64,18 @@ namespace ManagementAPI.Service.Tests.Tournament
         [InlineData(true,true, true, 70, "",MemberCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
         [InlineData(true,true, true, 70, "tournament name",(MemberCategory)99, TournamentFormat.Strokeplay, typeof(ArgumentOutOfRangeException))]
         [InlineData(true,true, true, 70, "tournament name",MemberCategory.Gents, (TournamentFormat)99, typeof(ArgumentOutOfRangeException))]
-        public void TournamentAggregate_CreateTournament_InvalidData_ErrorThrown(Boolean validTournamentDate, Boolean validClubConfigurationId, Boolean validMeasuredCourseId,
+        public void TournamentAggregate_CreateTournament_InvalidData_ErrorThrown(Boolean validTournamentDate, Boolean validGolfClubId, Boolean validMeasuredCourseId,
             Int32 measuredCourseSSS, String name, MemberCategory memberCategory, TournamentFormat tournamentFormat, Type exceptionType)
         {
             TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             DateTime tournamentDate = validTournamentDate ? TournamentTestData.TournamentDate : DateTime.MinValue;
-            Guid clubConfigurationId = validClubConfigurationId ? TournamentTestData.ClubConfigurationId : Guid.Empty;
+            Guid golfClubId = validGolfClubId ? TournamentTestData.GolfClubId : Guid.Empty;
             Guid measuredCourseId = validMeasuredCourseId ? TournamentTestData.MeasuredCourseId : Guid.Empty;
 
             Should.Throw(() =>
             {                
-                aggregate.CreateTournament(tournamentDate, clubConfigurationId, measuredCourseId, measuredCourseSSS, name, memberCategory, tournamentFormat);
+                aggregate.CreateTournament(tournamentDate, golfClubId, measuredCourseId, measuredCourseSSS, name, memberCategory, tournamentFormat);
 
             },exceptionType);
         }
@@ -87,7 +87,7 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             Should.Throw<InvalidOperationException>(() =>
             {
-                aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.ClubConfigurationId,
+                aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId,
                     TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name,
                     TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
             });

@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ManagementAPI.ClubConfiguration;
-using ManagementAPI.ClubConfiguration.DomainEvents;
 using ManagementAPI.GolfClub;
+using ManagementAPI.GolfClub.DomainEvents;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services.DataTransferObjects;
 using HoleDataTransferObject = ManagementAPI.GolfClub.HoleDataTransferObject;
 using DTOHoleDataTransferObject = ManagementAPI.Service.DataTransferObjects.HoleDataTransferObject;
 
-namespace ManagementAPI.Service.Tests.ClubConfiguration
+namespace ManagementAPI.Service.Tests.GolfClub
 {
-    public class ClubConfigurationTestData
+    public class GolfClubTestData
     {
         public static Guid AggregateId = Guid.Parse("CD64A469-9593-49D6-988D-3842C532D23E");
         public static String Name = "Test Club Name";
@@ -39,14 +38,14 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
             
         public static Guid AdminSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
 
-        public static GolfClubAggregate GetEmptyClubConfigurationAggregate()
+        public static GolfClubAggregate GetEmptyGolfClubAggregate()
         {
             GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
             return aggregate;
         }
 
-        public static GolfClubAggregate GetCreatedClubConfigurationAggregate()
+        public static GolfClubAggregate GetCreatedGolfClubAggregate()
         {
             GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
@@ -55,26 +54,26 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
             return aggregate;
         }
 
-        public static GolfClubAggregate GetCreatedClubConfigurationAggregateWithAdminUser()
+        public static GolfClubAggregate GetCreatedGolfClubAggregateWithAdminUser()
         {
             GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
             aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 
-            aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
+            aggregate.CreateAdminSecurityUser(GolfClubTestData.AdminSecurityUserId);
             
             return aggregate;
         }
 
-        public static GolfClubAggregate GetClubConfigurationAggregateWithMeasuredCourse()
+        public static GolfClubAggregate GetGolfClubAggregateWithMeasuredCourse()
         {
             GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
             aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 
-            aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
+            aggregate.CreateAdminSecurityUser(GolfClubTestData.AdminSecurityUserId);
 
-            MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
+            MeasuredCourseDataTransferObject measuredCourseDataTransferObject = GolfClubTestData.GetMeasuredCourseToAdd();
 
             aggregate.AddMeasuredCourse(measuredCourseDataTransferObject);
 
@@ -186,7 +185,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
             return result;
         }
 
-        public static CreateClubConfigurationRequest CreateClubConfigurationRequest = new CreateClubConfigurationRequest
+        public static CreateGolfClubRequest CreateGolfClubRequest = new CreateGolfClubRequest
         {
             Name = Name,
             AddressLine1 = AddressLine1,
@@ -199,10 +198,10 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
             AddressLine2 = AddressLine2
         };
 
-        public static CreateClubConfigurationResponse CreateClubConfigurationResponse =
-            new CreateClubConfigurationResponse
+        public static CreateGolfClubResponse CreateGolfClubResponse =
+            new CreateGolfClubResponse
             {
-                ClubConfigurationId = AggregateId
+                GolfClubId = AggregateId
             };
 
         public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest =
@@ -234,14 +233,14 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
                 }
             };
 
-        public static CreateClubConfigurationCommand GetCreateClubConfigurationCommand()
+        public static CreateGolfClubCommand GetCreateGolfClubCommand()
         {            
-            return CreateClubConfigurationCommand.Create(ClubConfigurationTestData.CreateClubConfigurationRequest);
+            return CreateGolfClubCommand.Create(GolfClubTestData.CreateGolfClubRequest);
         }
 
         public static AddMeasuredCourseToClubCommand GetAddMeasuredCourseToClubCommand()
         {
-            return AddMeasuredCourseToClubCommand.Create(AggregateId, ClubConfigurationTestData.AddMeasuredCourseToClubRequest);
+            return AddMeasuredCourseToClubCommand.Create(AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest);
         }
         
         public static RegisterUserResponse GetRegisterUserResponse()
@@ -252,19 +251,19 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
             };
         }
 
-        public static ClubConfigurationCreatedEvent GetClubConfigurationCreatedEvent()
+        public static GolfClubCreatedEvent GetGolfClubCreatedEvent()
         {
-            ClubConfigurationCreatedEvent domainEvent = ClubConfigurationCreatedEvent.Create(ClubConfigurationTestData.AggregateId, ClubConfigurationTestData.Name,
-                ClubConfigurationTestData.AddressLine1, ClubConfigurationTestData.AddressLine2, ClubConfigurationTestData.Town,
-                ClubConfigurationTestData.Region, ClubConfigurationTestData.PostalCode, ClubConfigurationTestData.TelephoneNumber,
-                ClubConfigurationTestData.Website, ClubConfigurationTestData.EmailAddress);
+            GolfClubCreatedEvent domainEvent = GolfClubCreatedEvent.Create(GolfClubTestData.AggregateId, GolfClubTestData.Name,
+                GolfClubTestData.AddressLine1, GolfClubTestData.AddressLine2, GolfClubTestData.Town,
+                GolfClubTestData.Region, GolfClubTestData.PostalCode, GolfClubTestData.TelephoneNumber,
+                GolfClubTestData.Website, GolfClubTestData.EmailAddress);
 
             return domainEvent;
         }
 
-        public static List<GetClubConfigurationResponse> GetClubConfigurationListResponse = new List<GetClubConfigurationResponse>
+        public static List<GetGolfClubResponse> GetGolfClubListResponse = new List<GetGolfClubResponse>
         {
-            new GetClubConfigurationResponse
+            new GetGolfClubResponse
             {
                 Id = AggregateId,
                 AddressLine1 = AddressLine1,
