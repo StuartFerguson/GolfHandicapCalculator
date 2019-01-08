@@ -24,8 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ManagementAPI.ClubConfiguration.DomainEvents\ManagementAPI.GolfClub.DomainEvents.csproj" />
-    <ProjectReference Include="..\ManagementAPI.ClubConfigurationAggregate\ManagementAPI.GolfClubAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.Database\ManagementAPI.Database.csproj" />
     <ProjectReference Include="..\ManagementAPI.Player.DomainEvents\ManagementAPI.Player.DomainEvents.csproj" />
     <ProjectReference Include="..\ManagementAPI.PlayerAggregate\ManagementAPI.PlayerAggregate.csproj" />

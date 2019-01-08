@@ -103,7 +103,7 @@ namespace ManagementAPI.Service.CommandHandlers
                 PhoneNumber = command.CreateGolfClubRequest.TelephoneNumber,
                 Roles = new List<String>
                 {
-                    "Golf Club Administrator"
+                    "Club Administrator"
                 }
             };
             var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);

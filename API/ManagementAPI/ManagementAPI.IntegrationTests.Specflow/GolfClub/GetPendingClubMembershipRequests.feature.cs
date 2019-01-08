@@ -10,14 +10,14 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
+namespace ManagementAPI.IntegrationTests.Specflow.GolfClub
 {
     using TechTalk.SpecFlow;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.4.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [Xunit.TraitAttribute("Category", "clubconfiguration")]
+    [Xunit.TraitAttribute("Category", "golfclub")]
     public partial class GetPendingClubMembershipRequestsFeature : Xunit.IClassFixture<GetPendingClubMembershipRequestsFeature.FixtureData>, System.IDisposable
     {
         
@@ -38,7 +38,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Get Pending Club Membership Requests", null, ProgrammingLanguage.CSharp, new string[] {
-                        "clubconfiguration"});
+                        "golfclub"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -79,7 +79,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
 #line 5
  testRunner.Given("The Golf Handicapping System Is Running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 6
- testRunner.And("a club has already been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("a golf club has already been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 7
  testRunner.And("a player has already registed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 8

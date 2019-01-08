@@ -10,25 +10,25 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
+namespace ManagementAPI.IntegrationTests.Specflow.GolfClub
 {
     using TechTalk.SpecFlow;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.4.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [Xunit.TraitAttribute("Category", "clubconfiguration")]
-    public partial class AddMeasuredCourseToExistingClubFeature : Xunit.IClassFixture<AddMeasuredCourseToExistingClubFeature.FixtureData>, System.IDisposable
+    [Xunit.TraitAttribute("Category", "golfclub")]
+    public partial class CreateGolfClubFeature : Xunit.IClassFixture<CreateGolfClubFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
-#line 1 "AddMeasuredCoursetoExistingClub.feature"
+#line 1 "CreateGolfClub.feature"
 #line hidden
         
-        public AddMeasuredCourseToExistingClubFeature(AddMeasuredCourseToExistingClubFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public CreateGolfClubFeature(CreateGolfClubFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -37,9 +37,9 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Add Measured Course to Existing Club", "\tIn order to run a golf club handicapping system\r\n\tAs a match secretary\r\n\tI want " +
-                    "to be able to add measured courses to my golf club configuration", ProgrammingLanguage.CSharp, new string[] {
-                        "clubconfiguration"});
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Create Golf Club", "\tIn order to run a golf club handicapping system\r\n\tAs a club administrator\r\n\tI wa" +
+                    "nt to be able to create my golf club", ProgrammingLanguage.CSharp, new string[] {
+                        "golfclub"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -87,25 +87,25 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Add Measured Course to Existing Club")]
-        [Xunit.TraitAttribute("FeatureTitle", "Add Measured Course to Existing Club")]
-        [Xunit.TraitAttribute("Description", "Add Measured Course to Existing Club")]
-        public virtual void AddMeasuredCourseToExistingClub()
+        [Xunit.FactAttribute(DisplayName="Create Golf Club")]
+        [Xunit.TraitAttribute("FeatureTitle", "Create Golf Club")]
+        [Xunit.TraitAttribute("Description", "Create Golf Club")]
+        public virtual void CreateGolfClub()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add Measured Course to Existing Club", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create Golf Club", null, ((string[])(null)));
 #line 10
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
 #line 11
- testRunner.Given("My Club configuration has been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have the details of the new club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 12
- testRunner.And("I am logged in as a club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I call Create Golf Club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 13
- testRunner.When("I add a measured course to the club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Then("the golf club configuration will be created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 14
- testRunner.Then("the measured course is added to the club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("I will get the new Golf Club Id in the response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -117,12 +117,12 @@ this.FeatureBackground();
             
             public FixtureData()
             {
-                AddMeasuredCourseToExistingClubFeature.FeatureSetup();
+                CreateGolfClubFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                AddMeasuredCourseToExistingClubFeature.FeatureTearDown();
+                CreateGolfClubFeature.FeatureTearDown();
             }
         }
     }

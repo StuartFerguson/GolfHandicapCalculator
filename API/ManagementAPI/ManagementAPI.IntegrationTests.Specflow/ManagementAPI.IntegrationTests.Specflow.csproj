@@ -113,27 +113,27 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="ClubConfiguration\AddMeasuredCoursetoExistingClub.feature.cs">
+    <Compile Include="GolfClub\AddMeasuredCoursetoExistingClub.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AddMeasuredCoursetoExistingClub.feature</DependentUpon>
     </Compile>
-    <Compile Include="ClubConfiguration\CreateClubConfiguration.feature.cs">
+    <Compile Include="GolfClub\CreateGolfClub.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>CreateClubConfiguration.feature</DependentUpon>
+      <DependentUpon>CreateGolfClub.feature</DependentUpon>
     </Compile>
-    <Compile Include="ClubConfiguration\GetClubConfiguration.feature.cs">
+    <Compile Include="GolfClub\GetGolfClub.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>GetClubConfiguration.feature</DependentUpon>
+      <DependentUpon>GetGolfClub.feature</DependentUpon>
     </Compile>
-    <Compile Include="ClubConfiguration\GetClubList.feature.cs">
+    <Compile Include="GolfClub\GetGolfClubList.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>GetClubList.feature</DependentUpon>
+      <DependentUpon>GetGolfClubList.feature</DependentUpon>
     </Compile>
-    <Compile Include="ClubConfiguration\GetPendingClubMembershipRequests.feature.cs">
+    <Compile Include="GolfClub\GetPendingClubMembershipRequests.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>GetPendingClubMembershipRequests.feature</DependentUpon>
@@ -141,7 +141,7 @@
     <Compile Include="Common\CreateRoleRequest.cs" />
     <Compile Include="Common\GenericSteps.cs" />
     <Compile Include="Common\IntegrationTestsTestData.cs" />
-    <Compile Include="ClubConfiguration\ClubConfigurationSteps.cs" />
+    <Compile Include="GolfClub\GolfClubSteps.cs" />
     <Compile Include="Common\Setup.cs" />
     <Compile Include="Common\TokenResponse.cs" />
     <Compile Include="Common\TokenType.cs" />
@@ -195,24 +195,24 @@
     <Compile Include="Tournament\TournamentManagementSteps.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClubConfiguration\AddMeasuredCoursetoExistingClub.feature">
+    <None Include="GolfClub\AddMeasuredCoursetoExistingClub.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>AddMeasuredCoursetoExistingClub.feature.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
-    <None Include="ClubConfiguration\CreateClubConfiguration.feature">
+    <None Include="GolfClub\CreateGolfClub.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>CreateClubConfiguration.feature.cs</LastGenOutput>
+      <LastGenOutput>CreateGolfClub.feature.cs</LastGenOutput>
     </None>
-    <None Include="ClubConfiguration\GetClubConfiguration.feature">
+    <None Include="GolfClub\GetGolfClub.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>GetClubConfiguration.feature.cs</LastGenOutput>
+      <LastGenOutput>GetGolfClub.feature.cs</LastGenOutput>
     </None>
-    <None Include="ClubConfiguration\GetClubList.feature">
+    <None Include="GolfClub\GetGolfClubList.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>GetClubList.feature.cs</LastGenOutput>
+      <LastGenOutput>GetGolfClubList.feature.cs</LastGenOutput>
     </None>
-    <None Include="ClubConfiguration\GetPendingClubMembershipRequests.feature">
+    <None Include="GolfClub\GetPendingClubMembershipRequests.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>GetPendingClubMembershipRequests.feature.cs</LastGenOutput>
     </None>

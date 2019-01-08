@@ -85,23 +85,23 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         [Given(@"The club I want to register for is already created")]
         public async Task GivenTheClubIWantToRegisterForIsAlreadyCreated()
         {
-            var request = IntegrationTestsTestData.CreateClubConfigurationRequest;
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            var request = IntegrationTestsTestData.CreateGolfClubRequest;
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub";
 
             var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
             var responseData = await GetResponseObject<CreateGolfClubResponse>(httpResponse).ConfigureAwait(false);
 
-            this.ScenarioContext["ClubId"] = responseData.ClubConfigurationId;
+            this.ScenarioContext["GolfClubId"] = responseData.GolfClubId;
         }
         
         [When(@"I request club membership")]
         public async Task WhenIRequestClubMembership()
         {
             Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
-            Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
+            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
             String requestUri =
-                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubId}";
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{golfClubId}";
 
             String bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
 
@@ -130,10 +130,10 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         public async Task GivenIHaveRequestedAClubMembership()
         {
             Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
-            Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
+            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
             String requestUri =
-                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubId}";
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{golfClubId}";
 
             String bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
 
@@ -154,10 +154,10 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         public async Task GivenIApproveAClubMembershipRequest()
         {
             Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
-            Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
+            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
             String requestUri =
-                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubId}/Approve";
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{golfClubId}/Approve";
 
             String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
@@ -177,10 +177,10 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
         public async Task GivenIRejectAClubMembershipRequest()
         {
             Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
-            Guid clubId = this.ScenarioContext.Get<Guid>("ClubId");
+            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
             String requestUri =
-                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubId}/Approve";
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{golfClubId}/Approve";
 
             String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 

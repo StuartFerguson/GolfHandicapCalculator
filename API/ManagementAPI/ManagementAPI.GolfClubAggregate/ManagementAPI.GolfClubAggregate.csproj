@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ManagementAPI.ClubConfiguration.DomainEvents\ManagementAPI.GolfClub.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClub.DomainEvents\ManagementAPI.GolfClub.DomainEvents.csproj" />
   </ItemGroup>
 
 </Project>

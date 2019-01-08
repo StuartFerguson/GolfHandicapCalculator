@@ -10,14 +10,14 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
+namespace ManagementAPI.IntegrationTests.Specflow.GolfClub
 {
     using TechTalk.SpecFlow;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.4.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [Xunit.TraitAttribute("Category", "clubconfiguration")]
+    [Xunit.TraitAttribute("Category", "golfclub")]
     public partial class GetClubConfigurationFeature : Xunit.IClassFixture<GetClubConfigurationFeature.FixtureData>, System.IDisposable
     {
         
@@ -25,7 +25,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
-#line 1 "GetClubConfiguration.feature"
+#line 1 "GetGolfClub.feature"
 #line hidden
         
         public GetClubConfigurationFeature(GetClubConfigurationFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
@@ -38,8 +38,8 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Get Club Configuration", "\tIn order to run a golf club handicapping system\r\n\tAs a match secretary\r\n\tI want " +
-                    "to be able to get my golf club configuration", ProgrammingLanguage.CSharp, new string[] {
-                        "clubconfiguration"});
+                    "to be able to get my golf club", ProgrammingLanguage.CSharp, new string[] {
+                        "golfclub"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -87,25 +87,25 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Get Created Club Configuration")]
+        [Xunit.FactAttribute(DisplayName="Get Created Golf Club")]
         [Xunit.TraitAttribute("FeatureTitle", "Get Club Configuration")]
-        [Xunit.TraitAttribute("Description", "Get Created Club Configuration")]
-        public virtual void GetCreatedClubConfiguration()
+        [Xunit.TraitAttribute("Description", "Get Created Golf Club")]
+        public virtual void GetCreatedGolfClub()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Created Club Configuration", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Created Golf Club", null, ((string[])(null)));
 #line 10
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
 #line 11
- testRunner.Given("My Club configuration has been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("My Golf Club has been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 12
  testRunner.And("I am logged in as a club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 13
- testRunner.When("I request the details of the club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I request the details of the golf club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 14
- testRunner.Then("the club configuration will be returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the golf club will be returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 15
  testRunner.And("the club data returned is the correct club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden

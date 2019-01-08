@@ -14,13 +14,13 @@ using Newtonsoft.Json;
 using Shouldly;
 using TechTalk.SpecFlow;
 
-namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
+namespace ManagementAPI.IntegrationTests.Specflow.GolfClub
 {
     [Binding]
-    [Scope(Tag = "clubconfiguration")]
-    public class ClubConfigurationSteps : GenericSteps
+    [Scope(Tag = "golfclub")]
+    public class GolfClubSteps : GenericSteps
     {
-        public ClubConfigurationSteps(ScenarioContext scenarioContext) : base(scenarioContext)
+        public GolfClubSteps(ScenarioContext scenarioContext) : base(scenarioContext)
         {
             // Nothing in here
         }
@@ -41,79 +41,79 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         public void GivenIHaveTheDetailsOfTheNewClub()
         {
             // Construct the request 
-            this.ScenarioContext["CreateClubConfigurationRequest"] = IntegrationTestsTestData.CreateClubConfigurationRequest; 
+            this.ScenarioContext["CreateGolfClubRequest"] = IntegrationTestsTestData.CreateGolfClubRequest; 
         }
         
-        [When(@"I call Create Club Configuration")]
-        public async Task WhenICallCreateClubConfiguration()
+        [When(@"I call Create Golf Club")]
+        public async Task WhenICallCreateGolfClub()
         {
-            var request = this.ScenarioContext.Get<CreateGolfClubRequest>("CreateClubConfigurationRequest");
+            var request = this.ScenarioContext.Get<CreateGolfClubRequest>("CreateGolfClubRequest");
             
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub";
 
-            this.ScenarioContext["CreateClubConfigurationHttpResponse"] = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
+            this.ScenarioContext["CreateGolfClubHttpResponse"] = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
         }
         
-        [Then(@"the club configuration will be created")]
-        public void ThenTheClubConfigurationWillBeCreated()
+        [Then(@"the golf club configuration will be created")]
+        public void ThenTheGolfClubConfigurationWillBeCreated()
         {
-            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("CreateClubConfigurationHttpResponse");
+            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("CreateGolfClubHttpResponse");
             httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
         
-        [Then(@"I will get the new Club Configuration Id in the response")]
-        public async Task ThenIWillGetTheNewClubConfigurationIdInTheResponse()
+        [Then(@"I will get the new Golf Club Id in the response")]
+        public async Task ThenIWillGetTheNewGolfClubIdInTheResponse()
         {
-            var responseData = await GetResponseObject<CreateGolfClubResponse>("CreateClubConfigurationHttpResponse")
+            var responseData = await GetResponseObject<CreateGolfClubResponse>("CreateGolfClubHttpResponse")
                 .ConfigureAwait(false);
 
-            responseData.ClubConfigurationId.ShouldNotBe(Guid.Empty);
+            responseData.GolfClubId.ShouldNotBe(Guid.Empty);
         }
 
-        [Given(@"My Club configuration has been created")]
-        public async Task GivenMyClubConfigurationHasBeenCreated()
+        [Given(@"My Golf Club has been created")]
+        public async Task GivenMyGolfClubHasBeenCreated()
         {
-            var request = IntegrationTestsTestData.CreateClubConfigurationRequest;
+            var request = IntegrationTestsTestData.CreateGolfClubRequest;
             
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub";
 
             var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
 
             var responseData = await GetResponseObject<CreateGolfClubResponse>(httpResponse).ConfigureAwait(false);
 
-            responseData.ClubConfigurationId.ShouldNotBe(Guid.Empty);
+            responseData.GolfClubId.ShouldNotBe(Guid.Empty);
 
             // Cache the create club config response
-            this.ScenarioContext["CreateClubConfigurationResponse"] = responseData;
+            this.ScenarioContext["CreateGolfClubResponse"] = responseData;
         }
         
-        [When(@"I request the details of the club")]
-        public async Task WhenIRequestTheDetailsOfTheClub()
+        [When(@"I request the details of the golf club")]
+        public async Task WhenIRequestTheDetailsOfTheGolfClub()
         {
-            var createClubConfigurationResponse =
-                this.ScenarioContext.Get<CreateGolfClubResponse>("CreateClubConfigurationResponse");
+            var createGolfClubResponse =
+                this.ScenarioContext.Get<CreateGolfClubResponse>("CreateGolfClubResponse");
 
             // Get the token
             var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration/{createClubConfigurationResponse.ClubConfigurationId}";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub/{createGolfClubResponse.GolfClubId}";
 
-            this.ScenarioContext["GetClubConfigurationHttpResponse"] = await MakeHttpGet(requestUri, bearerToken).ConfigureAwait(false);
+            this.ScenarioContext["GetSingleGolfClubHttpResponse"] = await MakeHttpGet(requestUri, bearerToken).ConfigureAwait(false);
         }
         
-        [Then(@"the club configuration will be returned")]
-        public void ThenTheClubConfigurationWillBeReturned()
+        [Then(@"the golf club will be returned")]
+        public void ThenTheGolfClubWillBeReturned()
         {
-            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("GetClubConfigurationHttpResponse");
+            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>("GetSingleGolfClubHttpResponse");
             httpResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
         
         [Then(@"the club data returned is the correct club")]
         public async Task ThenTheClubDataReturnedIsTheCorrectClub()
         {
-            var responseData = await GetResponseObject<GetClubConfigurationResponse>("GetClubConfigurationHttpResponse").ConfigureAwait(false);
+            var responseData = await GetResponseObject<GetGolfClubResponse>("GetSingleGolfClubHttpResponse").ConfigureAwait(false);
 
-            var originalRequest = IntegrationTestsTestData.CreateClubConfigurationRequest;
+            var originalRequest = IntegrationTestsTestData.CreateGolfClubRequest;
 
             responseData.Name.ShouldBe(originalRequest.Name);
             responseData.AddressLine1.ShouldBe(originalRequest.AddressLine1);
@@ -129,16 +129,15 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         [When(@"I add a measured course to the club")]
         public async Task WhenIAddAMeasuredCourseToTheClub()
         {
-            var createClubConfigurationResponse =
-                this.ScenarioContext.Get<CreateGolfClubResponse>("CreateClubConfigurationResponse");
+            var createGolfClubResponse =
+                this.ScenarioContext.Get<CreateGolfClubResponse>("CreateGolfClubResponse");
 
             var request = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
-            //request.ClubAggregateId = createClubConfigurationResponse.ClubConfigurationId;
-
+            
             // Get the token
             var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
             
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration/{createClubConfigurationResponse.ClubConfigurationId}";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub/{createGolfClubResponse.GolfClubId}";
 
             this.ScenarioContext["AddMeasuredCourseToClubHttpResponse"] = await MakeHttpPut(requestUri, request, bearerToken).ConfigureAwait(false);
         }
@@ -158,8 +157,8 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
             // Set the stream name
             switch (this.ScenarioContext.ScenarioInfo.Title)
             {
-                case "Get Club List":
-                    streamName = "$et-ManagementAPI.ClubConfiguration.DomainEvents.ClubConfigurationCreatedEvent";
+                case "Get Golf Club List":
+                    streamName = "$et-ManagementAPI.GolfClub.DomainEvents.GolfClubCreatedEvent";
                     break;
                 case "Get Pending Membership Request List":
                     streamName = "$et-ManagementAPI.Player.DomainEvents.ClubMembershipRequestedEvent";
@@ -225,49 +224,49 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
             }
         }
 
-        [Given(@"a club has already been created")]
-        public async Task GivenAClubHasAlreadyBeenCreated()
+        [Given(@"a golf club has already been created")]
+        public async Task GivenAGolfClubHasAlreadyBeenCreated()
         {
-            var request = IntegrationTestsTestData.CreateClubConfigurationRequest;
+            var request = IntegrationTestsTestData.CreateGolfClubRequest;
 
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub";
             
             var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
 
             var responseData = await GetResponseObject<CreateGolfClubResponse>(httpResponse).ConfigureAwait(false);
 
-            this.ScenarioContext["ClubConfigurationId"] = responseData.ClubConfigurationId;
+            this.ScenarioContext["GolfClubId"] = responseData.GolfClubId;
 
             Thread.Sleep(30000);
         }
         
-        [When(@"I request the list of clubs")]
-        public async Task WhenIRequestTheListOfClubs()
+        [When(@"I request the list of golf clubs")]
+        public async Task WhenIRequestTheListOfGolfClubs()
         {
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub";
 
             // Get the token
             var bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
 
-            this.ScenarioContext["GetClubListHttpResponse"] = await MakeHttpGet(requestUri, bearerToken).ConfigureAwait(false);
+            this.ScenarioContext["GetGolfClubListHttpResponse"] = await MakeHttpGet(requestUri, bearerToken).ConfigureAwait(false);
         }
         
-        [Then(@"a list of clubs will be returned")]
-        public async Task ThenAListOfClubsWillBeReturned()
+        [Then(@"a list of golf clubs will be returned")]
+        public async Task ThenAListOfGolfClubsWillBeReturned()
         {            
-            var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+            var golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
-            var responseData = await GetResponseObject<List<GetClubConfigurationResponse>>("GetClubListHttpResponse")
+            var responseData = await GetResponseObject<List<GetGolfClubResponse>>("GetGolfClubListHttpResponse")
                 .ConfigureAwait(false);
 
-            responseData.Any(r => r.Id == clubConfigurationId).ShouldBeTrue();
+            responseData.Any(r => r.Id == golfClubId).ShouldBeTrue();
         }
 
         [Given(@"I am logged in as a club administrator")]
         public async Task GivenIAmLoggedInAsAClubAdministrator()
         {
             var tokenResponse = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
-                IntegrationTestsTestData.CreateClubConfigurationRequest.EmailAddress, "123456").ConfigureAwait(false);
+                IntegrationTestsTestData.CreateGolfClubRequest.EmailAddress, "123456").ConfigureAwait(false);
 
             this.ScenarioContext["ClubAdministratorToken"] = tokenResponse;
         }
@@ -297,10 +296,10 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         public async Task GivenAPlayerHasRequestedMembershipOfTheClub()
         {
             Guid playerId = this.ScenarioContext.Get<Guid>("PlayerId");
-            Guid clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
             String requestUri =
-                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{clubConfigurationId}";
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/Player/{playerId}/ClubMembershipRequest/{golfClubId}";
 
             var bearerToken = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
                 "player@test.co.uk", "123456").ConfigureAwait(false);
@@ -314,10 +313,10 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         [When(@"I request the list of pending membership requests")]
         public async Task WhenIRequestTheListOfPendingMembershipRequests()
         {
-            Guid clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
             String requestUri =
-                $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration/{clubConfigurationId}/PendingMembershipRequests";
+                $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub/{golfClubId}/PendingMembershipRequests";
 
             // Get the token
             var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
@@ -328,12 +327,12 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         [Then(@"a list of pending membership requests will be returned")]
         public async Task ThenAListOfPendingMembershipRequestsWillBeReturned()
         {
-            var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+            var golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
             var responseData = await GetResponseObject<List<GetClubMembershipRequestResponse>>("GetPendingMembershipRequestsHttpResponse")
                 .ConfigureAwait(false);
 
-            responseData.Any(r => r.ClubId == clubConfigurationId).ShouldBeTrue();
+            responseData.Any(r => r.ClubId == golfClubId).ShouldBeTrue();
         }
 
     }
