@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
-namespace ManagementAPI.Service.DataTransferObjects
+namespace ManagementAPI.Database.Models
 {
-    public class CreateClubConfigurationRequest
+    public class GolfClub
     {
         /// <summary>
-        /// Gets the name.
+        /// Gets or sets the golf club identifier.
+        /// </summary>
+        /// <value>
+        /// The golf club identifier.
+        /// </value>
+        [Key]
+        public Guid GolfClubId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name.
         /// </summary>
         /// <value>
         /// The name.
@@ -16,7 +25,7 @@ namespace ManagementAPI.Service.DataTransferObjects
         public String Name { get; set; }
 
         /// <summary>
-        /// Gets the address line1.
+        /// Gets or sets the address line1.
         /// </summary>
         /// <value>
         /// The address line1.
@@ -24,7 +33,7 @@ namespace ManagementAPI.Service.DataTransferObjects
         public String AddressLine1 { get; set; }
 
         /// <summary>
-        /// Gets the address line2.
+        /// Gets or sets the address line2.
         /// </summary>
         /// <value>
         /// The address line2.
@@ -32,7 +41,7 @@ namespace ManagementAPI.Service.DataTransferObjects
         public String AddressLine2 { get; set; }
 
         /// <summary>
-        /// Gets the town.
+        /// Gets or sets the town.
         /// </summary>
         /// <value>
         /// The town.
@@ -40,15 +49,15 @@ namespace ManagementAPI.Service.DataTransferObjects
         public String Town { get; set; }
 
         /// <summary>
-        /// Gets the region.
+        /// Gets or sets the region.
         /// </summary>
         /// <value>
         /// The region.
         /// </value>
-        public String Region  { get; set; }
+        public String Region { get; set; }
 
         /// <summary>
-        /// Gets the postal code.
+        /// Gets or sets the postal code.
         /// </summary>
         /// <value>
         /// The postal code.
@@ -56,7 +65,7 @@ namespace ManagementAPI.Service.DataTransferObjects
         public String PostalCode { get; set; }
 
         /// <summary>
-        /// Gets the telephone number.
+        /// Gets or sets the telephone number.
         /// </summary>
         /// <value>
         /// The telephone number.
@@ -64,15 +73,15 @@ namespace ManagementAPI.Service.DataTransferObjects
         public String TelephoneNumber { get; set; }
 
         /// <summary>
-        /// Gets the website.
+        /// Gets or sets the web site.
         /// </summary>
         /// <value>
-        /// The website.
+        /// The web site.
         /// </value>
-        public String Website { get; set; }
+        public String WebSite { get; set; }
 
         /// <summary>
-        /// Gets the email address.
+        /// Gets or sets the email address.
         /// </summary>
         /// <value>
         /// The email address.

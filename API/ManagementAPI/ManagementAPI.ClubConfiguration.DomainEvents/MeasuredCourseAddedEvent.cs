@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Newtonsoft.Json;
 using Shared.EventSourcing;
 
-namespace ManagementAPI.ClubConfiguration.DomainEvents
+namespace ManagementAPI.GolfClub.DomainEvents
 {
     [JsonObject]
     public class MeasuredCourseAddedEvent : DomainEvent

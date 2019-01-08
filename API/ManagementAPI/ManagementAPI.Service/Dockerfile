@@ -9,8 +9,8 @@
 	COPY ["ManagementAPI.Service/NuGet.Config", "ManagementAPI.Service/"]
 	COPY ["ManagementAPI.TournamentAggregate/ManagementAPI.TournamentAggregate.csproj", "ManagementAPI.TournamentAggregate/"]
 	COPY ["ManagementAPI.Tournament.DomainEvents/ManagementAPI.Tournament.DomainEvents.csproj", "ManagementAPI.Tournament.DomainEvents/"]
-	COPY ["ManagementAPI.ClubConfigurationAggregate/ManagementAPI.ClubConfigurationAggregate.csproj", "ManagementAPI.ClubConfigurationAggregate/"]
-	COPY ["ManagementAPI.ClubConfiguration.DomainEvents/ManagementAPI.ClubConfiguration.DomainEvents.csproj", "ManagementAPI.ClubConfiguration.DomainEvents/"]
+	COPY ["ManagementAPI.GolfClubAggregate/ManagementAPI.GolfClubAggregate.csproj", "ManagementAPI.GolfClubAggregate/"]
+	COPY ["ManagementAPI.GolfClub.DomainEvents/ManagementAPI.GolfClub.DomainEvents.csproj", "ManagementAPI.GolfClub.DomainEvents/"]
 	COPY ["ManagementAPI.Service.DataTransferObjects/ManagementAPI.Service.DataTransferObjects.csproj", "ManagementAPI.Service.DataTransferObjects/"]
 	RUN dotnet restore "ManagementAPI.Service/ManagementAPI.Service.csproj"
 	COPY . .

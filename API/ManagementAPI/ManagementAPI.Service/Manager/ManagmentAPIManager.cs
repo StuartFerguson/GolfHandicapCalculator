@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ManagementAPI.ClubConfiguration;
-using ManagementAPI.ClubConfiguration.DomainEvents;
 using ManagementAPI.Database;
 using ManagementAPI.Database.Models;
+using ManagementAPI.GolfClub;
+using ManagementAPI.GolfClub.DomainEvents;
 using ManagementAPI.Player;
 using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.DataTransferObjects;
@@ -24,7 +24,7 @@ namespace ManagementAPI.Service.Manager
         /// <summary>
         /// The club repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate> ClubRepository;
+        private readonly IAggregateRepository<GolfClubAggregate> GolfClubRepository;
 
         /// <summary>
         /// The read model resolver
@@ -41,14 +41,15 @@ namespace ManagementAPI.Service.Manager
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ManagmentAPIManager"/> class.
+        /// Initializes a new instance of the <see cref="ManagmentAPIManager" /> class.
         /// </summary>
-        /// <param name="clubRepository">The club repository.</param>
+        /// <param name="golfClubRepository">The golf club repository.</param>
         /// <param name="readModelResolver">The read model resolver.</param>
-        public ManagmentAPIManager(IAggregateRepository<ClubConfigurationAggregate> clubRepository, Func<ManagementAPIReadModel> readModelResolver,
+        /// <param name="playerRepository">The player repository.</param>
+        public ManagmentAPIManager(IAggregateRepository<GolfClubAggregate> golfClubRepository, Func<ManagementAPIReadModel> readModelResolver,
             IAggregateRepository<PlayerAggregate> playerRepository)
         {
-            this.ClubRepository = clubRepository;
+            this.GolfClubRepository = golfClubRepository;
             this.ReadModelResolver = readModelResolver;
             this.PlayerRepository = playerRepository;
         }
@@ -57,67 +58,68 @@ namespace ManagementAPI.Service.Manager
 
         #region Public Methods
 
-        #region public async Task<GetClubConfigurationResponse> GetClubConfiguration(Guid clubId, CancellationToken cancellationToken)        
+        #region public async Task<GetGolfClubResponse> GetGolfClub(Guid golfClubId, CancellationToken cancellationToken)        
         /// <summary>
         /// Gets the club configuration.
         /// </summary>
-        /// <param name="clubId">The club identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<GetClubConfigurationResponse> GetClubConfiguration(Guid clubId, CancellationToken cancellationToken)
+        /// <exception cref="NotFoundException">Golf Club not found for Golf Club Id [{golfClubId}</exception>
+        public async Task<GetGolfClubResponse> GetGolfClub(Guid golfClubId, CancellationToken cancellationToken)
         {
-            Guard.ThrowIfInvalidGuid(clubId, typeof(ArgumentNullException), "A Club Id must be provided to retrieve a club configuration");
+            Guard.ThrowIfInvalidGuid(golfClubId, typeof(ArgumentNullException), "A Golf Club Id must be provided to retrieve a golf club");
 
-            GetClubConfigurationResponse result = null;
+            GetGolfClubResponse result = null;
 
             // Find the club configuration by id
-            var clubConfiguration = await this.ClubRepository.GetLatestVersion(clubId, cancellationToken);
+            var golfClub = await this.GolfClubRepository.GetLatestVersion(golfClubId, cancellationToken);
 
             // Check we have found the club configuration
-            if (!clubConfiguration.HasBeenCreated)
+            if (!golfClub.HasBeenCreated)
             {
-                throw new NotFoundException($"Club Configuration not found for Club Id [{clubId}]");
+                throw new NotFoundException($"Golf Club not found for Golf Club Id [{golfClubId}]");
             }
 
             // We have found the club configuration
-            result = new GetClubConfigurationResponse
+            result = new GetGolfClubResponse
             {
-                AddressLine1 = clubConfiguration.AddressLine1,
-                EmailAddress = clubConfiguration.EmailAddress,
-                PostalCode = clubConfiguration.PostalCode,
-                Name = clubConfiguration.Name,
-                Town = clubConfiguration.Town,
-                Website = clubConfiguration.Website,
-                Region = clubConfiguration.Region,
-                TelephoneNumber = clubConfiguration.TelephoneNumber,
-                AddressLine2 = clubConfiguration.AddressLine2,
-                Id = clubConfiguration.AggregateId
+                AddressLine1 = golfClub.AddressLine1,
+                EmailAddress = golfClub.EmailAddress,
+                PostalCode = golfClub.PostalCode,
+                Name = golfClub.Name,
+                Town = golfClub.Town,
+                Website = golfClub.Website,
+                Region = golfClub.Region,
+                TelephoneNumber = golfClub.TelephoneNumber,
+                AddressLine2 = golfClub.AddressLine2,
+                Id = golfClub.AggregateId
             };
 
             return result;
         }
         #endregion
 
-        #region public async Task InsertClubInformationToReadModel(ClubConfigurationCreatedEvent domainEvent, CancellationToken cancellationToken)        
+        #region public async Task InsertClubInformationToReadModel(GolfClubCreatedEvent domainEvent, CancellationToken cancellationToken)        
         /// <summary>
         /// Inserts the club information to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task InsertClubInformationToReadModel(ClubConfigurationCreatedEvent domainEvent, CancellationToken cancellationToken)
+        public async Task InsertGolfClubToReadModel(GolfClubCreatedEvent domainEvent, CancellationToken cancellationToken)
         {
             Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
 
             using (var context = this.ReadModelResolver())
             {
                 // Check the club has not already been added to the read model
-                var isDuplicate = await context.ClubInformation.Where(c => c.ClubConfigurationId == domainEvent.AggregateId)
+                var isDuplicate = await context.GolfClub.Where(c => c.GolfClubId == domainEvent.AggregateId)
                     .AnyAsync(cancellationToken);
 
                 if (!isDuplicate)
                 {
-                    ClubInformation clubInformation = new ClubInformation
+                    Database.Models.GolfClub golfClub = new Database.Models.GolfClub
                     {
                         AddressLine1 = domainEvent.AddressLine1,
                         EmailAddress = domainEvent.EmailAddress,
@@ -126,12 +128,12 @@ namespace ManagementAPI.Service.Manager
                         Region = domainEvent.Region,
                         TelephoneNumber = domainEvent.TelephoneNumber,
                         AddressLine2 = domainEvent.AddressLine2,
-                        ClubConfigurationId = domainEvent.AggregateId,
+                        GolfClubId = domainEvent.AggregateId,
                         PostalCode = domainEvent.PostalCode,
                         WebSite = domainEvent.Website
                     };
 
-                    context.ClubInformation.Add(clubInformation);
+                    context.GolfClub.Add(golfClub);
 
                     await context.SaveChangesAsync(cancellationToken);
                 }
@@ -139,34 +141,34 @@ namespace ManagementAPI.Service.Manager
         }
         #endregion
 
-        #region public async Task<List<GetClubConfigurationResponse>> GetClubList(CancellationToken cancellationToken)        
+        #region public async Task<List<GetGolfClubResponse>> GetGolfClubList(CancellationToken cancellationToken)        
         /// <summary>
         /// Gets the club list.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<List<GetClubConfigurationResponse>> GetClubList(CancellationToken cancellationToken)
+        public async Task<List<GetGolfClubResponse>> GetGolfClubList(CancellationToken cancellationToken)
         {
-            List<GetClubConfigurationResponse> result = new List<GetClubConfigurationResponse>();
+            List<GetGolfClubResponse> result = new List<GetGolfClubResponse>();
 
             using (var context = ReadModelResolver())
             {
-                var clubInformationList = await context.ClubInformation.ToListAsync(cancellationToken);
+                var golfClubs = await context.GolfClub.ToListAsync(cancellationToken);
 
-                foreach (var clubInformation in clubInformationList)
+                foreach (var golfClub in golfClubs)
                 {
-                    result.Add(new GetClubConfigurationResponse
+                    result.Add(new GetGolfClubResponse
                     {
-                        AddressLine1 = clubInformation.AddressLine1,
-                        EmailAddress = clubInformation.EmailAddress,
-                        Name = clubInformation.Name,
-                        Town = clubInformation.Town,
-                        Website = clubInformation.WebSite,
-                        Region = clubInformation.Region,
-                        TelephoneNumber = clubInformation.TelephoneNumber,
-                        PostalCode = clubInformation.PostalCode,
-                        AddressLine2 = clubInformation.AddressLine2,
-                        Id = clubInformation.ClubConfigurationId
+                        AddressLine1 = golfClub.AddressLine1,
+                        EmailAddress = golfClub.EmailAddress,
+                        Name = golfClub.Name,
+                        Town = golfClub.Town,
+                        Website = golfClub.WebSite,
+                        Region = golfClub.Region,
+                        TelephoneNumber = golfClub.TelephoneNumber,
+                        PostalCode = golfClub.PostalCode,
+                        AddressLine2 = golfClub.AddressLine2,
+                        Id = golfClub.GolfClubId
                     });
                 }
             }
@@ -187,11 +189,11 @@ namespace ManagementAPI.Service.Manager
             Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
 
             // Get the club
-            var club = await this.ClubRepository.GetLatestVersion(domainEvent.ClubId, cancellationToken);
+            var club = await this.GolfClubRepository.GetLatestVersion(domainEvent.ClubId, cancellationToken);
 
             if (!club.HasBeenCreated)
             {
-                throw new InvalidOperationException($"Unable to find club with Id {domainEvent.ClubId}");
+                throw new InvalidOperationException($"Unable to find golf club with Id {domainEvent.ClubId}");
             }
 
             // Get the player

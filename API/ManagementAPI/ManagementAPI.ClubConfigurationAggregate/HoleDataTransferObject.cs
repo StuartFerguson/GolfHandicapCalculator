@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ManagementAPI.ClubConfiguration
+namespace ManagementAPI.GolfClub
 {
     public class HoleDataTransferObject
     {

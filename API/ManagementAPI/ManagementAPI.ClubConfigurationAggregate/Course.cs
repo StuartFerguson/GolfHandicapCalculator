@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ManagementAPI.ClubConfiguration
+namespace ManagementAPI.GolfClub
 {
     /// <summary>
     /// 

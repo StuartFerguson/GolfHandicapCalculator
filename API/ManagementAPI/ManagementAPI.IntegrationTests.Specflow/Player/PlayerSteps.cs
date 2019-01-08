@@ -89,7 +89,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Player
             String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
 
             var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
-            var responseData = await GetResponseObject<CreateClubConfigurationResponse>(httpResponse).ConfigureAwait(false);
+            var responseData = await GetResponseObject<CreateGolfClubResponse>(httpResponse).ConfigureAwait(false);
 
             this.ScenarioContext["ClubId"] = responseData.ClubConfigurationId;
         }

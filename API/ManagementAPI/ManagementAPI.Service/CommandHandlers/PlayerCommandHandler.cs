@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ManagementAPI.ClubConfiguration;
+using ManagementAPI.GolfClub;
 using ManagementAPI.Player;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
@@ -32,7 +32,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The club repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate> clubRepository;
+        private readonly IAggregateRepository<GolfClubAggregate> clubRepository;
 
         #endregion
 
@@ -44,7 +44,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <param name="playerRepository">The player repository.</param>
         /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
         /// <param name="clubRepository">The club repository.</param>
-        public PlayerCommandHandler(IAggregateRepository<PlayerAggregate> playerRepository, IOAuth2SecurityService oAuth2SecurityService, IAggregateRepository<ClubConfigurationAggregate> clubRepository)
+        public PlayerCommandHandler(IAggregateRepository<PlayerAggregate> playerRepository, IOAuth2SecurityService oAuth2SecurityService, IAggregateRepository<GolfClubAggregate> clubRepository)
         {
             this.PlayerRepository = playerRepository;
             this.OAuth2SecurityService = oAuth2SecurityService;
@@ -167,7 +167,7 @@ namespace ManagementAPI.Service.CommandHandlers
 
             DateTime membershipRequestApprovedDateAndTime = DateTime.Now;
 
-            player.ApproveClubMembershipRequest(command.ClubId, membershipRequestApprovedDateAndTime);
+            player.ApproveClubMembershipRequest(command.GolfClubId, membershipRequestApprovedDateAndTime);
 
             // Save the changes
             await this.PlayerRepository.SaveChanges(player, cancellationToken);
@@ -188,7 +188,7 @@ namespace ManagementAPI.Service.CommandHandlers
 
             DateTime membershipRequestRejectedDateAndTime = DateTime.Now;
 
-            player.RejectClubMembershipRequest(command.ClubId, membershipRequestRejectedDateAndTime, command.RejectMembershipRequestRequest.RejectionReason);
+            player.RejectClubMembershipRequest(command.GolfClubId, membershipRequestRejectedDateAndTime, command.RejectMembershipRequestRequest.RejectionReason);
 
             // Save the changes
             await this.PlayerRepository.SaveChanges(player, cancellationToken);

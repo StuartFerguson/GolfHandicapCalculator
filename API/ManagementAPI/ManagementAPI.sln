@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.ClubConfiguration.DomainEvents", "ManagementAPI.ClubConfiguration.DomainEvents\ManagementAPI.ClubConfiguration.DomainEvents.csproj", "{0F135963-A347-44B4-9CB1-D17A669DF8A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClub.DomainEvents", "ManagementAPI.ClubConfiguration.DomainEvents\ManagementAPI.GolfClub.DomainEvents.csproj", "{0F135963-A347-44B4-9CB1-D17A669DF8A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.ClubConfigurationAggregate", "ManagementAPI.ClubConfigurationAggregate\ManagementAPI.ClubConfigurationAggregate.csproj", "{C8EFA131-9327-471E-BBD9-292BB82E0D41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClubAggregate", "ManagementAPI.ClubConfigurationAggregate\ManagementAPI.GolfClubAggregate.csproj", "{C8EFA131-9327-471E-BBD9-292BB82E0D41}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Service", "ManagementAPI.Service\ManagementAPI.Service.csproj", "{F2B835CA-06DA-4486-A708-12146EA1C251}"
 EndProject
@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Player.Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Database", "ManagementAPI.Database\ManagementAPI.Database.csproj", "{06F22C57-A3E3-4217-B615-4B462BC851DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementAPI.Service.Client", "ManagementAPI.Service.Client\ManagementAPI.Service.Client.csproj", "{DCC3912A-77EB-4023-BBA1-008E2271B244}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Service.Client", "ManagementAPI.Service.Client\ManagementAPI.Service.Client.csproj", "{DCC3912A-77EB-4023-BBA1-008E2271B244}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

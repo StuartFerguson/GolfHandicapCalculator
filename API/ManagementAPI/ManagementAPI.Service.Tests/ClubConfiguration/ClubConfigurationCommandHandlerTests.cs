@@ -17,7 +17,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationCommandHandler_HandleCommand_CreateClubConfigurationCommand_CommandHandled()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> repository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate());
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
             oAuth2SecurityService
@@ -34,7 +34,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationCommandHandler_HandleCommand_AddMeasuredCourseToClubCommand_CommandHandled()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> repository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
             oAuth2SecurityService

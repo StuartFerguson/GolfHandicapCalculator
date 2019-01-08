@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
-using ManagementAPI.ClubConfiguration;
+using ManagementAPI.GolfClub;
 using ManagementAPI.Player;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Manager;
@@ -52,8 +52,8 @@ namespace ManagementAPI.Service.Bootstrapper
 
             For<ESLogger.ILogger>().Use<ESLogger.Common.Log.ConsoleLogger>().Singleton();
             For<ICommandRouter>().Use<CommandRouter>().Singleton();
-            For<IAggregateRepository<ClubConfigurationAggregate>>()
-                .Use<AggregateRepository<ClubConfigurationAggregate>>().Singleton();
+            For<IAggregateRepository<GolfClubAggregate>>()
+                .Use<AggregateRepository<GolfClubAggregate>>().Singleton();
             For<IAggregateRepository<TournamentAggregate>>()
                 .Use<AggregateRepository<TournamentAggregate>>().Singleton();
             For<IAggregateRepository<PlayerAggregate>>()

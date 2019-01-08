@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Shared.EventSourcing;
 
-namespace ManagementAPI.ClubConfiguration.DomainEvents
+namespace ManagementAPI.GolfClub.DomainEvents
 {
     [JsonObject]
     public class HoleAddedToMeasuredCourseEvent : DomainEvent

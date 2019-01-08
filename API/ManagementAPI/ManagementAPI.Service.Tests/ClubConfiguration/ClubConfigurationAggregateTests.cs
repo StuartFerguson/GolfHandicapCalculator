@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using ManagementAPI.ClubConfiguration;
+using ManagementAPI.GolfClub;
 using Shared.EventStore;
 using Shared.Exceptions;
 using Shouldly;
@@ -16,7 +17,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_CanBeCreated_IsCreated()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationAggregate.Create(ClubConfigurationTestData.AggregateId);
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(ClubConfigurationTestData.AggregateId);
 
             aggregate.ShouldNotBeNull();
             aggregate.AggregateId.ShouldBe(ClubConfigurationTestData.AggregateId);
@@ -27,8 +28,8 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         {
             Should.Throw<ArgumentNullException>(() =>
             {
-                ClubConfigurationAggregate aggregate =
-                    ClubConfigurationAggregate.Create(Guid.Empty);
+                GolfClubAggregate aggregate =
+                    GolfClubAggregate.Create(Guid.Empty);
             });
         }
 
@@ -39,9 +40,9 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_CreateClubConfiguration_ClubConfigurationCreated()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationAggregate.Create(ClubConfigurationTestData.AggregateId);
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(ClubConfigurationTestData.AggregateId);
 
-            aggregate.CreateClubConfiguration(ClubConfigurationTestData.Name, ClubConfigurationTestData.AddressLine1, ClubConfigurationTestData.AddressLine2,
+            aggregate.CreateGolfClub(ClubConfigurationTestData.Name, ClubConfigurationTestData.AddressLine1, ClubConfigurationTestData.AddressLine2,
                 ClubConfigurationTestData.Town, ClubConfigurationTestData.Region, ClubConfigurationTestData.PostalCode, ClubConfigurationTestData.TelephoneNumber,
                 ClubConfigurationTestData.Website, ClubConfigurationTestData.EmailAddress);
 
@@ -72,11 +73,11 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [InlineData("name", "addressline1", "town", "region", null)]
         public void ClubConfigurationAggregate_CreateClubConfiguration_InvalidData_ErrorThrown(String name, String addressLine1, String town,String region, String postalCode)
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationAggregate.Create(ClubConfigurationTestData.AggregateId);
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(ClubConfigurationTestData.AggregateId);
 
             Should.Throw<ArgumentNullException>(() =>
             {
-                aggregate.CreateClubConfiguration(name, addressLine1, ClubConfigurationTestData.AddressLine2,
+                aggregate.CreateGolfClub(name, addressLine1, ClubConfigurationTestData.AddressLine2,
                     town, region, postalCode, ClubConfigurationTestData.TelephoneNumber,
                     ClubConfigurationTestData.Website, ClubConfigurationTestData.EmailAddress);
             });
@@ -85,11 +86,11 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_CreateClubConfiguration_DuplicateCreateClubConfigurationCalled_ErrorThrown()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationAggregate.Create(ClubConfigurationTestData.AggregateId);
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(ClubConfigurationTestData.AggregateId);
 
             Should.NotThrow(() =>
             {
-                aggregate.CreateClubConfiguration(ClubConfigurationTestData.Name,
+                aggregate.CreateGolfClub(ClubConfigurationTestData.Name,
                     ClubConfigurationTestData.AddressLine1, ClubConfigurationTestData.AddressLine2,
                     ClubConfigurationTestData.Town, ClubConfigurationTestData.Region,
                     ClubConfigurationTestData.PostalCode, ClubConfigurationTestData.TelephoneNumber,
@@ -98,7 +99,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
 
             Should.Throw<InvalidOperationException>(() =>
             {
-                aggregate.CreateClubConfiguration(ClubConfigurationTestData.Name,
+                aggregate.CreateGolfClub(ClubConfigurationTestData.Name,
                     ClubConfigurationTestData.AddressLine1, ClubConfigurationTestData.AddressLine2,
                     ClubConfigurationTestData.Town, ClubConfigurationTestData.Region,
                     ClubConfigurationTestData.PostalCode, ClubConfigurationTestData.TelephoneNumber,
@@ -113,7 +114,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_AddMeasuredCourse_MeasuredCourseWithHolesAdded()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
 
@@ -144,7 +145,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_AddMeasuredCourse_ClubNotCreated_ErrorThrown()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetEmptyClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetEmptyClubConfigurationAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
 
@@ -158,7 +159,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_AddMeasuredCourse_DuplicateMeasuredCourse_ErrorThrown()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
 
@@ -179,7 +180,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [InlineData("name", "teeColour", -70)]
         public void ClubConfigurationAggregate_AddMeasuredCourse_InvalidCourseData_ErrorThrown(String name, String teeColour, Int32 standardScratchScore)
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
             measuredCourseDataTransferObject.Name = name;
@@ -214,7 +215,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [InlineData(19)]
         public void ClubConfigurationAggregate_AddMeasuredCourse_InvalidNumberOfHoles_ErrorThrown(Int32 numberHoles)
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd(numberHoles);            
 
@@ -245,7 +246,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [InlineData(18)]
         public void ClubConfigurationAggregate_AddMeasuredCourse_InvalidHoleData_MissingHoleNumber_ErrorThrown(Int32 holeNumber)
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAddWithMissingHoles(holeNumber);            
 
@@ -276,7 +277,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [InlineData(18)]
         public void ClubConfigurationAggregate_AddMeasuredCourse_InvalidHoleData_MissingStrokeIndex_ErrorThrown(Int32 strokeIndex)
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAddWithMissingStrokeIndex(strokeIndex);            
 
@@ -293,7 +294,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [InlineData(400, -1)]
         public void ClubConfigurationAggregate_AddMeasuredCourse_InvalidHoleData_InvalidData_ErrorThrown(Int32 lengthInYards, Int32 par)
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
             measuredCourseDataTransferObject.Holes.First().LengthInYards = lengthInYards;
@@ -311,7 +312,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_GetMeasuredCourse_MeasuredCourseWithHolesReturned()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
 
@@ -340,7 +341,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_GetMeasuredCourse_MeasuredCourseNotFound_ErrorThrown()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = ClubConfigurationTestData.GetMeasuredCourseToAdd();
 
@@ -357,7 +358,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_CreateAdminSecurityUser_AdminSecurityUserCreated()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
 
@@ -368,7 +369,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_CreateAdminSecurityUser_InvalidData_ErrorThrown()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregate();
 
             Should.Throw<ArgumentNullException>(() =>
             {
@@ -379,7 +380,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_CreateAdminSecurityUser_ClubNotCreated_ErrorThrown()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetEmptyClubConfigurationAggregate();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetEmptyClubConfigurationAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
@@ -390,7 +391,7 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
         [Fact]
         public void ClubConfigurationAggregate_CreateAdminSecurityUser_AdminSecurityUserAlreadyCreated_ErrorThrown()
         {
-            ClubConfigurationAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregateWithAdminUser();
+            GolfClubAggregate aggregate = ClubConfigurationTestData.GetCreatedClubConfigurationAggregateWithAdminUser();
 
             Should.Throw<InvalidOperationException>(() =>
             {

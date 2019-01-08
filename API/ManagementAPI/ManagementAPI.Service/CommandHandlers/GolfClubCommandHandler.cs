@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ManagementAPI.ClubConfiguration;
+using ManagementAPI.GolfClub;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services;
@@ -11,18 +11,18 @@ using ManagementAPI.Service.Services.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Shared.CommandHandling;
 using Shared.EventStore;
-using HoleDataTransferObject = ManagementAPI.ClubConfiguration.HoleDataTransferObject;
+using HoleDataTransferObject = ManagementAPI.GolfClub.HoleDataTransferObject;
 
 namespace ManagementAPI.Service.CommandHandlers
 {
-    public class ClubConfigurationCommandHandler : ICommandHandler
+    public class GolfClubCommandHandler : ICommandHandler
     {
         #region Fields
 
         /// <summary>
-        /// The club configuration repository
+        /// The golf club repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate> ClubConfigurationRepository;
+        private readonly IAggregateRepository<GolfClubAggregate> GolfClubRepository;
 
         /// <summary>
         /// The o auth2 security service
@@ -34,12 +34,13 @@ namespace ManagementAPI.Service.CommandHandlers
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubConfigurationCommandHandler"/> class.
+        /// Initializes a new instance of the <see cref="GolfClubCommandHandler" /> class.
         /// </summary>
-        /// <param name="clubConfigurationRepository">The club configuration repository.</param>
-        public ClubConfigurationCommandHandler(IAggregateRepository<ClubConfigurationAggregate> clubConfigurationRepository, IOAuth2SecurityService oAuth2SecurityService)
+        /// <param name="golfClubRepository">The golf club repository.</param>
+        /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
+        public GolfClubCommandHandler(IAggregateRepository<GolfClubAggregate> golfClubRepository, IOAuth2SecurityService oAuth2SecurityService)
         {
-            this.ClubConfigurationRepository = clubConfigurationRepository;
+            this.GolfClubRepository = golfClubRepository;
             this.OAuth2SecurityService = oAuth2SecurityService;
         }
 
@@ -65,44 +66,44 @@ namespace ManagementAPI.Service.CommandHandlers
 
         #region Private Methods (Command Handling)
 
-        #region private async Task HandleCommand(CreateClubConfigurationCommand command, CancellationToken cancellationToken)        
+        #region private async Task HandleCommand(CreateGolfClubCommand command, CancellationToken cancellationToken)        
         /// <summary>
         /// Handles the command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private async Task HandleCommand(CreateClubConfigurationCommand command, CancellationToken cancellationToken)
+        private async Task HandleCommand(CreateGolfClubCommand command, CancellationToken cancellationToken)
         {
-            Guid clubAggregateId = Guid.NewGuid();
+            Guid golfClubAggregateId = Guid.NewGuid();
 
             // Rehydrate the aggregate
-            var club = await this.ClubConfigurationRepository.GetLatestVersion(clubAggregateId, cancellationToken);
+            var club = await this.GolfClubRepository.GetLatestVersion(golfClubAggregateId, cancellationToken);
 
             // Call the aggregate method
-            club.CreateClubConfiguration(command.CreateClubConfigurationRequest.Name,
-                command.CreateClubConfigurationRequest.AddressLine1,
-                command.CreateClubConfigurationRequest.AddressLine2,
-                command.CreateClubConfigurationRequest.Town,
-                command.CreateClubConfigurationRequest.Region,
-                command.CreateClubConfigurationRequest.PostalCode,
-                command.CreateClubConfigurationRequest.TelephoneNumber,
-                command.CreateClubConfigurationRequest.Website,
-                command.CreateClubConfigurationRequest.EmailAddress);
+            club.CreateGolfClub(command.CreateGolfClubRequest.Name,
+                command.CreateGolfClubRequest.AddressLine1,
+                command.CreateGolfClubRequest.AddressLine2,
+                command.CreateGolfClubRequest.Town,
+                command.CreateGolfClubRequest.Region,
+                command.CreateGolfClubRequest.PostalCode,
+                command.CreateGolfClubRequest.TelephoneNumber,
+                command.CreateGolfClubRequest.Website,
+                command.CreateGolfClubRequest.EmailAddress);
 
             // Now create a club admin security user
             RegisterUserRequest request = new RegisterUserRequest
             {
-                EmailAddress = command.CreateClubConfigurationRequest.EmailAddress,
+                EmailAddress = command.CreateGolfClubRequest.EmailAddress,
                 Claims = new Dictionary<String, String>
                 {
-                    {"ClubId", clubAggregateId.ToString()}
+                    {"GolfClubId", golfClubAggregateId.ToString()}
                 },
                 Password = "123456",
-                PhoneNumber = command.CreateClubConfigurationRequest.TelephoneNumber,
+                PhoneNumber = command.CreateGolfClubRequest.TelephoneNumber,
                 Roles = new List<String>
                 {
-                    "Club Administrator"
+                    "Golf Club Administrator"
                 }
             };
             var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);
@@ -111,10 +112,10 @@ namespace ManagementAPI.Service.CommandHandlers
             club.CreateAdminSecurityUser(createSecurityUserResponse.UserId);
 
             // Save the changes
-            await this.ClubConfigurationRepository.SaveChanges(club, cancellationToken);
+            await this.GolfClubRepository.SaveChanges(club, cancellationToken);
 
             // Setup the response
-            command.Response = new CreateClubConfigurationResponse {ClubConfigurationId = clubAggregateId };
+            command.Response = new CreateGolfClubResponse {GolfClubId = golfClubAggregateId };
         }
         #endregion
 
@@ -128,7 +129,7 @@ namespace ManagementAPI.Service.CommandHandlers
         private async Task HandleCommand(AddMeasuredCourseToClubCommand command, CancellationToken cancellationToken)
         {
             // Rehydrate the aggregate
-            var club = await this.ClubConfigurationRepository.GetLatestVersion(command.ClubConfigurationId, cancellationToken);
+            var club = await this.GolfClubRepository.GetLatestVersion(command.GolfClubId, cancellationToken);
 
             // Translate the request to the input for AddMeasuredCourse
             MeasuredCourseDataTransferObject measuredCourse = new MeasuredCourseDataTransferObject
@@ -156,12 +157,12 @@ namespace ManagementAPI.Service.CommandHandlers
             club.AddMeasuredCourse(measuredCourse);
 
             // Save the changes
-            await this.ClubConfigurationRepository.SaveChanges(club, cancellationToken);
+            await this.GolfClubRepository.SaveChanges(club, cancellationToken);
 
             // No Response to set
         }
         #endregion
 
         #endregion
-    }
+    }  
 }

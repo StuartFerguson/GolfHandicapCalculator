@@ -3,32 +3,32 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using ManagementAPI.ClubConfiguration.DomainEvents;
+using ManagementAPI.GolfClub.DomainEvents;
 using Shared.EventSourcing;
 using Shared.EventStore;
 using Shared.Exceptions;
 using Shared.General;
 
-namespace ManagementAPI.ClubConfiguration
+namespace ManagementAPI.GolfClub
 {
-    public class ClubConfigurationAggregate : Aggregate
+    public class GolfClubAggregate : Aggregate
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubConfigurationAggregate"/> class.
+        /// Initializes a new instance of the <see cref="GolfClubAggregate"/> class.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        public ClubConfigurationAggregate()
+        public GolfClubAggregate()
         {
             // Nothing here
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubConfigurationAggregate"/> class.
+        /// Initializes a new instance of the <see cref="GolfClubAggregate"/> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
-        private ClubConfigurationAggregate(Guid aggregateId)
+        private GolfClubAggregate(Guid aggregateId)
         {
             Guard.ThrowIfInvalidGuid(aggregateId, "Aggregate Id cannot be an Empty Guid");
 
@@ -167,21 +167,21 @@ namespace ManagementAPI.ClubConfiguration
 
         #region Public Methods
 
-        #region public static ClubConfigurationAggregate Create(Guid aggregateId)        
+        #region public static GolfClubAggregate Create(Guid aggregateId)        
         /// <summary>
         /// Creates the specified aggregate identifier.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <returns></returns>
-        public static ClubConfigurationAggregate Create(Guid aggregateId)
+        public static GolfClubAggregate Create(Guid aggregateId)
         {
-            return new ClubConfigurationAggregate(aggregateId);
+            return new GolfClubAggregate(aggregateId);
         }
         #endregion
 
-        #region public void CreateClubConfiguration(String name, String addressLine1, String addressLine2, String town, String region, String postalCode, String telephoneNumber, String website, String emailAddress)
+        #region public void CreateGolfClub(String name, String addressLine1, String addressLine2, String town, String region, String postalCode, String telephoneNumber, String website, String emailAddress)
         /// <summary>
-        /// Creates the club configuration.
+        /// Creates the golf club.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="addressLine1">The address line1.</param>
@@ -192,7 +192,7 @@ namespace ManagementAPI.ClubConfiguration
         /// <param name="telephoneNumber">The telephone number.</param>
         /// <param name="website">The website.</param>
         /// <param name="emailAddress">The email address.</param>
-        public void CreateClubConfiguration(String name, String addressLine1, String addressLine2, String town, String region, 
+        public void CreateGolfClub(String name, String addressLine1, String addressLine2, String town, String region, 
                                             String postalCode, String telephoneNumber, String website, String emailAddress)
         {
             // Now apply the business rules
@@ -203,15 +203,15 @@ namespace ManagementAPI.ClubConfiguration
             Guard.ThrowIfNullOrEmpty(postalCode, typeof(ArgumentNullException), "A club must have a postal code to be created");
             Guard.ThrowIfNullOrEmpty(telephoneNumber, typeof(ArgumentNullException), "A club must have a telephone number to be created");
 
-            this.CheckHasClubConfigurationHasNotAlreadyBeenCreated();
+            this.CheckGolfClubHasNotAlreadyBeenCreated();
 
             // Now create the domain event
-            ClubConfigurationCreatedEvent clubConfigurationCreatedEvent = ClubConfigurationCreatedEvent.Create(
+            GolfClubCreatedEvent golfClubCreatedEvent = GolfClubCreatedEvent.Create(
                 this.AggregateId, name, addressLine1, addressLine2,
                 town, region, postalCode, telephoneNumber, website, emailAddress);
 
             // Apply and Pend the event
-            this.ApplyAndPend(clubConfigurationCreatedEvent);
+            this.ApplyAndPend(golfClubCreatedEvent);
         }
         #endregion
 
@@ -224,7 +224,7 @@ namespace ManagementAPI.ClubConfiguration
         {
             // Apply the business rules here
             // Check club has been created
-            this.CheckHasClubConfigurationAlreadyBeenCreated();
+            this.CheckHasGolfClubAlreadyBeenCreated();
 
             // Check for a duplicate measured course addition
             this.CheckNotDuplicateMeasuredCourse(measuredCourse);
@@ -301,7 +301,7 @@ namespace ManagementAPI.ClubConfiguration
         {
             Guard.ThrowIfInvalidGuid(adminSecurityUserId, typeof(ArgumentNullException), "A security user id is required to create a club admin security user");
 
-            this.CheckHasClubConfigurationAlreadyBeenCreated();
+            this.CheckHasGolfClubAlreadyBeenCreated();
             this.CheckHasClubAdminSecurityUserAlreadyBeenCreated();
 
             // Create the domain event
@@ -332,12 +332,12 @@ namespace ManagementAPI.ClubConfiguration
 
         #region Private Methods (Play Event)
 
-        #region private void PlayEvent(ClubConfigurationCreatedEvent domainEvent)        
+        #region private void PlayEvent(GolfClubCreatedEvent domainEvent)        
         /// <summary>
         /// Plays the event.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
-        private void PlayEvent(ClubConfigurationCreatedEvent domainEvent)
+        private void PlayEvent(GolfClubCreatedEvent domainEvent)
         {
             this.Name = domainEvent.Name;
             this.AddressLine1 = domainEvent.AddressLine1;
@@ -394,30 +394,30 @@ namespace ManagementAPI.ClubConfiguration
 
         #region Private Methods
 
-        #region private void CheckHasClubConfigurationHasNotAlreadyBeenCreated()
+        #region private void CheckGolfClubHasNotAlreadyBeenCreated()        
         /// <summary>
-        /// Checks the has club configuration has not already been created.
+        /// Checks the golf club has not already been created.
         /// </summary>
-        /// <exception cref="InvalidOperationException">This operation cannot be performed on a Club that already has configuration created</exception>
-        private void CheckHasClubConfigurationHasNotAlreadyBeenCreated()
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a Golf Club that already been created</exception>
+        private void CheckGolfClubHasNotAlreadyBeenCreated()
         {
             if (this.HasBeenCreated)
             {
-                throw new InvalidOperationException("This operation cannot be performed on a Club that already has configuration created");
+                throw new InvalidOperationException("This operation cannot be performed on a Golf Club that already been created");
             }
         }
         #endregion
 
-        #region private void CheckHasClubConfigurationBeenCreated()
+        #region private void CheckHasGolfClubAlreadyBeenCreated()
         /// <summary>
-        /// Checks the has club configuration already been created.
+        /// Checks the has golf club already been created.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">This operation cannot be performed on a Club that already has configuration created</exception>
-        private void CheckHasClubConfigurationAlreadyBeenCreated()
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a Golf Club that has already been created</exception>
+        private void CheckHasGolfClubAlreadyBeenCreated()
         {
             if (!this.HasBeenCreated)
             {
-                throw new InvalidOperationException("This operation cannot be performed on a Club that already has not had its configuration created");
+                throw new InvalidOperationException("This operation cannot be performed on a Golf Club that has already been created");
             }
         }
         #endregion

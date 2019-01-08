@@ -31,7 +31,7 @@ namespace ManagementAPI.Service.Controllers
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubConfigurationController"/> class.
+        /// Initializes a new instance of the <see cref="GolfClubController"/> class.
         /// </summary>
         /// <param name="commandRouter">The command router.</param>
         public PlayerController(ICommandRouter commandRouter)

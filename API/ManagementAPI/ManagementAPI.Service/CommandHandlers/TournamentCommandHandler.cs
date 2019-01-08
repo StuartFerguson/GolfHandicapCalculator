@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ManagementAPI.ClubConfiguration;
+using ManagementAPI.GolfClub;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services;
@@ -21,7 +21,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The club configuration repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate> ClubConfigurationRepository;
+        private readonly IAggregateRepository<GolfClubAggregate> GolfClubRepository;
 
         /// <summary>
         /// The tournament repository
@@ -40,14 +40,14 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// Initializes a new instance of the <see cref="TournamentCommandHandler" /> class.
         /// </summary>
-        /// <param name="clubConfigurationRepository">The club configuration repository.</param>
+        /// <param name="golfClubRepository">The golf club repository.</param>
         /// <param name="tournamentRepository">The tournament repository.</param>
         /// <param name="handicapAdjustmentCalculatorService">The handicap adjustment calculator service.</param>
-        public TournamentCommandHandler(IAggregateRepository<ClubConfigurationAggregate> clubConfigurationRepository,
+        public TournamentCommandHandler(IAggregateRepository<GolfClubAggregate> golfClubRepository,
                                         IAggregateRepository<TournamentAggregate> tournamentRepository,
                                         IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService)
         {
-            this.ClubConfigurationRepository = clubConfigurationRepository;
+            this.GolfClubRepository = golfClubRepository;
             this.TournamentRepository = tournamentRepository;
             this.HandicapAdjustmentCalculatorService = handicapAdjustmentCalculatorService;
         }
@@ -89,20 +89,20 @@ namespace ManagementAPI.Service.CommandHandlers
             var tournament = await this.TournamentRepository.GetLatestVersion(tournamentAggregateId, cancellationToken);
 
             // Get the club to validate the input
-            var club = await this.ClubConfigurationRepository.GetLatestVersion(
-                command.CreateTournamentRequest.ClubConfigurationId, cancellationToken);
+            var club = await this.GolfClubRepository.GetLatestVersion(
+                command.CreateTournamentRequest.GolfClubId, cancellationToken);
 
             // bug #29 fixes (throw exception if club not created)
             if (!club.HasBeenCreated)
             {
                 throw new NotFoundException(
-                    $"No created club found with Id {command.CreateTournamentRequest.ClubConfigurationId}");
+                    $"No created golf club found with Id {command.CreateTournamentRequest.GolfClubId}");
             }
 
             // Club is valid, now check the measured course, this will throw exception if not found
             var measuredCourse = club.GetMeasuredCourse(command.CreateTournamentRequest.MeasuredCourseId);                
         
-            tournament.CreateTournament(command.CreateTournamentRequest.TournamentDate, command.CreateTournamentRequest.ClubConfigurationId,
+            tournament.CreateTournament(command.CreateTournamentRequest.TournamentDate, command.CreateTournamentRequest.GolfClubId,
                 command.CreateTournamentRequest.MeasuredCourseId, measuredCourse.StandardScratchScore, command.CreateTournamentRequest.Name,
                 (MemberCategory)command.CreateTournamentRequest.MemberCategory,
                 (TournamentFormat)command.CreateTournamentRequest.Format);

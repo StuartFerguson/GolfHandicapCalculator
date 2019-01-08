@@ -2,7 +2,7 @@
 
 namespace ManagementAPI.Service.DataTransferObjects
 {
-    public class GetClubConfigurationResponse
+    public class GetGolfClubResponse
     {
         /// <summary>
         /// Gets or sets the club configuration identifier.

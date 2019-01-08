@@ -1,28 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Newtonsoft.Json;
 using Shared.EventSourcing;
 
-namespace ManagementAPI.ClubConfiguration.DomainEvents
+namespace ManagementAPI.GolfClub.DomainEvents
 {
     [JsonObject]
-    public class ClubConfigurationCreatedEvent : DomainEvent
+    public class GolfClubCreatedEvent : DomainEvent
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubConfigurationCreatedEvent" /> class.
+        /// Initializes a new instance of the <see cref="GolfClubCreatedEvent" /> class.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        public ClubConfigurationCreatedEvent()
+        public GolfClubCreatedEvent()
         {
             //We need this for serialisation, so just embrace the DDD crime
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClubConfigurationCreatedEvent" /> class.
+        /// Initializes a new instance of the <see cref="GolfClubCreatedEvent" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="eventId">The event identifier.</param>
@@ -35,7 +33,7 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <param name="telephoneNumber">The telephone number.</param>
         /// <param name="website">The website.</param>
         /// <param name="emailAddress">The email address.</param>
-        private ClubConfigurationCreatedEvent(Guid aggregateId, Guid eventId, String name, String addressLine1, 
+        private GolfClubCreatedEvent(Guid aggregateId, Guid eventId, String name, String addressLine1, 
                                               String addressLine2, String town, String region, String postalCode, 
                                               String telephoneNumber, String website, String emailAddress) : base(aggregateId, eventId)
         {
@@ -153,11 +151,11 @@ namespace ManagementAPI.ClubConfiguration.DomainEvents
         /// <param name="website">The website.</param>
         /// <param name="emailAddress">The email address.</param>
         /// <returns></returns>
-        public static ClubConfigurationCreatedEvent Create(Guid aggregateId,String name, String addressLine1, String addressLine2, 
+        public static GolfClubCreatedEvent Create(Guid aggregateId,String name, String addressLine1, String addressLine2, 
                                                            String town, String region, String postalCode, String telephoneNumber, 
                                                            String website, String emailAddress)
         {
-            return new ClubConfigurationCreatedEvent(aggregateId, Guid.NewGuid(), name, addressLine1, addressLine2, town, region,
+            return new GolfClubCreatedEvent(aggregateId, Guid.NewGuid(), name, addressLine1, addressLine2, town, region,
                                                      postalCode, telephoneNumber, website, emailAddress);
         }
 

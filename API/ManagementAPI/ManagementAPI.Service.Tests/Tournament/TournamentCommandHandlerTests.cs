@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using ManagementAPI.ClubConfiguration;
+using ManagementAPI.GolfClub;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.Services;
@@ -20,7 +21,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         [Fact]
         public void TournamentCommandHandler_HandleCommand_CreateTournamentCommand_CommandHandled()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubConfigurationRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse());
 
@@ -41,7 +42,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         public void TournamentCommandHandler_HandleCommand_CreateTournamentCommand_ClubNotFound_ErrorThrown()
         {
             // test added as part of bug #29 fixes
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubConfigurationRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate);
 
@@ -62,7 +63,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         public void TournamentCommandHandler_HandleCommand_CreateTournamentCommand_MeasuredCourseNotFound_ErrorThrown()
         {
             // test added as part of bug #29 fixes
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubConfigurationRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
 
@@ -82,7 +83,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         [Fact]
         public void TournamentCommandHandler_HandleCommand_RecordMemberTournamentScoreCommand_CommandHandled()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
 
             Mock<IAggregateRepository<TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate>>();
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -100,7 +101,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         [Fact]
         public void TournamentCommandHandler_HandleCommand_CompleteTournamentCommand_WithScores_CommandHandled()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
 
             Mock<IAggregateRepository<TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate>>();
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -118,7 +119,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         [Fact]
         public void TournamentCommandHandler_HandleCommand_CancelTournamentCommand_WithScores_CommandHandled()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
 
             Mock<IAggregateRepository<TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate>>();
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -136,7 +137,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         [Fact]
         public void TournamentCommandHandler_HandleCommand_ProduceTournamentResultCommand_CommandHandled()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubConfigurationRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
 
             Mock<IAggregateRepository<TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate>>();
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventStore.ClientAPI.Exceptions;
-using ManagementAPI.ClubConfiguration.DomainEvents;
+using ManagementAPI.GolfClub.DomainEvents;
 using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.Manager;
 using Microsoft.AspNetCore.Mvc;
@@ -70,16 +70,16 @@ namespace ManagementAPI.Service.Controllers
 
         #region Private Methods
 
-        #region private async Task HandleEvent(ClubConfigurationCreatedEvent domainEvent, CancellationToken cancellationToken)        
+        #region private async Task HandleEvent(GolfClubCreatedEvent domainEvent, CancellationToken cancellationToken)        
         /// <summary>
         /// Handles the event.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private async Task HandleEvent(ClubConfigurationCreatedEvent domainEvent, CancellationToken cancellationToken)
+        private async Task HandleEvent(GolfClubCreatedEvent domainEvent, CancellationToken cancellationToken)
         {
-            await this.Manager.InsertClubInformationToReadModel(domainEvent, cancellationToken);
+            await this.Manager.InsertGolfClubToReadModel(domainEvent, cancellationToken);
         }
         #endregion
 

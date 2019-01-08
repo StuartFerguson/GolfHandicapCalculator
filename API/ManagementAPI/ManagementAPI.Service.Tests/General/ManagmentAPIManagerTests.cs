@@ -37,7 +37,7 @@ namespace ManagementAPI.Service.Tests.General
         [Fact]
         public async Task ManagmentAPIManager_GetClubConfiguration_ClubConfigurationReturned()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate());
 
@@ -66,7 +66,7 @@ namespace ManagementAPI.Service.Tests.General
         [Fact]
         public void ManagmentAPIManager_GetClubConfiguration_InvalidClubId_ErrorThrown()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(Guid.NewGuid().ToString("N"));
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
@@ -84,7 +84,7 @@ namespace ManagementAPI.Service.Tests.General
         [Fact]
         public void ManagmentAPIManager_GetClubConfiguration_ClubConfigurationNotFound_ErrorThrown()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(Guid.NewGuid().ToString("N"));
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
@@ -102,7 +102,7 @@ namespace ManagementAPI.Service.Tests.General
         [Fact]
         public void ManagmentAPIManager_GetClubConfiguration_ClubConfigurationNotCreated_ErrorThrown()
         {
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate());
 
@@ -127,7 +127,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_InsertClubInformationToReadModel_RecordInsertedSuccessfully()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(databaseName);
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
@@ -150,7 +150,7 @@ namespace ManagementAPI.Service.Tests.General
         public void ManagementAPIManager_InsertClubInformationToReadModel_NullDomainEvent_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(databaseName);
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
@@ -171,7 +171,7 @@ namespace ManagementAPI.Service.Tests.General
         public void ManagementAPIManager_InsertClubInformationToReadModel_DuplicateRecord_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(databaseName);
             context.ClubInformation.Add(new ClubInformation
             {
@@ -210,7 +210,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_GetClubList_ListOfClubsReturned()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
             context.ClubInformation.Add(new ClubInformation
@@ -244,7 +244,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_GetClubList_NoClubsFound_ListOfClubsReturnedIsEmpty()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
 
@@ -267,7 +267,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_InsertClubMembershipRequestToReadModel_RecordInsertedSuccessfully()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
 
@@ -293,7 +293,7 @@ namespace ManagementAPI.Service.Tests.General
         public void ManagementAPIManager_InsertClubMembershipRequestToReadModel_ClubNotFound_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate);
 
@@ -317,7 +317,7 @@ namespace ManagementAPI.Service.Tests.General
         public void ManagementAPIManager_InsertClubMembershipRequestToReadModel_PlayerNotFound_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
 
@@ -343,7 +343,7 @@ namespace ManagementAPI.Service.Tests.General
         public void ManagementAPIManager_InsertClubMembershipRequestToReadModel_NullDomainEvent_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             var context = GetContext(databaseName);
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
@@ -364,7 +364,7 @@ namespace ManagementAPI.Service.Tests.General
         public void ManagementAPIManager_InsertClubMembershipRequestToReadModel_DuplicateRecord_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(ClubConfigurationTestData.GetCreatedClubConfigurationAggregate);
 
@@ -403,7 +403,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_GetPendingMembershipRequests_ListOfPendingMembershipRequestsReturned()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
             context.ClubMembershipRequest.Add(new ClubMembershipRequest
@@ -440,7 +440,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_GetPendingMembershipRequests_NoPendingRequestsFound_ListOfPendingMembershipRequestsReturnedIsEmpty()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
 
@@ -463,7 +463,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Accept_RecordRemovedSuccessfully()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
 
@@ -504,7 +504,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Reject_RecordRemovedSuccessfully()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
 
@@ -545,7 +545,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Accept_NullEvent_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
 
@@ -567,7 +567,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Reject_NullEvent_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
 
@@ -589,7 +589,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Accept_RequestNotFound_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
 
@@ -611,7 +611,7 @@ namespace ManagementAPI.Service.Tests.General
         public async Task ManagementAPIManager_RemoveClubMembershipRequestFromReadModel_Reject_RequestNotFound_ErrorThrown()
         {
             String databaseName = Guid.NewGuid().ToString("N");
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
             var context = GetContext(databaseName);
 

@@ -47,7 +47,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         [When(@"I call Create Club Configuration")]
         public async Task WhenICallCreateClubConfiguration()
         {
-            var request = this.ScenarioContext.Get<CreateClubConfigurationRequest>("CreateClubConfigurationRequest");
+            var request = this.ScenarioContext.Get<CreateGolfClubRequest>("CreateClubConfigurationRequest");
             
             String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
 
@@ -64,7 +64,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         [Then(@"I will get the new Club Configuration Id in the response")]
         public async Task ThenIWillGetTheNewClubConfigurationIdInTheResponse()
         {
-            var responseData = await GetResponseObject<CreateClubConfigurationResponse>("CreateClubConfigurationHttpResponse")
+            var responseData = await GetResponseObject<CreateGolfClubResponse>("CreateClubConfigurationHttpResponse")
                 .ConfigureAwait(false);
 
             responseData.ClubConfigurationId.ShouldNotBe(Guid.Empty);
@@ -79,7 +79,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
 
             var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
 
-            var responseData = await GetResponseObject<CreateClubConfigurationResponse>(httpResponse).ConfigureAwait(false);
+            var responseData = await GetResponseObject<CreateGolfClubResponse>(httpResponse).ConfigureAwait(false);
 
             responseData.ClubConfigurationId.ShouldNotBe(Guid.Empty);
 
@@ -91,7 +91,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         public async Task WhenIRequestTheDetailsOfTheClub()
         {
             var createClubConfigurationResponse =
-                this.ScenarioContext.Get<CreateClubConfigurationResponse>("CreateClubConfigurationResponse");
+                this.ScenarioContext.Get<CreateGolfClubResponse>("CreateClubConfigurationResponse");
 
             // Get the token
             var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
@@ -130,7 +130,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
         public async Task WhenIAddAMeasuredCourseToTheClub()
         {
             var createClubConfigurationResponse =
-                this.ScenarioContext.Get<CreateClubConfigurationResponse>("CreateClubConfigurationResponse");
+                this.ScenarioContext.Get<CreateGolfClubResponse>("CreateClubConfigurationResponse");
 
             var request = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
             //request.ClubAggregateId = createClubConfigurationResponse.ClubConfigurationId;
@@ -234,7 +234,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.ClubConfiguration
             
             var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
 
-            var responseData = await GetResponseObject<CreateClubConfigurationResponse>(httpResponse).ConfigureAwait(false);
+            var responseData = await GetResponseObject<CreateGolfClubResponse>(httpResponse).ConfigureAwait(false);
 
             this.ScenarioContext["ClubConfigurationId"] = responseData.ClubConfigurationId;
 

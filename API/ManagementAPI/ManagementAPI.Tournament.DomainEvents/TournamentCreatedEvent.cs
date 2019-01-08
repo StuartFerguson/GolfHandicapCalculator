@@ -26,17 +26,17 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="eventId">The event identifier.</param>
         /// <param name="tournamentDate">The tournament date.</param>
-        /// <param name="clubConfigurationId">The club configuration identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="measuredCourseId">The measured course identifier.</param>
         /// <param name="measuredCourseSSS">The measured course SSS.</param>
         /// <param name="name">The name.</param>
         /// <param name="memberCategory">The member category.</param>
         /// <param name="format">The format.</param>
-        private TournamentCreatedEvent(Guid aggregateId,Guid eventId, DateTime tournamentDate, Guid clubConfigurationId, Guid measuredCourseId,
+        private TournamentCreatedEvent(Guid aggregateId,Guid eventId, DateTime tournamentDate, Guid golfClubId, Guid measuredCourseId,
             Int32 measuredCourseSSS, String name, Int32 memberCategory, Int32 format) : base(aggregateId, eventId)
         {
             this.TournamentDate = tournamentDate;
-            this.ClubConfigurationId = clubConfigurationId;
+            this.GolfClubId = golfClubId;
             this.MeasuredCourseId = measuredCourseId;
             this.MeasuredCourseSSS = measuredCourseSSS;
             this.Name = name;
@@ -57,13 +57,13 @@ namespace ManagementAPI.Tournament.DomainEvents
         public DateTime TournamentDate { get; private set; }
 
         /// <summary>
-        /// Gets the club configuration identifier.
+        /// Gets the golf club identifier.
         /// </summary>
         /// <value>
-        /// The club configuration identifier.
+        /// The golf club identifier.
         /// </value>
         [JsonProperty]
-        public Guid ClubConfigurationId { get; private set; }
+        public Guid GolfClubId { get; private set; }
 
         /// <summary>
         /// Gets the measured course identifier.
@@ -74,6 +74,12 @@ namespace ManagementAPI.Tournament.DomainEvents
         [JsonProperty]
         public Guid MeasuredCourseId { get; private set; }
 
+        /// <summary>
+        /// Gets the measured course SSS.
+        /// </summary>
+        /// <value>
+        /// The measured course SSS.
+        /// </value>
         [JsonProperty]
         public Int32 MeasuredCourseSSS { get; private set; }
 
@@ -113,17 +119,17 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="tournamentDate">The tournament date.</param>
-        /// <param name="clubConfigurationId">The club configuration identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="measuredCourseId">The measured course identifier.</param>
         /// <param name="measuredCourseSSS">The measured course SSS.</param>
         /// <param name="name">The name.</param>
         /// <param name="memberCategory">The member category.</param>
         /// <param name="format">The format.</param>
         /// <returns></returns>
-        public static TournamentCreatedEvent Create(Guid aggregateId, DateTime tournamentDate, Guid clubConfigurationId, Guid measuredCourseId,
+        public static TournamentCreatedEvent Create(Guid aggregateId, DateTime tournamentDate, Guid golfClubId, Guid measuredCourseId,
             Int32 measuredCourseSSS, String name, Int32 memberCategory, Int32 format)
         {
-            return new TournamentCreatedEvent(aggregateId, Guid.NewGuid(), tournamentDate, clubConfigurationId,measuredCourseId, measuredCourseSSS, name,memberCategory, format);
+            return new TournamentCreatedEvent(aggregateId, Guid.NewGuid(), tournamentDate, golfClubId,measuredCourseId, measuredCourseSSS, name,memberCategory, format);
         }
 
         #endregion

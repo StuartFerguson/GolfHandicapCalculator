@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ManagementAPI.ClubConfiguration
+namespace ManagementAPI.GolfClub
 {
     public class MeasuredCourseDataTransferObject
     {

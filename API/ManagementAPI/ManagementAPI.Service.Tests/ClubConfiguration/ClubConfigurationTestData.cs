@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using ManagementAPI.ClubConfiguration;
 using ManagementAPI.ClubConfiguration.DomainEvents;
+using ManagementAPI.GolfClub;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services.DataTransferObjects;
-using HoleDataTransferObject = ManagementAPI.ClubConfiguration.HoleDataTransferObject;
+using HoleDataTransferObject = ManagementAPI.GolfClub.HoleDataTransferObject;
 using DTOHoleDataTransferObject = ManagementAPI.Service.DataTransferObjects.HoleDataTransferObject;
 
 namespace ManagementAPI.Service.Tests.ClubConfiguration
@@ -38,38 +39,38 @@ namespace ManagementAPI.Service.Tests.ClubConfiguration
             
         public static Guid AdminSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
 
-        public static ClubConfigurationAggregate GetEmptyClubConfigurationAggregate()
+        public static GolfClubAggregate GetEmptyClubConfigurationAggregate()
         {
-            ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
+            GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
             return aggregate;
         }
 
-        public static ClubConfigurationAggregate GetCreatedClubConfigurationAggregate()
+        public static GolfClubAggregate GetCreatedClubConfigurationAggregate()
         {
-            ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
+            GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
-            aggregate.CreateClubConfiguration(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+            aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 
             return aggregate;
         }
 
-        public static ClubConfigurationAggregate GetCreatedClubConfigurationAggregateWithAdminUser()
+        public static GolfClubAggregate GetCreatedClubConfigurationAggregateWithAdminUser()
         {
-            ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
+            GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
-            aggregate.CreateClubConfiguration(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+            aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 
             aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
             
             return aggregate;
         }
 
-        public static ClubConfigurationAggregate GetClubConfigurationAggregateWithMeasuredCourse()
+        public static GolfClubAggregate GetClubConfigurationAggregateWithMeasuredCourse()
         {
-            ClubConfigurationAggregate aggregate= ClubConfigurationAggregate.Create(AggregateId);
+            GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
-            aggregate.CreateClubConfiguration(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+            aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 
             aggregate.CreateAdminSecurityUser(ClubConfigurationTestData.AdminSecurityUserId);
 

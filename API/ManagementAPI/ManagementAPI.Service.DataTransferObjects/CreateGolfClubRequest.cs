@@ -1,23 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace ManagementAPI.Database.Models
+namespace ManagementAPI.Service.DataTransferObjects
 {
-    public class ClubInformation
+    public class CreateGolfClubRequest
     {
         /// <summary>
-        /// Gets or sets the club configuration identifier.
-        /// </summary>
-        /// <value>
-        /// The club configuration identifier.
-        /// </value>
-        [Key]
-        public Guid ClubConfigurationId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name.
+        /// Gets the name.
         /// </summary>
         /// <value>
         /// The name.
@@ -25,7 +16,7 @@ namespace ManagementAPI.Database.Models
         public String Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the address line1.
+        /// Gets the address line1.
         /// </summary>
         /// <value>
         /// The address line1.
@@ -33,7 +24,7 @@ namespace ManagementAPI.Database.Models
         public String AddressLine1 { get; set; }
 
         /// <summary>
-        /// Gets or sets the address line2.
+        /// Gets the address line2.
         /// </summary>
         /// <value>
         /// The address line2.
@@ -41,7 +32,7 @@ namespace ManagementAPI.Database.Models
         public String AddressLine2 { get; set; }
 
         /// <summary>
-        /// Gets or sets the town.
+        /// Gets the town.
         /// </summary>
         /// <value>
         /// The town.
@@ -49,15 +40,15 @@ namespace ManagementAPI.Database.Models
         public String Town { get; set; }
 
         /// <summary>
-        /// Gets or sets the region.
+        /// Gets the region.
         /// </summary>
         /// <value>
         /// The region.
         /// </value>
-        public String Region { get; set; }
+        public String Region  { get; set; }
 
         /// <summary>
-        /// Gets or sets the postal code.
+        /// Gets the postal code.
         /// </summary>
         /// <value>
         /// The postal code.
@@ -65,7 +56,7 @@ namespace ManagementAPI.Database.Models
         public String PostalCode { get; set; }
 
         /// <summary>
-        /// Gets or sets the telephone number.
+        /// Gets the telephone number.
         /// </summary>
         /// <value>
         /// The telephone number.
@@ -73,15 +64,15 @@ namespace ManagementAPI.Database.Models
         public String TelephoneNumber { get; set; }
 
         /// <summary>
-        /// Gets or sets the web site.
+        /// Gets the website.
         /// </summary>
         /// <value>
-        /// The web site.
+        /// The website.
         /// </value>
-        public String WebSite { get; set; }
+        public String Website { get; set; }
 
         /// <summary>
-        /// Gets or sets the email address.
+        /// Gets the email address.
         /// </summary>
         /// <value>
         /// The email address.
