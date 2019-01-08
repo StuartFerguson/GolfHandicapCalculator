@@ -39,7 +39,7 @@ namespace ManagementAPI.Service.Tests.Player
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
             command.PlayerId.ShouldBe(PlayerTestData.AggregateId);
-            command.ClubId.ShouldBe(PlayerTestData.ClubId);
+            command.GolfClubId.ShouldBe(PlayerTestData.ClubId);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace ManagementAPI.Service.Tests.Player
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
             command.PlayerId.ShouldBe(PlayerTestData.AggregateId);
-            command.ClubId.ShouldBe(PlayerTestData.ClubId);
+            command.GolfClubId.ShouldBe(PlayerTestData.ClubId);
             command.RejectMembershipRequestRequest.ShouldBe(PlayerTestData.RejectMembershipRequestRequest);
         }
     }

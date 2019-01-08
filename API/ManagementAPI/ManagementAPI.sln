@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.ClubConfiguration.DomainEvents", "ManagementAPI.ClubConfiguration.DomainEvents\ManagementAPI.ClubConfiguration.DomainEvents.csproj", "{0F135963-A347-44B4-9CB1-D17A669DF8A5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.ClubConfigurationAggregate", "ManagementAPI.ClubConfigurationAggregate\ManagementAPI.ClubConfigurationAggregate.csproj", "{C8EFA131-9327-471E-BBD9-292BB82E0D41}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Service", "ManagementAPI.Service\ManagementAPI.Service.csproj", "{F2B835CA-06DA-4486-A708-12146EA1C251}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Service.Tests", "ManagementAPI.Service.Tests\ManagementAPI.Service.Tests.csproj", "{7CC940CD-41D8-4BDC-A6E5-E83AEAF6CEAC}"
@@ -29,7 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Player.Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Database", "ManagementAPI.Database\ManagementAPI.Database.csproj", "{06F22C57-A3E3-4217-B615-4B462BC851DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementAPI.Service.Client", "ManagementAPI.Service.Client\ManagementAPI.Service.Client.csproj", "{DCC3912A-77EB-4023-BBA1-008E2271B244}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Service.Client", "ManagementAPI.Service.Client\ManagementAPI.Service.Client.csproj", "{DCC3912A-77EB-4023-BBA1-008E2271B244}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClub.DomainEvents", "ManagementAPI.GolfClub.DomainEvents\ManagementAPI.GolfClub.DomainEvents.csproj", "{3D8154AA-0171-4E80-8AAA-8CD49DD809BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClubAggregate", "ManagementAPI.GolfClubAggregate\ManagementAPI.GolfClubAggregate.csproj", "{91C39FA6-A060-48B1-A24A-9509EA2A1463}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +37,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0F135963-A347-44B4-9CB1-D17A669DF8A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F135963-A347-44B4-9CB1-D17A669DF8A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F135963-A347-44B4-9CB1-D17A669DF8A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F135963-A347-44B4-9CB1-D17A669DF8A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8EFA131-9327-471E-BBD9-292BB82E0D41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8EFA131-9327-471E-BBD9-292BB82E0D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8EFA131-9327-471E-BBD9-292BB82E0D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8EFA131-9327-471E-BBD9-292BB82E0D41}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F2B835CA-06DA-4486-A708-12146EA1C251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F2B835CA-06DA-4486-A708-12146EA1C251}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2B835CA-06DA-4486-A708-12146EA1C251}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,13 +77,19 @@ Global
 		{DCC3912A-77EB-4023-BBA1-008E2271B244}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCC3912A-77EB-4023-BBA1-008E2271B244}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCC3912A-77EB-4023-BBA1-008E2271B244}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D8154AA-0171-4E80-8AAA-8CD49DD809BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D8154AA-0171-4E80-8AAA-8CD49DD809BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D8154AA-0171-4E80-8AAA-8CD49DD809BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D8154AA-0171-4E80-8AAA-8CD49DD809BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91C39FA6-A060-48B1-A24A-9509EA2A1463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91C39FA6-A060-48B1-A24A-9509EA2A1463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91C39FA6-A060-48B1-A24A-9509EA2A1463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91C39FA6-A060-48B1-A24A-9509EA2A1463}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0F135963-A347-44B4-9CB1-D17A669DF8A5} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
-		{C8EFA131-9327-471E-BBD9-292BB82E0D41} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 		{F2B835CA-06DA-4486-A708-12146EA1C251} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 		{7CC940CD-41D8-4BDC-A6E5-E83AEAF6CEAC} = {E879EDAF-2767-4DEB-868A-DB4B49239E06}
 		{BECBE4F7-8A67-430C-9637-6E1F120911A8} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
@@ -102,6 +100,8 @@ Global
 		{7D41D49C-3B60-43F5-B650-C67F2669469F} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 		{06F22C57-A3E3-4217-B615-4B462BC851DE} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 		{DCC3912A-77EB-4023-BBA1-008E2271B244} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
+		{3D8154AA-0171-4E80-8AAA-8CD49DD809BA} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
+		{91C39FA6-A060-48B1-A24A-9509EA2A1463} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0239A13-E2E7-4C85-AFF1-88820D94F461}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ManagementAPI.ClubConfiguration;
+using ManagementAPI.GolfClub;
 using ManagementAPI.Player;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.Services;
@@ -19,7 +19,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The club aggregate repository
         /// </summary>
-        private readonly IAggregateRepository<ClubConfigurationAggregate> ClubRepository;
+        private readonly IAggregateRepository<GolfClubAggregate> ClubRepository;
 
         /// <summary>
         /// The tournament repository
@@ -53,7 +53,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <param name="handicapAdjustmentCalculatorService">The handicap adjustment calculator service.</param>
         /// <param name="playerRepository">The player repository.</param>
         /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
-        public CommandRouter(IAggregateRepository<ClubConfigurationAggregate> clubRepository,
+        public CommandRouter(IAggregateRepository<GolfClubAggregate> clubRepository,
             IAggregateRepository<TournamentAggregate> tournamentRepository,
             IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService,
             IAggregateRepository<PlayerAggregate> playerRepository,
@@ -87,15 +87,15 @@ namespace ManagementAPI.Service.CommandHandlers
 
         #region Private Methods
 
-        #region private ICommandHandler CreateHandler(CreateClubConfigurationCommand command)        
+        #region private ICommandHandler CreateHandler(CreateGolfClubCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
-        private ICommandHandler CreateHandler(CreateClubConfigurationCommand command)
+        private ICommandHandler CreateHandler(CreateGolfClubCommand command)
         {
-            return new ClubConfigurationCommandHandler(this.ClubRepository, this.OAuth2SecurityService);
+            return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService);
         }
         #endregion
 
@@ -107,7 +107,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(AddMeasuredCourseToClubCommand command)
         {
-            return new ClubConfigurationCommandHandler(this.ClubRepository, this.OAuth2SecurityService);
+            return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService);
         }
         #endregion
 

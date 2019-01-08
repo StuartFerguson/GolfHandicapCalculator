@@ -52,12 +52,12 @@ namespace ManagementAPI.Tournament
         public DateTime TournamentDate { get; private set; }
 
         /// <summary>
-        /// Gets the club configuration identifier.
+        /// Gets the golf club identifier.
         /// </summary>
         /// <value>
-        /// The club configuration identifier.
+        /// The golf club identifier.
         /// </value>
-        public Guid ClubConfigurationId { get; private set; }
+        public Guid GolfClubId { get; private set; }
 
         /// <summary>
         /// Gets the measured course identifier.
@@ -221,16 +221,16 @@ namespace ManagementAPI.Tournament
         /// Creates the tournament.
         /// </summary>
         /// <param name="tournamentDate">The tournament date.</param>
-        /// <param name="clubConfigurationId">The club configuration identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="measuredCourseId">The measured course identifier.</param>
         /// <param name="measuredCourseSSS">The measured course SSS.</param>
         /// <param name="name">The name.</param>
         /// <param name="memberCategory">The member category.</param>
         /// <param name="tournamentFormat">The tournament format.</param>
-        public void CreateTournament(DateTime tournamentDate, Guid clubConfigurationId, Guid measuredCourseId, Int32 measuredCourseSSS, String name, MemberCategory memberCategory, TournamentFormat tournamentFormat)
+        public void CreateTournament(DateTime tournamentDate, Guid golfClubId, Guid measuredCourseId, Int32 measuredCourseSSS, String name, MemberCategory memberCategory, TournamentFormat tournamentFormat)
         {
             Guard.ThrowIfInvalidDate(tournamentDate, typeof(ArgumentNullException), " A tournament requires a valid date to be created");
-            Guard.ThrowIfInvalidGuid(clubConfigurationId, typeof(ArgumentNullException), " A tournament requires a valid Club Configuration Id to be created");
+            Guard.ThrowIfInvalidGuid(golfClubId, typeof(ArgumentNullException), " A tournament requires a valid Golf Club Id to be created");
             Guard.ThrowIfInvalidGuid(measuredCourseId, typeof(ArgumentNullException), " A tournament requires a valid Measured Course Id to be created");
             Guard.ThrowIfZero(measuredCourseSSS, typeof(ArgumentOutOfRangeException), "Measured Course SS must not be zero");
             Guard.ThrowIfNegative(measuredCourseSSS, typeof(ArgumentOutOfRangeException), "Measured Course SS must not be negative");
@@ -245,7 +245,7 @@ namespace ManagementAPI.Tournament
             this.CheckTournamentNotAlreadyCancelled();
 
             TournamentCreatedEvent tournamentCreatedEvent = TournamentCreatedEvent.Create(this.AggregateId,
-                tournamentDate, clubConfigurationId, measuredCourseId, measuredCourseSSS,
+                tournamentDate, golfClubId, measuredCourseId, measuredCourseSSS,
                 name, (Int32) memberCategory, (Int32) tournamentFormat);
 
             this.ApplyAndPend(tournamentCreatedEvent);
@@ -500,7 +500,7 @@ namespace ManagementAPI.Tournament
         private void PlayEvent(TournamentCreatedEvent domainEvent)
         {
             this.Name = domainEvent.Name;
-            this.ClubConfigurationId = domainEvent.ClubConfigurationId;
+            this.GolfClubId = domainEvent.GolfClubId;
             this.Format = (TournamentFormat) domainEvent.Format;
             this.HasBeenCreated = true;
             this.MeasuredCourseId = domainEvent.MeasuredCourseId;

@@ -16,13 +16,7 @@ namespace ManagementAPI.Service.Commands
         /// </value>
         public Guid PlayerId { get; private set; }
 
-        /// <summary>
-        /// Gets the club identifier.
-        /// </summary>
-        /// <value>
-        /// The club identifier.
-        /// </value>
-        public Guid ClubId { get; private set; }
+        public Guid GolfClubId { get; private set; }
 
         /// <summary>
         /// Gets the reject membership request request.
@@ -39,28 +33,28 @@ namespace ManagementAPI.Service.Commands
         /// Initializes a new instance of the <see cref="RejectPlayerMembershipRequestCommand" /> class.
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
-        /// <param name="clubId">The club configuration identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="commandId">The command identifier.</param>
-        private RejectPlayerMembershipRequestCommand(Guid playerId, Guid clubId, RejectMembershipRequestRequest request, Guid commandId) : base(commandId)
+        private RejectPlayerMembershipRequestCommand(Guid playerId, Guid golfClubId, RejectMembershipRequestRequest request, Guid commandId) : base(commandId)
         {
             this.PlayerId = playerId;
-            this.ClubId = clubId;
+            this.GolfClubId = golfClubId;
             this.RejectMembershipRequestRequest = request;
         }
         #endregion
 
-        #region public static RejectPlayerMembershipRequestCommand Create(Guid playerId, Guid clubConfigurationId, RejectMembershipRequestRequest request)
+        #region public static RejectPlayerMembershipRequestCommand Create(Guid playerId, Guid golfClubId, RejectMembershipRequestRequest request)
         /// <summary>
         /// Creates this instance.
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
-        /// <param name="clubId">The club configuration identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="request">The request.</param>
         /// <returns></returns>
-        public static RejectPlayerMembershipRequestCommand Create(Guid playerId, Guid clubId, RejectMembershipRequestRequest request)
+        public static RejectPlayerMembershipRequestCommand Create(Guid playerId, Guid golfClubId, RejectMembershipRequestRequest request)
         {
-            return new RejectPlayerMembershipRequestCommand(playerId, clubId, request, Guid.NewGuid());
+            return new RejectPlayerMembershipRequestCommand(playerId, golfClubId, request, Guid.NewGuid());
         }
         #endregion
     }

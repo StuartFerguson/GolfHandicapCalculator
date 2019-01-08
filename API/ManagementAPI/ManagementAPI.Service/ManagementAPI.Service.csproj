@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ManagementAPI.ClubConfigurationAggregate\ManagementAPI.ClubConfigurationAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.Database\ManagementAPI.Database.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClubAggregate\ManagementAPI.GolfClubAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.PlayerAggregate\ManagementAPI.PlayerAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.Service.DataTransferObjects\ManagementAPI.Service.DataTransferObjects.csproj" />
     <ProjectReference Include="..\ManagementAPI.TournamentAggregate\ManagementAPI.TournamentAggregate.csproj" />

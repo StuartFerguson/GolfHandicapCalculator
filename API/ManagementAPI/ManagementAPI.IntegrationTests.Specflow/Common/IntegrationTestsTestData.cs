@@ -6,7 +6,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Common
 {
     public class IntegrationTestsTestData
     {
-        public static CreateClubConfigurationRequest CreateClubConfigurationRequest = new CreateClubConfigurationRequest
+        public static CreateGolfClubRequest CreateGolfClubRequest = new CreateGolfClubRequest
         {
             Name = "Name",
             AddressLine1 = "Address Line 1",

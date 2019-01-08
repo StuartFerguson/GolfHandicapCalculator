@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
-using ManagementAPI.ClubConfiguration;
+using ManagementAPI.GolfClub;
 using ManagementAPI.Player;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services;
 using ManagementAPI.Service.Services.DataTransferObjects;
-using ManagementAPI.Service.Tests.ClubConfiguration;
+using ManagementAPI.Service.Tests.GolfClub;
 using Moq;
 using Shared.EventStore;
 using Shared.Exceptions;
@@ -28,9 +28,9 @@ namespace ManagementAPI.Service.Tests.Player
             oAuth2SecurityService
                 .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(PlayerTestData.GetRegisterUserResponse());
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse());
+                .ReturnsAsync(GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse());
 
             PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);
 
@@ -46,9 +46,9 @@ namespace ManagementAPI.Service.Tests.Player
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithSecurityUserCreated);
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse());
+                .ReturnsAsync(GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse());
 
             PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);
 
@@ -64,9 +64,9 @@ namespace ManagementAPI.Service.Tests.Player
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithSecurityUserCreated);
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetEmptyClubConfigurationAggregate);
+                .ReturnsAsync(GolfClubTestData.GetEmptyGolfClubAggregate);
 
             PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);
 
@@ -82,9 +82,9 @@ namespace ManagementAPI.Service.Tests.Player
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithPendingMembershipRequest);
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse());
+                .ReturnsAsync(GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse());
 
             PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);
 
@@ -100,9 +100,9 @@ namespace ManagementAPI.Service.Tests.Player
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithPendingMembershipRequest);
             Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
-            Mock<IAggregateRepository<ClubConfigurationAggregate>> clubRepository = new Mock<IAggregateRepository<ClubConfigurationAggregate>>();
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(ClubConfigurationTestData.GetClubConfigurationAggregateWithMeasuredCourse());
+                .ReturnsAsync(GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse());
 
 
             PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);

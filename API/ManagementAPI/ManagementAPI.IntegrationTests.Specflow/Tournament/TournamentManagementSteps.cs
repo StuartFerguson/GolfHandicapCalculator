@@ -38,24 +38,23 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         [Given(@"My Club configuration has been already created")]
         public async Task GivenMyClubConfigurationHasBeenAlreadyCreated()
         {
-            var request = IntegrationTestsTestData.CreateClubConfigurationRequest;
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration";
+            var request = IntegrationTestsTestData.CreateGolfClubRequest;
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub";
 
             var httpResponse = await MakeHttpPost(requestUri, request).ConfigureAwait(false);
-            var responseData = await GetResponseObject<CreateClubConfigurationResponse>(httpResponse);
+            var responseData = await GetResponseObject<CreateGolfClubResponse>(httpResponse);
 
-            this.ScenarioContext["ClubConfigurationId"] = responseData.ClubConfigurationId;            
+            this.ScenarioContext["GolfClubId"] = responseData.GolfClubId;            
         }
         
         [Given(@"the club has a measured course")]
         public async Task GivenTheClubHasAMeasuredCourse()
         {
-            var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+            var golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
 
             var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
-            //addMeasuredCourseToClubRequest.ClubAggregateId = clubConfigurationId;
 
-            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/ClubConfiguration/{clubConfigurationId}";
+            String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/GolfClub/{golfClubId}";
 
             var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
@@ -67,11 +66,11 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         [Given(@"I have the details of the new tournament")]
         public void GivenIHaveTheDetailsOfTheNewTournament()
         {
-            var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+            var golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
             var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
 
             var createTournamentRequest = IntegrationTestsTestData.CreateTournamentRequest;
-            createTournamentRequest.ClubConfigurationId = clubConfigurationId;
+            createTournamentRequest.GolfClubId = golfClubId;
             createTournamentRequest.MeasuredCourseId = addMeasuredCourseToClubRequest.MeasuredCourseId;
 
             this.ScenarioContext["CreateTournamentRequest"] = createTournamentRequest;
@@ -107,11 +106,11 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         [Given(@"I have created a tournament")]
         public async Task GivenIHaveCreatedATournament()
         {
-            var clubConfigurationId = this.ScenarioContext.Get<Guid>("ClubConfigurationId");
+            var golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
             var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
 
             var createTournamentRequest = IntegrationTestsTestData.CreateTournamentRequest;
-            createTournamentRequest.ClubConfigurationId = clubConfigurationId;
+            createTournamentRequest.GolfClubId = golfClubId;
             createTournamentRequest.MeasuredCourseId = addMeasuredCourseToClubRequest.MeasuredCourseId;
 
             String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament";
@@ -264,7 +263,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
         public async Task GivenIAmLoggedInAsAClubAdministrator()
         {
             var tokenResponse = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
-                IntegrationTestsTestData.CreateClubConfigurationRequest.EmailAddress, "123456").ConfigureAwait(false);
+                IntegrationTestsTestData.CreateGolfClubRequest.EmailAddress, "123456").ConfigureAwait(false);
 
             this.ScenarioContext["ClubAdministratorToken"] = tokenResponse;
         }

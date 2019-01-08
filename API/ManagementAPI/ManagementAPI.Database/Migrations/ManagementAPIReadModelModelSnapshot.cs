@@ -17,34 +17,6 @@ namespace ManagementAPI.Database.Migrations
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("ManagementAPI.Database.Models.ClubInformation", b =>
-                {
-                    b.Property<Guid>("ClubConfigurationId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("AddressLine1");
-
-                    b.Property<string>("AddressLine2");
-
-                    b.Property<string>("EmailAddress");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("PostalCode");
-
-                    b.Property<string>("Region");
-
-                    b.Property<string>("TelephoneNumber");
-
-                    b.Property<string>("Town");
-
-                    b.Property<string>("WebSite");
-
-                    b.HasKey("ClubConfigurationId");
-
-                    b.ToTable("ClubInformation");
-                });
-
             modelBuilder.Entity("ManagementAPI.Database.Models.ClubMembershipRequest", b =>
                 {
                     b.Property<Guid>("MembershipRequestId")
@@ -77,6 +49,34 @@ namespace ManagementAPI.Database.Migrations
                     b.HasKey("MembershipRequestId");
 
                     b.ToTable("ClubMembershipRequest");
+                });
+
+            modelBuilder.Entity("ManagementAPI.Database.Models.GolfClub", b =>
+                {
+                    b.Property<Guid>("GolfClubId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AddressLine1");
+
+                    b.Property<string>("AddressLine2");
+
+                    b.Property<string>("EmailAddress");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("PostalCode");
+
+                    b.Property<string>("Region");
+
+                    b.Property<string>("TelephoneNumber");
+
+                    b.Property<string>("Town");
+
+                    b.Property<string>("WebSite");
+
+                    b.HasKey("GolfClubId");
+
+                    b.ToTable("GolfClub");
                 });
 #pragma warning restore 612, 618
         }

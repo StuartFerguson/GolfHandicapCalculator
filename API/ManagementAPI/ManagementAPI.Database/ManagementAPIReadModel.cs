@@ -69,9 +69,12 @@ namespace ManagementAPI.Database
         #region Entities
 
         /// <summary>
-        /// The club information
+        /// Gets or sets the golf club.
         /// </summary>
-        public DbSet<ClubInformation> ClubInformation { get; set; }
+        /// <value>
+        /// The golf club.
+        /// </value>
+        public DbSet<GolfClub> GolfClub { get; set; }
 
         /// <summary>
         /// Gets or sets the club membership request.
