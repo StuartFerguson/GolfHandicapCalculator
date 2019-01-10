@@ -252,15 +252,18 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         protected override void SetupSubscriptionServiceConfig()
         {
             String streamName = String.Empty;
+            String subscriptionGroup = String.Empty;
 
             // Set the stream name
             switch (this.ScenarioContext.ScenarioInfo.Title)
             {
                 case "Get Golf Club List":
                     streamName = "$et-ManagementAPI.GolfClub.DomainEvents.GolfClubCreatedEvent";
+                    subscriptionGroup = "ClubCreated";
                     break;
                 case "Get Pending Membership Request List":
                     streamName = "$et-ManagementAPI.Player.DomainEvents.ClubMembershipRequestedEvent";
+                    subscriptionGroup = "MembershipRequested";
                     break;
             }
                         
@@ -306,7 +309,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
 
                 MySqlCommand groupInsert = connection.CreateCommand();
                 groupInsert.CommandText =
-                    $"insert into SubscriptionGroups(Id, BufferSize, EndpointId, Name, StreamPosition, SubscriptionStreamId) select '{subscriptionGroupId}', 10, '{endpointId}', 'ClubCreated', null, '{subscriptionStreamId}'";
+                    $"insert into SubscriptionGroups(Id, BufferSize, EndpointId, Name, StreamPosition, SubscriptionStreamId) select '{subscriptionGroupId}', 10, '{endpointId}', '{subscriptionGroup}', null, '{subscriptionStreamId}'";
                 groupInsert.ExecuteNonQuery();
                 
                 // Insert the subscription service
