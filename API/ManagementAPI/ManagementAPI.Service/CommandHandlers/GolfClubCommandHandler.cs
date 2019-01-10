@@ -75,7 +75,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private async Task HandleCommand(CreateGolfClubCommand command, CancellationToken cancellationToken)
         {
-            Guid golfClubAggregateId = Guid.NewGuid();
+            Guid golfClubAggregateId = command.GolfClubId;
 
             // Rehydrate the aggregate
             var club = await this.GolfClubRepository.GetLatestVersion(golfClubAggregateId, cancellationToken);
@@ -90,26 +90,8 @@ namespace ManagementAPI.Service.CommandHandlers
                 command.CreateGolfClubRequest.TelephoneNumber,
                 command.CreateGolfClubRequest.Website,
                 command.CreateGolfClubRequest.EmailAddress);
-
-            // Now create a club admin security user
-            RegisterUserRequest request = new RegisterUserRequest
-            {
-                EmailAddress = command.CreateGolfClubRequest.EmailAddress,
-                Claims = new Dictionary<String, String>
-                {
-                    {"GolfClubId", golfClubAggregateId.ToString()}
-                },
-                Password = "123456",
-                PhoneNumber = command.CreateGolfClubRequest.TelephoneNumber,
-                Roles = new List<String>
-                {
-                    "Club Administrator"
-                }
-            };
-            var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);
-
-            // Record this in the aggregate
-            club.CreateAdminSecurityUser(createSecurityUserResponse.UserId);
+            
+            // TODO: Record club admin user against aggregate
 
             // Save the changes
             await this.GolfClubRepository.SaveChanges(club, cancellationToken);

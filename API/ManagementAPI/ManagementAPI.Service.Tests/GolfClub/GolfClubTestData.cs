@@ -36,7 +36,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
         public static Int32 HolePar = 3;
         public static Int32 HoleStrokeIndex = 1;
             
-        public static Guid AdminSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
+        public static Guid GolfClubAdministratorSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
 
         public static GolfClubAggregate GetEmptyGolfClubAggregate()
         {
@@ -54,13 +54,13 @@ namespace ManagementAPI.Service.Tests.GolfClub
             return aggregate;
         }
 
-        public static GolfClubAggregate GetCreatedGolfClubAggregateWithAdminUser()
+        public static GolfClubAggregate GetCreatedGolfClubAggregateWithGolfClubAdministratorUser()
         {
             GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
 
             aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 
-            aggregate.CreateAdminSecurityUser(GolfClubTestData.AdminSecurityUserId);
+            aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
             
             return aggregate;
         }
@@ -71,7 +71,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
 
             aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
 
-            aggregate.CreateAdminSecurityUser(GolfClubTestData.AdminSecurityUserId);
+            aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = GolfClubTestData.GetMeasuredCourseToAdd();
 
@@ -235,7 +235,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
 
         public static CreateGolfClubCommand GetCreateGolfClubCommand()
         {            
-            return CreateGolfClubCommand.Create(GolfClubTestData.CreateGolfClubRequest);
+            return CreateGolfClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.GolfClubAdministratorSecurityUserId, GolfClubTestData.CreateGolfClubRequest);
         }
 
         public static AddMeasuredCourseToClubCommand GetAddMeasuredCourseToClubCommand()
@@ -247,7 +247,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
         {
             return new RegisterUserResponse()
             {
-                UserId = AdminSecurityUserId
+                UserId = GolfClubAdministratorSecurityUserId
             };
         }
 
@@ -292,5 +292,13 @@ namespace ManagementAPI.Service.Tests.GolfClub
                     Status = 0 // Pending
                 }
             };
+
+        public static RegisterClubAdministratorRequest RegisterClubAdministratorRequest = new RegisterClubAdministratorRequest
+        {
+            EmailAddress = "testclubadministrator@test.co.uk",
+            Password = "123456",
+            ConfirmPassword = "123456",
+            TelephoneNumber = "123456789"
+        };
     }
 }

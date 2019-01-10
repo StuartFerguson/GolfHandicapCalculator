@@ -8,24 +8,24 @@ namespace ManagementAPI.Service.Common
     public class PolicyNames
     {
         /// <summary>
-        /// The get club list policy
+        /// The get golf club list policy
         /// </summary>
-        public const String GetClubListPolicy = "GetClubListPolicy";
+        public const String GetGolfClubListPolicy = "GetGolfClubListPolicy";
 
         /// <summary>
-        /// The get single club policy
+        /// The get single golf club policy
         /// </summary>
-        public const String GetSingleClubPolicy = "GetSingleClubPolicy";
+        public const String GetSingleGolfClubPolicy = "GetSingleGolfClubPolicy";
 
         /// <summary>
-        /// The create club policy
+        /// The create golf club policy
         /// </summary>
-        public const String CreateClubPolicy = "CreateClubPolicy";
+        public const String CreateGolfClubPolicy = "CreateGolfClubPolicy";
 
         /// <summary>
-        /// The add measured course to club policy
+        /// The add measured course to golf club policy
         /// </summary>
-        public const String AddMeasuredCourseToClubPolicy = "AddMeasuredCourseToClubPolicy";
+        public const String AddMeasuredCourseToGolfClubPolicy = "AddMeasuredCourseToGolfClubPolicy";
 
         /// <summary>
         /// The register player policy
@@ -35,7 +35,7 @@ namespace ManagementAPI.Service.Common
         /// <summary>
         /// The request club membership for player policy
         /// </summary>
-        public const String RequestClubMembershipForPlayerPolicy = "RequestClubMembershipForPlayerPolicy";
+        public const String RequestGolfClubMembershipForPlayerPolicy = "RequestGolfClubMembershipForPlayerPolicy";
 
         /// <summary>
         /// The create tournament policy
@@ -71,5 +71,10 @@ namespace ManagementAPI.Service.Common
         /// The approve player membership request policy
         /// </summary>
         public const String ApprovePlayerMembershipRequestPolicy = "ApprovePlayerMembershipRequestPolicy";
+
+        /// <summary>
+        /// The reject player membership request policy
+        /// </summary>
+        public const String RejectPlayerMembershipRequestPolicy = "RejectPlayerMembershipRequestPolicy";
     }
 }

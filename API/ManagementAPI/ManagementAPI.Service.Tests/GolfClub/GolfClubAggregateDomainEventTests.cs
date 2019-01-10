@@ -76,17 +76,17 @@ namespace ManagementAPI.Service.Tests.GolfClub
         }
 
         [Fact]
-        public void AdminSecurityUserCreatedEvent_CanBeCreated_IsCreated()
+        public void GolfClubAdministratorSecurityUserCreatedEvent_CanBeCreated_IsCreated()
         {
-            AdminSecurityUserCreatedEvent adminSecurityUserCreatedEvent = AdminSecurityUserCreatedEvent.Create(
+            GolfClubAdministratorSecurityUserCreatedEvent golfClubAdministratorSecurityUserCreatedEvent = GolfClubAdministratorSecurityUserCreatedEvent.Create(
                 GolfClubTestData.AggregateId,
-                GolfClubTestData.AdminSecurityUserId);
+                GolfClubTestData.GolfClubAdministratorSecurityUserId);
 
-            adminSecurityUserCreatedEvent.ShouldNotBeNull();
-            adminSecurityUserCreatedEvent.AggregateId.ShouldBe(GolfClubTestData.AggregateId);
-            adminSecurityUserCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
-            adminSecurityUserCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
-            adminSecurityUserCreatedEvent.AdminSecurityUserId.ShouldBe(GolfClubTestData.AdminSecurityUserId);
+            golfClubAdministratorSecurityUserCreatedEvent.ShouldNotBeNull();
+            golfClubAdministratorSecurityUserCreatedEvent.AggregateId.ShouldBe(GolfClubTestData.AggregateId);
+            golfClubAdministratorSecurityUserCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            golfClubAdministratorSecurityUserCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
+            golfClubAdministratorSecurityUserCreatedEvent.GolfClubAdministratorSecurityUserId.ShouldBe(GolfClubTestData.GolfClubAdministratorSecurityUserId);
         }
     }
 }

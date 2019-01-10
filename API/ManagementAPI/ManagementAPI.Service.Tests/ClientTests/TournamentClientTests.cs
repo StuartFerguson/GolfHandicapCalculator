@@ -133,7 +133,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             TournamentClient client = new TournamentClient(resolver, httpClient);
 
-            await client.CancelTournament(passwordToken, TournamentTestData.AggregateId, CancellationToken.None);            
+            await client.CancelTournament(passwordToken, TournamentTestData.AggregateId, TournamentTestData.CancelTournamentRequest, CancellationToken.None);            
         }
 
         [Theory]
@@ -160,7 +160,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
             
             var exception = Should.Throw(async () =>
             {
-                await client.CancelTournament(passwordToken, TournamentTestData.AggregateId, CancellationToken.None);
+                await client.CancelTournament(passwordToken, TournamentTestData.AggregateId,TournamentTestData.CancelTournamentRequest, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);

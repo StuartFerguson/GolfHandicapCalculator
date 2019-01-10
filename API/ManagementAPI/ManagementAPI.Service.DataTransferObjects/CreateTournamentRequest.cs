@@ -16,14 +16,6 @@ namespace ManagementAPI.Service.DataTransferObjects
         public DateTime TournamentDate { get; set; }
 
         /// <summary>
-        /// Gets or sets the golf club identifier.
-        /// </summary>
-        /// <value>
-        /// The golf club identifier.
-        /// </value>
-        public Guid GolfClubId { get; set; }
-
-        /// <summary>
         /// Gets the measured course identifier.
         /// </summary>
         /// <value>

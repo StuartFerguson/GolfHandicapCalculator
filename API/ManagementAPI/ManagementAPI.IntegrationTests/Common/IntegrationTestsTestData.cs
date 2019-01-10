@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ManagementAPI.IntegrationTests.DataTransferObjects;
 using ManagementAPI.Service.DataTransferObjects;
 
-namespace ManagementAPI.IntegrationTests
+namespace ManagementAPI.IntegrationTests.Common
 {
     public class IntegrationTestsTestData
     {
-        public static CreateClubConfigurationRequest CreateClubConfigurationRequest = new CreateClubConfigurationRequest
+        public static RegisterClubAdministratorRequest RegisterClubAdministratorRequest = new RegisterClubAdministratorRequest
+        {
+            EmailAddress = "testclubadministrator@golfclub.com",
+            ConfirmPassword = "123456",
+            Password = "123456",
+            TelephoneNumber = "123456789"
+        };
+
+        public static CreateGolfClubRequest CreateGolfClubRequest = new CreateGolfClubRequest
         {
             Name = "Name",
             AddressLine1 = "Address Line 1",
@@ -28,7 +35,7 @@ namespace ManagementAPI.IntegrationTests
                 Name = "Test Course",
                 StandardScratchScore = 70,
                 TeeColour = "White",
-                Holes = new List<DataTransferObjects.HoleDataTransferObject>
+                Holes = new List<HoleDataTransferObject>
                 {
                     new HoleDataTransferObject {HoleNumber = 1, LengthInYards = 348, Par = 4, StrokeIndex = 10},
                     new HoleDataTransferObject {HoleNumber = 2, LengthInYards = 402, Par = 4, StrokeIndex = 4},
@@ -49,7 +56,6 @@ namespace ManagementAPI.IntegrationTests
                     new HoleDataTransferObject {HoleNumber = 17, LengthInYards = 286, Par = 4, StrokeIndex = 17},
                     new HoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9}
                 }
-
             };
 
         public static CreateTournamentRequest CreateTournamentRequest = new CreateTournamentRequest
@@ -57,7 +63,8 @@ namespace ManagementAPI.IntegrationTests
             Name = "Test Competition",
             MemberCategory = 1,
             TournamentDate = DateTime.Today,
-            Format = 1
+            Format = 1,
+            MeasuredCourseId = Guid.Parse("47708163-7E3A-4C61-B1C3-64C2CDFC1170")
         };
 
         public static RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest =
@@ -74,6 +81,29 @@ namespace ManagementAPI.IntegrationTests
         public static CancelTournamentRequest CancelTournamentRequest = new CancelTournamentRequest
         {
             CancellationReason = "Test Reason"
+        };
+
+        public static RegisterPlayerRequest RegisterPlayerRequest = new RegisterPlayerRequest
+        {
+            EmailAddress = "testemail@myemailaddress.com",
+            FirstName = "Test",
+            MiddleName = String.Empty,
+            LastName = "Player 1",
+            Age = 35,
+            Gender = "M",
+            ExactHandicap = 6.1m
+        };
+        
+        public static List<CreateRoleRequest> RolesToCreateRequests = new List<CreateRoleRequest>
+        {
+            new CreateRoleRequest {RoleName = "Club Administrator"},
+            new CreateRoleRequest {RoleName = "Match Secretary"},
+            new CreateRoleRequest {RoleName = "Player"}
+        };
+
+        public static RejectMembershipRequestRequest RejectMembershipRequestRequest = new RejectMembershipRequestRequest
+        {
+            RejectionReason = "Rejected"
         };
     }
 }

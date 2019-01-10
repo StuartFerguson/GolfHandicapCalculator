@@ -170,7 +170,6 @@ namespace ManagementAPI.Service.Tests.Tournament
             Name = Name,
             MemberCategory = MemberCategory,
             MeasuredCourseId = MeasuredCourseId,
-            GolfClubId = GolfClubId,
             TournamentDate = TournamentDate,
             Format = TournamentFormat
         };
@@ -182,7 +181,7 @@ namespace ManagementAPI.Service.Tests.Tournament
 
         public static CreateTournamentCommand GetCreateTournamentCommand()
         {
-            return CreateTournamentCommand.Create(CreateTournamentRequest);
+            return CreateTournamentCommand.Create(GolfClubId, CreateTournamentRequest);
         }
 
         public static RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest = new RecordMemberTournamentScoreRequest

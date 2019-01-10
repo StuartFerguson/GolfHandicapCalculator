@@ -351,49 +351,49 @@ namespace ManagementAPI.Service.Tests.GolfClub
 
         #endregion
 
-        #region Create Admin Security User Tests
+        #region Create Golf Club Administrator Security User Tests
 
         [Fact]
-        public void GolfClubAggregate_CreateAdminSecurityUser_AdminSecurityUserCreated()
+        public void GolfClubAggregate_CreateGolfClubAdministratorSecurityUser_GolfClubAdministratorSecurityUserCreated()
         {
             GolfClubAggregate aggregate = GolfClubTestData.GetCreatedGolfClubAggregate();
 
-            aggregate.CreateAdminSecurityUser(GolfClubTestData.AdminSecurityUserId);
+            aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
 
-            aggregate.AdminSecurityUserId.ShouldBe(GolfClubTestData.AdminSecurityUserId);
+            aggregate.GolfClubAdministratorSecurityUserId.ShouldBe(GolfClubTestData.GolfClubAdministratorSecurityUserId);
             aggregate.HasAdminSecurityUserBeenCreated.ShouldBeTrue();
         }
 
         [Fact]
-        public void GolfClubAggregate_CreateAdminSecurityUser_InvalidData_ErrorThrown()
+        public void GolfClubAggregate_CreateGolfClubAdministratorSecurityUser_InvalidData_ErrorThrown()
         {
             GolfClubAggregate aggregate = GolfClubTestData.GetCreatedGolfClubAggregate();
 
             Should.Throw<ArgumentNullException>(() =>
             {
-                aggregate.CreateAdminSecurityUser(Guid.Empty);
+                aggregate.CreateGolfClubAdministratorSecurityUser(Guid.Empty);
             });
         }
 
         [Fact]
-        public void GolfClubAggregate_CreateAdminSecurityUser_ClubNotCreated_ErrorThrown()
+        public void GolfClubAggregate_CreateGolfClubAdministratorSecurityUser_ClubNotCreated_ErrorThrown()
         {
             GolfClubAggregate aggregate = GolfClubTestData.GetEmptyGolfClubAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
             {
-                aggregate.CreateAdminSecurityUser(GolfClubTestData.AdminSecurityUserId);
+                aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
             });
         }
 
         [Fact]
-        public void GolfClubAggregate_CreateAdminSecurityUser_AdminSecurityUserAlreadyCreated_ErrorThrown()
+        public void GolfClubAggregate_CreateGolfClubAdministratorSecurityUser_AdminSecurityUserAlreadyCreated_ErrorThrown()
         {
-            GolfClubAggregate aggregate = GolfClubTestData.GetCreatedGolfClubAggregateWithAdminUser();
+            GolfClubAggregate aggregate = GolfClubTestData.GetCreatedGolfClubAggregateWithGolfClubAdministratorUser();
 
             Should.Throw<InvalidOperationException>(() =>
             {
-                aggregate.CreateAdminSecurityUser(GolfClubTestData.AdminSecurityUserId);
+                aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
             });
         }
 

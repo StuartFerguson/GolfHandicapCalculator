@@ -10,10 +10,11 @@ namespace ManagementAPI.Service.Tests.Tournament
         [Fact]
         public void CreateTournamentCommand_CanBeCreated_IsCreated()
         {
-            CreateTournamentCommand command = CreateTournamentCommand.Create(TournamentTestData.CreateTournamentRequest);
+            CreateTournamentCommand command = CreateTournamentCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.CreateTournamentRequest);
 
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
+            command.GolfClubId.ShouldBe(TournamentTestData.GolfClubId);
             command.CreateTournamentRequest.ShouldNotBeNull();
             command.CreateTournamentRequest.ShouldBe(TournamentTestData.CreateTournamentRequest); 
         }
