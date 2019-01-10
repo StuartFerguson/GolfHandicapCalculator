@@ -10,21 +10,29 @@ namespace ManagementAPI.Service.Client
     public interface IGolfClubClient
     {
         /// <summary>
-        /// Creates the golf club.
+        /// Registers the golf club administrator.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<CreateGolfClubResponse> CreateGolfClub(CreateGolfClubRequest request, CancellationToken cancellationToken);
+        Task RegisterGolfClubAdministrator(RegisterClubAdministratorRequest request,CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Creates the golf club.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<CreateGolfClubResponse> CreateGolfClub(String passwordToken, CreateGolfClubRequest request, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the single golf club.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<GetGolfClubResponse> GetSingleGolfClub(String passwordToken, Guid golfClubId, CancellationToken cancellationToken);
+        Task<GetGolfClubResponse> GetSingleGolfClub(String passwordToken, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the golf club list.
@@ -38,19 +46,17 @@ namespace ManagementAPI.Service.Client
         /// Adds the measured course to golf club.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task AddMeasuredCourseToGolfClub(String passwordToken, Guid golfClubId, AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken);
+        Task AddMeasuredCourseToGolfClub(String passwordToken, AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the pending membership requests.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, Guid golfClubId, CancellationToken cancellationToken);
+        Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, CancellationToken cancellationToken);
     }
 }

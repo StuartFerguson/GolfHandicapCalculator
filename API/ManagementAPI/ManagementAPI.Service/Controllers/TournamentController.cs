@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Commands;
@@ -55,8 +56,11 @@ namespace ManagementAPI.Service.Controllers
         [Authorize(Policy = PolicyNames.CreateTournamentPolicy)]
         public async Task<IActionResult> PostTournament([FromBody]CreateTournamentRequest request, CancellationToken cancellationToken)
         {
+            // Get the Golf Club Id claim from the user            
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
             // Create the command
-            var command = CreateTournamentCommand.Create(request);
+            var command = CreateTournamentCommand.Create(Guid.Parse(golfClubIdClaim.Value),  request);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);

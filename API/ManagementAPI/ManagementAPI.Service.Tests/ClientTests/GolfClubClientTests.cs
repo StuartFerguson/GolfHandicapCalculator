@@ -28,10 +28,11 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
 
             GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            var response = await client.CreateGolfClub(GolfClubTestData.CreateGolfClubRequest,
+            var response = await client.CreateGolfClub(passwordToken, GolfClubTestData.CreateGolfClubRequest,
                 CancellationToken.None);
 
             response.ShouldNotBeNull();
@@ -56,12 +57,13 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
 
             GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
             var exception = Should.Throw(async () =>
             {
-                await client.CreateGolfClub(GolfClubTestData.CreateGolfClubRequest,
+                await client.CreateGolfClub(passwordToken, GolfClubTestData.CreateGolfClubRequest,
                     CancellationToken.None);
             }, exceptionType);
 
@@ -136,7 +138,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            var response = await client.GetSingleGolfClub(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
+            var response = await client.GetSingleGolfClub(passwordToken, CancellationToken.None);
 
             response.ShouldNotBeNull();
             response.AddressLine1.ShouldBe(GolfClubTestData.AddressLine1);
@@ -175,7 +177,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             var exception = Should.Throw(async () =>
             {
-                await client.GetSingleGolfClub(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
+                await client.GetSingleGolfClub(passwordToken, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);
@@ -197,7 +199,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            await client.AddMeasuredCourseToGolfClub(passwordToken, GolfClubTestData.AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest, CancellationToken.None);
+            await client.AddMeasuredCourseToGolfClub(passwordToken, GolfClubTestData.AddMeasuredCourseToClubRequest, CancellationToken.None);
         }
 
         [Theory]
@@ -224,7 +226,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
             
             var exception = Should.Throw(async () =>
             {
-                await client.AddMeasuredCourseToGolfClub(passwordToken, GolfClubTestData.AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest, CancellationToken.None);
+                await client.AddMeasuredCourseToGolfClub(passwordToken, GolfClubTestData.AddMeasuredCourseToClubRequest, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);
@@ -246,7 +248,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            var response = await client.GetPendingMembershipRequests(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
+            var response = await client.GetPendingMembershipRequests(passwordToken, CancellationToken.None);
 
             response.ShouldNotBeNull();
             response.Count.ShouldBe(GolfClubTestData.GetClubMembershipRequestResponse.Count);
@@ -276,7 +278,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             var exception = Should.Throw(async () =>
             {
-                await client.GetPendingMembershipRequests(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
+                await client.GetPendingMembershipRequests(passwordToken, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);

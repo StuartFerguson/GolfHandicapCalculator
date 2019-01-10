@@ -7,7 +7,7 @@ namespace ManagementAPI.Service.Common
         /// <summary>
         /// The club identifier
         /// </summary>
-        public const String ClubId = "ClubId";
+        public const String GolfClubId = "GolfClubId";
 
         /// <summary>
         /// The player identifier

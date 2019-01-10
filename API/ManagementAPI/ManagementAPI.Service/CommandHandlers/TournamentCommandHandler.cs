@@ -90,19 +90,19 @@ namespace ManagementAPI.Service.CommandHandlers
 
             // Get the club to validate the input
             var club = await this.GolfClubRepository.GetLatestVersion(
-                command.CreateTournamentRequest.GolfClubId, cancellationToken);
+                command.GolfClubId, cancellationToken);
 
             // bug #29 fixes (throw exception if club not created)
             if (!club.HasBeenCreated)
             {
                 throw new NotFoundException(
-                    $"No created golf club found with Id {command.CreateTournamentRequest.GolfClubId}");
+                    $"No created golf club found with Id {command.GolfClubId}");
             }
 
             // Club is valid, now check the measured course, this will throw exception if not found
             var measuredCourse = club.GetMeasuredCourse(command.CreateTournamentRequest.MeasuredCourseId);                
         
-            tournament.CreateTournament(command.CreateTournamentRequest.TournamentDate, command.CreateTournamentRequest.GolfClubId,
+            tournament.CreateTournament(command.CreateTournamentRequest.TournamentDate, command.GolfClubId,
                 command.CreateTournamentRequest.MeasuredCourseId, measuredCourse.StandardScratchScore, command.CreateTournamentRequest.Name,
                 (MemberCategory)command.CreateTournamentRequest.MemberCategory,
                 (TournamentFormat)command.CreateTournamentRequest.Format);

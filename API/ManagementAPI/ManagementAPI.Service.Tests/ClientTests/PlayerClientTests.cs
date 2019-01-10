@@ -17,7 +17,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
     public class PlayerClientTests
     {
         [Fact]
-        public async Task PlayerClient_CreatePlayer_SuccessfulResponse()
+        public async Task PlayerClient_RegisterPlayer_SuccessfulResponse()
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
@@ -31,7 +31,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             PlayerClient client = new PlayerClient(resolver, httpClient);
 
-            var response = await client.CreatePlayer(PlayerTestData.RegisterPlayerRequest, CancellationToken.None);
+            var response = await client.RegisterPlayer(PlayerTestData.RegisterPlayerRequest, CancellationToken.None);
 
             response.ShouldNotBeNull();
             response.PlayerId.ShouldBe(PlayerTestData.AggregateId);
@@ -44,7 +44,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
-        public async Task PlayerClient_CreatePlayer_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        public async Task PlayerClient_RegisterPlayer_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
             var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
@@ -60,7 +60,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             var exception = Should.Throw(async () =>
             {
-                await client.CreatePlayer(PlayerTestData.RegisterPlayerRequest, CancellationToken.None);
+                await client.RegisterPlayer(PlayerTestData.RegisterPlayerRequest, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);
@@ -82,8 +82,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             PlayerClient client = new PlayerClient(resolver, httpClient);
 
-            await client.RequestClubMembership(passwordToken, PlayerTestData.AggregateId,
-                PlayerTestData.ClubId, CancellationToken.None);            
+            await client.RequestClubMembership(passwordToken, PlayerTestData.ClubId, CancellationToken.None);            
         }
 
         [Theory]
@@ -110,8 +109,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
             
             var exception = Should.Throw(async () =>
             {
-                await client.RequestClubMembership(passwordToken, PlayerTestData.AggregateId,
-                    PlayerTestData.ClubId, CancellationToken.None); 
+                await client.RequestClubMembership(passwordToken, PlayerTestData.ClubId, CancellationToken.None); 
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);

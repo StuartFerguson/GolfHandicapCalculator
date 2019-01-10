@@ -12,6 +12,22 @@ namespace ManagementAPI.Service.Commands
         #region Properties
 
         /// <summary>
+        /// Gets the golf club identifier.
+        /// </summary>
+        /// <value>
+        /// The golf club identifier.
+        /// </value>
+        public Guid GolfClubId { get; private set; }
+
+        /// <summary>
+        /// Gets the security user identifier.
+        /// </summary>
+        /// <value>
+        /// The security user identifier.
+        /// </value>
+        public Guid SecurityUserId { get; private set; }
+
+        /// <summary>
         /// Gets or sets the create club configuration request.
         /// </summary>
         /// <value>
@@ -25,11 +41,15 @@ namespace ManagementAPI.Service.Commands
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateGolfClubCommand" /> class.
         /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="securityUserId">The security user identifier.</param>
         /// <param name="createGolfClubRequest">The create golf club request.</param>
         /// <param name="commandId">The command identifier.</param>
-        private CreateGolfClubCommand(CreateGolfClubRequest createGolfClubRequest, Guid commandId) : base(commandId)
+        private CreateGolfClubCommand(Guid golfClubId, Guid securityUserId, CreateGolfClubRequest createGolfClubRequest, Guid commandId) : base(commandId)
         {
+            this.GolfClubId = golfClubId;
             this.CreateGolfClubRequest = createGolfClubRequest;
+            this.SecurityUserId = securityUserId;
         }
         #endregion
 
@@ -37,11 +57,13 @@ namespace ManagementAPI.Service.Commands
         /// <summary>
         /// Creates this instance.
         /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="securityUserId">The security user identifier.</param>
         /// <param name="createGolfClubRequest">The create golf club request.</param>
         /// <returns></returns>
-        public static CreateGolfClubCommand Create(CreateGolfClubRequest createGolfClubRequest)
+        public static CreateGolfClubCommand Create(Guid golfClubId, Guid securityUserId, CreateGolfClubRequest createGolfClubRequest)
         {
-            return new CreateGolfClubCommand(createGolfClubRequest, Guid.NewGuid());
+            return new CreateGolfClubCommand(golfClubId, securityUserId, createGolfClubRequest, Guid.NewGuid());
         }
         #endregion
     }

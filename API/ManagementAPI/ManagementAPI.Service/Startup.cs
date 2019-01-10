@@ -270,41 +270,56 @@ namespace ManagementAPI.Service
         /// <param name="policies">The policies.</param>
         private static void ConfigurePolicies(AuthorizationOptions policies)
         {
-            policies.AddPolicy(PolicyNames.GetClubListPolicy, policy =>
+            #region Golf Club Policies
+
+            policies.AddPolicy(PolicyNames.CreateGolfClubPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes("Bearer");
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole(new[]
+                {
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(),
+                });
+                policy.RequireClaim(CustomClaims.GolfClubId);
+            });
+
+            policies.AddPolicy(PolicyNames.GetGolfClubListPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[] 
                 {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
-                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper(),
                     RoleNames.Player, RoleNames.Player.ToUpper()
                 });
             });
 
-            policies.AddPolicy(PolicyNames.GetSingleClubPolicy, policy =>
+            policies.AddPolicy(PolicyNames.GetSingleGolfClubPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[]
                 {
                     RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
-                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper(),
-                    RoleNames.Player, RoleNames.Player.ToUpper()
                 });
+                policy.RequireClaim(CustomClaims.GolfClubId);
             });
             
-            policies.AddPolicy(PolicyNames.AddMeasuredCourseToClubPolicy, policy =>
+            policies.AddPolicy(PolicyNames.AddMeasuredCourseToGolfClubPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[]
                 {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper()
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(),
+                    RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
                 });
+                policy.RequireClaim(CustomClaims.GolfClubId);
             });
+            #endregion
 
-            policies.AddPolicy(PolicyNames.RequestClubMembershipForPlayerPolicy, policy =>
+            #region Player Policies
+
+            policies.AddPolicy(PolicyNames.RequestGolfClubMembershipForPlayerPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
@@ -312,7 +327,10 @@ namespace ManagementAPI.Service
                 {
                     RoleNames.Player, RoleNames.Player.ToUpper()
                 });
+                policy.RequireClaim(CustomClaims.PlayerId);
             });
+
+            #endregion
 
             policies.AddPolicy(PolicyNames.CreateTournamentPolicy, policy =>
             {
@@ -323,6 +341,7 @@ namespace ManagementAPI.Service
                     RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
                     RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
                 });
+                policy.RequireClaim(CustomClaims.GolfClubId);
             });
 
             policies.AddPolicy(PolicyNames.RecordPlayerScoreForTournamentPolicy, policy =>

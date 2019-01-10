@@ -9,6 +9,11 @@ using Newtonsoft.Json;
 
 namespace ManagementAPI.Service.Client
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="ClientProxyBase.ClientProxyBase" />
+    /// <seealso cref="ManagementAPI.Service.Client.ITournamentClient" />
     public class TournamentClient : ClientProxyBase.ClientProxyBase, ITournamentClient
     {
         #region Fields
@@ -87,7 +92,7 @@ namespace ManagementAPI.Service.Client
         /// <returns></returns>
         public async Task RecordPlayerScore(String passwordToken, Guid tournamentId, RecordMemberTournamentScoreRequest request, CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/api/Tournament/{tournamentId}/RecordMemberScore";
+            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/RecordMemberScore";
 
             try
             {
@@ -128,7 +133,7 @@ namespace ManagementAPI.Service.Client
         /// <returns></returns>
         public async Task CompleteTournament(String passwordToken, Guid tournamentId, CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/api/Tournament/{tournamentId}/Complete";
+            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/Complete";
 
             try
             {
@@ -156,7 +161,7 @@ namespace ManagementAPI.Service.Client
         }
         #endregion
 
-        #region public async Task CancelTournament(String passwordToken, Guid tournamentId, CancellationToken cancellationToken)        
+        #region public async Task CancelTournament(String passwordToken, Guid tournamentId, CancelTournamentRequest request, CancellationToken cancellationToken)        
         /// <summary>
         /// Cancels the tournament.
         /// </summary>
@@ -164,13 +169,15 @@ namespace ManagementAPI.Service.Client
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task CancelTournament(String passwordToken, Guid tournamentId, CancellationToken cancellationToken)
+        public async Task CancelTournament(String passwordToken, Guid tournamentId, CancelTournamentRequest request, CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/api/Tournament/{tournamentId}/Cancel";
+            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/Cancel";
 
             try
             {
-                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+                String requestSerialised = JsonConvert.SerializeObject(request);
+
+                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
                 this.HttpClient.DefaultRequestHeaders.Authorization =
@@ -204,7 +211,7 @@ namespace ManagementAPI.Service.Client
         /// <returns></returns>
         public async Task ProduceTournamentResult(String passwordToken, Guid tournamentId, CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/api/Tournament/{tournamentId}/ProduceResult";
+            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/ProduceResult";
 
             try
             {

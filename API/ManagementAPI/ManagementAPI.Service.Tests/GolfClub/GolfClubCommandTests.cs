@@ -10,10 +10,12 @@ namespace ManagementAPI.Service.Tests.GolfClub
         [Fact]
         public void CreateGolfClubCommand_CanBeCreated_IsCreated()
         {
-            CreateGolfClubCommand command = CreateGolfClubCommand.Create(GolfClubTestData.CreateGolfClubRequest);
+            CreateGolfClubCommand command = CreateGolfClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.GolfClubAdministratorSecurityUserId, GolfClubTestData.CreateGolfClubRequest);
 
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
+            command.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            command.SecurityUserId.ShouldBe(GolfClubTestData.GolfClubAdministratorSecurityUserId);
             command.CreateGolfClubRequest.ShouldNotBeNull();
             command.CreateGolfClubRequest.ShouldBe(GolfClubTestData.CreateGolfClubRequest);
         }

@@ -34,18 +34,52 @@ namespace ManagementAPI.Service.Client
         }
         #endregion
 
+        #region public async Task RegisterGolfClubAdministrator(RegisterClubAdministratorRequest request, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Registers the golf club administrator.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task RegisterGolfClubAdministrator(RegisterClubAdministratorRequest request, CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/RegisterGolfClubAdministrator";
+
+            try
+            {
+                String requestSerialised = JsonConvert.SerializeObject(request);
+
+                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                
+                // Make the Http Call here
+                var httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                String content = await HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful, no response data to deserialise
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error registering a Golf Club Administrator.", ex);
+
+                throw exception;
+            }
+        }
+        #endregion
+
         #region public async Task AddMeasuredCourseToGolfClub(String passwordToken, Guid golfClubId, AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)        
         /// <summary>
         /// Adds the measured course to golf club.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task AddMeasuredCourseToGolfClub(String passwordToken, Guid golfClubId, AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)
+        public async Task AddMeasuredCourseToGolfClub(String passwordToken, AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/GolClub";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/AddMeasuredCourse";
 
             try
             {
@@ -68,31 +102,35 @@ namespace ManagementAPI.Service.Client
             catch (Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error Adding a measured course to Golf Club {golfClubId}.", ex);
+                Exception exception = new Exception($"Error Adding a measured course to Golf Club.", ex);
 
                 throw exception;
             }
         }
         #endregion
 
-        #region public async Task<CreateGolfClubResponse> CreateGolfClub(CreateGolfClubRequest request, CancellationToken cancellationToken)                
+        #region public async Task<CreateGolfClubResponse> CreateGolfClub(String passwordToken, CreateGolfClubRequest request, CancellationToken cancellationToken)                
         /// <summary>
         /// Creates the golf club.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<CreateGolfClubResponse> CreateGolfClub(CreateGolfClubRequest request, CancellationToken cancellationToken)
+        public async Task<CreateGolfClubResponse> CreateGolfClub(String passwordToken, CreateGolfClubRequest request, CancellationToken cancellationToken)
         {
             CreateGolfClubResponse response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/GolfClub";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/Create";
 
             try
             {
                 String requestSerialised = JsonConvert.SerializeObject(request);
 
                 var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
                 var httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
@@ -126,7 +164,7 @@ namespace ManagementAPI.Service.Client
         {
             List<GetGolfClubResponse> response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/GolfClub";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/List";
 
             try
             {
@@ -155,20 +193,19 @@ namespace ManagementAPI.Service.Client
         }
         #endregion
 
-        #region public async Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, Guid golfClubId, CancellationToken cancellationToken)        
+        #region public async Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, CancellationToken cancellationToken)        
         /// <summary>
         /// Gets the pending membership requests.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, Guid golfClubId, CancellationToken cancellationToken)
+        public async Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, CancellationToken cancellationToken)
         {
             List<GetClubMembershipRequestResponse> response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/PendingMembershipRequests";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/PendingMembershipRequests";
 
             try
             {
@@ -187,7 +224,7 @@ namespace ManagementAPI.Service.Client
             catch (Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error getting a list of Pending Membership Requests for Golf Club {golfClubId}.", ex);
+                Exception exception = new Exception($"Error getting a list of Pending Membership Requests for Golf Club.", ex);
 
                 throw exception;
             }
@@ -196,20 +233,19 @@ namespace ManagementAPI.Service.Client
         }
         #endregion
 
-        #region public async Task<GetGolfClubResponse> GetSingleGolfClub(String passwordToken, Guid golfClubId, CancellationToken cancellationToken)        
+        #region public async Task<GetGolfClubResponse> GetSingleGolfClub(String passwordToken, CancellationToken cancellationToken)        
         /// <summary>
         /// Gets the single golf club.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<GetGolfClubResponse> GetSingleGolfClub(String passwordToken, Guid golfClubId, CancellationToken cancellationToken)
+        public async Task<GetGolfClubResponse> GetSingleGolfClub(String passwordToken, CancellationToken cancellationToken)
         {
             GetGolfClubResponse response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub";
 
             try
             {
@@ -229,7 +265,7 @@ namespace ManagementAPI.Service.Client
             catch (Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error getting a single golf club {golfClubId}.", ex);
+                Exception exception = new Exception($"Error getting a single golf club.", ex);
 
                 throw exception;
             }

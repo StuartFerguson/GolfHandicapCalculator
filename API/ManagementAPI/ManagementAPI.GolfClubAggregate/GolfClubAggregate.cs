@@ -119,12 +119,12 @@ namespace ManagementAPI.GolfClub
         public Boolean HasBeenCreated { get; private set; }
 
         /// <summary>
-        /// Gets the admin security user identifier.
+        /// Gets the golf club administrator security user identifier.
         /// </summary>
         /// <value>
-        /// The admin security user identifier.
+        /// The golf club administrator security user identifier.
         /// </value>
-        public Guid AdminSecurityUserId { get; private set; }
+        public Guid GolfClubAdministratorSecurityUserId { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance has admin security user been created.
@@ -292,23 +292,23 @@ namespace ManagementAPI.GolfClub
         }
         #endregion
 
-        #region public void CreateAdminSecurityUser(Guid adminSecurityUserId)                
+        #region public void CreateGolfClubAdministratorSecurityUser(Guid adminSecurityUserId)                
         /// <summary>
         /// Creates the admin user.
         /// </summary>
-        /// <param name="adminSecurityUserId">The admin security user identifier.</param>
-        public void CreateAdminSecurityUser(Guid adminSecurityUserId)
+        /// <param name="golfClubAdminSecurityUserId">The golf club admin security user identifier.</param>
+        public void CreateGolfClubAdministratorSecurityUser(Guid golfClubAdminSecurityUserId)
         {
-            Guard.ThrowIfInvalidGuid(adminSecurityUserId, typeof(ArgumentNullException), "A security user id is required to create a club admin security user");
+            Guard.ThrowIfInvalidGuid(golfClubAdminSecurityUserId, typeof(ArgumentNullException), "A golf club admin security user id is required to create a club admin security user");
 
             this.CheckHasGolfClubAlreadyBeenCreated();
             this.CheckHasClubAdminSecurityUserAlreadyBeenCreated();
 
             // Create the domain event
-            AdminSecurityUserCreatedEvent adminSecurityUserCreatedEvent = AdminSecurityUserCreatedEvent.Create(this.AggregateId, adminSecurityUserId);
+            GolfClubAdministratorSecurityUserCreatedEvent golfClubAdministratorSecurityUserCreatedEvent = GolfClubAdministratorSecurityUserCreatedEvent.Create(this.AggregateId, golfClubAdminSecurityUserId);
 
             // Apply and pend
-            this.ApplyAndPend(adminSecurityUserCreatedEvent);
+            this.ApplyAndPend(golfClubAdministratorSecurityUserCreatedEvent);
         }
         #endregion
 
@@ -378,15 +378,15 @@ namespace ManagementAPI.GolfClub
         }
         #endregion
 
-        #region private void PlayEvent(AdminSecurityUserCreatedEvent domainEvent)        
+        #region private void PlayEvent(GolfClubAdministratorSecurityUserCreatedEvent domainEvent)        
         /// <summary>
         /// Plays the event.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
-        private void PlayEvent(AdminSecurityUserCreatedEvent domainEvent)
+        private void PlayEvent(GolfClubAdministratorSecurityUserCreatedEvent domainEvent)
         {
             this.HasAdminSecurityUserBeenCreated = true;
-            this.AdminSecurityUserId = domainEvent.AdminSecurityUserId;
+            this.GolfClubAdministratorSecurityUserId = domainEvent.GolfClubAdministratorSecurityUserId;
         }
         #endregion
 

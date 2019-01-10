@@ -70,7 +70,6 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
 
             var createTournamentRequest = IntegrationTestsTestData.CreateTournamentRequest;
-            createTournamentRequest.GolfClubId = golfClubId;
             createTournamentRequest.MeasuredCourseId = addMeasuredCourseToClubRequest.MeasuredCourseId;
 
             this.ScenarioContext["CreateTournamentRequest"] = createTournamentRequest;
@@ -110,7 +109,7 @@ namespace ManagementAPI.IntegrationTests.Specflow.Tournament
             var addMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
 
             var createTournamentRequest = IntegrationTestsTestData.CreateTournamentRequest;
-            createTournamentRequest.GolfClubId = golfClubId;
+            //createTournamentRequest.GolfClubId = golfClubId;
             createTournamentRequest.MeasuredCourseId = addMeasuredCourseToClubRequest.MeasuredCourseId;
 
             String requestUri = $"http://127.0.0.1:{this.ManagementApiPort}/api/Tournament";

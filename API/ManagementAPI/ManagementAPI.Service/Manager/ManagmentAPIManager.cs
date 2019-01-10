@@ -10,6 +10,8 @@ using ManagementAPI.GolfClub.DomainEvents;
 using ManagementAPI.Player;
 using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.DataTransferObjects;
+using ManagementAPI.Service.Services;
+using ManagementAPI.Service.Services.DataTransferObjects;
 using Microsoft.EntityFrameworkCore;
 using Shared.EventStore;
 using Shared.Exceptions;
@@ -36,6 +38,11 @@ namespace ManagementAPI.Service.Manager
         /// </summary>
         private readonly IAggregateRepository<PlayerAggregate> PlayerRepository;
 
+        /// <summary>
+        /// The o auth2 security service
+        /// </summary>
+        private readonly IOAuth2SecurityService OAuth2SecurityService;
+
         #endregion
 
         #region Constructors
@@ -46,17 +53,52 @@ namespace ManagementAPI.Service.Manager
         /// <param name="golfClubRepository">The golf club repository.</param>
         /// <param name="readModelResolver">The read model resolver.</param>
         /// <param name="playerRepository">The player repository.</param>
+        /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
         public ManagmentAPIManager(IAggregateRepository<GolfClubAggregate> golfClubRepository, Func<ManagementAPIReadModel> readModelResolver,
-            IAggregateRepository<PlayerAggregate> playerRepository)
+            IAggregateRepository<PlayerAggregate> playerRepository, IOAuth2SecurityService oAuth2SecurityService)
         {
             this.GolfClubRepository = golfClubRepository;
             this.ReadModelResolver = readModelResolver;
             this.PlayerRepository = playerRepository;
+            this.OAuth2SecurityService = oAuth2SecurityService;
         }
 
         #endregion
 
         #region Public Methods
+
+        #region public async Task RegisterClubAdministrator(RegisterClubAdministratorRequest request, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Registers the club administrator.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task RegisterClubAdministrator(RegisterClubAdministratorRequest request, CancellationToken cancellationToken)
+        {
+            // Allocate a new club Id 
+            Guid golfClubAggregateId = Guid.NewGuid();
+
+            // Now create a club admin security user
+            RegisterUserRequest registerUserRequest = new RegisterUserRequest
+            {
+                EmailAddress = request.EmailAddress,
+                Claims = new Dictionary<String, String>
+                {
+                    {"GolfClubId", golfClubAggregateId.ToString()}
+                },
+                Password = "123456",
+                PhoneNumber = request.TelephoneNumber,
+                Roles = new List<String>
+                {
+                    "Club Administrator"
+                }
+            };
+
+            // Create the user
+            await this.OAuth2SecurityService.RegisterUser(registerUserRequest, cancellationToken);
+        }
+        #endregion
 
         #region public async Task<GetGolfClubResponse> GetGolfClub(Guid golfClubId, CancellationToken cancellationToken)        
         /// <summary>
