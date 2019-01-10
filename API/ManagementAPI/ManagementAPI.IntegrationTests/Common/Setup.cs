@@ -6,6 +6,7 @@ using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Services;
 using Ductus.FluentDocker.Services.Extensions;
 using MySql.Data.MySqlClient;
+using Shouldly;
 using TechTalk.SpecFlow;
 
 namespace ManagementAPI.IntegrationTests.Common
@@ -21,6 +22,8 @@ namespace ManagementAPI.IntegrationTests.Common
         [BeforeTestRun]
         protected static void GlobalSetup()
         {
+            ShouldlyConfiguration.DefaultTaskTimeout = TimeSpan.FromMinutes(1);
+
             // Setup a network for the DB Server
             DatabaseServerNetwork = new Builder().UseNetwork($"testnetwork{Guid.NewGuid()}").Build();
 
