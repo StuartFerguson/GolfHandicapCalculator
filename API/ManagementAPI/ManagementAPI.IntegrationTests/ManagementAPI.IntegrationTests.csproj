@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Ductus.FluentDocker" Version="2.6.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="MySql.Data" Version="8.0.13" />
@@ -27,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ManagementAPI.Service.Client\ManagementAPI.Service.Client.csproj" />
+    <ProjectReference Include="..\ManagementAPI.Service.DataTransferObjects\ManagementAPI.Service.DataTransferObjects.csproj" />
   </ItemGroup>
 
   <ItemGroup>                   
