@@ -25,7 +25,7 @@ namespace ManagementAPI.IntegrationTests.Common
             ShouldlyConfiguration.DefaultTaskTimeout = TimeSpan.FromMinutes(1);
 
             // Setup a network for the DB Server
-            DatabaseServerNetwork = new Builder().UseNetwork($"testnetwork{Guid.NewGuid()}").Build();
+            DatabaseServerNetwork = new Builder().UseNetwork($"testnetwork{Guid.NewGuid():N}").Build();
 
             // Start the Database Server here
             DbConnectionStringWithNoDatabase = StartMySqlContainerWithOpenConnection();            
@@ -39,11 +39,24 @@ namespace ManagementAPI.IntegrationTests.Common
         [AfterTestRun]
         protected static void GlobalTearDown()
         {
-            // Kill the DB Server 
-            DatabaseServerContainer?.Stop();
+            if (DatabaseServerContainer != null)
+            {
+                var networks = DatabaseServerContainer.GetNetworks();
+
+                foreach (var networkService in networks)
+                {
+                    networkService.Stop();
+                    networkService.Remove(true);
+                }
+
+                // Kill the DB Server 
+                DatabaseServerContainer.StopOnDispose = true;
+                DatabaseServerContainer.RemoveOnDispose = true;
+                DatabaseServerContainer.Dispose();
+            }
 
             // Kill the Network 
-            DatabaseServerNetwork?.Stop();
+            //DatabaseServerNetwork?.Stop();
         }
 
         private static String StartMySqlContainerWithOpenConnection()
@@ -52,7 +65,7 @@ namespace ManagementAPI.IntegrationTests.Common
             DatabaseServerContainer = new Ductus.FluentDocker.Builders.Builder()
                 .UseContainer()
                 .WithName(containerName)
-                .UseImage("golfhandicapping/subscriptionservicemysqldb")
+                .UseImage("subscriptionservicemysqldb")
                 .WithEnvironment("MYSQL_ROOT_PASSWORD=Pa55word", "MYSQL_ROOT_HOST=%")
                 .ExposePort(3306)
                 .UseNetwork(DatabaseServerNetwork)

@@ -80,34 +80,45 @@ namespace ManagementAPI.IntegrationTests.Common
 
         protected void StopSystem()
         {
-            if (this.ManagementAPIContainer != null)
+            try
             {
-                this.ManagementAPIContainer.Stop();
-                this.ManagementAPIContainer.Remove(true);
-            }
-            
-            if (this.EventStoreContainer != null)
-            {
-                this.EventStoreContainer.Stop();
-                this.EventStoreContainer.Remove(true);
-            }
+                if (this.ManagementAPIContainer != null)
+                {
+                    this.ManagementAPIContainer.StopOnDispose = true;
+                    this.ManagementAPIContainer.RemoveOnDispose = true;
+                    this.ManagementAPIContainer.Dispose();
+                }
 
-            if (this.SecurityServiceContainer != null)
-            {
-                this.SecurityServiceContainer.Stop();
-                this.SecurityServiceContainer.Remove(true);
-            }
+                if (this.EventStoreContainer != null)
+                {
+                    this.EventStoreContainer.StopOnDispose = true;
+                    this.EventStoreContainer.RemoveOnDispose = true;
+                    this.EventStoreContainer.Dispose();
+                }
 
-            if (this.SubscriptionServiceContainer != null)
-            {
-                this.SubscriptionServiceContainer.Stop();
-                this.SubscriptionServiceContainer.Remove(true);
-            }
+                if (this.SecurityServiceContainer != null)
+                {
+                    this.SecurityServiceContainer.StopOnDispose = true;
+                    this.SecurityServiceContainer.RemoveOnDispose = true;
+                    this.SecurityServiceContainer.Dispose();
+                }
 
-            if (this.TestNetwork != null)
+                if (this.SubscriptionServiceContainer != null)
+                {
+                    this.SubscriptionServiceContainer.StopOnDispose = true;
+                    this.SubscriptionServiceContainer.RemoveOnDispose = true;
+                    this.SubscriptionServiceContainer.Dispose();
+                }
+
+                if (this.TestNetwork != null)
+                {
+                    this.TestNetwork.Stop();
+                    this.TestNetwork.Remove(true);
+                }
+            }
+            catch (Exception e)
             {
-                this.TestNetwork.Stop();
-                this.TestNetwork.Remove(true);
+                Console.WriteLine(e);
             }
         }
 
