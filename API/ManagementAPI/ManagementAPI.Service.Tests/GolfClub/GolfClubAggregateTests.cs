@@ -22,7 +22,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
         }
 
         [Fact]
-        public void GolfClubAggregate_CanBeCreated_EmptyAggregateid_ErrorThrown()
+        public void GolfClubAggregate_CanBeCreated_EmptyAggregateId_ErrorThrown()
         {
             Should.Throw<ArgumentNullException>(() =>
             {

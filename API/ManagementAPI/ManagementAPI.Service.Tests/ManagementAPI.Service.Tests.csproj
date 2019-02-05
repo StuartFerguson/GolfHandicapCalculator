@@ -25,6 +25,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ManagementAPI.Database\ManagementAPI.Database.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClub.DomainEvents\ManagementAPI.GolfClub.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClubMembership.DomainEvents\ManagementAPI.GolfClubMembership.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClubMembershipAggregate\ManagementAPI.GolfClubMembershipAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.Player.DomainEvents\ManagementAPI.Player.DomainEvents.csproj" />
     <ProjectReference Include="..\ManagementAPI.PlayerAggregate\ManagementAPI.PlayerAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.Service.Client\ManagementAPI.Service.Client.csproj" />

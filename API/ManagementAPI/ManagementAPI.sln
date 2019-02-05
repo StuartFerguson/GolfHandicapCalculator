@@ -31,6 +31,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClubAggre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.IntegrationTests", "ManagementAPI.IntegrationTests\ManagementAPI.IntegrationTests.csproj", "{A2499D02-6B5B-4007-92A0-8794DC3DABF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementAPI.GolfClubMembershipAggregate", "ManagementAPI.GolfClubMembershipAggregate\ManagementAPI.GolfClubMembershipAggregate.csproj", "{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementAPI.GolfClubMembership.DomainEvents", "ManagementAPI.GolfClubMembership.DomainEvents\ManagementAPI.GolfClubMembership.DomainEvents.csproj", "{4AF30D8E-0363-4FAA-B377-23E8C22FF452}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +89,14 @@ Global
 		{A2499D02-6B5B-4007-92A0-8794DC3DABF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2499D02-6B5B-4007-92A0-8794DC3DABF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2499D02-6B5B-4007-92A0-8794DC3DABF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AF30D8E-0363-4FAA-B377-23E8C22FF452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AF30D8E-0363-4FAA-B377-23E8C22FF452}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AF30D8E-0363-4FAA-B377-23E8C22FF452}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AF30D8E-0363-4FAA-B377-23E8C22FF452}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +114,8 @@ Global
 		{3D8154AA-0171-4E80-8AAA-8CD49DD809BA} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 		{91C39FA6-A060-48B1-A24A-9509EA2A1463} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 		{A2499D02-6B5B-4007-92A0-8794DC3DABF1} = {E879EDAF-2767-4DEB-868A-DB4B49239E06}
+		{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
+		{4AF30D8E-0363-4FAA-B377-23E8C22FF452} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0239A13-E2E7-4C85-AFF1-88820D94F461}
