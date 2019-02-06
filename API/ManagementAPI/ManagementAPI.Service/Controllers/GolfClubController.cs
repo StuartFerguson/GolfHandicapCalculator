@@ -166,28 +166,7 @@ namespace ManagementAPI.Service.Controllers
             return this.Ok(command.Response);
         }
         #endregion
-
-        #region public async Task<IActionResult> GetPendingMembershipRequests(CancellationToken cancellationToken)        
-        /// <summary>
-        /// Gets the pending membership requests.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(List<GetClubMembershipRequestResponse>), 200)]
-        [Route("PendingMembershipRequests")]
-        [Authorize(Policy = PolicyNames.GetPendingMembershipRequestsPolicy)]
-        public async Task<IActionResult> GetPendingMembershipRequests(CancellationToken cancellationToken)
-        {
-            // Get the Golf Club Id claim from the user
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
-
-            var pendingMembershipRequests = await this.Manager.GetPendingMembershipRequests(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
-
-            return this.Ok(pendingMembershipRequests);
-        }
-        #endregion
-
+        
         #endregion
     }
 }

@@ -210,45 +210,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         .ConfigureAwait(false);
             });            
         }
-
-        [Given(@"a player has requested membership of the club")]
-        public void GivenAPlayerHasRequestedMembershipOfTheClub()
-        {
-            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
-
-            IPlayerClient client = new PlayerClient(this.baseAddressResolver, this.httpClient);
-
-            var bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
-
-            client.RequestClubMembership(bearerToken, golfClubId, CancellationToken.None).ConfigureAwait(false);
-
-            Thread.Sleep(30000);
-        }
         
-        [When(@"I request the list of pending membership requests")]
-        public async Task WhenIRequestTheListOfPendingMembershipRequests()
-        {
-            IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
-
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
-
-            this.ScenarioContext["GetPendingMembershipRequestsResponse"] = await client
-                .GetPendingMembershipRequests(bearerToken, CancellationToken.None).ConfigureAwait(false);
-        }
-        
-        [Then(@"a list of pending membership requests will be returned")]
-        public void ThenAListOfPendingMembershipRequestsWillBeReturned()
-        {
-            var golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
-
-            var response =
-                this.ScenarioContext.Get<List<GetClubMembershipRequestResponse>>(
-                    "GetPendingMembershipRequestsResponse");
-
-            response.Any(r => r.ClubId == golfClubId).ShouldBeTrue();
-        }
-
-
         protected override void SetupSubscriptionServiceConfig()
         {
             String streamName = String.Empty;
