@@ -50,7 +50,7 @@ namespace ManagementAPI.IntegrationTests.Player
         [When(@"I register my details on the system")]
         public void WhenIRegisterMyDetailsOnTheSystem()
         {
-            var request = this.ScenarioContext.Get<RegisterPlayerRequest>("RegisterPlayerRequest");
+            RegisterPlayerRequest request = this.ScenarioContext.Get<RegisterPlayerRequest>("RegisterPlayerRequest");
 
             IPlayerClient client = new PlayerClient(this.baseAddressResolver, this.httpClient);
 
@@ -63,7 +63,7 @@ namespace ManagementAPI.IntegrationTests.Player
         [Then(@"my details are registered successfully")]
         public void ThenMyDetailsAreRegisteredSuccessfully()
         {
-            var response = this.ScenarioContext.Get<RegisterPlayerResponse>("RegisterPlayerResponse");
+            RegisterPlayerResponse response = this.ScenarioContext.Get<RegisterPlayerResponse>("RegisterPlayerResponse");
 
             response.ShouldNotBeNull();
             response.PlayerId.ShouldNotBe(Guid.Empty);

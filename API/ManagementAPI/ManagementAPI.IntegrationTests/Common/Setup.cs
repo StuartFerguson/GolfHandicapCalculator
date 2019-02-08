@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Net;
 using System.Threading;
 using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Services;
@@ -41,9 +43,9 @@ namespace ManagementAPI.IntegrationTests.Common
         {
             if (DatabaseServerContainer != null)
             {
-                var networks = DatabaseServerContainer.GetNetworks();
+                IList<INetworkService> networks = DatabaseServerContainer.GetNetworks();
 
-                foreach (var networkService in networks)
+                foreach (INetworkService networkService in networks)
                 {
                     networkService.Stop();
                     networkService.Remove(true);
@@ -73,7 +75,7 @@ namespace ManagementAPI.IntegrationTests.Common
                 .Start()
                 .WaitForPort("3306/tcp", 30000);
 
-            var mysqlEndpoint = DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
+            IPEndPoint mysqlEndpoint = DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
 
             // Try opening a connection
             Int32 maxRetries = 10;

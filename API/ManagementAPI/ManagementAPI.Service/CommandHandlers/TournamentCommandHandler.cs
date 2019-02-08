@@ -8,6 +8,7 @@ using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services;
 using ManagementAPI.Tournament;
+using ManagementAPI.Tournament.DataTransferObjects;
 using Shared.CommandHandling;
 using Shared.EventStore;
 using Shared.Exceptions;
@@ -86,10 +87,10 @@ namespace ManagementAPI.Service.CommandHandlers
             Guid tournamentAggregateId = Guid.NewGuid();
 
             // Rehydrate the aggregate
-            var tournament = await this.TournamentRepository.GetLatestVersion(tournamentAggregateId, cancellationToken);
+            TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(tournamentAggregateId, cancellationToken);
 
             // Get the club to validate the input
-            var club = await this.GolfClubRepository.GetLatestVersion(
+            GolfClubAggregate club = await this.GolfClubRepository.GetLatestVersion(
                 command.GolfClubId, cancellationToken);
 
             // bug #29 fixes (throw exception if club not created)
@@ -100,7 +101,7 @@ namespace ManagementAPI.Service.CommandHandlers
             }
 
             // Club is valid, now check the measured course, this will throw exception if not found
-            var measuredCourse = club.GetMeasuredCourse(command.CreateTournamentRequest.MeasuredCourseId);                
+            MeasuredCourseDataTransferObject measuredCourse = club.GetMeasuredCourse(command.CreateTournamentRequest.MeasuredCourseId);                
         
             tournament.CreateTournament(command.CreateTournamentRequest.TournamentDate, command.GolfClubId,
                 command.CreateTournamentRequest.MeasuredCourseId, measuredCourse.StandardScratchScore, command.CreateTournamentRequest.Name,
@@ -125,7 +126,7 @@ namespace ManagementAPI.Service.CommandHandlers
         private async Task HandleCommand(RecordMemberTournamentScoreCommand command, CancellationToken cancellationToken)
         {            
             // Rehydrate the aggregate
-            var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
+            TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
             tournament.RecordMemberScore(command.RecordMemberTournamentScoreRequest.MemberId, 
                 command.RecordMemberTournamentScoreRequest.PlayingHandicap,
@@ -146,7 +147,7 @@ namespace ManagementAPI.Service.CommandHandlers
         private async Task HandleCommand(CompleteTournamentCommand command, CancellationToken cancellationToken)
         {            
             // Rehydrate the aggregate
-            var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
+            TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
             DateTime completedDateTime = DateTime.Now;
 
@@ -169,7 +170,7 @@ namespace ManagementAPI.Service.CommandHandlers
         private async Task HandleCommand(CancelTournamentCommand command, CancellationToken cancellationToken)
         {            
             // Rehydrate the aggregate
-            var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
+            TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
             DateTime cancelledDateTime = DateTime.Now;
 
@@ -190,19 +191,19 @@ namespace ManagementAPI.Service.CommandHandlers
         private async Task HandleCommand(ProduceTournamentResultCommand command, CancellationToken cancellationToken)
         {
             // Rehydrate the aggregate
-            var tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
+            TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
             // Get the scores from the tournament
-            var scoreRecords = tournament.GetScores();
+            List<MemberScoreRecordDataTransferObject> scoreRecords = tournament.GetScores();
 
             // Now process each score
-            foreach (var memberScoreRecordDataTransferObject in scoreRecords)
+            foreach (MemberScoreRecordDataTransferObject memberScoreRecordDataTransferObject in scoreRecords)
             {
                 // Lookup the member record to get the exact handicap
                 // TODO:
 
                 // Calculate the adjustments
-                var adjustments = this.HandicapAdjustmentCalculatorService.CalculateHandicapAdjustment(
+                List<Decimal> adjustments = this.HandicapAdjustmentCalculatorService.CalculateHandicapAdjustment(
                     Convert.ToDecimal(memberScoreRecordDataTransferObject.PlayingHandicap),
                     tournament.CSS, memberScoreRecordDataTransferObject.HoleScores);
 

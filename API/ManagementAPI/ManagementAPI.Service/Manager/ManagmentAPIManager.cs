@@ -115,7 +115,7 @@ namespace ManagementAPI.Service.Manager
             GetGolfClubResponse result = null;
 
             // Find the club configuration by id
-            var golfClub = await this.GolfClubRepository.GetLatestVersion(golfClubId, cancellationToken);
+            GolfClubAggregate golfClub = await this.GolfClubRepository.GetLatestVersion(golfClubId, cancellationToken);
 
             // Check we have found the club configuration
             if (!golfClub.HasBeenCreated)
@@ -153,10 +153,10 @@ namespace ManagementAPI.Service.Manager
         {
             Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
 
-            using (var context = this.ReadModelResolver())
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
             {
                 // Check the club has not already been added to the read model
-                var isDuplicate = await context.GolfClub.Where(c => c.GolfClubId == domainEvent.AggregateId)
+                Boolean isDuplicate = await context.GolfClub.Where(c => c.GolfClubId == domainEvent.AggregateId)
                     .AnyAsync(cancellationToken);
 
                 if (!isDuplicate)
@@ -193,11 +193,11 @@ namespace ManagementAPI.Service.Manager
         {
             List<GetGolfClubResponse> result = new List<GetGolfClubResponse>();
 
-            using (var context = ReadModelResolver())
+            using (ManagementAPIReadModel context = ReadModelResolver())
             {
-                var golfClubs = await context.GolfClub.ToListAsync(cancellationToken);
+                List<Database.Models.GolfClub> golfClubs = await context.GolfClub.ToListAsync(cancellationToken);
 
-                foreach (var golfClub in golfClubs)
+                foreach (Database.Models.GolfClub golfClub in golfClubs)
                 {
                     result.Add(new GetGolfClubResponse
                     {

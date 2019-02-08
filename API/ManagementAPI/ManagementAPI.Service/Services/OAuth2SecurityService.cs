@@ -30,12 +30,12 @@ namespace ManagementAPI.Service.Services
             {
                 String uri = $"{ConfigurationReader.GetBaseServerUri("OAuth2SecurityService")}api/user";
                 
-                var httpResponse = await client.PostAsync(uri, content, CancellationToken.None)
+                HttpResponseMessage httpResponse = await client.PostAsync(uri, content, CancellationToken.None)
                     .ConfigureAwait(false);
 
                 Logger.LogInformation($"Status Code: {httpResponse.StatusCode}");
 
-                var responseContent = await HandleResponse(httpResponse, cancellationToken);
+                String responseContent = await HandleResponse(httpResponse, cancellationToken);
 
                 response = JsonConvert.DeserializeObject<RegisterUserResponse>(responseContent);
             }

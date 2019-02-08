@@ -1,5 +1,6 @@
 ﻿using System;
 using ManagementAPI.Service.Commands;
+using ManagementAPI.Service.DataTransferObjects;
 using Shouldly;
 using Xunit;
 
@@ -30,6 +31,17 @@ namespace ManagementAPI.Service.Tests.GolfClub
             command.AddMeasuredCourseToClubRequest.ShouldNotBeNull();
             command.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
             command.AddMeasuredCourseToClubRequest.ShouldBe(GolfClubTestData.AddMeasuredCourseToClubRequest);
+        }
+
+        [Fact]
+        public void RequestClubMembershipCommand_CanBeCreated_IsCreated()
+        {
+            RequestClubMembershipCommand command = RequestClubMembershipCommand.Create(GolfClubTestData.PlayerId, GolfClubTestData.AggregateId);
+
+            command.ShouldNotBeNull();
+            command.CommandId.ShouldNotBe(Guid.Empty);
+            command.PlayerId.ShouldBe(GolfClubTestData.PlayerId);
+            command.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using ManagementAPI.GolfClub;
 using ManagementAPI.GolfClub.DomainEvents;
 using ManagementAPI.Player;
 using ManagementAPI.Player.DomainEvents;
+using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Manager;
 using ManagementAPI.Service.Services;
 using ManagementAPI.Service.Services.DataTransferObjects;
@@ -43,17 +45,17 @@ namespace ManagementAPI.Service.Tests.General
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate());
 
-            var context = GetContext(Guid.NewGuid().ToString("N"));
+            ManagementAPIReadModel context = GetContext(Guid.NewGuid().ToString("N"));
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object,
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object,
                 securityService.Object);
 
-            var result = await manager.GetGolfClub(GolfClubTestData.AggregateId, CancellationToken.None);
+            GetGolfClubResponse result = await manager.GetGolfClub(GolfClubTestData.AggregateId, CancellationToken.None);
 
             result.ShouldNotBeNull();
             result.Name.ShouldBe(GolfClubTestData.Name);
@@ -71,14 +73,14 @@ namespace ManagementAPI.Service.Tests.General
         public void ManagmentAPIManager_GetGolfClub_InvalidGolfClubId_ErrorThrown()
         {
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
-            var context = GetContext(Guid.NewGuid().ToString("N"));
+            ManagementAPIReadModel context = GetContext(Guid.NewGuid().ToString("N"));
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
 
             Should.ThrowAsync<ArgumentNullException>(async () => 
             {
@@ -90,14 +92,14 @@ namespace ManagementAPI.Service.Tests.General
         public void ManagmentAPIManager_GetGolfClub_GolfClubNotFound_ErrorThrown()
         {
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
-            var context = GetContext(Guid.NewGuid().ToString("N"));
+            ManagementAPIReadModel context = GetContext(Guid.NewGuid().ToString("N"));
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
 
             Should.ThrowAsync<NotFoundException>(async () => 
             {
@@ -112,14 +114,14 @@ namespace ManagementAPI.Service.Tests.General
             clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(GolfClubTestData.GetEmptyGolfClubAggregate());
 
-            var context = GetContext(Guid.NewGuid().ToString("N"));
+            ManagementAPIReadModel context = GetContext(Guid.NewGuid().ToString("N"));
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
 
             Should.ThrowAsync<NotFoundException>(async () => 
             {
@@ -135,20 +137,20 @@ namespace ManagementAPI.Service.Tests.General
         {
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
-            var context = GetContext(databaseName);
+            ManagementAPIReadModel context = GetContext(databaseName);
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
 
-            var domainEvent = GolfClubTestData.GetGolfClubCreatedEvent();
+            GolfClubCreatedEvent domainEvent = GolfClubTestData.GetGolfClubCreatedEvent();
 
             await manager.InsertGolfClubToReadModel(domainEvent, CancellationToken.None);
 
-            var verifyContext = GetContext(databaseName);
+            ManagementAPIReadModel verifyContext = GetContext(databaseName);
             verifyContext.GolfClub.Count().ShouldBe(1);
         }
 
@@ -157,14 +159,14 @@ namespace ManagementAPI.Service.Tests.General
         {
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
-            var context = GetContext(databaseName);
+            ManagementAPIReadModel context = GetContext(databaseName);
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
 
             GolfClubCreatedEvent domainEvent = null;
 
@@ -179,7 +181,7 @@ namespace ManagementAPI.Service.Tests.General
         {
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
-            var context = GetContext(databaseName);
+            ManagementAPIReadModel context = GetContext(databaseName);
             context.GolfClub.Add(new Database.Models.GolfClub
             {
                 EmailAddress = GolfClubTestData.EmailAddress,
@@ -200,7 +202,7 @@ namespace ManagementAPI.Service.Tests.General
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
 
             GolfClubCreatedEvent domainEvent = GolfClubTestData.GetGolfClubCreatedEvent();
 
@@ -220,7 +222,7 @@ namespace ManagementAPI.Service.Tests.General
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
-            var context = GetContext(databaseName);
+            ManagementAPIReadModel context = GetContext(databaseName);
             context.GolfClub.Add(new Database.Models.GolfClub
             {
                 EmailAddress = GolfClubTestData.EmailAddress,
@@ -241,9 +243,9 @@ namespace ManagementAPI.Service.Tests.General
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
 
-            var result = await manager.GetGolfClubList(CancellationToken.None);
+            List<GetGolfClubResponse> result = await manager.GetGolfClubList(CancellationToken.None);
 
             result.ShouldNotBeEmpty();
             result.Count.ShouldBe(1);
@@ -255,16 +257,16 @@ namespace ManagementAPI.Service.Tests.General
             String databaseName = Guid.NewGuid().ToString("N");
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
-            var context = GetContext(databaseName);
+            ManagementAPIReadModel context = GetContext(databaseName);
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object, securityService.Object);
 
-            var result = await manager.GetGolfClubList(CancellationToken.None);
+            List<GetGolfClubResponse> result = await manager.GetGolfClubList(CancellationToken.None);
 
             result.ShouldBeEmpty();
         }
@@ -278,7 +280,7 @@ namespace ManagementAPI.Service.Tests.General
         {
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
-            var context = GetContext(Guid.NewGuid().ToString("N"));
+            ManagementAPIReadModel context = GetContext(Guid.NewGuid().ToString("N"));
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
@@ -291,10 +293,10 @@ namespace ManagementAPI.Service.Tests.General
                     UserId = Guid.NewGuid()
                 });
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object,
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object,
                 securityService.Object);
 
-            var request = GolfClubTestData.RegisterClubAdministratorRequest;
+            RegisterClubAdministratorRequest request = GolfClubTestData.RegisterClubAdministratorRequest;
 
             Should.NotThrow(async () => { await manager.RegisterClubAdministrator(request, CancellationToken.None); });
         }
@@ -304,7 +306,7 @@ namespace ManagementAPI.Service.Tests.General
         {
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             
-            var context = GetContext(Guid.NewGuid().ToString("N"));
+            ManagementAPIReadModel context = GetContext(Guid.NewGuid().ToString("N"));
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
@@ -314,10 +316,10 @@ namespace ManagementAPI.Service.Tests.General
             securityService.Setup(s => s.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ThrowsAsync(new InvalidOperationException("Error"));
 
-            var manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object,
+            ManagmentAPIManager manager = new ManagmentAPIManager(clubRepository.Object, contextResolver, playerRepository.Object,
                 securityService.Object);
 
-            var request = GolfClubTestData.RegisterClubAdministratorRequest;
+            RegisterClubAdministratorRequest request = GolfClubTestData.RegisterClubAdministratorRequest;
 
             Should.Throw<Exception>(async () => { await manager.RegisterClubAdministrator(request, CancellationToken.None); });
         }

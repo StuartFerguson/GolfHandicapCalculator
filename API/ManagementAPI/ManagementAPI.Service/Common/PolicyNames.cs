@@ -28,14 +28,14 @@ namespace ManagementAPI.Service.Common
         public const String AddMeasuredCourseToGolfClubPolicy = "AddMeasuredCourseToGolfClubPolicy";
 
         /// <summary>
+        /// The request club membership policy
+        /// </summary>
+        public const String RequestClubMembershipPolicy = "RequestClubMembershipPolicy";
+
+        /// <summary>
         /// The register player policy
         /// </summary>
         public const String RegisterPlayerPolicy = "RegisterPlayerPolicy";
-
-        /// <summary>
-        /// The request club membership for player policy
-        /// </summary>
-        public const String RequestGolfClubMembershipForPlayerPolicy = "RequestGolfClubMembershipForPlayerPolicy";
 
         /// <summary>
         /// The create tournament policy
@@ -61,20 +61,5 @@ namespace ManagementAPI.Service.Common
         /// The produce tournament result policy
         /// </summary>
         public const String ProduceTournamentResultPolicy = "ProduceTournamentResultPolicy";
-
-        /// <summary>
-        /// The get pending membership requests policy
-        /// </summary>
-        public const String GetPendingMembershipRequestsPolicy = "GetPendingMembershipRequestsPolicy";
-
-        /// <summary>
-        /// The approve player membership request policy
-        /// </summary>
-        public const String ApprovePlayerMembershipRequestPolicy = "ApprovePlayerMembershipRequestPolicy";
-
-        /// <summary>
-        /// The reject player membership request policy
-        /// </summary>
-        public const String RejectPlayerMembershipRequestPolicy = "RejectPlayerMembershipRequestPolicy";
     }
 }

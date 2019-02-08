@@ -41,7 +41,7 @@ namespace ManagementAPI.Service.Services
             Int32 bufferZone = DetermineBufferZone(playingHandicap);
 
             // Now get the difference from CSS
-            var netDifference = netScore - CSS;
+            Int32 netDifference = netScore - CSS;
 
             if (netDifference >= 0)
             {
@@ -59,11 +59,11 @@ namespace ManagementAPI.Service.Services
             }
             else
             {
-                var workingExactHandicap = exactHandicap;
+                Decimal workingExactHandicap = exactHandicap;
                 // We need to calculate a reduction adjustment
                 for (Int32 i = 0; i < netDifference * -1; i++)
                 {
-                    var adjustmentValue = DetermineAdjustmentValue(workingExactHandicap);                    
+                    Decimal adjustmentValue = DetermineAdjustmentValue(workingExactHandicap);                    
 
                     workingExactHandicap = workingExactHandicap - adjustmentValue;                    
 

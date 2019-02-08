@@ -57,7 +57,7 @@ namespace ManagementAPI.Service.Controllers
         public async Task<IActionResult> PostPlayer([FromBody]RegisterPlayerRequest request, CancellationToken cancellationToken)
         {
             // Create the command
-            var command = RegisterPlayerCommand.Create(request);
+            RegisterPlayerCommand command = RegisterPlayerCommand.Create(request);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);

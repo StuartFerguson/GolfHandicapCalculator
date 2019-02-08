@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ManagementAPI.Tournament;
+using ManagementAPI.Tournament.DataTransferObjects;
 using Shared.EventStore;
 using Shared.Exceptions;
 using Shouldly;
@@ -434,7 +435,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
-            var scores = aggregate.GetScores();
+            List<MemberScoreRecordDataTransferObject> scores = aggregate.GetScores();
 
             scores.ShouldNotBeNull();
             scores.Count.ShouldBe(1);
@@ -449,7 +450,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate();
 
-            var memberScore = aggregate.GetScores().First();
+            MemberScoreRecordDataTransferObject memberScore = aggregate.GetScores().First();
             Should.NotThrow(() =>
             {
                 aggregate.RecordHandicapAdjustment(memberScore.MemberId, TournamentTestData.Adjustments);

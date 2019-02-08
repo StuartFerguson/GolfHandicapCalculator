@@ -181,7 +181,7 @@ namespace ManagementAPI.Service.Tests.General
         {
             IHandicapAdjustmentCalculatorService service = new HandicapAdjustmentCalculatorService();
             
-            var adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
+            List<Decimal> adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
 
             adjustments.Count.ShouldBe(1);
             adjustments[0].ShouldBe(adjustment);
@@ -198,7 +198,7 @@ namespace ManagementAPI.Service.Tests.General
         {
             IHandicapAdjustmentCalculatorService service = new HandicapAdjustmentCalculatorService();
             
-            var adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
+            List<Decimal> adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
 
             adjustments.Count.ShouldBe(1);
             adjustments[0].ShouldBe(adjustment);
@@ -215,7 +215,7 @@ namespace ManagementAPI.Service.Tests.General
         {
             IHandicapAdjustmentCalculatorService service = new HandicapAdjustmentCalculatorService();
             
-            var adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
+            List<Decimal> adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
 
             adjustments.Count.ShouldBe(1);
             adjustments[0].ShouldBe(adjustment);
@@ -233,7 +233,7 @@ namespace ManagementAPI.Service.Tests.General
             };
             Decimal exactHandicap = 6.1m;
 
-            var adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, sixHandicapHoleScoresCut);
+            List<Decimal> adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, sixHandicapHoleScoresCut);
 
             adjustments.Count.ShouldBe(6);
             adjustments[0].ShouldBe(-0.2m);

@@ -192,7 +192,7 @@ namespace ManagementAPI.IntegrationTests.Common
         {
             T result = default(T);
 
-            var httpResponse = this.ScenarioContext.Get<HttpResponseMessage>(contextKey);
+            HttpResponseMessage httpResponse = this.ScenarioContext.Get<HttpResponseMessage>(contextKey);
 
             result = await GetResponseObject<T>(httpResponse).ConfigureAwait(false);
 
@@ -229,9 +229,9 @@ namespace ManagementAPI.IntegrationTests.Common
 
             String requestUri = $"http://127.0.0.1:{this.SecurityServicePort}/connect/token";
 
-            var httpResponse = await MakeHttpPost(requestUri, queryString.ToString(), mediaType:"application/x-www-form-urlencoded").ConfigureAwait(false);
+            HttpResponseMessage httpResponse = await MakeHttpPost(requestUri, queryString.ToString(), mediaType:"application/x-www-form-urlencoded").ConfigureAwait(false);
 
-            var token = await GetResponseObject<TokenResponse>(httpResponse).ConfigureAwait(false);
+            TokenResponse token = await GetResponseObject<TokenResponse>(httpResponse).ConfigureAwait(false);
 
             return token.AccessToken;
         }

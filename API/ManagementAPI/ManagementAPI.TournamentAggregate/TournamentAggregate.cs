@@ -351,51 +351,51 @@ namespace ManagementAPI.Tournament
             this.CheckTournamentCSSNotAlreadyCalculated();
             
             // Filter out category 5 players scores
-            var filteredScores = this.MemberScoreRecords.Where(m => m.PlayingHandicap <= 28).ToList();
+            List<MemberScoreRecord> filteredScores = this.MemberScoreRecords.Where(m => m.PlayingHandicap <= 28).ToList();
 
             // Get the total score count 
-            var totalScoreCount = filteredScores.Count();
+            Int32 totalScoreCount = filteredScores.Count();
 
             // Get a per category score count (including NRs and DQ's)
-            var category1ScoreCount = filteredScores.Count(f => f.PlayingHandicap <= 5);
-            var category2ScoreCount = filteredScores.Count(f => f.PlayingHandicap >= 6 && f.PlayingHandicap <= 12);
-            var category3And4ScoreCount = filteredScores.Count(f => f.PlayingHandicap >= 13 && f.PlayingHandicap <= 28);
+            Int32 category1ScoreCount = filteredScores.Count(f => f.PlayingHandicap <= 5);
+            Int32 category2ScoreCount = filteredScores.Count(f => f.PlayingHandicap >= 6 && f.PlayingHandicap <= 12);
+            Int32 category3And4ScoreCount = filteredScores.Count(f => f.PlayingHandicap >= 13 && f.PlayingHandicap <= 28);
 
             // Now to get the number of buffers or better (by category excluding NRs)
-            var cat1Scores = filteredScores.Where(s => s.PlayingHandicap <=5 && s.NetScore != 0);
-            var cat2Scores = filteredScores.Where(s => s.PlayingHandicap >= 6 && s.PlayingHandicap <=12 && s.NetScore != 0);
-            var cat3Scores = filteredScores.Where(s => s.PlayingHandicap >= 13 && s.PlayingHandicap <= 20 && s.NetScore != 0);
-            var cat4Scores = filteredScores.Where(s => s.PlayingHandicap >= 21 && s.PlayingHandicap <= 28 && s.NetScore != 0);
+            IEnumerable<MemberScoreRecord> cat1Scores = filteredScores.Where(s => s.PlayingHandicap <=5 && s.NetScore != 0);
+            IEnumerable<MemberScoreRecord> cat2Scores = filteredScores.Where(s => s.PlayingHandicap >= 6 && s.PlayingHandicap <=12 && s.NetScore != 0);
+            IEnumerable<MemberScoreRecord> cat3Scores = filteredScores.Where(s => s.PlayingHandicap >= 13 && s.PlayingHandicap <= 20 && s.NetScore != 0);
+            IEnumerable<MemberScoreRecord> cat4Scores = filteredScores.Where(s => s.PlayingHandicap >= 21 && s.PlayingHandicap <= 28 && s.NetScore != 0);
 
-            var cat1BufferorbetterCount = cat1Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 1);
-            var cat2BufferorbetterCount = cat2Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 2);
-            var cat3BufferorbetterCount = cat3Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 3);
-            var cat4BufferorbetterCount = cat4Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 4);
+            Int32 cat1BufferorbetterCount = cat1Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 1);
+            Int32 cat2BufferorbetterCount = cat2Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 2);
+            Int32 cat3BufferorbetterCount = cat3Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 3);
+            Int32 cat4BufferorbetterCount = cat4Scores.Count(s => s.NetScore - MeasuredCourseSSS <= 4);
 
             // Get count of total buffer or better
-            var totalBufferOrBetter = cat1BufferorbetterCount + cat2BufferorbetterCount + cat3BufferorbetterCount +
+            Int32 totalBufferOrBetter = cat1BufferorbetterCount + cat2BufferorbetterCount + cat3BufferorbetterCount +
                     cat4BufferorbetterCount;
 
             // Get percentage of category 1 scores (to nearest 10%)
-            var cat1ScorePercentage = ((category1ScoreCount * 100) / totalScoreCount).RoundOff();
+            Int32 cat1ScorePercentage = ((category1ScoreCount * 100) / totalScoreCount).RoundOff();
 
             // Get percentage of category 2 scores (to nearest 10%)
-            var cat2ScorePercentage = ((category2ScoreCount * 100) / totalScoreCount).RoundOff();
+            Int32 cat2ScorePercentage = ((category2ScoreCount * 100) / totalScoreCount).RoundOff();
 
             // Remainder is category 3 & 4
-            var cat3ScorePercentage = 100 - (cat1ScorePercentage + cat2ScorePercentage);
+            Int32 cat3ScorePercentage = 100 - (cat1ScorePercentage + cat2ScorePercentage);
 
             // Calculate percentage of scores at buffer or better
-            var scoresAtBufferOrBetterPercentage =
+            Decimal scoresAtBufferOrBetterPercentage =
                 Math.Round(Convert.ToDecimal((totalBufferOrBetter * 100) / totalScoreCount));
 
             // Get the required table entry
-            var cssScoreTableEntry =
+            CSSScoreTableEntry cssScoreTableEntry =
                 this.GetCSSScoreTableEntry(cat1ScorePercentage, cat2ScorePercentage, cat3ScorePercentage);
 
             Int32 adjustment = 0;
             // Get the adjustment based on net scores buffer or better
-            foreach (var adjustmentRange in cssScoreTableEntry.AdjustmentRanges)
+            foreach (AdjustmentRange adjustmentRange in cssScoreTableEntry.AdjustmentRanges)
             {
                 if (scoresAtBufferOrBetterPercentage >= adjustmentRange.RangeStart &&
                     scoresAtBufferOrBetterPercentage <= adjustmentRange.RangeEnd)
@@ -436,7 +436,7 @@ namespace ManagementAPI.Tournament
             this.CheckMemberHasRecordedScore(memberId);
 
             // Get the members score
-            var memberScore = this.MemberScoreRecords.Single(s => s.MemberId == memberId);
+            MemberScoreRecord memberScore = this.MemberScoreRecords.Single(s => s.MemberId == memberId);
 
             HandicapAdjustmentRecordedEvent handicapAdjustmentRecordedEvent = HandicapAdjustmentRecordedEvent.Create(this.AggregateId,memberId, memberScore.GrossScore, memberScore.NetScore, 
                 this.CSS, memberScore.PlayingHandicap, adjustments, adjustments.Sum());
@@ -455,7 +455,7 @@ namespace ManagementAPI.Tournament
         {
             List<MemberScoreRecordDataTransferObject> result = new List<MemberScoreRecordDataTransferObject>();
 
-            foreach (var memberScoreRecord in this.MemberScoreRecords)
+            foreach (MemberScoreRecord memberScoreRecord in this.MemberScoreRecords)
             {
                 result.Add(new MemberScoreRecordDataTransferObject
                 {
@@ -720,7 +720,7 @@ namespace ManagementAPI.Tournament
                 throw new InvalidDataException("A score to record must have 18 individual scores");
             }
             
-            var missingHoleNumbers = Enumerable.Range(MinimumHoleNumber, MaximumHoleNumber- MinimumHoleNumber + 1).Except(holeScores.Keys).ToList();
+            List<Int32> missingHoleNumbers = Enumerable.Range(MinimumHoleNumber, MaximumHoleNumber- MinimumHoleNumber + 1).Except(holeScores.Keys).ToList();
 
             if (missingHoleNumbers.Count > 0)
             {
@@ -728,7 +728,7 @@ namespace ManagementAPI.Tournament
                 throw new InvalidDataException($"Hole numbers {String.Join(",", missingHoleNumbers)} are missing a score");
             }
 
-            var holesWithNegativeScore = holeScores.Any(h => h.Value < 0);
+            Boolean holesWithNegativeScore = holeScores.Any(h => h.Value < 0);
 
             if (holesWithNegativeScore)
             {
@@ -3576,7 +3576,7 @@ namespace ManagementAPI.Tournament
             #endregion
 
             // Get the required table entry
-            var cssScoreTableEntry = cssScoreTableEntries.Where(e => e.Category1Percentage == category1Percentage
+            CSSScoreTableEntry cssScoreTableEntry = cssScoreTableEntries.Where(e => e.Category1Percentage == category1Percentage
                                                                      && e.Category2Percentage == category2Percentage
                                                                      && e.Category3And4Percentage ==
                                                                      category3And4Percentage).Single();

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using ManagementAPI.GolfClub;
+using ManagementAPI.GolfClubMembership;
 using ManagementAPI.Player;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Manager;
@@ -26,9 +27,9 @@ namespace ManagementAPI.Service.Bootstrapper
     {
         public CommonRegistry()
         {            
-            var connString = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString");            
-            var connectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
-            var httpPort = Startup.Configuration.GetValue<Int32>("EventStoreSettings:HttpPort");
+            String connString = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString");            
+            String connectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
+            Int32 httpPort = Startup.Configuration.GetValue<Int32>("EventStoreSettings:HttpPort");
 
             EventStoreConnectionSettings settings = EventStoreConnectionSettings.Create(connString, connectionName, httpPort);
 
@@ -54,6 +55,8 @@ namespace ManagementAPI.Service.Bootstrapper
             For<ICommandRouter>().Use<CommandRouter>().Singleton();
             For<IAggregateRepository<GolfClubAggregate>>()
                 .Use<AggregateRepository<GolfClubAggregate>>().Singleton();
+            For<IAggregateRepository<GolfClubMembershipAggregate>>()
+                .Use<AggregateRepository<GolfClubMembershipAggregate>>().Singleton();
             For<IAggregateRepository<TournamentAggregate>>()
                 .Use<AggregateRepository<TournamentAggregate>>().Singleton();
             For<IAggregateRepository<PlayerAggregate>>()
@@ -62,6 +65,7 @@ namespace ManagementAPI.Service.Bootstrapper
             For<IHandicapAdjustmentCalculatorService>().Use<HandicapAdjustmentCalculatorService>();
             For<IManagmentAPIManager>().Use<ManagmentAPIManager>().Singleton();
             For<IOAuth2SecurityService>().Use<OAuth2SecurityService>().Singleton();
+            For<IGolfClubMembershipApplicationService>().Use<GolfClubMembershipApplicationService>().Singleton();
         }
     }
 }

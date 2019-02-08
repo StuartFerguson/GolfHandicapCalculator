@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Client;
+using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Tests.Player;
 using Moq;
 using Newtonsoft.Json;
@@ -19,19 +20,19 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [Fact]
         public async Task PlayerClient_RegisterPlayer_SuccessfulResponse()
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
                 Content =new StringContent(JsonConvert.SerializeObject(PlayerTestData.RegisterPlayerResponse))
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
 
             PlayerClient client = new PlayerClient(resolver, httpClient);
 
-            var response = await client.RegisterPlayer(PlayerTestData.RegisterPlayerRequest, CancellationToken.None);
+            RegisterPlayerResponse response = await client.RegisterPlayer(PlayerTestData.RegisterPlayerRequest, CancellationToken.None);
 
             response.ShouldNotBeNull();
             response.PlayerId.ShouldBe(PlayerTestData.AggregateId);
@@ -47,19 +48,19 @@ namespace ManagementAPI.Service.Tests.ClientTests
         public async Task PlayerClient_RegisterPlayer_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode,
             Type exceptionType, Type innerExceptionType)
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> {CallBase = true};
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> {CallBase = true};
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = statusCode,
                 Content = new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
 
             PlayerClient client = new PlayerClient(resolver, httpClient);
 
-            var exception =
+            Exception exception =
                 Should.Throw(
                     async () =>
                     {

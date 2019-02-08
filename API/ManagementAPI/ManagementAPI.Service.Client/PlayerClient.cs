@@ -50,10 +50,10 @@ namespace ManagementAPI.Service.Client
             {
                 String requestSerialised = JsonConvert.SerializeObject(request);
 
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
