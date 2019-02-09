@@ -27,7 +27,7 @@ namespace ManagementAPI.IntegrationTests.Common
             ShouldlyConfiguration.DefaultTaskTimeout = TimeSpan.FromMinutes(1);
 
             // Setup a network for the DB Server
-            DatabaseServerNetwork = new Builder().UseNetwork($"testnetwork{Guid.NewGuid():N}").Build();
+            DatabaseServerNetwork = new Builder().UseNetwork($"sharednetwork").ReuseIfExist().Build();
 
             // Start the Database Server here
             DbConnectionStringWithNoDatabase = StartMySqlContainerWithOpenConnection();            
@@ -63,7 +63,7 @@ namespace ManagementAPI.IntegrationTests.Common
 
         private static String StartMySqlContainerWithOpenConnection()
         {
-            String containerName = $"testdatabase{Guid.NewGuid():N}";
+            String containerName = $"shareddatabasemysql";
             DatabaseServerContainer = new Ductus.FluentDocker.Builders.Builder()
                 .UseContainer()
                 .WithName(containerName)
@@ -71,6 +71,9 @@ namespace ManagementAPI.IntegrationTests.Common
                 .WithEnvironment("MYSQL_ROOT_PASSWORD=Pa55word", "MYSQL_ROOT_HOST=%")
                 .ExposePort(3306)
                 .UseNetwork(DatabaseServerNetwork)
+                .KeepContainer()
+                .KeepRunning()
+                .ReuseIfExists()
                 .Build()
                 .Start()
                 .WaitForPort("3306/tcp", 30000);
