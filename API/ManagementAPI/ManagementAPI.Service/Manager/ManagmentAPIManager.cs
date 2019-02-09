@@ -115,7 +115,7 @@ namespace ManagementAPI.Service.Manager
             GetGolfClubResponse result = null;
 
             // Find the club configuration by id
-            var golfClub = await this.GolfClubRepository.GetLatestVersion(golfClubId, cancellationToken);
+            GolfClubAggregate golfClub = await this.GolfClubRepository.GetLatestVersion(golfClubId, cancellationToken);
 
             // Check we have found the club configuration
             if (!golfClub.HasBeenCreated)
@@ -153,10 +153,10 @@ namespace ManagementAPI.Service.Manager
         {
             Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
 
-            using (var context = this.ReadModelResolver())
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
             {
                 // Check the club has not already been added to the read model
-                var isDuplicate = await context.GolfClub.Where(c => c.GolfClubId == domainEvent.AggregateId)
+                Boolean isDuplicate = await context.GolfClub.Where(c => c.GolfClubId == domainEvent.AggregateId)
                     .AnyAsync(cancellationToken);
 
                 if (!isDuplicate)
@@ -193,11 +193,11 @@ namespace ManagementAPI.Service.Manager
         {
             List<GetGolfClubResponse> result = new List<GetGolfClubResponse>();
 
-            using (var context = ReadModelResolver())
+            using (ManagementAPIReadModel context = ReadModelResolver())
             {
-                var golfClubs = await context.GolfClub.ToListAsync(cancellationToken);
+                List<Database.Models.GolfClub> golfClubs = await context.GolfClub.ToListAsync(cancellationToken);
 
-                foreach (var golfClub in golfClubs)
+                foreach (Database.Models.GolfClub golfClub in golfClubs)
                 {
                     result.Add(new GetGolfClubResponse
                     {
@@ -216,160 +216,6 @@ namespace ManagementAPI.Service.Manager
             }
 
             return result;
-        }
-        #endregion
-
-        #region public async Task InsertClubMembershipRequestToReadModel(ClubMembershipRequestedEvent domainEvent, CancellationToken cancellationToken)        
-        /// <summary>
-        /// Inserts the club membership request to read model.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        public async Task InsertClubMembershipRequestToReadModel(ClubMembershipRequestedEvent domainEvent, CancellationToken cancellationToken)
-        {
-            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
-
-            // Get the club
-            var club = await this.GolfClubRepository.GetLatestVersion(domainEvent.ClubId, cancellationToken);
-
-            if (!club.HasBeenCreated)
-            {
-                throw new InvalidOperationException($"Unable to find golf club with Id {domainEvent.ClubId}");
-            }
-
-            // Get the player
-            var player = await this.PlayerRepository.GetLatestVersion(domainEvent.AggregateId, cancellationToken);
-
-            if (!player.HasBeenRegistered)
-            {
-                throw new InvalidOperationException($"Unable to find player with Id {domainEvent.AggregateId}");
-            }
-
-            using (var context = this.ReadModelResolver())
-            {
-                ClubMembershipRequest clubMembershipRequest = new ClubMembershipRequest
-                {
-                    ClubId = domainEvent.ClubId,
-                    Age = player.Age,
-                    ExactHandicap = player.ExactHandicap,
-                    FirstName = player.FirstName,
-                    Gender = player.Gender,
-                    HandicapCategory = player.HandicapCategory,
-                    LastName = player.LastName,
-                    MembershipRequestId = domainEvent.EventId,
-                    MembershipRequestedDateAndTime = domainEvent.MembershipRequestedDateAndTime,
-                    MiddleName = player.MiddleName,
-                    PlayerId = domainEvent.AggregateId,
-                    PlayingHandicap = player.PlayingHandicap,
-                    Status = 0 // Pending
-                };
-
-                context.ClubMembershipRequest.Add(clubMembershipRequest);
-
-                await context.SaveChangesAsync(cancellationToken);                
-            }
-        }
-        #endregion
-
-        #region public async Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(Guid clubId, CancellationToken cancellationToken)        
-        /// <summary>
-        /// Gets the club membership request.
-        /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        public async Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(Guid clubId, CancellationToken cancellationToken)
-        {
-            List<GetClubMembershipRequestResponse> result = new List<GetClubMembershipRequestResponse>();
-
-            using (var context = this.ReadModelResolver())
-            {
-                var pendingMembershipRequests = await context.ClubMembershipRequest.Where(c => c.ClubId == clubId && c.Status == 0).ToListAsync(cancellationToken);
-
-                foreach (var pendingMembershipRequest in pendingMembershipRequests)
-                {
-                    result.Add(new GetClubMembershipRequestResponse
-                    {
-                        ClubId = pendingMembershipRequest.ClubId,
-                        MembershipRequestedDateAndTime = pendingMembershipRequest.MembershipRequestedDateAndTime,
-                        PlayerId = pendingMembershipRequest.PlayerId,
-                        MembershipRequestId = pendingMembershipRequest.MembershipRequestId,
-                        HandicapCategory = pendingMembershipRequest.HandicapCategory,
-                        Age = pendingMembershipRequest.Age,
-                        Gender = pendingMembershipRequest.Gender,
-                        FirstName = pendingMembershipRequest.FirstName,
-                        MiddleName = pendingMembershipRequest.MiddleName,
-                        PlayingHandicap = pendingMembershipRequest.PlayingHandicap,
-                        LastName = pendingMembershipRequest.LastName,
-                        ExactHandicap = pendingMembershipRequest.ExactHandicap,
-                    });
-                }
-            }
-
-            return result;
-        }
-        #endregion
-
-        #region public async Task RemoveClubMembershipRequestFromReadModel(ClubMembershipApprovedEvent domainEvent, CancellationToken cancellationToken)        
-        /// <summary>
-        /// Removes the club membership request from read model.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        /// <exception cref="NotFoundException">No pending membership request found for Club Id {domainEvent.ClubId} and Player Id {domainEvent.AggregateId}</exception>
-        public async Task RemoveClubMembershipRequestFromReadModel(ClubMembershipApprovedEvent domainEvent, CancellationToken cancellationToken)
-        {
-            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
-
-            using (var context = this.ReadModelResolver())
-            {
-                // find the pending membership request
-                var pendingRequest = await context.ClubMembershipRequest.Where(c => c.ClubId == domainEvent.ClubId && 
-                                                                              c.PlayerId == domainEvent.AggregateId &&
-                                                                              c.Status == 0).SingleOrDefaultAsync(cancellationToken); // Pending
-                
-                if (pendingRequest == null)
-                {
-                    throw new NotFoundException($"No pending membership request found for Club Id {domainEvent.ClubId} and Player Id {domainEvent.AggregateId}");
-                }
-
-                context.ClubMembershipRequest.Remove(pendingRequest);
-
-                await context.SaveChangesAsync(cancellationToken);                
-            }
-        }
-        #endregion
-
-        #region public async Task RemoveClubMembershipRequestFromReadModel(ClubMembershipRejectedEvent domainEvent, CancellationToken cancellationToken)        
-        /// <summary>
-        /// Removes the club membership request from read model.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        /// <exception cref="NotFoundException">No pending membership request found for Club Id {domainEvent.ClubId} and Player Id {domainEvent.AggregateId}</exception>
-        public async Task RemoveClubMembershipRequestFromReadModel(ClubMembershipRejectedEvent domainEvent, CancellationToken cancellationToken)
-        {
-            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
-
-            using (var context = this.ReadModelResolver())
-            {
-                // find the pending membership request
-                var pendingRequest = await context.ClubMembershipRequest.Where(c => c.ClubId == domainEvent.ClubId && 
-                                                                                    c.PlayerId == domainEvent.AggregateId &&
-                                                                                    c.Status == 0).SingleOrDefaultAsync(cancellationToken); // Pending
-                
-                if (pendingRequest == null)
-                {
-                    throw new NotFoundException($"No pending membership request found for Club Id {domainEvent.ClubId} and Player Id {domainEvent.AggregateId}");
-                }
-
-                context.ClubMembershipRequest.Remove(pendingRequest);
-
-                await context.SaveChangesAsync(cancellationToken);                
-            }
         }
         #endregion
 

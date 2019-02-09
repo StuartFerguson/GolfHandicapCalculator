@@ -43,7 +43,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"I have registered as a golf club administrator")]
         public void GivenIHaveRegisteredAsAGolfClubAdministrator()
         {
-            var request =  IntegrationTestsTestData.RegisterClubAdministratorRequest;
+            RegisterClubAdministratorRequest request =  IntegrationTestsTestData.RegisterClubAdministratorRequest;
 
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
@@ -64,13 +64,13 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"my golf club has been created")]
         public async Task GivenMyGolfClubHasBeenCreated()
         {
-            var request = IntegrationTestsTestData.CreateGolfClubRequest;
+            CreateGolfClubRequest request = IntegrationTestsTestData.CreateGolfClubRequest;
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
-            var response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+            CreateGolfClubResponse response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
 
             this.ScenarioContext["GolfClubId"] = response.GolfClubId;
 
@@ -83,11 +83,11 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"a measured course is added to the club")]
         public void GivenAMeasuredCourseIsAddedToTheClub()
         {
-            var request = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
+            AddMeasuredCourseToClubRequest request = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
 
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             Should.NotThrow(async () =>
             {
@@ -104,11 +104,11 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [When(@"I call Create Tournament")]
         public void WhenICallCreateTournament()
         {
-            var request = this.ScenarioContext.Get<CreateTournamentRequest>("CreateTournamentRequest");
+            CreateTournamentRequest request = this.ScenarioContext.Get<CreateTournamentRequest>("CreateTournamentRequest");
 
             ITournamentClient client = new TournamentClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             Should.NotThrow(async () =>
             {
@@ -119,7 +119,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Then(@"the tournament will be created")]
         public void ThenTheTournamentWillBeCreated()
         {
-            var response = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+            CreateTournamentResponse response = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
             response.ShouldNotBeNull();
             response.TournamentId.ShouldNotBe(Guid.Empty);
@@ -128,11 +128,11 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"I have created a tournament")]
         public void GivenIHaveCreatedATournament()
         {
-            var request = IntegrationTestsTestData.CreateTournamentRequest;
+            CreateTournamentRequest request = IntegrationTestsTestData.CreateTournamentRequest;
 
             ITournamentClient client = new TournamentClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             Should.NotThrow(async () =>
             {
@@ -143,7 +143,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"a player has been registered")]
         public void GivenAPlayerHasBeenRegistered()
         {
-            var request = IntegrationTestsTestData.RegisterPlayerRequest;
+            RegisterPlayerRequest request = IntegrationTestsTestData.RegisterPlayerRequest;
 
             IPlayerClient client = new PlayerClient(this.baseAddressResolver, this.httpClient);
 
@@ -170,13 +170,13 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Then(@"the score is recorded against the tournament")]
         public void ThenTheScoreIsRecordedAgainstTheTournament()
         {
-            var request = this.ScenarioContext.Get<RecordMemberTournamentScoreRequest>("RecordMemberTournamentScoreRequest");
+            RecordMemberTournamentScoreRequest request = this.ScenarioContext.Get<RecordMemberTournamentScoreRequest>("RecordMemberTournamentScoreRequest");
 
-            var createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+            CreateTournamentResponse createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
             ITournamentClient client = new TournamentClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
+            String bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
 
             Should.NotThrow(async () =>
             {
@@ -187,13 +187,13 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"some scores have been recorded")]
         public void GivenSomeScoresHaveBeenRecorded()
         {
-            var request = IntegrationTestsTestData.RecordMemberTournamentScoreRequest;
+            RecordMemberTournamentScoreRequest request = IntegrationTestsTestData.RecordMemberTournamentScoreRequest;
 
-            var createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+            CreateTournamentResponse createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
             ITournamentClient client = new TournamentClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
+            String bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
 
             Should.NotThrow(async () =>
             {
@@ -206,9 +206,9 @@ namespace ManagementAPI.IntegrationTests.Tournament
         {
             ITournamentClient client = new TournamentClient(this.baseAddressResolver, this.httpClient);
 
-            var createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+            CreateTournamentResponse createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             Should.NotThrow(async () =>
             {
@@ -223,11 +223,11 @@ namespace ManagementAPI.IntegrationTests.Tournament
         {
             ITournamentClient client = new TournamentClient(this.baseAddressResolver, this.httpClient);
 
-            var createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+            CreateTournamentResponse createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
-            var cancelTournamentRequest = IntegrationTestsTestData.CancelTournamentRequest;
+            CancelTournamentRequest cancelTournamentRequest = IntegrationTestsTestData.CancelTournamentRequest;
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             Should.NotThrow(async () =>
             {
@@ -242,9 +242,9 @@ namespace ManagementAPI.IntegrationTests.Tournament
         {
             ITournamentClient client = new TournamentClient(this.baseAddressResolver, this.httpClient);
 
-            var createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+            CreateTournamentResponse createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             Should.NotThrow(async () =>
             {
@@ -259,9 +259,9 @@ namespace ManagementAPI.IntegrationTests.Tournament
         {
             ITournamentClient client = new TournamentClient(this.baseAddressResolver, this.httpClient);
 
-            var createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
+            CreateTournamentResponse createTournamentResponse = this.ScenarioContext.Get<CreateTournamentResponse>("CreateTournamentResponse");
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             Should.NotThrow(async () =>
             {

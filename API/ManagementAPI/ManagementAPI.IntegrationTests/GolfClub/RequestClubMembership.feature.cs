@@ -18,17 +18,17 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "golfclub")]
-    public partial class GetPendingClubMembershipRequestsFeature : Xunit.IClassFixture<GetPendingClubMembershipRequestsFeature.FixtureData>, System.IDisposable
+    public partial class RequestClubMembershipFeature : Xunit.IClassFixture<RequestClubMembershipFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
-#line 1 "GetPendingClubMembershipRequests.feature"
+#line 1 "RequestClubMembership.feature"
 #line hidden
         
-        public GetPendingClubMembershipRequestsFeature(GetPendingClubMembershipRequestsFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public RequestClubMembershipFeature(RequestClubMembershipFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -37,7 +37,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Get Pending Club Membership Requests", null, ProgrammingLanguage.CSharp, new string[] {
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "RequestClubMembership", null, ProgrammingLanguage.CSharp, new string[] {
                         "golfclub"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -83,13 +83,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
 #line 7
  testRunner.And("I am logged in as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 8
- testRunner.And("my golf club has been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 9
- testRunner.And("a player has been registered", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 10
- testRunner.And("I am logged in as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 11
- testRunner.And("a player has requested membership of the club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I am registered as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
         
@@ -98,21 +92,23 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Get Pending Membership Request List")]
-        [Xunit.TraitAttribute("FeatureTitle", "Get Pending Club Membership Requests")]
-        [Xunit.TraitAttribute("Description", "Get Pending Membership Request List")]
-        public virtual void GetPendingMembershipRequestList()
+        [Xunit.FactAttribute(DisplayName="Request Club Membership")]
+        [Xunit.TraitAttribute("FeatureTitle", "RequestClubMembership")]
+        [Xunit.TraitAttribute("Description", "Request Club Membership")]
+        public virtual void RequestClubMembership()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Pending Membership Request List", null, ((string[])(null)));
-#line 13
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Request Club Membership", null, ((string[])(null)));
+#line 10
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 14
- testRunner.When("I request the list of pending membership requests", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 15
- testRunner.Then("a list of pending membership requests will be returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 11
+ testRunner.Given("The club I want to register for is already created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 12
+ testRunner.And("I am logged in as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 13
+ testRunner.When("I request club membership my request is accepted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -124,12 +120,12 @@ this.FeatureBackground();
             
             public FixtureData()
             {
-                GetPendingClubMembershipRequestsFeature.FeatureSetup();
+                RequestClubMembershipFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                GetPendingClubMembershipRequestsFeature.FeatureTearDown();
+                RequestClubMembershipFeature.FeatureTearDown();
             }
         }
     }

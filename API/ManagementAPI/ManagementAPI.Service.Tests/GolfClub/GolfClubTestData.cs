@@ -300,5 +300,10 @@ namespace ManagementAPI.Service.Tests.GolfClub
             ConfirmPassword = "123456",
             TelephoneNumber = "123456789"
         };
+
+        public static RequestClubMembershipCommand GetRequestClubMembershipCommand()
+        {
+            return RequestClubMembershipCommand.Create(PlayerId, AggregateId);
+        }
     }
 }

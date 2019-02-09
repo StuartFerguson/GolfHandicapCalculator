@@ -1,4 +1,5 @@
 ﻿using System;
+using ManagementAPI.GolfClub;
 using ManagementAPI.GolfClubMembership;
 
 namespace ManagementAPI.Service.Tests.GolfClubMembership
@@ -26,7 +27,7 @@ namespace ManagementAPI.Service.Tests.GolfClubMembership
         public static String RejectionReason = "A reason";
 
         public static String MembershipNumber = "000001";
-
+        
         public static GolfClubMembershipAggregate GetCreatedGolfClubMembershipAggregate()
         {
             GolfClubMembershipAggregate aggregate = GolfClubMembershipAggregate.Create(GolfClubMembershipTestData.AggregateId);

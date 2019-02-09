@@ -118,7 +118,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
 
             aggregate.AddMeasuredCourse(measuredCourseDataTransferObject);
 
-            var measuredCourse = aggregate.GetMeasuredCourse(measuredCourseDataTransferObject.MeasuredCourseId);
+            MeasuredCourseDataTransferObject measuredCourse = aggregate.GetMeasuredCourse(measuredCourseDataTransferObject.MeasuredCourseId);
 
             measuredCourse.ShouldNotBeNull();
             measuredCourse.Name.ShouldBe(measuredCourseDataTransferObject.Name);
@@ -126,11 +126,11 @@ namespace ManagementAPI.Service.Tests.GolfClub
             measuredCourse.TeeColour.ShouldBe(measuredCourseDataTransferObject.TeeColour);
             measuredCourse.Holes.Count.ShouldBe(measuredCourseDataTransferObject.Holes.Count);
             
-            var resultHoles = measuredCourse.Holes.OrderBy(m => m.HoleNumber);
+            IOrderedEnumerable<HoleDataTransferObject> resultHoles = measuredCourse.Holes.OrderBy(m => m.HoleNumber);
 
-            foreach (var holeDataTransferObject in resultHoles)
+            foreach (HoleDataTransferObject holeDataTransferObject in resultHoles)
             {
-                var orignalHole = measuredCourseDataTransferObject.Holes.Single(h => h.HoleNumber == holeDataTransferObject.HoleNumber);
+                HoleDataTransferObject orignalHole = measuredCourseDataTransferObject.Holes.Single(h => h.HoleNumber == holeDataTransferObject.HoleNumber);
 
                 holeDataTransferObject.HoleNumber.ShouldBe(orignalHole.HoleNumber);
                 holeDataTransferObject.LengthInMeters.ShouldBe(orignalHole.LengthInMeters);
@@ -314,7 +314,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = GolfClubTestData.GetMeasuredCourseToAdd();
 
-            var measuredCourse = aggregate.GetMeasuredCourse(measuredCourseDataTransferObject.MeasuredCourseId);
+            MeasuredCourseDataTransferObject measuredCourse = aggregate.GetMeasuredCourse(measuredCourseDataTransferObject.MeasuredCourseId);
 
             measuredCourse.ShouldNotBeNull();
             measuredCourse.Name.ShouldBe(measuredCourseDataTransferObject.Name);
@@ -322,11 +322,11 @@ namespace ManagementAPI.Service.Tests.GolfClub
             measuredCourse.TeeColour.ShouldBe(measuredCourseDataTransferObject.TeeColour);
             measuredCourse.Holes.Count.ShouldBe(measuredCourseDataTransferObject.Holes.Count);
             
-            var resultHoles = measuredCourse.Holes.OrderBy(m => m.HoleNumber);
+            IOrderedEnumerable<HoleDataTransferObject> resultHoles = measuredCourse.Holes.OrderBy(m => m.HoleNumber);
 
-            foreach (var holeDataTransferObject in resultHoles)
+            foreach (HoleDataTransferObject holeDataTransferObject in resultHoles)
             {
-                var orignalHole = measuredCourseDataTransferObject.Holes.Single(h => h.HoleNumber == holeDataTransferObject.HoleNumber);
+                HoleDataTransferObject orignalHole = measuredCourseDataTransferObject.Holes.Single(h => h.HoleNumber == holeDataTransferObject.HoleNumber);
 
                 holeDataTransferObject.HoleNumber.ShouldBe(orignalHole.HoleNumber);
                 holeDataTransferObject.LengthInMeters.ShouldBe(orignalHole.LengthInMeters);

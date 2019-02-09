@@ -154,7 +154,7 @@ namespace ManagementAPI.Service
         /// <returns></returns>
         public static IContainer GetConfiguredContainer(IServiceCollection services, IHostingEnvironment hostingEnvironment)
         {
-            var container = new Container();
+            Container container = new Container();
             
             container.Configure(config =>
             {
@@ -256,7 +256,7 @@ namespace ManagementAPI.Service
             {
                 ManagementAPIReadModel managementApiReadModel = scope.ServiceProvider.GetRequiredService<ManagementAPIReadModel>();
 
-                var seedingType = Configuration.GetValue<SeedingType>("SeedingType");
+                SeedingType seedingType = Configuration.GetValue<SeedingType>("SeedingType");
                 
                 DatabaseSeeding.InitialiseDatabase(managementApiReadModel, seedingType);                
             }
@@ -264,6 +264,7 @@ namespace ManagementAPI.Service
         #endregion
 
         #region private static void ConfigurePolicies(AuthorizationOptions policies)        
+
         /// <summary>
         /// Configures the policies.
         /// </summary>
@@ -287,7 +288,7 @@ namespace ManagementAPI.Service
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[] 
+                policy.RequireRole(new[]
                 {
                     RoleNames.Player, RoleNames.Player.ToUpper()
                 });
@@ -299,11 +300,11 @@ namespace ManagementAPI.Service
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[]
                 {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(),
                 });
                 policy.RequireClaim(CustomClaims.GolfClubId);
             });
-            
+
             policies.AddPolicy(PolicyNames.AddMeasuredCourseToGolfClubPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
@@ -315,11 +316,8 @@ namespace ManagementAPI.Service
                 });
                 policy.RequireClaim(CustomClaims.GolfClubId);
             });
-            #endregion
 
-            #region Player Policies
-
-            policies.AddPolicy(PolicyNames.RequestGolfClubMembershipForPlayerPolicy, policy =>
+            policies.AddPolicy(PolicyNames.RequestClubMembershipPolicy, policy =>
             {
                 policy.AddAuthenticationSchemes("Bearer");
                 policy.RequireAuthenticatedUser();
@@ -327,10 +325,15 @@ namespace ManagementAPI.Service
                 {
                     RoleNames.Player, RoleNames.Player.ToUpper()
                 });
-                policy.RequireClaim(CustomClaims.PlayerId);
             });
 
             #endregion
+
+            #region Player Policies
+            
+            #endregion
+
+            #region Tournament Policies
 
             policies.AddPolicy(PolicyNames.CreateTournamentPolicy, policy =>
             {
@@ -338,7 +341,7 @@ namespace ManagementAPI.Service
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[]
                 {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(),
                     RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
                 });
                 policy.RequireClaim(CustomClaims.GolfClubId);
@@ -360,7 +363,7 @@ namespace ManagementAPI.Service
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[]
                 {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(),
                     RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
                 });
             });
@@ -371,7 +374,7 @@ namespace ManagementAPI.Service
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[]
                 {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(),
                     RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
                 });
             });
@@ -382,31 +385,14 @@ namespace ManagementAPI.Service
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(new[]
                 {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(), 
+                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper(),
                     RoleNames.MatchSecretary, RoleNames.MatchSecretary.ToUpper()
                 });
             });
 
-            policies.AddPolicy(PolicyNames.GetPendingMembershipRequestsPolicy, policy =>
-            {
-                policy.AddAuthenticationSchemes("Bearer");
-                policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[]
-                {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper()
-                });
-            });
-
-            policies.AddPolicy(PolicyNames.ApprovePlayerMembershipRequestPolicy, policy =>
-            {
-                policy.AddAuthenticationSchemes("Bearer");
-                policy.RequireAuthenticatedUser();
-                policy.RequireRole(new[]
-                {
-                    RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper()
-                });
-            });
+            #endregion
         }
+
         #endregion
         
         #endregion

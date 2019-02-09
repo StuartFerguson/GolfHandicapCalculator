@@ -239,7 +239,7 @@ namespace ManagementAPI.GolfClub
             this.ApplyAndPend(measuredCourseAddedEvent);
 
             // Now add an event for each hole
-            foreach (var holeDataTransferObject in measuredCourse.Holes)
+            foreach (HoleDataTransferObject holeDataTransferObject in measuredCourse.Holes)
             {
                 HoleAddedToMeasuredCourseEvent holeAddedToMeasuredCourseEvent = HoleAddedToMeasuredCourseEvent.Create(this.AggregateId,measuredCourse.MeasuredCourseId, holeDataTransferObject.HoleNumber,
                                                                                                                       holeDataTransferObject.LengthInYards, holeDataTransferObject.LengthInMeters,
@@ -258,14 +258,14 @@ namespace ManagementAPI.GolfClub
         /// <exception cref="NotFoundException"></exception>
         public MeasuredCourseDataTransferObject GetMeasuredCourse(Guid measuredCourseId)
         {
-            var measuredCourseFound = this.MeasuredCourses.Any(m => m.MeasuredCourseId == measuredCourseId);
+            Boolean measuredCourseFound = this.MeasuredCourses.Any(m => m.MeasuredCourseId == measuredCourseId);
 
             if (!measuredCourseFound)
             {
                 throw new NotFoundException($"No measured course found for Club {this.Name} with Measured Course Id {measuredCourseId}");
             }
 
-            var measuredCourse = this.MeasuredCourses.Where(m => m.MeasuredCourseId == measuredCourseId).Single();
+            MeasuredCourse measuredCourse = this.MeasuredCourses.Where(m => m.MeasuredCourseId == measuredCourseId).Single();
 
             MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject
             {
@@ -276,7 +276,7 @@ namespace ManagementAPI.GolfClub
                 Holes = new List<HoleDataTransferObject>()
             };
 
-            foreach (var measuredCourseHole in measuredCourse.Holes)
+            foreach (Hole measuredCourseHole in measuredCourse.Holes)
             {
                 result.Holes.Add(new HoleDataTransferObject
                 {
@@ -373,7 +373,7 @@ namespace ManagementAPI.GolfClub
         private void PlayEvent(HoleAddedToMeasuredCourseEvent domainEvent)
         {
             // Find the measured course
-            var measuredCourse = this.MeasuredCourses.Single(m => m.MeasuredCourseId == domainEvent.MeasuredCourseId);
+            MeasuredCourse measuredCourse = this.MeasuredCourses.Single(m => m.MeasuredCourseId == domainEvent.MeasuredCourseId);
             measuredCourse.AddHole(Hole.Create(domainEvent.HoleNumber, domainEvent.LengthInYards, domainEvent.LengthInMeters, domainEvent.Par, domainEvent.StrokeIndex));
         }
         #endregion
@@ -456,8 +456,8 @@ namespace ManagementAPI.GolfClub
             }
 
             // Check there are no missing hole numbers
-            var holeNumberList = measuredCourse.Holes.Select(h => h.HoleNumber);
-            var missingHoleNumbers = Enumerable.Range(MinimumHoleNumber, MaximumHoleNumber - MinimumHoleNumber + 1).Except(holeNumberList).ToList();
+            IEnumerable<Int32> holeNumberList = measuredCourse.Holes.Select(h => h.HoleNumber);
+            List<Int32> missingHoleNumbers = Enumerable.Range(MinimumHoleNumber, MaximumHoleNumber - MinimumHoleNumber + 1).Except(holeNumberList).ToList();
 
             if (missingHoleNumbers.Count > 0)
             {
@@ -466,8 +466,8 @@ namespace ManagementAPI.GolfClub
             }
 
             // Check there are no missing stroke indexes
-            var strokeIndexList = measuredCourse.Holes.Select(h => h.StrokeIndex);
-            var missingStrokeIndexes = Enumerable.Range(strokeIndexList.Min(), strokeIndexList.Max() - strokeIndexList.Min() + 1).Except(strokeIndexList).ToList();
+            IEnumerable<Int32> strokeIndexList = measuredCourse.Holes.Select(h => h.StrokeIndex);
+            List<Int32> missingStrokeIndexes = Enumerable.Range(strokeIndexList.Min(), strokeIndexList.Max() - strokeIndexList.Min() + 1).Except(strokeIndexList).ToList();
 
             if (missingStrokeIndexes.Count > 0)
             {
@@ -476,7 +476,7 @@ namespace ManagementAPI.GolfClub
             }
 
             // Check all holes have a valid length in yards
-            var holesWithInvalidLengthInYards = measuredCourse.Holes.Where(h => h.LengthInYards <= 0).Select(h => h.HoleNumber);
+            IEnumerable<Int32> holesWithInvalidLengthInYards = measuredCourse.Holes.Where(h => h.LengthInYards <= 0).Select(h => h.HoleNumber);
 
             if (holesWithInvalidLengthInYards.Any())
             {
@@ -484,7 +484,7 @@ namespace ManagementAPI.GolfClub
             }
 
             // Check all holes have a valid par
-            var holesWithInvalidPar = measuredCourse.Holes.Where(h => h.Par != 3 && h.Par != 4 && h.Par != 5).Select(h => h.HoleNumber);
+            IEnumerable<Int32> holesWithInvalidPar = measuredCourse.Holes.Where(h => h.Par != 3 && h.Par != 4 && h.Par != 5).Select(h => h.HoleNumber);
 
             if (holesWithInvalidPar.Any())
             {

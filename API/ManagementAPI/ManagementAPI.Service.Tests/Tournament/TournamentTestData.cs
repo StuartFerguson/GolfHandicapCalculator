@@ -57,7 +57,7 @@ namespace ManagementAPI.Service.Tests.Tournament
 
         public static Dictionary<Int32, Int32> HoleScoresMissingHole(Int32 holeNumber)
         {
-            var holeScores = new Dictionary<Int32, Int32>()
+            Dictionary<Int32, Int32> holeScores = new Dictionary<Int32, Int32>()
             {
                 {1, 4}, {2, 4}, {3, 3}, {4, 4}, {5, 4}, {6, 5}, {7, 3}, {8, 4}, {9, 3},
                 {10, 4}, {11, 4}, {12, 4}, {13, 5}, {14, 3}, {15, 4}, {16, 4}, {17, 4}, {18, 4}
@@ -70,7 +70,7 @@ namespace ManagementAPI.Service.Tests.Tournament
 
         public static Dictionary<Int32, Int32> HoleScoresNegativeScore(Int32 holeNumber)
         {
-            var holeScores = new Dictionary<Int32, Int32>()
+            Dictionary<Int32, Int32> holeScores = new Dictionary<Int32, Int32>()
             {
                 {1, 4}, {2, 4}, {3, 3}, {4, 4}, {5, 4}, {6, 5}, {7, 3}, {8, 4}, {9, 3},
                 {10, 4}, {11, 4}, {12, 4}, {13, 5}, {14, 3}, {15, 4}, {16, 4}, {17, 4}, {18, 4}
@@ -121,8 +121,8 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             aggregate.CreateTournament(TournamentDate, GolfClubId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
-            var scoresToRecord = GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
-            foreach (var memberScoreForTest in scoresToRecord)
+            List<GeneratedMemberScore> scoresToRecord = GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
+            foreach (GeneratedMemberScore memberScoreForTest in scoresToRecord)
             {
                 aggregate.RecordMemberScore(memberScoreForTest.MemberId, memberScoreForTest.Handicap, memberScoreForTest.HoleScores);
             }
@@ -152,8 +152,8 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             aggregate.CreateTournament(TournamentDate, GolfClubId, MeasuredCourseId, MeasuredCourseSSS, Name, MemberCategoryEnum, TournamentFormatEnum);
 
-            var scoresToRecord = GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
-            foreach (var memberScoreForTest in scoresToRecord)
+            List<GeneratedMemberScore> scoresToRecord = GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
+            foreach (GeneratedMemberScore memberScoreForTest in scoresToRecord)
             {
                 aggregate.RecordMemberScore(memberScoreForTest.MemberId, memberScoreForTest.Handicap, memberScoreForTest.HoleScores);
             }
@@ -632,7 +632,7 @@ namespace ManagementAPI.Service.Tests.Tournament
             // now set buffer or better
             for (Int32 i = 0; i < bufferorbetter; i++)
             {
-                var index = random.Next(0, scores.Count);
+                Int32 index = random.Next(0, scores.Count);
 
                 while (scores[index].HoleScores[18] == 4 || scores[index].Handicap > 28)
                 {

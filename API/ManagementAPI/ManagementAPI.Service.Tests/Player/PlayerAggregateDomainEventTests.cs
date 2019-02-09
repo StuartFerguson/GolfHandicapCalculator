@@ -40,53 +40,6 @@ namespace ManagementAPI.Service.Tests.Player
             securityUserCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
             securityUserCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             securityUserCreatedEvent.SecurityUserId.ShouldBe(PlayerTestData.SecurityUserId);
-        }
-
-        [Fact]
-        public void ClubMembershipRequestedEvent_CanBeCreated_IsCreated()
-        {
-            ClubMembershipRequestedEvent clubMembershipRequestedEvent = ClubMembershipRequestedEvent.Create(
-                PlayerTestData.AggregateId, PlayerTestData.ClubId,
-                PlayerTestData.MembershipRequestedDateAndTime);
-
-            clubMembershipRequestedEvent.ShouldNotBeNull();
-            clubMembershipRequestedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
-            clubMembershipRequestedEvent.EventId.ShouldNotBe(Guid.Empty);
-            clubMembershipRequestedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
-            clubMembershipRequestedEvent.ClubId.ShouldBe(PlayerTestData.ClubId);
-            clubMembershipRequestedEvent.MembershipRequestedDateAndTime.ShouldBe(PlayerTestData.MembershipRequestedDateAndTime);
-        }
-
-        [Fact]
-        public void ClubMembershipApprovedEvent_CanBeCreated_IsCreated()
-        {
-            ClubMembershipApprovedEvent clubMembershipApprovedEvent = ClubMembershipApprovedEvent.Create(
-                PlayerTestData.AggregateId, PlayerTestData.ClubId,
-                PlayerTestData.MembershipApprovedDateAndTime);
-
-            clubMembershipApprovedEvent.ShouldNotBeNull();
-            clubMembershipApprovedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
-            clubMembershipApprovedEvent.EventId.ShouldNotBe(Guid.Empty);
-            clubMembershipApprovedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
-            clubMembershipApprovedEvent.ClubId.ShouldBe(PlayerTestData.ClubId);
-            clubMembershipApprovedEvent.MembershipApprovedDateAndTime.ShouldBe(PlayerTestData.MembershipApprovedDateAndTime);
-        }
-
-        [Fact]
-        public void ClubMembershipRejectedEvent_CanBeCreated_IsCreated()
-        {
-            ClubMembershipRejectedEvent clubMembershipRejectedEvent = ClubMembershipRejectedEvent.Create(
-                PlayerTestData.AggregateId, PlayerTestData.ClubId,
-                PlayerTestData.MembershipRejectedDateAndTime,
-                PlayerTestData.RejectionReason);
-
-            clubMembershipRejectedEvent.ShouldNotBeNull();
-            clubMembershipRejectedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
-            clubMembershipRejectedEvent.EventId.ShouldNotBe(Guid.Empty);
-            clubMembershipRejectedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
-            clubMembershipRejectedEvent.ClubId.ShouldBe(PlayerTestData.ClubId);
-            clubMembershipRejectedEvent.MembershipRejectedDateAndTime.ShouldBe(PlayerTestData.MembershipRejectedDateAndTime);
-            clubMembershipRejectedEvent.RejectionReason.ShouldBe(PlayerTestData.RejectionReason);
-        }
+        }        
     }
 }

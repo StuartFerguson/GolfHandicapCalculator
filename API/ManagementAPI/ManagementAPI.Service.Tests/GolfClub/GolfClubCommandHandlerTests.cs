@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using ManagementAPI.GolfClub;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Commands;
@@ -23,8 +24,10 @@ namespace ManagementAPI.Service.Tests.GolfClub
             oAuth2SecurityService
                 .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(GolfClubTestData.GetRegisterUserResponse());
+            Mock<IGolfClubMembershipApplicationService> golfClubMembershipApplicationService = new Mock<IGolfClubMembershipApplicationService>();
 
-            GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object);
+            GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object, 
+                golfClubMembershipApplicationService.Object);
 
             CreateGolfClubCommand command = GolfClubTestData.GetCreateGolfClubCommand();
 
@@ -40,10 +43,29 @@ namespace ManagementAPI.Service.Tests.GolfClub
             oAuth2SecurityService
                 .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(GolfClubTestData.GetRegisterUserResponse());
+            Mock<IGolfClubMembershipApplicationService> golfClubMembershipApplicationService = new Mock<IGolfClubMembershipApplicationService>();
 
-            GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object);
+            GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object, 
+                golfClubMembershipApplicationService.Object);
 
             AddMeasuredCourseToClubCommand command = GolfClubTestData.GetAddMeasuredCourseToClubCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+        [Fact]
+        public void GolfClubCommandHandler_HandleCommand_RequestClubMembershipCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();            
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            Mock<IGolfClubMembershipApplicationService> golfClubMembershipApplicationService = new Mock<IGolfClubMembershipApplicationService>();
+            golfClubMembershipApplicationService.Setup(x =>
+                    x.RequestClubMembership(It.IsAny<Guid>(), It.IsAny<Guid>(), CancellationToken.None))
+                .Returns(Task.CompletedTask);
+            GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object, 
+                golfClubMembershipApplicationService.Object);
+
+            RequestClubMembershipCommand command = GolfClubTestData.GetRequestClubMembershipCommand();
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }

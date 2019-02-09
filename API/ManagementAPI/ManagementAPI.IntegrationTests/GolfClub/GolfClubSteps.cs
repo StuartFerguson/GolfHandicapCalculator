@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,7 +54,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Then(@"my registration should be successful")]
         public void ThenMyRegistrationShouldBeSuccessful()
         {
-            var request = this.ScenarioContext.Get<RegisterClubAdministratorRequest>("RegisterGolfClubAdministratorRequest");
+            RegisterClubAdministratorRequest request = this.ScenarioContext.Get<RegisterClubAdministratorRequest>("RegisterGolfClubAdministratorRequest");
 
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
@@ -66,7 +67,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Given(@"I have registered as a golf club administrator")]
         public void GivenIHaveRegisteredAsAGolfClubAdministrator()
         {
-            var request =  IntegrationTestsTestData.RegisterClubAdministratorRequest;
+            RegisterClubAdministratorRequest request =  IntegrationTestsTestData.RegisterClubAdministratorRequest;
 
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
@@ -93,9 +94,9 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [When(@"I call Create Golf Club")]
         public async Task WhenICallCreateGolfClub()
         {
-            var request = this.ScenarioContext.Get<CreateGolfClubRequest>("CreateGolfClubRequest");
+            CreateGolfClubRequest request = this.ScenarioContext.Get<CreateGolfClubRequest>("CreateGolfClubRequest");
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
@@ -105,7 +106,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Then(@"the golf club configuration will be created successfully")]
         public void ThenTheGolfClubConfigurationWillBeCreatedSuccessfully()
         {
-            var response = this.ScenarioContext.Get<CreateGolfClubResponse>("CreateGolfClubResponse");
+            CreateGolfClubResponse response = this.ScenarioContext.Get<CreateGolfClubResponse>("CreateGolfClubResponse");
 
             response.ShouldNotBe(null);
             response.GolfClubId.ShouldNotBe(Guid.Empty);
@@ -114,13 +115,13 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Given(@"my golf club has been created")]
         public async Task GivenMyGolfClubHasBeenCreated()
         {
-            var request = IntegrationTestsTestData.CreateGolfClubRequest;
+            CreateGolfClubRequest request = IntegrationTestsTestData.CreateGolfClubRequest;
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
-            var response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+            CreateGolfClubResponse response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
 
             this.ScenarioContext["GolfClubId"] = response.GolfClubId;
 
@@ -130,12 +131,48 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             }
         }
         
+        [Given(@"The club I want to register for is already created")]
+        public async Task GivenTheClubIWantToRegisterForIsAlreadyCreated()
+        {
+            CreateGolfClubRequest request = IntegrationTestsTestData.CreateGolfClubRequest;
+
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+
+            IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
+
+            CreateGolfClubResponse response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+
+            this.ScenarioContext["GolfClubId"] = response.GolfClubId;
+
+            if (this.ScenarioContext.ScenarioInfo.Title == "Get Golf Club List")
+            {
+                Thread.Sleep(30000);
+            }
+        }
+        
+        [When(@"I request club membership my request is accepted")]
+        public void WhenIRequestClubMembershipMyRequestIsAccepted()
+        {
+            IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
+
+            String bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
+            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
+
+            Should.NotThrow(async () =>
+            {
+                await client.RequestClubMembership(bearerToken, golfClubId, CancellationToken.None)
+                    .ConfigureAwait(false);
+            });
+        }
+
+
+
         [When(@"I request the details of the golf club")]
         public async Task WhenIRequestTheDetailsOfTheGolfClub()
         {
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             this.ScenarioContext["GetSingleGolfClubResponse"] = await client.GetSingleGolfClub(bearerToken, CancellationToken.None).ConfigureAwait(false);
         }
@@ -143,7 +180,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Then(@"the golf club data will be returned")]
         public void ThenTheGolfClubDataWillBeReturned()
         {
-            var response = this.ScenarioContext.Get<GetGolfClubResponse>("GetSingleGolfClubResponse");
+            GetGolfClubResponse response = this.ScenarioContext.Get<GetGolfClubResponse>("GetSingleGolfClubResponse");
 
             response.ShouldNotBe(null);
             response.Name.ShouldBe(IntegrationTestsTestData.CreateGolfClubRequest.Name);
@@ -152,7 +189,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Given(@"a player has been registered")]
         public void GivenAPlayerHasBeenRegistered()
         {
-            var request = IntegrationTestsTestData.RegisterPlayerRequest;
+            RegisterPlayerRequest request = IntegrationTestsTestData.RegisterPlayerRequest;
 
             IPlayerClient client = new PlayerClient(this.baseAddressResolver, this.httpClient);
 
@@ -175,7 +212,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         {
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
+            String bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
 
             this.ScenarioContext["GetGolfClubListResponse"] = await client.GetGolfClubList(bearerToken, CancellationToken.None).ConfigureAwait(false);            
         }
@@ -183,7 +220,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Then(@"a list of golf clubs will be returned")]
         public void ThenAListOfGolfClubsWillBeReturned()
         {
-            var response = this.ScenarioContext.Get<List<GetGolfClubResponse>>("GetGolfClubListResponse");
+            List<GetGolfClubResponse> response = this.ScenarioContext.Get<List<GetGolfClubResponse>>("GetGolfClubListResponse");
 
             response.ShouldNotBeEmpty();
             response.Count.ShouldBe(1);
@@ -198,11 +235,11 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Then(@"the measured course is added to the club")]
         public void ThenTheMeasuredCourseIsAddedToTheClub()
         {
-            var request = this.ScenarioContext.Get<AddMeasuredCourseToClubRequest>("AddMeasuredCourseToClubRequest");
+            AddMeasuredCourseToClubRequest request = this.ScenarioContext.Get<AddMeasuredCourseToClubRequest>("AddMeasuredCourseToClubRequest");
 
             IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
+            String bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
 
             Should.NotThrow(async () =>
             {
@@ -210,42 +247,18 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         .ConfigureAwait(false);
             });            
         }
-
-        [Given(@"a player has requested membership of the club")]
-        public void GivenAPlayerHasRequestedMembershipOfTheClub()
+        
+        [Given(@"I am registered as a player")]
+        public void GivenIAmRegisteredAsAPlayer()
         {
-            Guid golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
+            RegisterPlayerRequest request = IntegrationTestsTestData.RegisterPlayerRequest;
 
             IPlayerClient client = new PlayerClient(this.baseAddressResolver, this.httpClient);
 
-            var bearerToken = this.ScenarioContext.Get<String>("PlayerToken");
-
-            client.RequestClubMembership(bearerToken, golfClubId, CancellationToken.None).ConfigureAwait(false);
-
-            Thread.Sleep(30000);
-        }
-        
-        [When(@"I request the list of pending membership requests")]
-        public async Task WhenIRequestTheListOfPendingMembershipRequests()
-        {
-            IGolfClubClient client = new GolfClubClient(this.baseAddressResolver, this.httpClient);
-
-            var bearerToken = this.ScenarioContext.Get<String>("ClubAdministratorToken");
-
-            this.ScenarioContext["GetPendingMembershipRequestsResponse"] = await client
-                .GetPendingMembershipRequests(bearerToken, CancellationToken.None).ConfigureAwait(false);
-        }
-        
-        [Then(@"a list of pending membership requests will be returned")]
-        public void ThenAListOfPendingMembershipRequestsWillBeReturned()
-        {
-            var golfClubId = this.ScenarioContext.Get<Guid>("GolfClubId");
-
-            var response =
-                this.ScenarioContext.Get<List<GetClubMembershipRequestResponse>>(
-                    "GetPendingMembershipRequestsResponse");
-
-            response.Any(r => r.ClubId == golfClubId).ShouldBeTrue();
+            Should.NotThrow( async () =>
+            {
+                this.ScenarioContext["RegisterPlayerResponse"] = await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
+            });
         }
 
 
@@ -269,7 +282,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         
             if (!String.IsNullOrEmpty(streamName))
             {
-                var mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
+                IPEndPoint mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
 
                 // Try opening a connection
                 Int32 maxRetries = 10;

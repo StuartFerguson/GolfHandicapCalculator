@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.Service.Client;
+using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Tests.Tournament;
 using Moq;
 using Newtonsoft.Json;
@@ -19,20 +20,20 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [Fact]
         public async Task TournamentClient_CreateTournament_SuccessfulResponse()
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
                 Content =new StringContent(JsonConvert.SerializeObject(TournamentTestData.CreateTournamentResponse))
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
             TournamentClient client = new TournamentClient(resolver, httpClient);
 
-            var response = await client.CreateTournament(passwordToken, TournamentTestData.CreateTournamentRequest, CancellationToken.None);
+            CreateTournamentResponse response = await client.CreateTournament(passwordToken, TournamentTestData.CreateTournamentRequest, CancellationToken.None);
 
             response.ShouldNotBeNull();
             response.TournamentId.ShouldBe(TournamentTestData.AggregateId);
@@ -47,20 +48,20 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_CreateTournament_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = statusCode,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
             TournamentClient client = new TournamentClient(resolver, httpClient);
 
-            var exception = Should.Throw(async () =>
+            Exception exception = Should.Throw(async () =>
             {
                 await client.CreateTournament(passwordToken, TournamentTestData.CreateTournamentRequest, CancellationToken.None);
             }, exceptionType);
@@ -71,14 +72,14 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [Fact]
         public async Task TournamentClient_RecordPlayerScore_SuccessfulResponse()
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.NoContent,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
@@ -96,20 +97,20 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_RecordPlayerScore_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = statusCode,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
             TournamentClient client = new TournamentClient(resolver, httpClient);
             
-            var exception = Should.Throw(async () =>
+            Exception exception = Should.Throw(async () =>
             {
                 await client.RecordPlayerScore(passwordToken, TournamentTestData.AggregateId,TournamentTestData.RecordMemberTournamentScoreRequest, CancellationToken.None);            
             }, exceptionType);
@@ -120,14 +121,14 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [Fact]
         public async Task TournamentClient_CancelTournament_SuccessfulResponse()
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.NoContent,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
@@ -145,20 +146,20 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_CancelTournament_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = statusCode,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
             TournamentClient client = new TournamentClient(resolver, httpClient);
             
-            var exception = Should.Throw(async () =>
+            Exception exception = Should.Throw(async () =>
             {
                 await client.CancelTournament(passwordToken, TournamentTestData.AggregateId,TournamentTestData.CancelTournamentRequest, CancellationToken.None);
             }, exceptionType);
@@ -169,14 +170,14 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [Fact]
         public async Task TournamentClient_CompleteTournament_SuccessfulResponse()
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.NoContent,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
@@ -194,20 +195,20 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_CompleteTournament_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = statusCode,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
             TournamentClient client = new TournamentClient(resolver, httpClient);
 
-            var exception = Should.Throw(async () =>
+            Exception exception = Should.Throw(async () =>
             {
                 await client.CompleteTournament(passwordToken, TournamentTestData.AggregateId, CancellationToken.None);
             }, exceptionType);
@@ -218,14 +219,14 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [Fact]
         public async Task TournamentClient_ProduceTournamentResult_SuccessfulResponse()
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.NoContent,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
@@ -243,20 +244,20 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_ProduceTournamentResult_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
         {
-            var fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
             {
                 StatusCode = statusCode,
                 Content =new StringContent(String.Empty)
             });
 
-            var httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
             Func<String, String> resolver = (api) => "http://baseaddress";
             String passwordToken = "passwordToken";
 
             TournamentClient client = new TournamentClient(resolver, httpClient);
 
-            var exception = Should.Throw(async () =>
+            Exception exception = Should.Throw(async () =>
             {
                 await client.ProduceTournamentResult(passwordToken, TournamentTestData.AggregateId, CancellationToken.None);
             }, exceptionType);

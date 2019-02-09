@@ -82,7 +82,7 @@ namespace ManagementAPI.Service.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(CreateGolfClubResponse), 200)]   
+        [ProducesResponseType(typeof(CreateGolfClubResponse), 200)]
         [Route("Create")]
         public async Task<IActionResult> CreateGolfClub([FromBody]CreateGolfClubRequest request, CancellationToken cancellationToken)
         {
@@ -93,7 +93,7 @@ namespace ManagementAPI.Service.Controllers
             Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
 
             // Create the command
-            var command = CreateGolfClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), Guid.Parse(subjectIdClaim.Value), request);
+            CreateGolfClubCommand command = CreateGolfClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), Guid.Parse(subjectIdClaim.Value), request);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);
@@ -117,7 +117,7 @@ namespace ManagementAPI.Service.Controllers
             // Get the Golf Club Id claim from the user
             Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
 
-            var golfClub = await this.Manager.GetGolfClub(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
+            GetGolfClubResponse golfClub = await this.Manager.GetGolfClub(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
 
             return this.Ok(golfClub);
         }
@@ -135,7 +135,7 @@ namespace ManagementAPI.Service.Controllers
         [Route("List")]
         public async Task<IActionResult> GetGolfClubList(CancellationToken cancellationToken)
         {
-            var golfClubList = await this.Manager.GetGolfClubList(cancellationToken);
+            List<GetGolfClubResponse> golfClubList = await this.Manager.GetGolfClubList(cancellationToken);
 
             return this.Ok(golfClubList);
         }
@@ -157,7 +157,7 @@ namespace ManagementAPI.Service.Controllers
             Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
 
             // Create the command
-            var command = AddMeasuredCourseToClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
+            AddMeasuredCourseToClubCommand command = AddMeasuredCourseToClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);
@@ -167,26 +167,31 @@ namespace ManagementAPI.Service.Controllers
         }
         #endregion
 
-        #region public async Task<IActionResult> GetPendingMembershipRequests(CancellationToken cancellationToken)        
+        #region public async Task<IActionResult> RequestClubMembership([FromRoute] Guid golfClubId, CancellationToken cancellationToken)        
         /// <summary>
-        /// Gets the pending membership requests.
+        /// Requests the club membership.
         /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(List<GetClubMembershipRequestResponse>), 200)]
-        [Route("PendingMembershipRequests")]
-        [Authorize(Policy = PolicyNames.GetPendingMembershipRequestsPolicy)]
-        public async Task<IActionResult> GetPendingMembershipRequests(CancellationToken cancellationToken)
+        [HttpPost]
+        [Route("{golfClubId}/RequestClubMembership")]
+        public async Task<IActionResult> RequestClubMembership([FromRoute] Guid golfClubId, CancellationToken cancellationToken)
         {
-            // Get the Golf Club Id claim from the user
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+            // Get the Golf Club Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId);
 
-            var pendingMembershipRequests = await this.Manager.GetPendingMembershipRequests(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
+            // Create the command
+            RequestClubMembershipCommand command = RequestClubMembershipCommand.Create(Guid.Parse(playerIdClaim.Value), golfClubId);
 
-            return this.Ok(pendingMembershipRequests);
+            //Route the command
+            await this.CommandRouter.Route(command,cancellationToken);
+
+            // return the result
+            return this.Ok(command.Response);
         }
         #endregion
+
 
         #endregion
     }

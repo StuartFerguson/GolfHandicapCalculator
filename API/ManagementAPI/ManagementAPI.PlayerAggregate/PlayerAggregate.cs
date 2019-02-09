@@ -213,99 +213,7 @@ namespace ManagementAPI.Player
             this.ApplyAndPend(securityUserCreatedEvent);
         }
         #endregion
-
-        #region public void RequestClubMembership(Guid clubId, DateTime membershipRequesteDateAndTime)        
-        /// <summary>
-        /// Requests the club membership.
-        /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        /// <param name="membershipRequestDateAndTime">The membership request date and time.</param>
-        public void RequestClubMembership(Guid clubId, DateTime membershipRequestDateAndTime)
-        {
-            Guard.ThrowIfInvalidGuid(clubId, typeof(ArgumentNullException), "Club Id must be provided to make a membership request");
-
-            this.CheckIfPlayerHasBeenRegistered();
-            
-            this.CheckForDuplicatePendingMembershipRequest(clubId);
-            
-            this.CheckIfAlreadyMemberOfClub(clubId);
-
-            // Create the domain event
-            ClubMembershipRequestedEvent clubMembershipRequestedEvent = ClubMembershipRequestedEvent.Create(this.AggregateId, clubId, membershipRequestDateAndTime);
-
-            // Apply and pend
-            this.ApplyAndPend(clubMembershipRequestedEvent);
-        }
-        #endregion
-
-        #region public List<ClubMembershipDataTransferObject> GetMemberships()        
-        /// <summary>
-        /// Gets the memberships.
-        /// </summary>
-        /// <returns></returns>
-        public List<ClubMembershipDataTransferObject> GetMemberships()
-        {
-            List<ClubMembershipDataTransferObject> result = new List<ClubMembershipDataTransferObject>();
-
-            foreach (var clubMembership in this.Memberships)
-            {
-                result.Add(new ClubMembershipDataTransferObject
-                {
-                    ClubId = clubMembership.ClubId,
-                    MembershipRequestedDateAndTime = clubMembership.MembershipRequestedDateAndTime,
-                    MembershipApprovedDateAndTime = clubMembership.MembershipApprovedDateAndTime,
-                    MembershipRejectedDateAndTime = clubMembership.MembershipRejectedDateAndTime,
-                    RejectionReason = clubMembership.RejectionReason,
-                    MembershipStatus = (MembershipStatus)clubMembership.Status
-                });
-            }
-
-            return result;
-        }
-        #endregion
-
-        #region public void ApproveClubMembershipRequest(Guid clubId, DateTime membershipApprovalDateAndTime)        
-        /// <summary>
-        /// Approves the club membership request.
-        /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        /// <param name="membershipApprovalDateAndTime">The membership approval date and time.</param>
-        public void ApproveClubMembershipRequest(Guid clubId, DateTime membershipApprovalDateAndTime)
-        {
-            Guard.ThrowIfInvalidGuid(clubId, typeof(ArgumentNullException), "Club Id must be provided to approve a membership request");
-
-            this.CheckIfPlayerHasBeenRegistered();
-
-            this.CheckForPendingMembershipRequest(clubId);
-
-            ClubMembershipApprovedEvent clubMembershipApprovedEvent = ClubMembershipApprovedEvent.Create(this.AggregateId, clubId, membershipApprovalDateAndTime);
-
-            this.ApplyAndPend(clubMembershipApprovedEvent);
-        }
-        #endregion
-
-        #region public void ApproveClubMembershipRequest(Guid clubId, DateTime membershipApprovalDateAndTime)        
-        /// <summary>
-        /// Approves the club membership request.
-        /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        /// <param name="membershipRejectionDateAndTime">The membership rejection date and time.</param>
-        /// <param name="rejectionReason">The rejection reason.</param>
-        public void RejectClubMembershipRequest(Guid clubId, DateTime membershipRejectionDateAndTime, String rejectionReason)
-        {
-            Guard.ThrowIfInvalidGuid(clubId, typeof(ArgumentNullException), "Club Id must be provided to reject a membership request");
-            Guard.ThrowIfNullOrEmpty(rejectionReason, typeof(ArgumentNullException), "A rejection reason must be provided to reject a membership request");
-
-            this.CheckIfPlayerHasBeenRegistered();
-
-            this.CheckForPendingMembershipRequest(clubId);
-
-            ClubMembershipRejectedEvent clubMembershipRejectedEvent = ClubMembershipRejectedEvent.Create(this.AggregateId, clubId, membershipRejectionDateAndTime, rejectionReason);
-
-            this.ApplyAndPend(clubMembershipRejectedEvent);
-        }
-        #endregion
-
+        
         #endregion
 
         #region Protected Methods
@@ -355,51 +263,6 @@ namespace ManagementAPI.Player
         {
             this.SecurityUserId = securityUserCreatedEvent.SecurityUserId;
             this.HasSecurityUserBeenCreated = true;
-        }
-        #endregion
-
-        #region private void PlayEvent(ClubMembershipRequestedEvent clubMembershipRequestedEvent)        
-        /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="clubMembershipRequestedEvent">The club membership requested event.</param>
-        private void PlayEvent(ClubMembershipRequestedEvent clubMembershipRequestedEvent)
-        {
-            ClubMembership clubMembership = ClubMembership.Create();
-
-            clubMembership.Request(clubMembershipRequestedEvent.ClubId, clubMembershipRequestedEvent.MembershipRequestedDateAndTime);
-
-            this.Memberships.Add(clubMembership);
-        }
-        #endregion
-
-        #region private void PlayEvent(ClubMembershipApprovedEvent clubMembershipApprovedEvent)        
-        /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="clubMembershipApprovedEvent">The club membership approved event.</param>
-        private void PlayEvent(ClubMembershipApprovedEvent clubMembershipApprovedEvent)
-        {
-            // find the membership request
-            var membership = this.Memberships.Single(m => m.ClubId == clubMembershipApprovedEvent.ClubId);
-
-            // mark as approved
-            membership.Approve(clubMembershipApprovedEvent.MembershipApprovedDateAndTime);
-        }
-        #endregion
-
-        #region private void PlayEvent(ClubMembershipRejectedEvent clubMembershipRejectedEvent)        
-        /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="clubMembershipRejectedEvent">The club membership rejected event.</param>
-        private void PlayEvent(ClubMembershipRejectedEvent clubMembershipRejectedEvent)
-        {
-            // find the membership request
-            var membership = this.Memberships.Single(m => m.ClubId == clubMembershipRejectedEvent.ClubId);
-
-            // mark as approved
-            membership.Reject(clubMembershipRejectedEvent.MembershipRejectedDateAndTime, clubMembershipRejectedEvent.RejectionReason);
         }
         #endregion
 
@@ -536,51 +399,7 @@ namespace ManagementAPI.Player
             }
         }
         #endregion
-
-        #region private void CheckForDuplicatePendingMembershipRequest(Guid clubId)                
-        /// <summary>
-        /// Checks for duplicate pending membership request.
-        /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        /// <exception cref="InvalidOperationException">A pending membership request already exists for Club Id {clubId}</exception>
-        private void CheckForDuplicatePendingMembershipRequest(Guid clubId)
-        {
-            if (this.Memberships.Any(m => m.ClubId == clubId && m.Status == ClubMembership.MembershipStatus.Pending))
-            {
-                throw new InvalidOperationException($"A pending membership request already exists for Club Id {clubId}");
-            }
-        }
-        #endregion
-
-        #region private void CheckForPendingMembershipRequest(Guid clubId)        
-        /// <summary>
-        /// Checks for pending membership request.
-        /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        /// <exception cref="InvalidOperationException">A pending membership request does not already exist for Club Id {clubId}</exception>
-        private void CheckForPendingMembershipRequest(Guid clubId)
-        {
-            if (this.Memberships.All(m => m.ClubId != clubId && m.Status == ClubMembership.MembershipStatus.Pending))
-            {
-                throw new InvalidOperationException($"A pending membership request does not already exist for Club Id {clubId}");
-            }
-        }
-        #endregion
-
-        #region private void CheckIfAlreadyMemberOfClub(Guid clubId)        
-        /// <summary>
-        /// Checks if already member of club.
-        /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        private void CheckIfAlreadyMemberOfClub(Guid clubId)
-        {
-            if (this.Memberships.Any(m => m.ClubId == clubId && m.Status == ClubMembership.MembershipStatus.Approved))
-            {
-                throw new InvalidOperationException($"Player is already a member of Club Id {clubId}");
-            }
-        }
-        #endregion
-
+        
         #endregion
     }
 }

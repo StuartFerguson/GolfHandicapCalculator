@@ -85,7 +85,7 @@ namespace ManagementAPI.Service.CommandHandlers
             Guid playerAggregateId = Guid.NewGuid();
 
             // Rehydrate the aggregate
-            var player = await this.PlayerRepository.GetLatestVersion(playerAggregateId, cancellationToken);
+            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(playerAggregateId, cancellationToken);
 
             // Call the aggregate method
             player.Register(command.RegisterPlayerRequest.FirstName, 
@@ -111,7 +111,7 @@ namespace ManagementAPI.Service.CommandHandlers
                     "Player"
                 }
             };
-            var createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);
+            RegisterUserResponse createSecurityUserResponse = await this.OAuth2SecurityService.RegisterUser(request, cancellationToken);
 
             // Record this in the aggregate
             player.CreateSecurityUser(createSecurityUserResponse.UserId);
@@ -121,77 +121,6 @@ namespace ManagementAPI.Service.CommandHandlers
 
             // Setup the response
             command.Response = new RegisterPlayerResponse {PlayerId = playerAggregateId };
-        }
-        #endregion
-
-        #region private async Task HandleCommand(PlayerClubMembershipRequestCommand command, CancellationToken cancellationToken)        
-        /// <summary>
-        /// Handles the command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        private async Task HandleCommand(PlayerClubMembershipRequestCommand command, CancellationToken cancellationToken)
-        {
-            // Rehydrate the aggregate
-            var player = await this.PlayerRepository.GetLatestVersion(command.PlayerId, cancellationToken);
-
-            // Validate the club
-            var club = await this.clubRepository.GetLatestVersion(command.ClubId, cancellationToken);
-
-            if (!club.HasBeenCreated)
-            {
-                throw new NotFoundException($"No club with Id {command.ClubId} found for membership request");
-            }
-
-            DateTime membershipRequestedDateAndTime = DateTime.Now;
-
-            player.RequestClubMembership(command.ClubId, membershipRequestedDateAndTime);
-
-            // Save the changes
-            await this.PlayerRepository.SaveChanges(player, cancellationToken);
-        }
-        #endregion
-
-        #region private async Task HandleCommand(ApprovePlayerMembershipRequestCommand command, CancellationToken cancellationToken)        
-        /// <summary>
-        /// Handles the command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        private async Task HandleCommand(ApprovePlayerMembershipRequestCommand command, CancellationToken cancellationToken)
-        {
-            // Rehydrate the aggregate
-            var player = await this.PlayerRepository.GetLatestVersion(command.PlayerId, cancellationToken);
-
-            DateTime membershipRequestApprovedDateAndTime = DateTime.Now;
-
-            player.ApproveClubMembershipRequest(command.GolfClubId, membershipRequestApprovedDateAndTime);
-
-            // Save the changes
-            await this.PlayerRepository.SaveChanges(player, cancellationToken);
-        }
-        #endregion
-
-        #region private async Task HandleCommand(RejectPlayerMembershipRequestCommand command, CancellationToken cancellationToken)        
-        /// <summary>
-        /// Handles the command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        private async Task HandleCommand(RejectPlayerMembershipRequestCommand command, CancellationToken cancellationToken)
-        {
-            // Rehydrate the aggregate
-            var player = await this.PlayerRepository.GetLatestVersion(command.PlayerId, cancellationToken);
-
-            DateTime membershipRequestRejectedDateAndTime = DateTime.Now;
-
-            player.RejectClubMembershipRequest(command.GolfClubId, membershipRequestRejectedDateAndTime, command.RejectMembershipRequestRequest.RejectionReason);
-
-            // Save the changes
-            await this.PlayerRepository.SaveChanges(player, cancellationToken);
         }
         #endregion
 

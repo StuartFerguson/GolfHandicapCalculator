@@ -29,6 +29,11 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         private readonly IOAuth2SecurityService OAuth2SecurityService;
 
+        /// <summary>
+        /// The golf club membership application service
+        /// </summary>
+        private readonly IGolfClubMembershipApplicationService GolfClubMembershipApplicationService;
+
         #endregion
 
         #region Constructors
@@ -38,10 +43,13 @@ namespace ManagementAPI.Service.CommandHandlers
         /// </summary>
         /// <param name="golfClubRepository">The golf club repository.</param>
         /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
-        public GolfClubCommandHandler(IAggregateRepository<GolfClubAggregate> golfClubRepository, IOAuth2SecurityService oAuth2SecurityService)
+        /// <param name="golfClubMembershipApplicationService">The golf club membership application service.</param>
+        public GolfClubCommandHandler(IAggregateRepository<GolfClubAggregate> golfClubRepository, IOAuth2SecurityService oAuth2SecurityService,
+            IGolfClubMembershipApplicationService golfClubMembershipApplicationService)
         {
             this.GolfClubRepository = golfClubRepository;
             this.OAuth2SecurityService = oAuth2SecurityService;
+            this.GolfClubMembershipApplicationService = golfClubMembershipApplicationService;
         }
 
         #endregion
@@ -78,7 +86,7 @@ namespace ManagementAPI.Service.CommandHandlers
             Guid golfClubAggregateId = command.GolfClubId;
 
             // Rehydrate the aggregate
-            var club = await this.GolfClubRepository.GetLatestVersion(golfClubAggregateId, cancellationToken);
+            GolfClubAggregate club = await this.GolfClubRepository.GetLatestVersion(golfClubAggregateId, cancellationToken);
 
             // Call the aggregate method
             club.CreateGolfClub(command.CreateGolfClubRequest.Name,
@@ -111,7 +119,7 @@ namespace ManagementAPI.Service.CommandHandlers
         private async Task HandleCommand(AddMeasuredCourseToClubCommand command, CancellationToken cancellationToken)
         {
             // Rehydrate the aggregate
-            var club = await this.GolfClubRepository.GetLatestVersion(command.GolfClubId, cancellationToken);
+            GolfClubAggregate club = await this.GolfClubRepository.GetLatestVersion(command.GolfClubId, cancellationToken);
 
             // Translate the request to the input for AddMeasuredCourse
             MeasuredCourseDataTransferObject measuredCourse = new MeasuredCourseDataTransferObject
@@ -123,7 +131,7 @@ namespace ManagementAPI.Service.CommandHandlers
                 Holes = new List<HoleDataTransferObject>()
             };
 
-            foreach (var holeDataTransferObject in command.AddMeasuredCourseToClubRequest.Holes)
+            foreach (DataTransferObjects.HoleDataTransferObject holeDataTransferObject in command.AddMeasuredCourseToClubRequest.Holes)
             {
                 measuredCourse.Holes.Add(new HoleDataTransferObject
                 {
@@ -145,6 +153,23 @@ namespace ManagementAPI.Service.CommandHandlers
         }
         #endregion
 
+        #region private async Task HandleCommand(RequestClubMembershipCommand command, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Handles the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleCommand(RequestClubMembershipCommand command, CancellationToken cancellationToken)
+        {
+            // Call the applciation service method
+            await this.GolfClubMembershipApplicationService.RequestClubMembership(command.PlayerId, command.GolfClubId,
+                cancellationToken);
+
+            // No response to be set
+        }
         #endregion
-    }  
+
+        #endregion
+    }
 }

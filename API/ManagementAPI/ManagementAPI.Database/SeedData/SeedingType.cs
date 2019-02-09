@@ -31,7 +31,7 @@ namespace ManagementAPI.Database.SeedData
             }
             catch (Exception ex)
             {
-                var connString = managementApiReadModel.Database.GetDbConnection().ConnectionString;
+                String connString = managementApiReadModel.Database.GetDbConnection().ConnectionString;
 
                 Exception newException = new Exception($"Connection String [{connString}]", ex);
                 throw newException;

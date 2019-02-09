@@ -60,7 +60,7 @@ namespace ManagementAPI.Service.Controllers
             Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
 
             // Create the command
-            var command = CreateTournamentCommand.Create(Guid.Parse(golfClubIdClaim.Value),  request);
+            CreateTournamentCommand command = CreateTournamentCommand.Create(Guid.Parse(golfClubIdClaim.Value),  request);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);
@@ -85,7 +85,7 @@ namespace ManagementAPI.Service.Controllers
         public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId, [FromBody]RecordMemberTournamentScoreRequest request, CancellationToken cancellationToken)
         {
             // Create the command
-            var command = RecordMemberTournamentScoreCommand.Create(tournamentId, request);
+            RecordMemberTournamentScoreCommand command = RecordMemberTournamentScoreCommand.Create(tournamentId, request);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);
@@ -110,7 +110,7 @@ namespace ManagementAPI.Service.Controllers
         public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId, CancellationToken cancellationToken)
         {
             // Create the command
-            var command = CompleteTournamentCommand.Create(tournamentId);
+            CompleteTournamentCommand command = CompleteTournamentCommand.Create(tournamentId);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);
@@ -135,7 +135,7 @@ namespace ManagementAPI.Service.Controllers
         public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId, [FromBody]CancelTournamentRequest request, CancellationToken cancellationToken)
         {
             // Create the command
-            var command = CancelTournamentCommand.Create(tournamentId, request);
+            CancelTournamentCommand command = CancelTournamentCommand.Create(tournamentId, request);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);
@@ -159,7 +159,7 @@ namespace ManagementAPI.Service.Controllers
         public async Task<IActionResult> PutTournamentProduceResult([FromRoute] Guid tournamentId, CancellationToken cancellationToken)
         {
             // Create the command
-            var command = ProduceTournamentResultCommand.Create(tournamentId);
+            ProduceTournamentResultCommand command = ProduceTournamentResultCommand.Create(tournamentId);
 
             // Route the command
             await this.CommandRouter.Route(command,cancellationToken);

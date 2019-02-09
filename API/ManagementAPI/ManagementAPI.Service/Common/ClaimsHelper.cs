@@ -20,7 +20,7 @@ namespace ManagementAPI.Service.Common
         public static Claim GetUserClaim(ClaimsPrincipal user, String customClaimType)
         {
             // Get the user id (subject claim). Note: This will ALWAYS be present
-            var userIdClaim = user.Claims.Single(c => c.Type == JwtClaimTypes.Subject);
+            Claim userIdClaim = user.Claims.Single(c => c.Type == JwtClaimTypes.Subject);
 
             // Get the claim from the token
             Claim userClaim = null;

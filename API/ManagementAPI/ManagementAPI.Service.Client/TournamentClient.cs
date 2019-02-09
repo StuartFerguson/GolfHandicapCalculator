@@ -55,13 +55,13 @@ namespace ManagementAPI.Service.Client
             {
                 String requestSerialised = JsonConvert.SerializeObject(request);
 
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
                 this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -98,13 +98,13 @@ namespace ManagementAPI.Service.Client
             {
                 String requestSerialised = JsonConvert.SerializeObject(request);
 
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
                 this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -137,14 +137,14 @@ namespace ManagementAPI.Service.Client
 
             try
             {
-                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
                 this.HttpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -177,14 +177,14 @@ namespace ManagementAPI.Service.Client
             {
                 String requestSerialised = JsonConvert.SerializeObject(request);
 
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
                 this.HttpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -215,14 +215,14 @@ namespace ManagementAPI.Service.Client
 
             try
             {
-                var httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
                 this.HttpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);

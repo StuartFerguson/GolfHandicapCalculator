@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Shared.CommandHandling;
 
 namespace ManagementAPI.Service.Commands
 {
-    public class ApprovePlayerMembershipRequestCommand : Command<String>
+    public class RequestClubMembershipCommand : Command<String>
     {
         #region Properties
 
@@ -30,28 +27,28 @@ namespace ManagementAPI.Service.Commands
 
         #region Constructor
         /// <summary>
-        /// Initializes a new instance of the <see cref="ApprovePlayerMembershipRequestCommand" /> class.
+        /// Initializes a new instance of the <see cref="RequestClubMembershipCommand" /> class.
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
         /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="commandId">The command identifier.</param>
-        private ApprovePlayerMembershipRequestCommand(Guid playerId, Guid golfClubId, Guid commandId) : base(commandId)
+        private RequestClubMembershipCommand(Guid playerId, Guid golfClubId, Guid commandId) : base(commandId)
         {
             this.PlayerId = playerId;
             this.GolfClubId = golfClubId;
         }
         #endregion
 
-        #region public static ApprovePlayerMembershipRequestCommand Create(Guid playerId, Guid golfClubId)
+        #region public static RequestClubMembershipCommand Create()        
         /// <summary>
         /// Creates this instance.
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
         /// <param name="golfClubId">The golf club identifier.</param>
         /// <returns></returns>
-        public static ApprovePlayerMembershipRequestCommand Create(Guid playerId, Guid golfClubId)
+        public static RequestClubMembershipCommand Create(Guid playerId, Guid golfClubId)
         {
-            return new ApprovePlayerMembershipRequestCommand(playerId, golfClubId, Guid.NewGuid());
+            return new RequestClubMembershipCommand(playerId, golfClubId, Guid.NewGuid());
         }
         #endregion
     }

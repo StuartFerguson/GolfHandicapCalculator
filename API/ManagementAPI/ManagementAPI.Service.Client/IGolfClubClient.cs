@@ -52,11 +52,12 @@ namespace ManagementAPI.Service.Client
         Task AddMeasuredCourseToGolfClub(String passwordToken, AddMeasuredCourseToClubRequest request, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Gets the pending membership requests.
+        /// Requests the club membership.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, CancellationToken cancellationToken);
+        Task RequestClubMembership(String passwordToken, Guid golfClubId, CancellationToken cancellationToken);
     }
 }

@@ -49,10 +49,10 @@ namespace ManagementAPI.Service.Client
             {
                 String requestSerialised = JsonConvert.SerializeObject(request);
 
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
                 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -85,14 +85,14 @@ namespace ManagementAPI.Service.Client
             {
                 String requestSerialised = JsonConvert.SerializeObject(request);
 
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
                 this.HttpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -126,14 +126,14 @@ namespace ManagementAPI.Service.Client
             {
                 String requestSerialised = JsonConvert.SerializeObject(request);
 
-                var httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
                 this.HttpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -173,7 +173,7 @@ namespace ManagementAPI.Service.Client
                     new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -191,48 +191,8 @@ namespace ManagementAPI.Service.Client
 
             return response;
         }
-        #endregion
-
-        #region public async Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, CancellationToken cancellationToken)        
-        /// <summary>
-        /// Gets the pending membership requests.
-        /// </summary>
-        /// <param name="passwordToken">The password token.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<List<GetClubMembershipRequestResponse>> GetPendingMembershipRequests(String passwordToken, CancellationToken cancellationToken)
-        {
-            List<GetClubMembershipRequestResponse> response = null;
-
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/PendingMembershipRequests";
-
-            try
-            {
-                // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
-
-                // Make the Http Call here
-                var httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
-
-                // Process the response
-                String content = await HandleResponse(httpResponse, cancellationToken);
-
-                // call was successful so now deserialise the body to the response object
-                response = JsonConvert.DeserializeObject<List<GetClubMembershipRequestResponse>>(content);
-            }
-            catch (Exception ex)
-            {
-                // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error getting a list of Pending Membership Requests for Golf Club.", ex);
-
-                throw exception;
-            }
-
-            return response;
-        }
-        #endregion
-
+        #endregion        
+        
         #region public async Task<GetGolfClubResponse> GetSingleGolfClub(String passwordToken, CancellationToken cancellationToken)        
         /// <summary>
         /// Gets the single golf club.
@@ -254,7 +214,7 @@ namespace ManagementAPI.Service.Client
                     new AuthenticationHeaderValue("Bearer", passwordToken);
 
                 // Make the Http Call here
-                var httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
 
                 // Process the response
                 String content = await HandleResponse(httpResponse, cancellationToken);
@@ -271,6 +231,44 @@ namespace ManagementAPI.Service.Client
             }
 
             return response;
+        }
+        #endregion
+
+        #region public async Task RequestClubMembership(String passwordToken, Guid golfClubId, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Requests the club membership.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task RequestClubMembership(String passwordToken, Guid golfClubId, CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/RequestClubMembership";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", passwordToken);
+
+                // Make the Http Call here
+                StringContent httpContent = new StringContent(String.Empty, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                String content = await HandleResponse(httpResponse, cancellationToken);                
+
+                // call was successful, no response data to deserialise
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error requesting Golf Club membership.", ex);
+
+                throw exception;
+            }
         }
         #endregion
     }
