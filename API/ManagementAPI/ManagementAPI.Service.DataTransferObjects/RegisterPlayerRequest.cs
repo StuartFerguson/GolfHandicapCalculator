@@ -39,12 +39,12 @@ namespace ManagementAPI.Service.DataTransferObjects
         public String Gender { get; set; }
 
         /// <summary>
-        /// Gets the age.
+        /// Gets or sets the date of birth.
         /// </summary>
         /// <value>
-        /// The age.
+        /// The date of birth.
         /// </value>
-        public Int32 Age { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
         /// <summary>
         /// Gets the exact handicap.

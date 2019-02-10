@@ -13,7 +13,7 @@ namespace ManagementAPI.Service.Tests.Player
         public void PlayerRegisteredEvent_CanBeCreated_IsCreated()
         {
             PlayerRegisteredEvent playerRegisteredEvent = PlayerRegisteredEvent.Create(PlayerTestData.AggregateId, PlayerTestData.FirstName,
-                PlayerTestData.MiddleName, PlayerTestData.LastName, PlayerTestData.Gender, PlayerTestData.Age, 
+                PlayerTestData.MiddleName, PlayerTestData.LastName, PlayerTestData.Gender, PlayerTestData.DateOfBirth, 
                 PlayerTestData.ExactHandicap, PlayerTestData.EmailAddress);
 
             playerRegisteredEvent.ShouldNotBeNull();
@@ -24,7 +24,7 @@ namespace ManagementAPI.Service.Tests.Player
             playerRegisteredEvent.MiddleName.ShouldBe(PlayerTestData.MiddleName);
             playerRegisteredEvent.LastName.ShouldBe(PlayerTestData.LastName);
             playerRegisteredEvent.Gender.ShouldBe(PlayerTestData.Gender);
-            playerRegisteredEvent.Age.ShouldBe(PlayerTestData.Age);
+            playerRegisteredEvent.DateOfBirth.ShouldBe(PlayerTestData.DateOfBirth);
             playerRegisteredEvent.ExactHandicap.ShouldBe(PlayerTestData.ExactHandicap);
             playerRegisteredEvent.EmailAddress.ShouldBe(PlayerTestData.EmailAddress);
         }

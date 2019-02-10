@@ -28,16 +28,16 @@ namespace ManagementAPI.Player.DomainEvents
         /// <param name="middleName">Name of the middle.</param>
         /// <param name="lastName">The last name.</param>
         /// <param name="gender">The gender.</param>
-        /// <param name="age">The age.</param>
+        /// <param name="dateOfBirth">The date of birth.</param>
         /// <param name="exactHandicap">The exact handicap.</param>
         /// <param name="emailAddress">The email address.</param>
-        private PlayerRegisteredEvent(Guid aggregateId, Guid eventId, String firstName, String middleName, String lastName, String gender, Int32 age, Decimal exactHandicap, String emailAddress) : base(aggregateId, eventId)
+        private PlayerRegisteredEvent(Guid aggregateId, Guid eventId, String firstName, String middleName, String lastName, String gender, DateTime dateOfBirth, Decimal exactHandicap, String emailAddress) : base(aggregateId, eventId)
         {
             this.FirstName = firstName;
             this.MiddleName = middleName;
             this.LastName = lastName;
             this.Gender = gender;
-            this.Age = age;
+            this.DateOfBirth = dateOfBirth;
             this.ExactHandicap = exactHandicap;
             this.EmailAddress = emailAddress;
         }
@@ -83,13 +83,13 @@ namespace ManagementAPI.Player.DomainEvents
         public String Gender { get; private set; }
 
         /// <summary>
-        /// Gets the age.
+        /// Gets the date of birth.
         /// </summary>
         /// <value>
-        /// The age.
+        /// The date of birth.
         /// </value>
         [JsonProperty]
-        public Int32 Age { get; private set; }
+        public DateTime DateOfBirth { get; private set; }
 
         /// <summary>
         /// Gets the exact handicap.
@@ -122,13 +122,13 @@ namespace ManagementAPI.Player.DomainEvents
         /// <param name="middleName">Name of the middle.</param>
         /// <param name="lastName">The last name.</param>
         /// <param name="gender">The gender.</param>
-        /// <param name="age">The age.</param>
+        /// <param name="dateOfBirth">The date of birth.</param>
         /// <param name="exactHandicap">The exact handicap.</param>
         /// <param name="emailAddress">The email address.</param>
         /// <returns></returns>
-        public static PlayerRegisteredEvent Create(Guid aggregateId, String firstName, String middleName,String lastName, String gender, Int32 age, Decimal exactHandicap, String emailAddress)
+        public static PlayerRegisteredEvent Create(Guid aggregateId, String firstName, String middleName,String lastName, String gender, DateTime dateOfBirth, Decimal exactHandicap, String emailAddress)
         {
-            return new PlayerRegisteredEvent(aggregateId, Guid.NewGuid(), firstName,middleName,lastName,gender,age, exactHandicap,emailAddress);
+            return new PlayerRegisteredEvent(aggregateId, Guid.NewGuid(), firstName,middleName,lastName,gender,dateOfBirth, exactHandicap,emailAddress);
         }
         #endregion
 
