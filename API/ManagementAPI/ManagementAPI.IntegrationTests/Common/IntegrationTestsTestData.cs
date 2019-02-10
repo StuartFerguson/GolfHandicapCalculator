@@ -89,7 +89,7 @@ namespace ManagementAPI.IntegrationTests.Common
             FirstName = "Test",
             MiddleName = String.Empty,
             LastName = "Player 1",
-            Age = 35,
+            DateOfBirth = new DateTime(1980,12,13),
             Gender = "M",
             ExactHandicap = 6.1m
         };

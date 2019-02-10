@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using ManagementAPI.Player.DomainEvents;
@@ -72,12 +73,12 @@ namespace ManagementAPI.Player
         public String Gender { get; private set; }
 
         /// <summary>
-        /// Gets the age.
+        /// Gets the date of birth.
         /// </summary>
         /// <value>
-        /// The age.
+        /// The date of birth.
         /// </value>
-        public Int32 Age { get; private set; }
+        public DateTime DateOfBirth { get; private set; }
 
         /// <summary>
         /// Gets the exact handicap.
@@ -160,7 +161,7 @@ namespace ManagementAPI.Player
         }
         #endregion
 
-        #region public void Register(String firstName, String middleName, String lastName, String gender, Int32 age, Decimal exactHandicap, String emailAddress)
+        #region public void Register(String firstName, String middleName, String lastName, String gender, DateTime dateOfBirth, Decimal exactHandicap, String emailAddress)
         /// <summary>
         /// Registers the specified first name.
         /// </summary>
@@ -168,10 +169,10 @@ namespace ManagementAPI.Player
         /// <param name="middleName">Name of the middle.</param>
         /// <param name="lastName">The last name.</param>
         /// <param name="gender">The gender.</param>
-        /// <param name="age">The age.</param>
+        /// <param name="dateOfBirth">The date of birth.</param>
         /// <param name="exactHandicap">The exact handicap.</param>
         /// <param name="emailAddress">The email address.</param>
-        public void Register(String firstName, String middleName, String lastName, String gender, Int32 age, Decimal exactHandicap, String emailAddress)
+        public void Register(String firstName, String middleName, String lastName, String gender, DateTime dateOfBirth, Decimal exactHandicap, String emailAddress)
         {
             // Validate the registration details
             Guard.ThrowIfNullOrEmpty(firstName, typeof(ArgumentNullException), "A first name is required to register a player");
@@ -180,14 +181,14 @@ namespace ManagementAPI.Player
             Guard.ThrowIfNullOrEmpty(emailAddress, typeof(ArgumentNullException), "An email address is required to register a player");
 
             this.ValidateGender(gender);
-            this.ValidateAge(age);
+            this.ValidateDateOfBirth(dateOfBirth);
             this.ValidateHandicap(exactHandicap);
 
             this.CheckIfPlayerAlreadyRegistered();
 
             // Create the domain event
             PlayerRegisteredEvent playerRegisteredEvent = PlayerRegisteredEvent.Create(this.AggregateId, firstName,middleName,lastName, gender,
-                age, exactHandicap, emailAddress);
+                dateOfBirth, exactHandicap, emailAddress);
 
             // Apply and pend
             this.ApplyAndPend(playerRegisteredEvent);
@@ -245,7 +246,7 @@ namespace ManagementAPI.Player
             this.MiddleName = playerRegisteredEvent.MiddleName;
             this.LastName = playerRegisteredEvent.LastName;
             this.Gender = playerRegisteredEvent.Gender;
-            this.Age = playerRegisteredEvent.Age;
+            this.DateOfBirth = playerRegisteredEvent.DateOfBirth;
             this.ExactHandicap = playerRegisteredEvent.ExactHandicap;
             this.EmailAddress = playerRegisteredEvent.EmailAddress;
             this.HasBeenRegistered = true;
@@ -346,15 +347,17 @@ namespace ManagementAPI.Player
         }
         #endregion
 
-        #region private void ValidateAge(Int32 age)        
+        #region private void ValidateDateOfBirth(DateTime dateOfBirth)        
         /// <summary>
-        /// Validates the age.
+        /// Validates the date of birth.
         /// </summary>
-        /// <param name="age">The age.</param>
-        private void ValidateAge(Int32 age)
+        /// <param name="dateOfBirth">The date of birth.</param>
+        private void ValidateDateOfBirth(DateTime dateOfBirth)
         {
-            Guard.ThrowIfZero(age, typeof(ArgumentOutOfRangeException), "A players age cannot be zero");
-            Guard.ThrowIfNegative(age, typeof(ArgumentOutOfRangeException), "A players age cannot be negative");
+            if (dateOfBirth > DateTime.Now)
+            {
+                throw new ArgumentOutOfRangeException(nameof(dateOfBirth), "A players date of birth cannot be in the future");
+            }
         }
         #endregion
 

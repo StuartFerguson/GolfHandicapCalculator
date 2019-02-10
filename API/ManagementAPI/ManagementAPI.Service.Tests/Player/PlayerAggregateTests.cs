@@ -77,13 +77,13 @@ namespace ManagementAPI.Service.Tests.Player
             }
 
             playerAggregate.Register(PlayerTestData.FirstName, PlayerTestData.MiddleName, PlayerTestData.LastName, PlayerTestData.Gender,
-                PlayerTestData.Age, exactHandicap, PlayerTestData.EmailAddress);
+                PlayerTestData.DateOfBirth, exactHandicap, PlayerTestData.EmailAddress);
 
             playerAggregate.FirstName.ShouldBe(PlayerTestData.FirstName);
             playerAggregate.MiddleName.ShouldBe(PlayerTestData.MiddleName);
             playerAggregate.LastName.ShouldBe(PlayerTestData.LastName);
             playerAggregate.Gender.ShouldBe(PlayerTestData.Gender);
-            playerAggregate.Age.ShouldBe(PlayerTestData.Age);
+            playerAggregate.DateOfBirth.ShouldBe(PlayerTestData.DateOfBirth);
             playerAggregate.ExactHandicap.ShouldBe(exactHandicap);
             playerAggregate.EmailAddress.ShouldBe(PlayerTestData.EmailAddress);
             playerAggregate.PlayingHandicap.ShouldBe(playingHandicap);
@@ -91,25 +91,27 @@ namespace ManagementAPI.Service.Tests.Player
         }
         
         [Theory]
-        [InlineData("", "lastname", "M", 30, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
-        [InlineData(null, "lastname", "M", 30, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
-        [InlineData("firstname", "", "M", 30, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
-        [InlineData("firstname", null, "M", 30, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
-        [InlineData("firstname", "lastname", "", 30, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
-        [InlineData("firstname", "lastname", null, 30, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
-        [InlineData("firstname", "lastname", "A", 30, 11.0, "testemail@email.com", typeof(ArgumentOutOfRangeException))]
-        [InlineData("firstname", "lastname", "AA", 30, 11.0, "testemail@email.com", typeof(ArgumentOutOfRangeException))]
-        [InlineData("firstname", "lastname", "M", -1, 55.0, "testemail@email.com", typeof(ArgumentOutOfRangeException))]
-        [InlineData("firstname", "lastname", "M", 90, 55.0, "testemail@email.com", typeof(ArgumentOutOfRangeException))]
-        [InlineData("firstname", "lastname", "M", 30, 11.0, "", typeof(ArgumentNullException))]
-        [InlineData("firstname", "lastname", "M", 30, 11.0, null, typeof(ArgumentNullException))]
-        public void PlayerAggregate_Register_InvalidData(String firstName, String lastName, String gender, Int32 age, Decimal exactHandicap, String emailAddress, Type exceptionType)
+        [InlineData("", "lastname", "M", false, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
+        [InlineData(null, "lastname", "M", false, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
+        [InlineData("firstname", "", "M", false, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
+        [InlineData("firstname", null, "M", false, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
+        [InlineData("firstname", "lastname", "", false, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
+        [InlineData("firstname", "lastname", null, false, 11.0, "testemail@email.com", typeof(ArgumentNullException))]
+        [InlineData("firstname", "lastname", "A", false, 11.0, "testemail@email.com", typeof(ArgumentOutOfRangeException))]
+        [InlineData("firstname", "lastname", "AA", false, 11.0, "testemail@email.com", typeof(ArgumentOutOfRangeException))]
+        [InlineData("firstname", "lastname", "M", true, 55.0, "testemail@email.com", typeof(ArgumentOutOfRangeException))]
+        [InlineData("firstname", "lastname", "M", false, 55.0, "testemail@email.com", typeof(ArgumentOutOfRangeException))]
+        [InlineData("firstname", "lastname", "M", false, 11.0, "", typeof(ArgumentNullException))]
+        [InlineData("firstname", "lastname", "M", false, 11.0, null, typeof(ArgumentNullException))]
+        public void PlayerAggregate_Register_InvalidData(String firstName, String lastName, String gender, Boolean dateOfBirthInFuture, Decimal exactHandicap, String emailAddress, Type exceptionType)
         {
             PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
 
+            DateTime dateOfBirth = dateOfBirthInFuture ? DateTime.Now.AddYears(5) : PlayerTestData.DateOfBirth;
+
             Should.Throw(() =>
             {
-                playerAggregate.Register(firstName, PlayerTestData.MiddleName, lastName, gender, age, exactHandicap, emailAddress);
+                playerAggregate.Register(firstName, PlayerTestData.MiddleName, lastName, gender, dateOfBirth, exactHandicap, emailAddress);
             }, exceptionType);
         }
 
@@ -121,7 +123,7 @@ namespace ManagementAPI.Service.Tests.Player
             Should.Throw<InvalidOperationException>(() =>
             {
                 playerAggregate.Register(PlayerTestData.FirstName, PlayerTestData.MiddleName, PlayerTestData.LastName, PlayerTestData.Gender,
-                    PlayerTestData.Age, PlayerTestData.ExactHandicapCat1, PlayerTestData.EmailAddress);
+                    PlayerTestData.DateOfBirth, PlayerTestData.ExactHandicapCat1, PlayerTestData.EmailAddress);
             });
         }
 

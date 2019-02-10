@@ -89,7 +89,7 @@ namespace ManagementAPI.Service.Services
             // Ok all the data has been validated, now run through the aggregate rules
             golfClubMembershipAggregate.RequestMembership(playerId, 
                 $"{playerAggregate.FirstName} {playerAggregate.LastName}", 
-                DateTime.Now.AddYears(playerAggregate.Age * -1), // TODO: This is a hack until player has date of birth added
+                playerAggregate.DateOfBirth,
                 playerAggregate.Gender,
                 DateTime.Now);
 

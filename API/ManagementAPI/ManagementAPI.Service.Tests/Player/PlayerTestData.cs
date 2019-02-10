@@ -16,7 +16,7 @@ namespace ManagementAPI.Service.Tests.Player
         public static String MiddleName = "Middle";
         public static String LastName = "Last";
         public static String Gender = "M";
-        public static Int32 Age = 30;
+        public static DateTime DateOfBirth = new DateTime(1980, 12, 13);
         public static Decimal ExactHandicap = 11.4m;
 
         public static Decimal ExactHandicapCat1 = 0.5m;
@@ -55,7 +55,7 @@ namespace ManagementAPI.Service.Tests.Player
             PlayerAggregate playerAggregate = PlayerAggregate.Create(AggregateId);
 
             playerAggregate.Register(FirstName, MiddleName, LastName, Gender,
-                Age, ExactHandicapCat1, EmailAddress);
+                DateOfBirth, ExactHandicapCat1, EmailAddress);
 
             return playerAggregate;
         }
@@ -65,7 +65,7 @@ namespace ManagementAPI.Service.Tests.Player
             PlayerAggregate playerAggregate = PlayerAggregate.Create(AggregateId);
 
             playerAggregate.Register(FirstName, MiddleName, LastName, Gender,
-                Age, ExactHandicapCat1, EmailAddress);
+                DateOfBirth, ExactHandicapCat1, EmailAddress);
 
             playerAggregate.CreateSecurityUser(SecurityUserId);
 
@@ -74,7 +74,7 @@ namespace ManagementAPI.Service.Tests.Player
         
         public static RegisterPlayerRequest RegisterPlayerRequest = new RegisterPlayerRequest
         {
-            Age = Age,
+            DateOfBirth = DateOfBirth,
             EmailAddress = EmailAddress,
             FirstName = FirstName,
             MiddleName = MiddleName,

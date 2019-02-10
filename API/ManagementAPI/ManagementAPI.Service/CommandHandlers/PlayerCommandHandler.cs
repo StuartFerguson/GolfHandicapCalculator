@@ -92,7 +92,7 @@ namespace ManagementAPI.Service.CommandHandlers
                 command.RegisterPlayerRequest.MiddleName,
                 command.RegisterPlayerRequest.LastName,
                 command.RegisterPlayerRequest.Gender,
-                command.RegisterPlayerRequest.Age,
+                command.RegisterPlayerRequest.DateOfBirth,
                 command.RegisterPlayerRequest.ExactHandicap,
                 command.RegisterPlayerRequest.EmailAddress);
 
