@@ -191,6 +191,30 @@ namespace ManagementAPI.Service.CommandHandlers
         }
         #endregion
 
+        #region private ICommandHandler CreateHandler(AddAcceptedMembershipToPlayerCommand command)        
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(AddAcceptedMembershipToPlayerCommand command)
+        {
+            return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
+        }
+        #endregion
+
+        #region private ICommandHandler CreateHandler(AddRejectedMembershipToPlayerCommand command)        
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(AddRejectedMembershipToPlayerCommand command)
+        {
+            return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
+        }
+        #endregion
+
         #region private ICommandHandler CreateHandler(RequestClubMembershipCommand command)        
         /// <summary>
         /// Creates the handler.

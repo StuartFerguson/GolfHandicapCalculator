@@ -2,8 +2,7 @@
 {
     public enum MembershipStatus
     {
-        Pending = 0,
-        Approved = 1,
+        Accepted = 1,
         Rejected = 2
     }
 }

@@ -6,6 +6,7 @@ using ManagementAPI.Player.DomainEvents;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services.DataTransferObjects;
+using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
 
 namespace ManagementAPI.Service.Tests.Player
 {
@@ -42,6 +43,19 @@ namespace ManagementAPI.Service.Tests.Player
         public static String EmailAddress = "test@email.com";
 
         public static Guid SecurityUserId = Guid.Parse("A78FF418-1CEB-47AC-9A8E-78CA6933E183");
+        
+        public static Guid GolfClubId = Guid.Parse("6AF76DC0-3913-4A6D-BF60-2E0A1DE06333");
+        
+        public static Guid MembershipId = Guid.Parse("B9D67FC1-E16B-43B7-AA96-F689F3C7314E");
+        
+        public static String MembershipNumber = "000001";
+
+        public static String RejectionReason = "Rejected";
+        
+        public static DateTime MembershipAcceptedDateTime = new DateTime(2019,2,12);
+
+        public static DateTime MembershipRejectedDateTime = new DateTime(2019,1,12);
+
 
         public static PlayerAggregate GetEmptyPlayerAggregate()
         {
@@ -68,6 +82,20 @@ namespace ManagementAPI.Service.Tests.Player
                 DateOfBirth, ExactHandicapCat1, EmailAddress);
 
             playerAggregate.CreateSecurityUser(SecurityUserId);
+
+            return playerAggregate;
+        }
+
+        public static PlayerAggregate GetRegisteredPlayerAggregateWithMembershipAdded()
+        {
+            PlayerAggregate playerAggregate = PlayerAggregate.Create(AggregateId);
+
+            playerAggregate.Register(FirstName, MiddleName, LastName, Gender,
+                DateOfBirth, ExactHandicapCat1, EmailAddress);
+
+            playerAggregate.CreateSecurityUser(SecurityUserId);
+
+            playerAggregate.AddAcceptedMembership(GolfClubId, MembershipId, MembershipNumber,MembershipAcceptedDateTime);
 
             return playerAggregate;
         }
@@ -99,6 +127,18 @@ namespace ManagementAPI.Service.Tests.Player
             {
                 UserId = SecurityUserId
             };
-        }        
+        }
+
+        public static AddAcceptedMembershipToPlayerCommand GetAddAcceptedMembershipToPlayerCommand()
+        {
+            return AddAcceptedMembershipToPlayerCommand.Create(AggregateId, GolfClubId, MembershipId, MembershipNumber,
+                MembershipAcceptedDateTime);
+        }
+
+        public static AddRejectedMembershipToPlayerCommand GetAddRejectedMembershipToPlayerCommand()
+        {
+            return AddRejectedMembershipToPlayerCommand.Create(AggregateId, GolfClubId, MembershipId, RejectionReason,
+                MembershipRejectedDateTime);
+        }
     }
 }

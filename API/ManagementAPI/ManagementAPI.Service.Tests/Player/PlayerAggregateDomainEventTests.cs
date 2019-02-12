@@ -40,6 +40,38 @@ namespace ManagementAPI.Service.Tests.Player
             securityUserCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
             securityUserCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             securityUserCreatedEvent.SecurityUserId.ShouldBe(PlayerTestData.SecurityUserId);
-        }        
+        }
+
+        [Fact]
+        public void AcceptedMembershipAddedEvent_CanBeCreated_IsCreated()
+        {
+            AcceptedMembershipAddedEvent acceptedMembershipAddedEvent = AcceptedMembershipAddedEvent.Create(PlayerTestData.AggregateId, PlayerTestData.GolfClubId, PlayerTestData.MembershipId, PlayerTestData.MembershipNumber,
+                PlayerTestData.MembershipAcceptedDateTime);
+
+            acceptedMembershipAddedEvent.ShouldNotBeNull();
+            acceptedMembershipAddedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
+            acceptedMembershipAddedEvent.EventId.ShouldNotBe(Guid.Empty);
+            acceptedMembershipAddedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            acceptedMembershipAddedEvent.GolfClubId.ShouldBe(PlayerTestData.GolfClubId);
+            acceptedMembershipAddedEvent.MembershipId.ShouldBe(PlayerTestData.MembershipId);
+            acceptedMembershipAddedEvent.MembershipNumber.ShouldBe(PlayerTestData.MembershipNumber);
+            acceptedMembershipAddedEvent.AcceptedDateTime.ShouldBe(PlayerTestData.MembershipAcceptedDateTime);
+        }
+
+        [Fact]
+        public void RejectedMembershipAddedEvent_CanBeCreated_IsCreated()
+        {
+            RejectedMembershipAddedEvent acceptedMembershipAddedEvent = RejectedMembershipAddedEvent.Create(PlayerTestData.AggregateId, PlayerTestData.GolfClubId, PlayerTestData.MembershipId, PlayerTestData.RejectionReason,
+                PlayerTestData.MembershipRejectedDateTime);
+
+            acceptedMembershipAddedEvent.ShouldNotBeNull();
+            acceptedMembershipAddedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
+            acceptedMembershipAddedEvent.EventId.ShouldNotBe(Guid.Empty);
+            acceptedMembershipAddedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            acceptedMembershipAddedEvent.GolfClubId.ShouldBe(PlayerTestData.GolfClubId);
+            acceptedMembershipAddedEvent.MembershipId.ShouldBe(PlayerTestData.MembershipId);
+            acceptedMembershipAddedEvent.RejectionReason.ShouldBe(PlayerTestData.RejectionReason);
+            acceptedMembershipAddedEvent.RejectedDateTime.ShouldBe(PlayerTestData.MembershipRejectedDateTime);
+        }
     }
 }

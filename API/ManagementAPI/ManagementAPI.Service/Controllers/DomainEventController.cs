@@ -6,9 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventStore.ClientAPI.Exceptions;
 using ManagementAPI.GolfClub.DomainEvents;
+using ManagementAPI.GolfClubMembership.DomainEvents;
 using ManagementAPI.Player.DomainEvents;
+using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.Manager;
 using Microsoft.AspNetCore.Mvc;
+using Shared.CommandHandling;
 using Shared.EventSourcing;
 
 namespace ManagementAPI.Service.Controllers
@@ -25,17 +28,24 @@ namespace ManagementAPI.Service.Controllers
         /// </summary>
         private readonly IManagmentAPIManager Manager;
 
+        /// <summary>
+        /// The command router
+        /// </summary>
+        private readonly ICommandRouter CommandRouter;
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DomainEventController"/> class.
+        /// Initializes a new instance of the <see cref="DomainEventController" /> class.
         /// </summary>
         /// <param name="manager">The manager.</param>
-        public DomainEventController(IManagmentAPIManager manager)
+        /// <param name="commandRouter">The command router.</param>
+        public DomainEventController(IManagmentAPIManager manager,ICommandRouter commandRouter)
         {
             this.Manager = manager;
+            this.CommandRouter = commandRouter;
         }
         #endregion
 
@@ -82,7 +92,42 @@ namespace ManagementAPI.Service.Controllers
             await this.Manager.InsertGolfClubToReadModel(domainEvent, cancellationToken);
         }
         #endregion
-        
+
+        #region private async Task HandleEvent(ClubMembershipRequestAcceptedEvent domainEvent, CancellationToken cancellationToken)
+        /// <summary>
+        /// Handles the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleEvent(ClubMembershipRequestAcceptedEvent domainEvent, CancellationToken cancellationToken)
+        {
+            AddAcceptedMembershipToPlayerCommand command = AddAcceptedMembershipToPlayerCommand.Create(domainEvent.PlayerId, 
+                domainEvent.AggregateId,
+                domainEvent.MembershipId, domainEvent.MembershipNumber, domainEvent.AcceptedDateAndTime);
+
+            await this.CommandRouter.Route(command, cancellationToken);
+        }
+        #endregion
+
+        #region private async Task HandleEvent(ClubMembershipRequestRejectedEvent domainEvent, CancellationToken cancellationToken)
+        /// <summary>
+        /// Handles the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleEvent(ClubMembershipRequestRejectedEvent domainEvent, CancellationToken cancellationToken)
+        {
+            AddRejectedMembershipToPlayerCommand command = AddRejectedMembershipToPlayerCommand.Create(
+                domainEvent.PlayerId,
+                domainEvent.AggregateId, domainEvent.MembershipId, domainEvent.RejectionReason,
+                domainEvent.RejectionDateAndTime);
+
+            await this.CommandRouter.Route(command, cancellationToken);
+        }
+        #endregion
+
         #endregion
     }
 }

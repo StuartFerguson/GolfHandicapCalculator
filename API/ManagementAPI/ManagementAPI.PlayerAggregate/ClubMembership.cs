@@ -21,44 +21,36 @@ namespace ManagementAPI.Player
         #region Internal Properties
 
         /// <summary>
-        /// Gets the club identifier.
+        /// Gets the golf club identifier.
         /// </summary>
         /// <value>
-        /// The club identifier.
+        /// The golf club identifier.
         /// </value>
-        internal Guid ClubId { get; private set; }
+        internal Guid GolfClubId { get; private set; }
 
         /// <summary>
-        /// Gets the membership requested date and time.
+        /// Gets the membership identifier.
         /// </summary>
         /// <value>
-        /// The membership requested date and time.
+        /// The membership identifier.
         /// </value>
-        internal DateTime MembershipRequestedDateAndTime { get; private set; }
+        internal Guid MembershipId { get; private set; }
 
         /// <summary>
-        /// Gets the membership approved date and time.
+        /// Gets the membership number.
         /// </summary>
         /// <value>
-        /// The membership approved date and time.
+        /// The membership number.
         /// </value>
-        internal DateTime MembershipApprovedDateAndTime { get; private set; }
+        internal String MembershipNumber { get; private set; }
 
         /// <summary>
-        /// Gets the membership rejected date and time.
+        /// Gets the accepted date time.
         /// </summary>
         /// <value>
-        /// The membership rejected date and time.
+        /// The accepted date time.
         /// </value>
-        internal DateTime MembershipRejectedDateAndTime { get; private set; }
-
-        /// <summary>
-        /// Gets the rejection reason.
-        /// </summary>
-        /// <value>
-        /// The rejection reason.
-        /// </value>
-        internal String RejectionReason { get; private set; }
+        internal DateTime AcceptedDateTime { get; private set; }
 
         /// <summary>
         /// Gets the membership status.
@@ -85,7 +77,7 @@ namespace ManagementAPI.Player
 
         #region Internal Methods
 
-        #region internal static ClubMembership Create(Guid clubId, DateTime membershipRequestedDateAndTime)        
+        #region internal static ClubMembership Create()
         /// <summary>
         /// Creates the specified club identifier.
         /// </summary>
@@ -96,45 +88,37 @@ namespace ManagementAPI.Player
         }
         #endregion
 
-        #region internal void Request(Guid clubId, DateTime membershipRequestedDateAndTime)        
-        /// <summary>
-        /// Requests the specified club identifier.
-        /// </summary>
-        /// <param name="clubId">The club identifier.</param>
-        /// <param name="membershipRequestedDateAndTime">The membership requested date and time.</param>
-        internal void Request(Guid clubId, DateTime membershipRequestedDateAndTime)
-        {
-            this.ClubId = clubId;
-            this.MembershipRequestedDateAndTime = membershipRequestedDateAndTime;
-            this.Status = MembershipStatus.Pending; 
-        }
-        #endregion
-
-        #region internal void Approve(DateTime membershipRequestApprovedDateAndTime)        
+        #region internal void Approve(Guid golfClubId, Guid membershipId, String membershipNumber, DateTime acceptedDateTime)
         /// <summary>
         /// Approves the specified membership request approved date and time.
         /// </summary>
-        /// <param name="membershipRequestApprovedDateAndTime">The membership request approved date and time.</param>
-        internal void Approve(DateTime membershipRequestApprovedDateAndTime)
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="membershipId">The membership identifier.</param>
+        /// <param name="membershipNumber">The membership number.</param>
+        /// <param name="acceptedDateTime">The accepted date time.</param>
+        internal void Approve(Guid golfClubId, Guid membershipId, String membershipNumber, DateTime acceptedDateTime)
         {
-            this.MembershipApprovedDateAndTime = membershipRequestApprovedDateAndTime;
+            this.GolfClubId = golfClubId;
+            this.MembershipId = membershipId;
+            this.MembershipNumber = membershipNumber;
+            this.AcceptedDateTime = acceptedDateTime;
             this.Status = MembershipStatus.Approved;
         }
         #endregion
 
-        #region internal void Reject(DateTime membershipRejectedDateAndTime, String rejectionReason)        
-        /// <summary>
-        /// Rejects the specified membership rejected date and time.
-        /// </summary>
-        /// <param name="membershipRejectedDateAndTime">The membership rejected date and time.</param>
-        /// <param name="rejectionReason">The rejection reason.</param>
-        internal void Reject(DateTime membershipRejectedDateAndTime, String rejectionReason)
-        {
-            this.MembershipRejectedDateAndTime = membershipRejectedDateAndTime;
-            this.RejectionReason = rejectionReason;
-            this.Status = MembershipStatus.Rejected;
-        }
-        #endregion
+        //#region internal void Reject(DateTime membershipRejectedDateAndTime, String rejectionReason)        
+        ///// <summary>
+        ///// Rejects the specified membership rejected date and time.
+        ///// </summary>
+        ///// <param name="membershipRejectedDateAndTime">The membership rejected date and time.</param>
+        ///// <param name="rejectionReason">The rejection reason.</param>
+        //internal void Reject(DateTime membershipRejectedDateAndTime, String rejectionReason)
+        //{
+        //    this.MembershipRejectedDateAndTime = membershipRejectedDateAndTime;
+        //    this.RejectionReason = rejectionReason;
+        //    this.Status = MembershipStatus.Rejected;
+        //}
+        //#endregion
 
         #endregion
     }
