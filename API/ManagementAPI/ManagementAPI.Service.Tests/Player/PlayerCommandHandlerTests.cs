@@ -38,5 +38,89 @@ namespace ManagementAPI.Service.Tests.Player
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }
+
+        [Fact]
+        public void PlayerCommandHandler_HandleCommand_AddAcceptedMembershipToPlayerCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            oAuth2SecurityService
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(PlayerTestData.GetRegisterUserResponse());
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse());
+
+            PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);
+
+            AddAcceptedMembershipToPlayerCommand command = PlayerTestData.GetAddAcceptedMembershipToPlayerCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+        [Fact]
+        public void PlayerCommandHandler_HandleCommand_AddAcceptedMembershipToPlayerCommand_ClubNotCreated_ErrorThrown()
+        {
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate());
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            oAuth2SecurityService
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(PlayerTestData.GetRegisterUserResponse());
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(GolfClubTestData.GetEmptyGolfClubAggregate);
+
+            PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);
+
+            AddAcceptedMembershipToPlayerCommand command = PlayerTestData.GetAddAcceptedMembershipToPlayerCommand();
+
+            Should.Throw<InvalidOperationException>(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+        [Fact]
+        public void PlayerCommandHandler_HandleCommand_AddRejectedMembershipToPlayerCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            oAuth2SecurityService
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(PlayerTestData.GetRegisterUserResponse());
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse());
+
+            PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);
+
+            AddRejectedMembershipToPlayerCommand command = PlayerTestData.GetAddRejectedMembershipToPlayerCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+        [Fact]
+        public void PlayerCommandHandler_HandleCommand_AddRejectedMembershipToPlayerCommand_ClubNotCreated_ErrorThrown()
+        {
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate());
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            oAuth2SecurityService
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(PlayerTestData.GetRegisterUserResponse());
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            clubRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(GolfClubTestData.GetEmptyGolfClubAggregate);
+
+            PlayerCommandHandler handler = new PlayerCommandHandler(playerRepository.Object, oAuth2SecurityService.Object, clubRepository.Object);
+
+            AddRejectedMembershipToPlayerCommand command = PlayerTestData.GetAddRejectedMembershipToPlayerCommand();
+
+            Should.Throw<InvalidOperationException>(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
     }
 }
