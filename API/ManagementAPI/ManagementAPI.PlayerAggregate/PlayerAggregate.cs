@@ -340,6 +340,22 @@ namespace ManagementAPI.Player
         }
         #endregion
 
+        #region private void PlayEvent(RejectedMembershipAddedEvent rejectedMembershipAddedEvent)
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="rejectedMembershipAddedEvent">The rejected membership added event.</param>
+        private void PlayEvent(RejectedMembershipAddedEvent rejectedMembershipAddedEvent)
+        {
+            ClubMembership membership = ClubMembership.Create();
+
+            membership.Reject(rejectedMembershipAddedEvent.GolfClubId, rejectedMembershipAddedEvent.MembershipId,
+                rejectedMembershipAddedEvent.RejectionReason,rejectedMembershipAddedEvent.RejectedDateTime);
+            
+            this.Memberships.Add(membership);
+        }
+        #endregion
+
         #endregion
 
         #region Private Methods (Other)

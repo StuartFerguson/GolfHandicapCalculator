@@ -60,6 +60,22 @@ namespace ManagementAPI.Player
         /// </value>
         internal MembershipStatus Status { get; private set; }
 
+        /// <summary>
+        /// Gets the rejection reason.
+        /// </summary>
+        /// <value>
+        /// The rejection reason.
+        /// </value>
+        internal String RejectionReason  { get; private set; }
+
+        /// <summary>
+        /// Gets the rejected date time.
+        /// </summary>
+        /// <value>
+        /// The rejected date time.
+        /// </value>
+        internal DateTime RejectedDateTime { get; private set; }
+
         #endregion
 
         #region Internal Enums     
@@ -106,19 +122,23 @@ namespace ManagementAPI.Player
         }
         #endregion
 
-        //#region internal void Reject(DateTime membershipRejectedDateAndTime, String rejectionReason)        
-        ///// <summary>
-        ///// Rejects the specified membership rejected date and time.
-        ///// </summary>
-        ///// <param name="membershipRejectedDateAndTime">The membership rejected date and time.</param>
-        ///// <param name="rejectionReason">The rejection reason.</param>
-        //internal void Reject(DateTime membershipRejectedDateAndTime, String rejectionReason)
-        //{
-        //    this.MembershipRejectedDateAndTime = membershipRejectedDateAndTime;
-        //    this.RejectionReason = rejectionReason;
-        //    this.Status = MembershipStatus.Rejected;
-        //}
-        //#endregion
+        #region internal void Reject(Guid golfClubId, Guid membershipId, String rejectionReason, DateTime rejectedDateTime)        
+        /// <summary>
+        /// Rejects the specified golf club identifier.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="membershipId">The membership identifier.</param>
+        /// <param name="rejectionReason">The rejection reason.</param>
+        /// <param name="rejectedDateTime">The rejected date time.</param>
+        internal void Reject(Guid golfClubId, Guid membershipId, String rejectionReason, DateTime rejectedDateTime)
+        {
+            this.GolfClubId = golfClubId;
+            this.MembershipId = membershipId;
+            this.RejectionReason = rejectionReason;
+            this.RejectedDateTime = rejectedDateTime;
+            this.Status = MembershipStatus.Rejected;
+        }
+        #endregion
 
         #endregion
     }

@@ -203,7 +203,7 @@ namespace ManagementAPI.Service.Tests.Player
             PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
 
             Guid golfClubId = validGolfClubId ? PlayerTestData.GolfClubId : Guid.Empty;
-            Guid membershipId = validMembershipId ? PlayerTestData.MembershipId: Guid.Empty;
+            Guid membershipId = validMembershipId ? PlayerTestData.MembershipId : Guid.Empty;
 
             Should.Throw<ArgumentNullException>(() =>
             {
@@ -216,10 +216,10 @@ namespace ManagementAPI.Service.Tests.Player
         public void PlayerAggregate_AddAcceptedMembership_PlayerNotRegistered_ErrorThrown()
         {
             PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
-            
+
             Should.Throw<InvalidOperationException>(() =>
             {
-                playerAggregate.AddAcceptedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId,PlayerTestData.MembershipNumber, PlayerTestData.MembershipAcceptedDateTime);
+                playerAggregate.AddAcceptedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId, PlayerTestData.MembershipNumber, PlayerTestData.MembershipAcceptedDateTime);
             });
         }
 
@@ -227,10 +227,10 @@ namespace ManagementAPI.Service.Tests.Player
         public void PlayerAggregate_AddAcceptedMembership_DuplicateMembership_ErrorThrown()
         {
             PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregateWithMembershipAdded();
-            
+
             Should.Throw<InvalidOperationException>(() =>
             {
-                playerAggregate.AddAcceptedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId,PlayerTestData.MembershipNumber, PlayerTestData.MembershipAcceptedDateTime);
+                playerAggregate.AddAcceptedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId, PlayerTestData.MembershipNumber, PlayerTestData.MembershipAcceptedDateTime);
             });
         }
 
@@ -243,7 +243,7 @@ namespace ManagementAPI.Service.Tests.Player
         {
             PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
 
-            playerAggregate.AddRejectedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId,PlayerTestData.RejectionReason, PlayerTestData.MembershipRejectedDateTime);
+            playerAggregate.AddRejectedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId, PlayerTestData.RejectionReason, PlayerTestData.MembershipRejectedDateTime);
 
             List<DomainEvent> events = playerAggregate.GetPendingEvents();
             events.Count.ShouldBe(2);
@@ -260,7 +260,7 @@ namespace ManagementAPI.Service.Tests.Player
             PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
 
             Guid golfClubId = validGolfClubId ? PlayerTestData.GolfClubId : Guid.Empty;
-            Guid membershipId = validMembershipId ? PlayerTestData.MembershipId: Guid.Empty;
+            Guid membershipId = validMembershipId ? PlayerTestData.MembershipId : Guid.Empty;
 
             Should.Throw<ArgumentNullException>(() =>
             {
@@ -273,10 +273,10 @@ namespace ManagementAPI.Service.Tests.Player
         public void PlayerAggregate_AddRejectedMembership_PlayerNotRegistered_ErrorThrown()
         {
             PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
-            
+
             Should.Throw<InvalidOperationException>(() =>
             {
-                playerAggregate.AddRejectedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId,PlayerTestData.RejectionReason, PlayerTestData.MembershipRejectedDateTime);
+                playerAggregate.AddRejectedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId, PlayerTestData.RejectionReason, PlayerTestData.MembershipRejectedDateTime);
             });
         }
 
@@ -284,10 +284,10 @@ namespace ManagementAPI.Service.Tests.Player
         public void PlayerAggregate_AddRejectedMembership_DuplicateMembership_ErrorThrown()
         {
             PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregateWithMembershipAdded();
-            
+
             Should.Throw<InvalidOperationException>(() =>
             {
-                playerAggregate.AddRejectedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId,PlayerTestData.RejectionReason, PlayerTestData.MembershipRejectedDateTime);
+                playerAggregate.AddRejectedMembership(PlayerTestData.GolfClubId, PlayerTestData.MembershipId, PlayerTestData.RejectionReason, PlayerTestData.MembershipRejectedDateTime);
             });
         }
 
