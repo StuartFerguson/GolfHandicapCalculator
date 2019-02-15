@@ -31,9 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClubAggre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.IntegrationTests", "ManagementAPI.IntegrationTests\ManagementAPI.IntegrationTests.csproj", "{A2499D02-6B5B-4007-92A0-8794DC3DABF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementAPI.GolfClubMembershipAggregate", "ManagementAPI.GolfClubMembershipAggregate\ManagementAPI.GolfClubMembershipAggregate.csproj", "{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClubMembershipAggregate", "ManagementAPI.GolfClubMembershipAggregate\ManagementAPI.GolfClubMembershipAggregate.csproj", "{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementAPI.GolfClubMembership.DomainEvents", "ManagementAPI.GolfClubMembership.DomainEvents\ManagementAPI.GolfClubMembership.DomainEvents.csproj", "{4AF30D8E-0363-4FAA-B377-23E8C22FF452}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClubMembership.DomainEvents", "ManagementAPI.GolfClubMembership.DomainEvents\ManagementAPI.GolfClubMembership.DomainEvents.csproj", "{4AF30D8E-0363-4FAA-B377-23E8C22FF452}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagmentAPI.TestDataGenerator", "ManagmentAPI.TestDataGenerator\ManagmentAPI.TestDataGenerator.csproj", "{695C18E3-7F7E-4104-9040-5BD7D54C1863}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,10 @@ Global
 		{4AF30D8E-0363-4FAA-B377-23E8C22FF452}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AF30D8E-0363-4FAA-B377-23E8C22FF452}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AF30D8E-0363-4FAA-B377-23E8C22FF452}.Release|Any CPU.Build.0 = Release|Any CPU
+		{695C18E3-7F7E-4104-9040-5BD7D54C1863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{695C18E3-7F7E-4104-9040-5BD7D54C1863}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{695C18E3-7F7E-4104-9040-5BD7D54C1863}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{695C18E3-7F7E-4104-9040-5BD7D54C1863}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,6 +122,7 @@ Global
 		{A2499D02-6B5B-4007-92A0-8794DC3DABF1} = {E879EDAF-2767-4DEB-868A-DB4B49239E06}
 		{1EE2599B-BA8D-496D-8120-A4DA4D65F3CA} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
 		{4AF30D8E-0363-4FAA-B377-23E8C22FF452} = {8305FE03-FF55-4725-B2E9-275FBA67F246}
+		{695C18E3-7F7E-4104-9040-5BD7D54C1863} = {E879EDAF-2767-4DEB-868A-DB4B49239E06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0239A13-E2E7-4C85-AFF1-88820D94F461}
