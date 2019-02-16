@@ -1,21 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using ManagementAPI.GolfClubMembership.DomainEvents;
-using Shared.EventSourcing;
-using Shared.EventStore;
-using Shared.Exceptions;
-using Shared.General;
-
-namespace ManagementAPI.GolfClubMembership
+﻿namespace ManagementAPI.GolfClubMembership
 {
-    public partial class GolfClubMembershipAggregate : Aggregate
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using DomainEvents;
+    using Shared.EventSourcing;
+    using Shared.EventStore;
+    using Shared.Exceptions;
+    using Shared.General;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Shared.EventStore.Aggregate" />
+    public class GolfClubMembershipAggregate : Aggregate
     {
+        #region Fields
+
+        /// <summary>
+        /// The membership list
+        /// </summary>
+        private readonly List<Membership> MembershipList;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GolfClubMembershipAggregate"/> class.
+        /// Initializes a new instance of the <see cref="GolfClubMembershipAggregate" /> class.
         /// </summary>
         [ExcludeFromCodeCoverage]
         public GolfClubMembershipAggregate()
@@ -25,7 +38,7 @@ namespace ManagementAPI.GolfClubMembership
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GolfClubMembershipAggregate"/> class.
+        /// Initializes a new instance of the <see cref="GolfClubMembershipAggregate" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         private GolfClubMembershipAggregate(Guid aggregateId)
@@ -38,24 +51,8 @@ namespace ManagementAPI.GolfClubMembership
 
         #endregion
 
-        #region Fields
+        #region Methods
 
-        /// <summary>
-        /// The membership list
-        /// </summary>
-        private readonly List<Membership> MembershipList;
-
-        /// <summary>
-        /// The maximum number of members
-        /// </summary>
-        // TODO: This will be set at the club level
-        private const Int32 MaximumNumberOfMembers = 500;
-
-        #endregion
-
-        #region Public Methods
-
-        #region public static GolfClubMembershipAggregate Create(Guid aggregateId)        
         /// <summary>
         /// Creates the specified aggregate identifier.
         /// </summary>
@@ -65,56 +62,7 @@ namespace ManagementAPI.GolfClubMembership
         {
             return new GolfClubMembershipAggregate(aggregateId);
         }
-        #endregion
 
-        #region public void RequestMembership(Guid playerId, String playerFullName, DateTime dateOfBirth, String playerGender, DateTime requestDateAndTime)
-        /// <summary>
-        /// Requests the membership.
-        /// </summary>
-        /// <param name="playerId">The player identifier.</param>
-        /// <param name="playerFullName">Full name of the player.</param>
-        /// <param name="playerDateOfBirth">The player date of birth.</param>
-        /// <param name="playerGender">The player gender.</param>
-        /// <param name="requestDateAndTime">The request date and time.</param>
-        public void RequestMembership(Guid playerId, String playerFullName, DateTime playerDateOfBirth, String playerGender, DateTime requestDateAndTime)
-        {
-            Guid membershipId = Guid.NewGuid();
-            
-            Guard.ThrowIfInvalidGuid(playerId, typeof(ArgumentNullException), "A membership request must have valid player id");
-            Guard.ThrowIfNullOrEmpty(playerFullName, typeof(ArgumentNullException), "A membership request must have player full name supplied");
-            Guard.ThrowIfInvalidDate(playerDateOfBirth, typeof(ArgumentNullException), "A membership request must have player name supplied");
-            Guard.ThrowIfNullOrEmpty(playerGender, typeof(ArgumentNullException), "A membership request must have player gender supplied");
-
-            if (playerGender != "M" && playerGender != "F")
-            {
-                throw new ArgumentOutOfRangeException(playerGender,"Players gender can only be 'M' (Male) or 'F' (Female)");
-            }
-
-            this.ValidateAgainstDuplicateMembershipRequest(playerId, playerDateOfBirth, playerGender);
-
-            try
-            {
-                this.ValidatePlayerDateOfBirth(membershipId, playerId,playerDateOfBirth);
-
-                this.ValidateMembershipCount(playerId);
-
-                // Get the membership number
-                String membershipNumber = this.GenerateMembershipNumber();
-
-                ClubMembershipRequestAcceptedEvent clubMembershipRequestAcceptedEvent = ClubMembershipRequestAcceptedEvent.Create(this.AggregateId, membershipId, playerId, playerFullName, playerDateOfBirth, playerGender, requestDateAndTime, membershipNumber);
-
-                this.ApplyAndPend(clubMembershipRequestAcceptedEvent);
-            }
-            catch (InvalidOperationException e)
-            {
-                ClubMembershipRequestRejectedEvent clubMembershipRequestRejectedEvent = ClubMembershipRequestRejectedEvent.Create(this.AggregateId, membershipId, playerId, playerFullName, playerDateOfBirth, playerGender, e.Message, requestDateAndTime);
-
-                this.ApplyAndPend(clubMembershipRequestRejectedEvent);
-            }            
-        }
-        #endregion
-
-        #region public MembershipDataTransferObject GetMembership(Guid playerId, DateTime dateOfBirth, String gender)
         /// <summary>
         /// Gets the membership.
         /// </summary>
@@ -123,41 +71,110 @@ namespace ManagementAPI.GolfClubMembership
         /// <param name="gender">The gender.</param>
         /// <returns></returns>
         /// <exception cref="NotFoundException">Membership with Player Id {playerId} Date of Birth {dateOfBirth.Date:dd/MM/yyy} and Gender {gender}</exception>
-        public MembershipDataTransferObject GetMembership(Guid playerId, DateTime dateOfBirth, String gender)
+        public MembershipDataTransferObject GetMembership(Guid playerId,
+                                                          DateTime dateOfBirth,
+                                                          String gender)
         {
-            Membership membership = this.MembershipList.SingleOrDefault(m => m.PlayerId == playerId && 
-                                                                             m.PlayerDateOfBirth == dateOfBirth &&
-                                                                             String.Compare(m.PlayerGender,gender, StringComparison.InvariantCultureIgnoreCase) == 0);
+            Membership membership = this.MembershipList.SingleOrDefault(m => m.PlayerId == playerId && m.PlayerDateOfBirth == dateOfBirth &&
+                                                                             string.Compare(m.PlayerGender, gender, StringComparison.InvariantCultureIgnoreCase) == 0);
 
             if (membership == null)
             {
                 throw new NotFoundException($"Membership with Player Id {playerId} Date of Birth {dateOfBirth.Date:dd/MM/yyy} and Gender {gender} not found.");
             }
 
-            MembershipDataTransferObject result = new MembershipDataTransferObject
-            {
-                PlayerId = membership.PlayerId,
-                MembershipId = membership.MembershipId,
-                PlayerGender = membership.PlayerGender,
-                PlayerFullName = membership.PlayerFullName,
-                PlayerDateOfBirth = membership.PlayerDateOfBirth,
-                RejectionReason = membership.RejectionReason,
-                AcceptedDateAndTime = membership.AcceptedDateAndTime,
-                RejectedDateAndTime = membership.RejectedDateAndTime,
-                Status = membership.Status,
-                RequestedDateAndTime = membership.RequestedDateAndTime,
-                MembershipNumber = membership.MembershipNumber
-            };
+            MembershipDataTransferObject result = this.CreateFrom(membership);
 
             return result;
         }
-        #endregion
 
-        #endregion
-        
-        #region Protected Methods
+        /// <summary>
+        /// Gets the memberships.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">No Memberships found for Golf CLub Id {this.AggregateId}</exception>
+        public List<MembershipDataTransferObject> GetMemberships()
+        {
+            List<MembershipDataTransferObject> result = new List<MembershipDataTransferObject>();
 
-        #region protected override void PlayEvent(DomainEvent domainEvent)        
+            if (this.MembershipList == null || this.MembershipList.Count == 0)
+            {
+                throw new NotFoundException($"No Memberships found for Golf CLub Id {this.AggregateId}.");
+            }
+
+            foreach (Membership membership in this.MembershipList)
+            {
+                result.Add(this.CreateFrom(membership));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Requests the membership.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="playerFullName">Full name of the player.</param>
+        /// <param name="playerDateOfBirth">The player date of birth.</param>
+        /// <param name="playerGender">The player gender.</param>
+        /// <param name="requestDateAndTime">The request date and time.</param>
+        /// <exception cref="System.ArgumentOutOfRangeException">Players gender can only be 'M' (Male) or 'F' (Female)</exception>
+        public void RequestMembership(Guid playerId,
+                                      String playerFullName,
+                                      DateTime playerDateOfBirth,
+                                      String playerGender,
+                                      DateTime requestDateAndTime)
+        {
+            Guid membershipId = Guid.NewGuid();
+
+            Guard.ThrowIfInvalidGuid(playerId, typeof(ArgumentNullException), "A membership request must have valid player id");
+            Guard.ThrowIfNullOrEmpty(playerFullName, typeof(ArgumentNullException), "A membership request must have player full name supplied");
+            Guard.ThrowIfInvalidDate(playerDateOfBirth, typeof(ArgumentNullException), "A membership request must have player name supplied");
+            Guard.ThrowIfNullOrEmpty(playerGender, typeof(ArgumentNullException), "A membership request must have player gender supplied");
+
+            if (playerGender != "M" && playerGender != "F")
+            {
+                throw new ArgumentOutOfRangeException(playerGender, "Players gender can only be 'M' (Male) or 'F' (Female)");
+            }
+
+            this.ValidateAgainstDuplicateMembershipRequest(playerId, playerDateOfBirth, playerGender);
+
+            try
+            {
+                this.ValidatePlayerDateOfBirth(membershipId, playerId, playerDateOfBirth);
+
+                this.ValidateMembershipCount(playerId);
+
+                // Get the membership number
+                String membershipNumber = this.GenerateMembershipNumber();
+
+                ClubMembershipRequestAcceptedEvent clubMembershipRequestAcceptedEvent =
+                    ClubMembershipRequestAcceptedEvent.Create(this.AggregateId,
+                                                              membershipId,
+                                                              playerId,
+                                                              playerFullName,
+                                                              playerDateOfBirth,
+                                                              playerGender,
+                                                              requestDateAndTime,
+                                                              membershipNumber);
+
+                this.ApplyAndPend(clubMembershipRequestAcceptedEvent);
+            }
+            catch(InvalidOperationException e)
+            {
+                ClubMembershipRequestRejectedEvent clubMembershipRequestRejectedEvent =
+                    ClubMembershipRequestRejectedEvent.Create(this.AggregateId,
+                                                              membershipId,
+                                                              playerId,
+                                                              playerFullName,
+                                                              playerDateOfBirth,
+                                                              playerGender,
+                                                              e.Message,
+                                                              requestDateAndTime);
+
+                this.ApplyAndPend(clubMembershipRequestRejectedEvent);
+            }
+        }
 
         /// <summary>
         /// Plays the event.
@@ -165,96 +182,9 @@ namespace ManagementAPI.GolfClubMembership
         /// <param name="domainEvent">The domain event.</param>
         protected override void PlayEvent(DomainEvent domainEvent)
         {
-            this.PlayEvent((dynamic) domainEvent);
+            this.PlayEvent((dynamic)domainEvent);
         }
 
-        #endregion
-
-        #endregion
-
-        #region Private Methods (Play Events)
-
-        #region private void PlayEvent(ClubMembershipRequestAcceptedEvent domainEvent)        
-        /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        private void PlayEvent(ClubMembershipRequestAcceptedEvent domainEvent)
-        {
-            Membership membership = Membership.Create(domainEvent.MembershipId, domainEvent.PlayerId,
-                domainEvent.PlayerFullName, domainEvent.PlayerGender, domainEvent.PlayerDateOfBirth);
-            membership.Accepted(String.Empty, domainEvent.AcceptedDateAndTime);
-            this.MembershipList.Add(membership);
-        }
-        #endregion
-
-        #region private void PlayEvent(ClubMembershipRequestRejectedEvent domainEvent)
-        /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        private void PlayEvent(ClubMembershipRequestRejectedEvent domainEvent)
-        {
-            Membership membership = Membership.Create(domainEvent.MembershipId, domainEvent.PlayerId,
-                domainEvent.PlayerFullName, domainEvent.PlayerGender, domainEvent.PlayerDateOfBirth);
-            membership.Rejected(domainEvent.RejectionReason, domainEvent.RejectionDateAndTime);
-            this.MembershipList.Add(membership);
-        }
-        #endregion
-
-        #endregion
-
-        #region private void ValidateAgainstDuplicateMembershipRequest(Guid playerId, DateTime dateOfBirth, String gender)
-        /// <summary>
-        /// Validates the against duplicate membership request.
-        /// </summary>
-        /// <param name="playerId">The player identifier.</param>
-        /// <param name="dateOfBirth">The date of birth.</param>
-        /// <param name="gender">The gender.</param>
-        /// <exception cref="InvalidOperationException">Membership with Id {membership}</exception>
-        private void ValidateAgainstDuplicateMembershipRequest(Guid playerId, DateTime dateOfBirth, String gender)
-        {
-            Boolean membershipExists = this.MembershipList.Any(m => m.PlayerId == playerId && 
-                                                               m.PlayerDateOfBirth == dateOfBirth &&
-                                                               String.Compare(m.PlayerGender,gender, StringComparison.InvariantCultureIgnoreCase) == 0);
-
-            if (membershipExists)
-            {
-                throw new InvalidOperationException($"Membership with Player Id {playerId} Date of Birth {dateOfBirth.Date:dd/MM/yyy} and Gender {gender} already requested");
-            }
-        }
-        #endregion
-
-        #region private void ValidatePlayerDateOfBirth(Guid membershipId, Guid playerId, DateTime dateOfBirth)        
-        /// <summary>
-        /// Validates the player date of birth.
-        /// </summary>
-        /// <param name="membershipId">The membership identifier.</param>
-        /// <param name="playerId">The player identifier.</param>
-        /// <param name="dateOfBirth">The date of birth.</param>
-        /// <exception cref="InvalidOperationException">
-        /// Player Id {playerId}
-        /// or
-        /// Player Id {playerId}
-        /// </exception>
-        private void ValidatePlayerDateOfBirth(Guid membershipId, Guid playerId, DateTime dateOfBirth)
-        {
-            // Get the players age 
-            AgeResult ageResult = CalculateAge(dateOfBirth);
-
-            if (ageResult.Years < 13)
-            {
-                throw  new InvalidOperationException($"Player Id {playerId} is too young.");
-            }
-
-            if (ageResult.Years >= 90)
-            {
-                throw  new InvalidOperationException($"Player Id {playerId} is too old.");
-            }
-        }
-        #endregion
-
-        #region private AgeResult CalculateAge(DateTime dateOfBirth)        
         /// <summary>
         /// Calculates the age.
         /// </summary>
@@ -286,26 +216,30 @@ namespace ManagementAPI.GolfClubMembership
 
             return result;
         }
-        #endregion
 
-        #region private void ValidateMembershipCount(Guid playerId)        
         /// <summary>
-        /// Validates the membership count.
+        /// Creates from.
         /// </summary>
-        /// <param name="playerId">The player identifier.</param>
-        /// <exception cref="InvalidOperationException">No more space at club for Player Id {playerId}</exception>
-        private void ValidateMembershipCount(Guid playerId)
+        /// <param name="membership">The membership.</param>
+        /// <returns></returns>
+        private MembershipDataTransferObject CreateFrom(Membership membership)
         {
-            Int32 acceptedMemberCount = this.MembershipList.Count(m => m.Status == 1);
-
-            if (acceptedMemberCount == MaximumNumberOfMembers)
-            {
-                throw new InvalidOperationException($"No more space at club for Player Id {playerId}");
-            }
+            return new MembershipDataTransferObject
+                   {
+                       PlayerId = membership.PlayerId,
+                       MembershipId = membership.MembershipId,
+                       PlayerGender = membership.PlayerGender,
+                       PlayerFullName = membership.PlayerFullName,
+                       PlayerDateOfBirth = membership.PlayerDateOfBirth,
+                       RejectionReason = membership.RejectionReason,
+                       AcceptedDateAndTime = membership.AcceptedDateAndTime,
+                       RejectedDateAndTime = membership.RejectedDateAndTime,
+                       Status = membership.Status,
+                       RequestedDateAndTime = membership.RequestedDateAndTime,
+                       MembershipNumber = membership.MembershipNumber
+                   };
         }
-        #endregion
 
-        #region private String GenerateMembershipNumber()        
         /// <summary>
         /// Generates the membership number.
         /// </summary>
@@ -320,7 +254,117 @@ namespace ManagementAPI.GolfClubMembership
 
             return $"{memberCount:000000}";
         }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(ClubMembershipRequestAcceptedEvent domainEvent)
+        {
+            Membership membership = Membership.Create(domainEvent.MembershipId,
+                                                      domainEvent.PlayerId,
+                                                      domainEvent.PlayerFullName,
+                                                      domainEvent.PlayerGender,
+                                                      domainEvent.PlayerDateOfBirth);
+            membership.Accepted(domainEvent.MembershipNumber, domainEvent.AcceptedDateAndTime);
+            this.MembershipList.Add(membership);
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(ClubMembershipRequestRejectedEvent domainEvent)
+        {
+            Membership membership = Membership.Create(domainEvent.MembershipId,
+                                                      domainEvent.PlayerId,
+                                                      domainEvent.PlayerFullName,
+                                                      domainEvent.PlayerGender,
+                                                      domainEvent.PlayerDateOfBirth);
+            membership.Rejected(domainEvent.RejectionReason, domainEvent.RejectionDateAndTime);
+            this.MembershipList.Add(membership);
+        }
+
+        /// <summary>
+        /// Validates the against duplicate membership request.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="dateOfBirth">The date of birth.</param>
+        /// <param name="gender">The gender.</param>
+        /// <exception cref="System.InvalidOperationException">Membership with Player Id {playerId} Date of Birth {dateOfBirth.Date:dd/MM/yyy} and Gender {gender}</exception>
+        /// <exception cref="InvalidOperationException">Membership with Id {membership}</exception>
+        private void ValidateAgainstDuplicateMembershipRequest(Guid playerId,
+                                                               DateTime dateOfBirth,
+                                                               String gender)
+        {
+            Boolean membershipExists = this.MembershipList.Any(m => m.PlayerId == playerId && m.PlayerDateOfBirth == dateOfBirth &&
+                                                                    string.Compare(m.PlayerGender, gender, StringComparison.InvariantCultureIgnoreCase) == 0);
+
+            if (membershipExists)
+            {
+                throw new
+                    InvalidOperationException($"Membership with Player Id {playerId} Date of Birth {dateOfBirth.Date:dd/MM/yyy} and Gender {gender} already requested");
+            }
+        }
+
+        /// <summary>
+        /// Validates the membership count.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <exception cref="System.InvalidOperationException">No more space at club for Player Id {playerId}</exception>
+        /// <exception cref="InvalidOperationException">No more space at club for Player Id {playerId}</exception>
+        private void ValidateMembershipCount(Guid playerId)
+        {
+            Int32 acceptedMemberCount = this.MembershipList.Count(m => m.Status == 1);
+
+            if (acceptedMemberCount == GolfClubMembershipAggregate.MaximumNumberOfMembers)
+            {
+                throw new InvalidOperationException($"No more space at club for Player Id {playerId}");
+            }
+        }
+
+        /// <summary>
+        /// Validates the player date of birth.
+        /// </summary>
+        /// <param name="membershipId">The membership identifier.</param>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="dateOfBirth">The date of birth.</param>
+        /// <exception cref="System.InvalidOperationException">
+        /// Player Id {playerId}
+        /// or
+        /// Player Id {playerId}
+        /// </exception>
+        /// <exception cref="InvalidOperationException">Player Id {playerId}
+        /// or
+        /// Player Id {playerId}</exception>
+        private void ValidatePlayerDateOfBirth(Guid membershipId,
+                                               Guid playerId,
+                                               DateTime dateOfBirth)
+        {
+            // Get the players age 
+            AgeResult ageResult = this.CalculateAge(dateOfBirth);
+
+            if (ageResult.Years < 13)
+            {
+                throw new InvalidOperationException($"Player Id {playerId} is too young.");
+            }
+
+            if (ageResult.Years >= 90)
+            {
+                throw new InvalidOperationException($"Player Id {playerId} is too old.");
+            }
+        }
+
+        #endregion
+
+        #region Others
+
+        /// <summary>
+        /// The maximum number of members
+        /// </summary>
+        // TODO: This will be set at the club level
+        private const Int32 MaximumNumberOfMembers = 500;
+
         #endregion
     }
 }
- 

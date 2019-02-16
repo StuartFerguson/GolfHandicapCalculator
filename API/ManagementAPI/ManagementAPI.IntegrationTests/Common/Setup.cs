@@ -17,7 +17,6 @@ namespace ManagementAPI.IntegrationTests.Common
     public class Setup
     {
         public static IContainerService DatabaseServerContainer;
-        //public static String DbConnectionString;
         private static String DbConnectionStringWithNoDatabase;
         public static INetworkService DatabaseServerNetwork;
 

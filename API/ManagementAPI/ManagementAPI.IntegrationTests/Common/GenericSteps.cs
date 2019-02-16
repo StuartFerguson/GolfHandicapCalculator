@@ -15,7 +15,7 @@ using TechTalk.SpecFlow;
 
 namespace ManagementAPI.IntegrationTests.Common
 {
-    [Binding]    
+    [Binding]
     public abstract class GenericSteps
     {
         protected ScenarioContext ScenarioContext;
@@ -311,6 +311,12 @@ namespace ManagementAPI.IntegrationTests.Common
                 .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)
                 .Build()
                 .Start();
-        }        
+        }     
+        
+        [Then(@"the response should be '(.*)'")]
+        public void ThenTheResponseShouldBe(int p0)
+        {
+            ScenarioContext.Current.Pending();
+        }
     }
 }

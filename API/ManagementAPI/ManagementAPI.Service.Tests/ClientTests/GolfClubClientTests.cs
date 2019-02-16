@@ -16,6 +16,8 @@ using Shouldly;
 
 namespace ManagementAPI.Service.Tests.ClientTests
 {
+    using GolfClubMembership;
+
     public class GolfClubClientTests
     {
         [Fact]
@@ -119,6 +121,58 @@ namespace ManagementAPI.Service.Tests.ClientTests
             Exception exception = Should.Throw(async () =>
             {
                 await client.GetGolfClubList(passwordToken, CancellationToken.None);
+            }, exceptionType);
+
+            exception.InnerException.ShouldBeOfType(innerExceptionType);
+        }
+
+        [Fact]
+        public async Task GolfClubClient_GetGolfClubMembersList_SuccessfulResponse()
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content =new StringContent(JsonConvert.SerializeObject(GolfClubMembershipTestData.GetGolfClubMembershipDetailsResponse()))
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
+
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
+
+            List<GolfClubMembershipDetails> response = await client.GetGolfClubMembershipList(passwordToken, CancellationToken.None);
+
+            response.ShouldNotBeNull();
+            response.Count.ShouldBe(GolfClubMembershipTestData.GetGolfClubMembershipDetailsResponse().Count);
+        }
+
+        [Theory]
+        [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
+        [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
+        [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
+        public async Task GolfClubClient_GetGolfClubMembersList_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = statusCode,
+                Content =new StringContent(String.Empty)
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
+
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
+            
+            Exception exception = Should.Throw(async () =>
+            {
+                await client.GetGolfClubMembershipList(passwordToken, CancellationToken.None);
             }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);
