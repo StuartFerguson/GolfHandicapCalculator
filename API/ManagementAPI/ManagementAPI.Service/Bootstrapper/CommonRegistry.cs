@@ -22,6 +22,8 @@ using ESLogger = EventStore.ClientAPI;
 
 namespace ManagementAPI.Service.Bootstrapper
 {
+    using EventHandling;
+
     [ExcludeFromCodeCoverage]
     public class CommonRegistry : Registry
     {
@@ -48,6 +50,14 @@ namespace ManagementAPI.Service.Bootstrapper
             {  
                 return EventStoreConnection.Create(connectionSettings.ConnectionString);                
             };
+
+            For<IDomainEventHandler>().Use<GolfClubDomainEventHandler>().Named("GolfClub");
+            For<IDomainEventHandler>().Use<GolfClubMembershipDomainEventHandler>().Named("GolfClubMembership");
+
+            Func<String, IDomainEventHandler> domainEventHanderFunc = (name) =>
+                                                                      {
+                                                                          return Startup.Container.GetInstance<IDomainEventHandler>(name);                                                                          
+                                                                      };
 
             For<Func<EventStoreConnectionSettings, IEventStoreConnection>>().Use(eventStoreConnectionFunc);
 

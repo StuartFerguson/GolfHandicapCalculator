@@ -1,8 +1,17 @@
-﻿using ESLogger = EventStore.ClientAPI;
+﻿using System;
+using System.Reflection;
+using ManagementAPI.Database;
+using ManagementAPI.Service;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Shared.General;
+using Swashbuckle.AspNetCore.Swagger;
+using ESLogger = EventStore.ClientAPI;
 
 namespace ManagementAPI.Service
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
@@ -11,6 +20,7 @@ namespace ManagementAPI.Service
     using Common;
     using Database;
     using Database.SeedData;
+    using EventHandling;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -147,7 +157,7 @@ namespace ManagementAPI.Service
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             Startup.ConfigureMiddlewareServices(services);
-
+            
             IContainer container = Startup.GetConfiguredContainer(services, Startup.HostingEnvironment);
 
             return container.GetInstance<IServiceProvider>();
@@ -163,6 +173,23 @@ namespace ManagementAPI.Service
                                                         IHostingEnvironment hostingEnvironment)
         {
             Container container = new Container();
+
+            Dictionary<String, String[]> handlerEventTypesToSilentlyHandle = new Dictionary<String, String[]>();
+
+            if (Startup.Configuration != null)
+            {
+                IConfigurationSection section = Startup.Configuration.GetSection("AppSettings:HandlerEventTypesToSilentlyHandle");
+
+                if (section != null)
+                {
+                    Startup.Configuration.GetSection("AppSettings:HandlerEventTypesToSilentlyHandle").Bind(handlerEventTypesToSilentlyHandle);
+                }
+            }
+
+            DomainEventTypesToSilentlyHandle eventTypesToSilentlyHandle = new DomainEventTypesToSilentlyHandle(handlerEventTypesToSilentlyHandle);
+
+            //Can we create a static method in this class that returns IContainer?
+            services.AddSingleton<IDomainEventTypesToSilentlyHandle>(eventTypesToSilentlyHandle);  
 
             container.Configure(config =>
                                 {

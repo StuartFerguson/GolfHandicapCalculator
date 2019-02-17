@@ -338,19 +338,15 @@
             switch(this.ScenarioContext.ScenarioInfo.Title)
             {
                 case "Get Golf Club List":
-                    streamName = "$et-ManagementAPI.GolfClub.DomainEvents.GolfClubCreatedEvent";
-                    subscriptionGroup = "ClubCreated";
+                    streamName = "$ce-GolfClubAggregate";
+                    subscriptionGroup = "GolfClubAggregate";
                     break;
             }
 
             if (!string.IsNullOrEmpty(streamName))
             {
                 IPEndPoint mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
-
-                // Try opening a connection
-                Int32 maxRetries = 10;
-                Int32 counter = 1;
-
+                
                 String server = "127.0.0.1";
                 String database = "SubscriptionServiceConfiguration";
                 String user = "root";
@@ -370,14 +366,14 @@
                 Guid subscriptionGroupId = Guid.NewGuid();
 
                 // Insert the Subscription Stream
-                String endpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent";
+                String endpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GOlfClub";
 
                 MySqlCommand streamInsert = connection.CreateCommand();
                 streamInsert.CommandText = $"insert into SubscriptionStream(Id, StreamName, SubscriptionType) select '{subscriptionStreamId}', '{streamName}', 0";
                 streamInsert.ExecuteNonQuery();
 
                 MySqlCommand endpointInsert = connection.CreateCommand();
-                endpointInsert.CommandText = $"insert into EndPoints(EndpointId, name, url) select '{endpointId}', 'ManagementAPI', '{endpointUrl}'";
+                endpointInsert.CommandText = $"insert into EndPoints(EndpointId, name, url) select '{endpointId}', 'Golf Club Read Model', '{endpointUrl}'";
                 endpointInsert.ExecuteNonQuery();
 
                 MySqlCommand groupInsert = connection.CreateCommand();
