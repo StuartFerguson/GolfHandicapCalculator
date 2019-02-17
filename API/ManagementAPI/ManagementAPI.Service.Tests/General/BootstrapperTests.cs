@@ -20,12 +20,12 @@ namespace ManagementAPI.Service.Tests.General
             Mock<IHostingEnvironment> hostingEnvironment = new Mock<IHostingEnvironment>();
             hostingEnvironment.Setup(he => he.EnvironmentName).Returns("Development");
 
-            Startup.Configuration = SetupMemoryConfiguration();
+            Startup.Configuration = this.SetupMemoryConfiguration();
             Startup.HostingEnvironment = hostingEnvironment.Object;
 
             IContainer container = Startup.GetConfiguredContainer(servicesCollection, hostingEnvironment.Object);
 
-            AddTestRegistrations(container);
+            this.AddTestRegistrations(container);
 
             container.AssertConfigurationIsValid();
         }
@@ -37,12 +37,12 @@ namespace ManagementAPI.Service.Tests.General
             Mock<IHostingEnvironment> hostingEnvironment = new Mock<IHostingEnvironment>();
             hostingEnvironment.Setup(he => he.EnvironmentName).Returns("Production");
 
-            Startup.Configuration = SetupMemoryConfiguration();
+            Startup.Configuration = this.SetupMemoryConfiguration();
             Startup.HostingEnvironment = hostingEnvironment.Object;
 
             IContainer container = Startup.GetConfiguredContainer(servicesCollection, hostingEnvironment.Object);
 
-            AddTestRegistrations(container);
+            this.AddTestRegistrations(container);
 
             container.AssertConfigurationIsValid();
         }
@@ -56,6 +56,8 @@ namespace ManagementAPI.Service.Tests.General
             configuration.Add("EventStoreSettings:ConnectionString", "ConnectTo=tcp://admin:changeit@127.0.0.1:1112;VerboseLogging=true;");
             configuration.Add("EventStoreSettings:ConnectionName", "UnitTestConnection");
             configuration.Add("EventStoreSettings:HttpPort", "2113");
+            configuration.Add("AppSettings:HandlerEventTypesToSilentlyHandle", "\"GolfClubDomainEventHandler\": []");
+
 
             builder.AddInMemoryCollection(configuration);
 

@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using EventStore.ClientAPI.Exceptions;
-using ManagementAPI.GolfClub.DomainEvents;
-using ManagementAPI.GolfClubMembership.DomainEvents;
-using ManagementAPI.Player.DomainEvents;
-using ManagementAPI.Service.Commands;
-using ManagementAPI.Service.Manager;
-using Microsoft.AspNetCore.Mvc;
-using Shared.CommandHandling;
-using Shared.EventSourcing;
-
-namespace ManagementAPI.Service.Controllers
+﻿namespace ManagementAPI.Service.Controllers
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using EventHandling;
+    using EventStore.ClientAPI.Exceptions;
+    using Microsoft.AspNetCore.Mvc;
+    using Shared.EventSourcing;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [Route("api/[controller]")]
     [ApiController]
     [ExcludeFromCodeCoverage]
@@ -24,14 +21,9 @@ namespace ManagementAPI.Service.Controllers
         #region Fields
 
         /// <summary>
-        /// The manager
+        /// The domian event handler resolver
         /// </summary>
-        private readonly IManagmentAPIManager Manager;
-
-        /// <summary>
-        /// The command router
-        /// </summary>
-        private readonly ICommandRouter CommandRouter;
+        private readonly Func<String, IDomainEventHandler> DomianEventHandlerResolver;
 
         #endregion
 
@@ -40,18 +32,16 @@ namespace ManagementAPI.Service.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="DomainEventController" /> class.
         /// </summary>
-        /// <param name="manager">The manager.</param>
-        /// <param name="commandRouter">The command router.</param>
-        public DomainEventController(IManagmentAPIManager manager,ICommandRouter commandRouter)
+        /// <param name="domianEventHandlerResolver">The domian event handler resolver.</param>
+        public DomainEventController(Func<String, IDomainEventHandler> domianEventHandlerResolver)
         {
-            this.Manager = manager;
-            this.CommandRouter = commandRouter;
+            this.DomianEventHandlerResolver = domianEventHandlerResolver;
         }
+
         #endregion
 
-        #region Public Methods
+        #region Methods
 
-        #region public async Task<IActionResult> PostEvent([FromBody]DomainEvent @event, CancellationToken cancellationToken)
         /// <summary>
         /// Posts the event.
         /// </summary>
@@ -59,74 +49,48 @@ namespace ManagementAPI.Service.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> PostEvent([FromBody]DomainEvent @event, CancellationToken cancellationToken)
+        [Route("GolfClub")]
+        public async Task<IActionResult> PostEventGolfClub([FromBody] DomainEvent @event,
+                                                           CancellationToken cancellationToken)
         {
             try
             {
-                //Handle incoming events
-                await this.HandleEvent((dynamic)@event, cancellationToken);
+                IDomainEventHandler domainEventHandler = this.DomianEventHandlerResolver("GolfClub");
+                await domainEventHandler.Handle(@event, cancellationToken);
             }
-            catch (WrongExpectedVersionException)
+            catch(WrongExpectedVersionException)
             {
-                return BadRequest();
+                return this.BadRequest();
             }
 
             //TODO: Handle NAK scenarios
             return this.Ok();
         }
-        #endregion
 
-        #endregion
-
-        #region Private Methods
-
-        #region private async Task HandleEvent(GolfClubCreatedEvent domainEvent, CancellationToken cancellationToken)        
         /// <summary>
-        /// Handles the event.
+        /// Posts the event golf club membership.
         /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="event">The event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private async Task HandleEvent(GolfClubCreatedEvent domainEvent, CancellationToken cancellationToken)
+        [HttpPost]
+        [Route("GolfClubMembership")]
+        public async Task<IActionResult> PostEventGolfClubMembership([FromBody] DomainEvent @event,
+                                                                     CancellationToken cancellationToken)
         {
-            await this.Manager.InsertGolfClubToReadModel(domainEvent, cancellationToken);
+            try
+            {
+                IDomainEventHandler domainEventHandler = this.DomianEventHandlerResolver("GolfClubMembership");
+                await domainEventHandler.Handle(@event, cancellationToken);
+            }
+            catch(WrongExpectedVersionException)
+            {
+                return this.BadRequest();
+            }
+
+            //TODO: Handle NAK scenarios
+            return this.Ok();
         }
-        #endregion
-
-        #region private async Task HandleEvent(ClubMembershipRequestAcceptedEvent domainEvent, CancellationToken cancellationToken)
-        /// <summary>
-        /// Handles the event.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        private async Task HandleEvent(ClubMembershipRequestAcceptedEvent domainEvent, CancellationToken cancellationToken)
-        {
-            AddAcceptedMembershipToPlayerCommand command = AddAcceptedMembershipToPlayerCommand.Create(domainEvent.PlayerId, 
-                domainEvent.AggregateId,
-                domainEvent.MembershipId, domainEvent.MembershipNumber, domainEvent.AcceptedDateAndTime);
-
-            await this.CommandRouter.Route(command, cancellationToken);
-        }
-        #endregion
-
-        #region private async Task HandleEvent(ClubMembershipRequestRejectedEvent domainEvent, CancellationToken cancellationToken)
-        /// <summary>
-        /// Handles the event.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        private async Task HandleEvent(ClubMembershipRequestRejectedEvent domainEvent, CancellationToken cancellationToken)
-        {
-            AddRejectedMembershipToPlayerCommand command = AddRejectedMembershipToPlayerCommand.Create(
-                domainEvent.PlayerId,
-                domainEvent.AggregateId, domainEvent.MembershipId, domainEvent.RejectionReason,
-                domainEvent.RejectionDateAndTime);
-
-            await this.CommandRouter.Route(command, cancellationToken);
-        }
-        #endregion
 
         #endregion
     }
