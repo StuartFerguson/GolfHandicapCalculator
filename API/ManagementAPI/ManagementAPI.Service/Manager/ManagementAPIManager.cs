@@ -268,6 +268,37 @@
             await this.OAuth2SecurityService.RegisterUser(registerUserRequest, cancellationToken);
         }
 
+        /// <summary>
+        /// Gets the players club memberships.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<List<ClubMembershipResponse>> GetPlayersClubMemberships(Guid playerId, CancellationToken cancellationToken)
+        {
+            List<ClubMembershipResponse> result = new List<ClubMembershipResponse>();
+
+            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(playerId, cancellationToken);
+
+            List<ClubMembershipDataTransferObject> membershipList = player.GetClubMemberships();
+
+            foreach (ClubMembershipDataTransferObject clubMembershipDataTransferObject in membershipList)
+            {
+                result.Add(new ClubMembershipResponse
+                           {
+                               MembershipNumber = clubMembershipDataTransferObject.MembershipNumber,
+                               MembershipId = clubMembershipDataTransferObject.MembershipId,
+                               GolfClubId = clubMembershipDataTransferObject.GolfClubId,
+                               RejectionReason = clubMembershipDataTransferObject.RejectionReason,
+                               Status = (MembershipStatus)clubMembershipDataTransferObject.Status,
+                               RejectedDateTime = clubMembershipDataTransferObject.RejectedDateTime,
+                               AcceptedDateTime = clubMembershipDataTransferObject.AcceptedDateTime
+                           });
+            }
+
+            return result;
+        }
+
         #endregion
     }
 }

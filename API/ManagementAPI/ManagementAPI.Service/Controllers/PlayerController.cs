@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
-using ManagementAPI.Service.Commands;
-using ManagementAPI.Service.Common;
-using ManagementAPI.Service.DataTransferObjects;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Shared.CommandHandling;
-
-namespace ManagementAPI.Service.Controllers
+﻿namespace ManagementAPI.Service.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Security.Claims;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Commands;
+    using Common;
+    using DataTransferObjects;
+    using Manager;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Shared.CommandHandling;
+
     [Route("api/[controller]")]
     [ApiController]
     [ExcludeFromCodeCoverage]
@@ -27,24 +27,49 @@ namespace ManagementAPI.Service.Controllers
         /// </summary>
         private readonly ICommandRouter CommandRouter;
 
+        /// <summary>
+        /// The manager
+        /// </summary>
+        private readonly IManagmentAPIManager Manager;
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GolfClubController"/> class.
+        /// Initializes a new instance of the <see cref="GolfClubController" /> class.
         /// </summary>
         /// <param name="commandRouter">The command router.</param>
-        public PlayerController(ICommandRouter commandRouter)
+        /// <param name="manager">The manager.</param>
+        public PlayerController(ICommandRouter commandRouter,
+                                IManagmentAPIManager manager)
         {
             this.CommandRouter = commandRouter;
+            this.Manager = manager;
         }
 
         #endregion
 
-        #region Public Methods
+        #region Methods
 
-        #region public async Task<IActionResult> PostPlayer([FromBody]RegisterPlayerRequest request, CancellationToken cancellationToken)        
+        /// <summary>
+        /// Gets the player memberships.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(List<ClubMembershipResponse>), 200)]
+        [Route("Memberships")]
+        public async Task<IActionResult> GetPlayerMemberships(CancellationToken cancellationToken)
+        {
+            // Get the Player Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId);
+
+            List<ClubMembershipResponse> membershipList = await this.Manager.GetPlayersClubMemberships(Guid.Parse(playerIdClaim.Value), cancellationToken);
+
+            return this.Ok(membershipList);
+        }
+
         /// <summary>
         /// Posts the player.
         /// </summary>
@@ -54,19 +79,19 @@ namespace ManagementAPI.Service.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(RegisterPlayerResponse), 200)]
         [AllowAnonymous]
-        public async Task<IActionResult> PostPlayer([FromBody]RegisterPlayerRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> PostPlayer([FromBody] RegisterPlayerRequest request,
+                                                    CancellationToken cancellationToken)
         {
             // Create the command
             RegisterPlayerCommand command = RegisterPlayerCommand.Create(request);
 
             // Route the command
-            await this.CommandRouter.Route(command,cancellationToken);
+            await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
             return this.Ok(command.Response);
         }
-        #endregion        
-        
+
         #endregion
     }
 }

@@ -43,6 +43,14 @@
         public RegisterPlayerRequest RegisterPlayerRequest;
 
         public RegisterPlayerResponse RegisterPlayerResponse;
+
+        public String ClubAdministratorToken;
+
+        public String PlayerToken;
+
+        public Guid GolfClubId;
+
+        public List<ClubMembershipResponse> ClubMembershipResponses;
     }
 
     public class TournamentTestingContext

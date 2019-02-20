@@ -1,6 +1,6 @@
 ﻿namespace ManagementAPI.Player
 {
-    internal enum MembershipStatus
+    public enum MembershipStatusEnum
     {
         Accepted = 1,
         Rejected = 2

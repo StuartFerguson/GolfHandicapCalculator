@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ManagementAPI.Player
+namespace ManagementAPI.Service.DataTransferObjects
 {
-    public class ClubMembershipDataTransferObject
+    public class ClubMembershipResponse
     {
         /// <summary>
         /// Gets the golf club identifier.
@@ -44,7 +44,7 @@ namespace ManagementAPI.Player
         /// <value>
         /// The membership status.
         /// </value>
-        public MembershipStatusEnum Status { get; set; }
+        public MembershipStatus Status { get; set; }
 
         /// <summary>
         /// Gets the rejection reason.

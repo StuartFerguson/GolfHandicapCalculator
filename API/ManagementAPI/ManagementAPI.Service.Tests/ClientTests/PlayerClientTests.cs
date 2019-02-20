@@ -15,6 +15,8 @@ using Xunit;
 
 namespace ManagementAPI.Service.Tests.ClientTests
 {
+    using System.Collections.Generic;
+
     public class PlayerClientTests
     {
         [Fact]
@@ -65,6 +67,59 @@ namespace ManagementAPI.Service.Tests.ClientTests
                     async () =>
                     {
                         await client.RegisterPlayer(PlayerTestData.RegisterPlayerRequest, CancellationToken.None);
+                    }, exceptionType);
+
+            exception.InnerException.ShouldBeOfType(innerExceptionType);
+        }
+
+        [Fact]
+        public async Task PlayerClient_GetPlayerMemberships_SuccessfulResponse()
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content =new StringContent(JsonConvert.SerializeObject(PlayerTestData.ClubMembershipResponses))
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
+            PlayerClient client = new PlayerClient(resolver, httpClient);
+
+            List<ClubMembershipResponse> response = await client.GetPlayerMemberships(passwordToken, CancellationToken.None);
+
+            response.ShouldNotBeEmpty();
+        }
+
+        [Theory]
+        [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
+        [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
+        [InlineData(HttpStatusCode.BadGateway, typeof(Exception), typeof(Exception))]
+        public async Task PlayerClient_GetPlayerMemberships_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode,
+            Type exceptionType, Type innerExceptionType)
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> {CallBase = true};
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = statusCode,
+                Content = new StringContent(String.Empty)
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
+
+            PlayerClient client = new PlayerClient(resolver, httpClient);
+
+            Exception exception =
+                Should.Throw(
+                    async () =>
+                    {
+                        await client.GetPlayerMemberships(passwordToken, CancellationToken.None);
                     }, exceptionType);
 
             exception.InnerException.ShouldBeOfType(innerExceptionType);

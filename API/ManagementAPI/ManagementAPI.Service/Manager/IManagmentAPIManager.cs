@@ -37,6 +37,14 @@
                                                                      CancellationToken cancellationToken);
 
         /// <summary>
+        /// Gets the players club memberships.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<List<ClubMembershipResponse>> GetPlayersClubMemberships(Guid playerId, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Inserts the golf club to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>

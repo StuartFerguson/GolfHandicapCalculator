@@ -1,15 +1,17 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using ManagementAPI.Service.DataTransferObjects;
-using Newtonsoft.Json;
-
-namespace ManagementAPI.Service.Client
+﻿namespace ManagementAPI.Service.Client
 {
-    public class PlayerClient : ClientProxyBase.ClientProxyBase, IPlayerClient
+    using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using ClientProxyBase;
+    using DataTransferObjects;
+    using Newtonsoft.Json;
+
+    public class PlayerClient : ClientProxyBase, IPlayerClient
     {
         #region Fields
 
@@ -27,20 +29,62 @@ namespace ManagementAPI.Service.Client
         /// </summary>
         /// <param name="baseAddressResolver">The base address resolver.</param>
         /// <param name="httpClient">The HTTP client.</param>
-        public PlayerClient(Func<String, String> baseAddressResolver, HttpClient httpClient) : base(httpClient)
+        public PlayerClient(Func<String, String> baseAddressResolver,
+                            HttpClient httpClient) : base(httpClient)
         {
             this.BaseAddress = baseAddressResolver("ManagementAPI");
         }
+
         #endregion
 
-        #region public async Task<RegisterPlayerResponse> RegisterPlayer(RegisterPlayerRequest request, CancellationToken cancellationToken)        
+        #region Methods
+
+        /// <summary>
+        /// Gets the player memberships.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<List<ClubMembershipResponse>> GetPlayerMemberships(String passwordToken,
+                                                                             CancellationToken cancellationToken)
+        {
+            List<ClubMembershipResponse> response = null;
+
+            String requestUri = $"{this.BaseAddress}/api/Player/Memberships";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<List<ClubMembershipResponse>>(content);
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting memberships for player.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
         /// <summary>
         /// Registers the player.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<RegisterPlayerResponse> RegisterPlayer(RegisterPlayerRequest request, CancellationToken cancellationToken)
+        public async Task<RegisterPlayerResponse> RegisterPlayer(RegisterPlayerRequest request,
+                                                                 CancellationToken cancellationToken)
         {
             RegisterPlayerResponse response = null;
 
@@ -56,22 +100,22 @@ namespace ManagementAPI.Service.Client
                 HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
 
                 // Process the response
-                String content = await HandleResponse(httpResponse, cancellationToken);
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
 
                 // call was successful so now deserialise the body to the response object
                 response = JsonConvert.DeserializeObject<RegisterPlayerResponse>(content);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception =
-                    new Exception($"Error creating the new player {request.FirstName} {request.LastName}.", ex);
+                Exception exception = new Exception($"Error creating the new player {request.FirstName} {request.LastName}.", ex);
 
                 throw exception;
             }
 
             return response;
         }
+
         #endregion
     }
 }
