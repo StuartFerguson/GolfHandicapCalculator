@@ -116,6 +116,20 @@ namespace ManagementAPI.Service.Tests.Player
             PlayerId = AggregateId
         };
 
+        public static List<ClubMembershipResponse> ClubMembershipResponses = new List<ClubMembershipResponse>
+                                                                             {
+                                                                                 new ClubMembershipResponse
+                                                                                 {
+                                                                                     AcceptedDateTime = PlayerTestData.MembershipAcceptedDateTime,
+                                                                                     MembershipNumber = PlayerTestData.MembershipNumber,
+                                                                                     MembershipId = PlayerTestData.MembershipId,
+                                                                                     GolfClubId = PlayerTestData.GolfClubId,
+                                                                                     RejectionReason = String.Empty,
+                                                                                     Status = MembershipStatus.Accepted,
+                                                                                     RejectedDateTime = DateTime.MinValue
+                                                                                 }
+                                                                             };
+
         public static RegisterPlayerCommand GetRegisterPlayerCommand()
         {
             return RegisterPlayerCommand.Create(RegisterPlayerRequest);

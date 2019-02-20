@@ -18,6 +18,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Moq;
+    using Player;
     using Services;
     using Services.DataTransferObjects;
     using Shared.EventStore;
@@ -172,6 +173,55 @@
             List<GolfClubMembershipDetails> result = await manager.GetGolfClubMembersList(GolfClubTestData.AggregateId, CancellationToken.None);
 
             result.ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_GetPlayersClubMemberships_MembershipListReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                            .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithMembershipAdded);
+            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            List<ClubMembershipResponse> membershipList = await manager.GetPlayersClubMemberships(PlayerTestData.AggregateId, CancellationToken.None);
+
+            membershipList.ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_GetPlayersClubMemberships_NotMemberOfAnyClubs_MembershipListReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            Should.Throw<NotFoundException>(async () => { await manager.GetPlayersClubMemberships(PlayerTestData.AggregateId, CancellationToken.None); });
         }
 
         [Fact]
