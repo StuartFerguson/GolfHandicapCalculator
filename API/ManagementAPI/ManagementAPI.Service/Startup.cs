@@ -18,6 +18,7 @@ namespace ManagementAPI.Service
     using System.Threading.Tasks;
     using Bootstrapper;
     using Common;
+    using Controllers;
     using Database;
     using Database.SeedData;
     using EventHandling;
@@ -35,6 +36,7 @@ namespace ManagementAPI.Service
     using Shared.Extensions;
     using Shared.General;
     using StructureMap;
+    using Swashbuckle.AspNetCore.Filters;
     using Swashbuckle.AspNetCore.Swagger;
 
     [ExcludeFromCodeCoverage]
@@ -256,7 +258,10 @@ namespace ManagementAPI.Service
                                                         Title = "Golf Handicapping API",
                                                         Version = "v1"
                                                     });
+                                       c.ExampleFilters();
                                    });
+
+            services.AddSwaggerExamplesFromAssemblyOf<SwaggerJsonConverter>();
         }
 
         /// <summary>

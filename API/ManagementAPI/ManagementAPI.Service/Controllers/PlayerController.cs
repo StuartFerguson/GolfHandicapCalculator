@@ -13,6 +13,8 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Shared.CommandHandling;
+    using Swashbuckle.AspNetCore.Annotations;
+    using Swashbuckle.AspNetCore.Filters;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -58,7 +60,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(List<ClubMembershipResponse>), 200)]
+        [SwaggerResponse(200, type:typeof(List<ClubMembershipResponse>))]
+        [SwaggerResponseExample(200, typeof(ClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Route("Memberships")]
         public async Task<IActionResult> GetPlayerMemberships(CancellationToken cancellationToken)
         {
@@ -77,7 +80,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(RegisterPlayerResponse), 200)]
+        [SwaggerResponse(200, type:typeof(RegisterPlayerResponse))]
+        [SwaggerResponseExample(200, typeof(RegisterPlayerResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [AllowAnonymous]
         public async Task<IActionResult> PostPlayer([FromBody] RegisterPlayerRequest request,
                                                     CancellationToken cancellationToken)
