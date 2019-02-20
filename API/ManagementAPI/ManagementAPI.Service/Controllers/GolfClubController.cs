@@ -13,7 +13,11 @@
     using Manager;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using Shared.CommandHandling;
+    using Swashbuckle.AspNetCore.Annotations;
+    using Swashbuckle.AspNetCore.Filters;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -62,6 +66,7 @@
         [HttpPut]
         [Authorize(Policy = PolicyNames.AddMeasuredCourseToGolfClubPolicy)]
         [Route("AddMeasuredCourse")]
+        [SwaggerResponse(200)]
         public async Task<IActionResult> AddMeasuredCourseToGolfClub([FromBody] AddMeasuredCourseToClubRequest request,
                                                                      CancellationToken cancellationToken)
         {
@@ -85,7 +90,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(CreateGolfClubResponse), 200)]
+        [SwaggerResponse(200, type:typeof(CreateGolfClubResponse))]
+        [SwaggerResponseExample(200, typeof(CreateGolfClubResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Route("Create")]
         public async Task<IActionResult> CreateGolfClub([FromBody] CreateGolfClubRequest request,
                                                         CancellationToken cancellationToken)
@@ -112,7 +118,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(GetGolfClubResponse), 200)]
+        [SwaggerResponse(200, type:typeof(GetGolfClubResponse))]
+        [SwaggerResponseExample(200, typeof(GetGolfClubResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Authorize(Policy = PolicyNames.GetSingleGolfClubPolicy)]
         public async Task<IActionResult> GetGolfClub(CancellationToken cancellationToken)
         {
@@ -130,7 +137,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(List<GetGolfClubResponse>), 200)]
+        [SwaggerResponse(200, type:typeof(List<CreateGolfClubResponse>))]
+        [SwaggerResponseExample(200, typeof(GetGolfClubListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Authorize(Policy = PolicyNames.GetGolfClubListPolicy)]
         [Route("List")]
         public async Task<IActionResult> GetGolfClubList(CancellationToken cancellationToken)
@@ -148,6 +156,7 @@
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
+        [SwaggerResponse(200)]
         [Route("RegisterGolfClubAdministrator")]
         public async Task<IActionResult> RegisterGolfClubAdministrator([FromBody] RegisterClubAdministratorRequest request,
                                                                        CancellationToken cancellationToken)
@@ -166,6 +175,7 @@
         /// <returns></returns>
         [HttpPost]
         [Route("{golfClubId}/RequestClubMembership")]
+        [SwaggerResponse(200)]
         public async Task<IActionResult> RequestClubMembership([FromRoute] Guid golfClubId,
                                                                CancellationToken cancellationToken)
         {
@@ -183,9 +193,10 @@
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<GolfClubMembershipDetails>), 200)]
         [Authorize(Policy = PolicyNames.GetGolfClubMembersListPolicy)]
         [Route("MembersList")]
+        [SwaggerResponse(200, type:typeof(List<GolfClubMembershipDetails>))]
+        [SwaggerResponseExample(200, typeof(GolfClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         public async Task<IActionResult> GetGolfClubMembersList(CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user
