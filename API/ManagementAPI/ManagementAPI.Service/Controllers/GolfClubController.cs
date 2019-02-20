@@ -66,7 +66,7 @@
         [HttpPut]
         [Authorize(Policy = PolicyNames.AddMeasuredCourseToGolfClubPolicy)]
         [Route("AddMeasuredCourse")]
-        [SwaggerResponse(200)]
+        [SwaggerResponse(204)]
         public async Task<IActionResult> AddMeasuredCourseToGolfClub([FromBody] AddMeasuredCourseToClubRequest request,
                                                                      CancellationToken cancellationToken)
         {
@@ -80,7 +80,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.NoContent();
         }
 
         /// <summary>
@@ -90,8 +90,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerResponse(200, type:typeof(CreateGolfClubResponse))]
-        [SwaggerResponseExample(200, typeof(CreateGolfClubResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [SwaggerResponse(201, type:typeof(CreateGolfClubResponse))]
+        [SwaggerResponseExample(201, typeof(CreateGolfClubResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Route("Create")]
         public async Task<IActionResult> CreateGolfClub([FromBody] CreateGolfClubRequest request,
                                                         CancellationToken cancellationToken)
@@ -109,7 +109,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.Created(String.Empty, command.Response);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        [SwaggerResponse(200)]
+        [SwaggerResponse(204)]
         [Route("RegisterGolfClubAdministrator")]
         public async Task<IActionResult> RegisterGolfClubAdministrator([FromBody] RegisterClubAdministratorRequest request,
                                                                        CancellationToken cancellationToken)
@@ -164,7 +164,7 @@
             await this.Manager.RegisterClubAdministrator(request, cancellationToken);
 
             // return the result
-            return this.Ok();
+            return this.NoContent();
         }
 
         /// <summary>
@@ -175,7 +175,7 @@
         /// <returns></returns>
         [HttpPost]
         [Route("{golfClubId}/RequestClubMembership")]
-        [SwaggerResponse(200)]
+        [SwaggerResponse(204)]
         public async Task<IActionResult> RequestClubMembership([FromRoute] Guid golfClubId,
                                                                CancellationToken cancellationToken)
         {
@@ -189,7 +189,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.NoContent();
         }
 
         [HttpGet]

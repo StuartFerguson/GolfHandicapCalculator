@@ -51,8 +51,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerResponse(200, type:typeof(CreateTournamentResponse))]
-        [SwaggerResponseExample(200, typeof(CreateTournamentResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [SwaggerResponse(201, type:typeof(CreateTournamentResponse))]
+        [SwaggerResponseExample(201, typeof(CreateTournamentResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Authorize(Policy = PolicyNames.CreateTournamentPolicy)]
         public async Task<IActionResult> PostTournament([FromBody] CreateTournamentRequest request,
                                                         CancellationToken cancellationToken)
@@ -67,7 +67,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.Created(String.Empty, command.Response);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.NoContent();
         }
 
         /// <summary>
@@ -116,7 +116,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.NoContent();
         }
 
         /// <summary>
@@ -141,7 +141,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.NoContent();
         }
 
         /// <summary>
@@ -164,7 +164,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.NoContent();
         }
 
         #endregion

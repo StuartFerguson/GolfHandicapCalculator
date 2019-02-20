@@ -80,8 +80,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerResponse(200, type:typeof(RegisterPlayerResponse))]
-        [SwaggerResponseExample(200, typeof(RegisterPlayerResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [SwaggerResponse(201, type:typeof(RegisterPlayerResponse))]
+        [SwaggerResponseExample(201, typeof(RegisterPlayerResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [AllowAnonymous]
         public async Task<IActionResult> PostPlayer([FromBody] RegisterPlayerRequest request,
                                                     CancellationToken cancellationToken)
@@ -93,7 +93,7 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Ok(command.Response);
+            return this.Created(String.Empty, command.Response);
         }
 
         #endregion
