@@ -284,7 +284,7 @@ namespace ManagementAPI.IntegrationTests.Common
             // Event Store Container
             this.EventStoreContainer = new Builder()
                 .UseContainer()
-                .UseImage("eventstore/eventstore")
+                .UseImage("eventstore/eventstore:release-5.0.0")
                 .ExposePort(2113)
                 .ExposePort(1113)
                 .WithName(this.EventStoreContainerName)
