@@ -142,7 +142,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
 
             GolfClubClient client = new GolfClubClient(resolver, httpClient);
 
-            List<GolfClubMembershipDetails> response = await client.GetGolfClubMembershipList(passwordToken, CancellationToken.None);
+            List<GetGolfClubMembershipDetailsResponse> response = await client.GetGolfClubMembershipList(passwordToken, CancellationToken.None);
 
             response.ShouldNotBeNull();
             response.Count.ShouldBe(GolfClubMembershipTestData.GetGolfClubMembershipDetailsResponse().Count);

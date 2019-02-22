@@ -28,7 +28,7 @@
 
         public Dictionary<Int32, RegisteredPlayer> RegisteredPlayers;
 
-        public List<GolfClubMembershipDetails> GolfClubMembersList;
+        public List<GetGolfClubMembershipDetailsResponse> GolfClubMembersList;
     }
 
     public class RegisteredPlayer
@@ -51,6 +51,8 @@
         public Guid GolfClubId;
 
         public List<ClubMembershipResponse> ClubMembershipResponses;
+
+        public GetPlayerDetailsResponse GetPlayerDetailsResponse;
     }
 
     public class TournamentTestingContext

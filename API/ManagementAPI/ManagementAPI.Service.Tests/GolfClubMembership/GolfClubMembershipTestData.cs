@@ -76,11 +76,11 @@ namespace ManagementAPI.Service.Tests.GolfClubMembership
             return aggregate;
         }
 
-        public static List<GolfClubMembershipDetails> GetGolfClubMembershipDetailsResponse()
+        public static List<GetGolfClubMembershipDetailsResponse> GetGolfClubMembershipDetailsResponse()
         {
-            return new List<GolfClubMembershipDetails>()
+            return new List<GetGolfClubMembershipDetailsResponse>()
                    {
-                       new GolfClubMembershipDetails
+                       new GetGolfClubMembershipDetailsResponse
                        {
                            GolfClubId = GolfClubMembershipTestData.AggregateId,
                            MembershipNumber = GolfClubMembershipTestData.MembershipNumber,
@@ -91,7 +91,7 @@ namespace ManagementAPI.Service.Tests.GolfClubMembership
                            PlayerFullName = GolfClubMembershipTestData.PlayerFullName,
                            Name = GolfClubMembershipTestData.GolfClubName
                        },
-                       new GolfClubMembershipDetails
+                       new GetGolfClubMembershipDetailsResponse
                        {
                            GolfClubId = GolfClubMembershipTestData.AggregateId,
                            MembershipNumber = GolfClubMembershipTestData.MembershipNumber2,

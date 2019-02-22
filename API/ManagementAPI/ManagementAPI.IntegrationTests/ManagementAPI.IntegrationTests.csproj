@@ -10,6 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Ductus.FluentDocker" Version="2.6.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="MySql.Data" Version="8.0.15" />
@@ -31,6 +34,9 @@
 
   <ItemGroup>                   
     <None Update="GolfClub\GetClubMembersList.feature">
+      <Generator></Generator>
+    </None>                   
+    <None Update="Player\GetPlayer.feature">
       <Generator></Generator>
     </None>                   
     <None Update="Player\GetPlayerMemberships.feature">

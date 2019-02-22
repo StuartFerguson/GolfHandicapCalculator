@@ -159,10 +159,10 @@
             return response;
         }
 
-        public async Task<List<GolfClubMembershipDetails>> GetGolfClubMembershipList(String passwordToken,
+        public async Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembershipList(String passwordToken,
                                                                                      CancellationToken cancellationToken)
         {
-            List<GolfClubMembershipDetails> response = null;
+            List<GetGolfClubMembershipDetailsResponse> response = null;
 
             String requestUri = $"{this.BaseAddress}/api/GolfClub/MembersList";
 
@@ -178,7 +178,7 @@
                 String content = await this.HandleResponse(httpResponse, cancellationToken);
 
                 // call was successful so now deserialise the body to the response object
-                response = JsonConvert.DeserializeObject<List<GolfClubMembershipDetails>>(content);
+                response = JsonConvert.DeserializeObject<List<GetGolfClubMembershipDetailsResponse>>(content);
             }
             catch(Exception ex)
             {
