@@ -13,9 +13,9 @@
 
         public Object GetExamples()
         {
-            return new List<GolfClubMembershipDetails>
+            return new List<GetGolfClubMembershipDetailsResponse>
                    {
-                       new GolfClubMembershipDetails
+                       new GetGolfClubMembershipDetailsResponse
                        {
                            PlayerId = Guid.Parse("66B7C12E-A5A7-4DEB-8DB0-5632092AB5C6"),
                            MembershipNumber = "000001",

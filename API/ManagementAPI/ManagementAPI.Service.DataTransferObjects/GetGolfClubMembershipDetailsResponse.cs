@@ -7,7 +7,7 @@ namespace ManagementAPI.Service.DataTransferObjects
     /// <summary>
     /// 
     /// </summary>
-    public class GolfClubMembershipDetails
+    public class GetGolfClubMembershipDetailsResponse
     {
         /// <summary>
         /// Gets or sets the golf club identifier.

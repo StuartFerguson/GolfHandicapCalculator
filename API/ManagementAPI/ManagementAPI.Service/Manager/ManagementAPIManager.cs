@@ -18,11 +18,15 @@
     using Shared.EventStore;
     using Shared.Exceptions;
     using Shared.General;
-    using MembershipStatus = DataTransferObjects.MembershipStatus;
 
     public class ManagementAPIManager : IManagmentAPIManager
     {
         #region Fields
+
+        /// <summary>
+        /// The golf club membership repository
+        /// </summary>
+        private readonly IAggregateRepository<GolfClubMembershipAggregate> GolfClubMembershipRepository;
 
         /// <summary>
         /// The club repository
@@ -43,11 +47,6 @@
         /// The read model resolver
         /// </summary>
         private readonly Func<ManagementAPIReadModel> ReadModelResolver;
-
-        /// <summary>
-        /// The golf club membership repository
-        /// </summary>
-        private readonly IAggregateRepository<GolfClubMembershipAggregate> GolfClubMembershipRepository;
 
         #endregion
 
@@ -159,10 +158,10 @@
         /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<List<GolfClubMembershipDetails>> GetGolfClubMembersList(Guid golfClubId,
-                                                                                  CancellationToken cancellationToken)
+        public async Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembersList(Guid golfClubId,
+                                                                                             CancellationToken cancellationToken)
         {
-            List<GolfClubMembershipDetails> result = new List<GolfClubMembershipDetails>();
+            List<GetGolfClubMembershipDetailsResponse> result = new List<GetGolfClubMembershipDetailsResponse>();
 
             // Rehydrate the Golf Club
             GolfClubAggregate golfClub = await this.GolfClubRepository.GetLatestVersion(golfClubId, cancellationToken);
@@ -174,13 +173,13 @@
 
             // Rehydrate the Golf Club Membership
             GolfClubMembershipAggregate golfClubMembership = await this.GolfClubMembershipRepository.GetLatestVersion(golfClubId, cancellationToken);
-            
+
             // Translate
             List<MembershipDataTransferObject> membershipList = golfClubMembership.GetMemberships();
 
             foreach (MembershipDataTransferObject membership in membershipList)
             {
-                result.Add(new GolfClubMembershipDetails
+                result.Add(new GetGolfClubMembershipDetailsResponse
                            {
                                GolfClubId = golfClub.AggregateId,
                                PlayerId = membership.PlayerId,
@@ -192,8 +191,79 @@
                                Name = golfClub.Name
                            });
             }
-            
+
             // Return
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the player details.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">Player not found with Id {playerId}</exception>
+        public async Task<GetPlayerDetailsResponse> GetPlayerDetails(Guid playerId,
+                                                                     CancellationToken cancellationToken)
+        {
+            GetPlayerDetailsResponse result = null;
+
+            // Rehydrate the player
+            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(playerId, cancellationToken);
+
+            if (!player.HasBeenRegistered)
+            {
+                throw new NotFoundException($"Player not found with Id {playerId}");
+            }
+
+            // Translate 
+            result = new GetPlayerDetailsResponse
+                     {
+                         DateOfBirth = player.DateOfBirth,
+                         FullName = player.FullName,
+                         EmailAddress = player.EmailAddress,
+                         Gender = player.Gender,
+                         HasBeenRegistered = player.HasBeenRegistered,
+                         FirstName = player.FirstName,
+                         LastName = player.LastName,
+                         MiddleName = player.MiddleName,
+                         ExactHandicap = player.ExactHandicap,
+                         HandicapCategory = player.HandicapCategory,
+                         PlayingHandicap = player.PlayingHandicap
+                     };
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the players club memberships.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<List<ClubMembershipResponse>> GetPlayersClubMemberships(Guid playerId,
+                                                                                  CancellationToken cancellationToken)
+        {
+            List<ClubMembershipResponse> result = new List<ClubMembershipResponse>();
+
+            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(playerId, cancellationToken);
+
+            List<ClubMembershipDataTransferObject> membershipList = player.GetClubMemberships();
+
+            foreach (ClubMembershipDataTransferObject clubMembershipDataTransferObject in membershipList)
+            {
+                result.Add(new ClubMembershipResponse
+                           {
+                               MembershipNumber = clubMembershipDataTransferObject.MembershipNumber,
+                               MembershipId = clubMembershipDataTransferObject.MembershipId,
+                               GolfClubId = clubMembershipDataTransferObject.GolfClubId,
+                               RejectionReason = clubMembershipDataTransferObject.RejectionReason,
+                               Status = (MembershipStatus)clubMembershipDataTransferObject.Status,
+                               RejectedDateTime = clubMembershipDataTransferObject.RejectedDateTime,
+                               AcceptedDateTime = clubMembershipDataTransferObject.AcceptedDateTime
+                           });
+            }
+
             return result;
         }
 
@@ -266,37 +336,6 @@
 
             // Create the user
             await this.OAuth2SecurityService.RegisterUser(registerUserRequest, cancellationToken);
-        }
-
-        /// <summary>
-        /// Gets the players club memberships.
-        /// </summary>
-        /// <param name="playerId">The player identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        public async Task<List<ClubMembershipResponse>> GetPlayersClubMemberships(Guid playerId, CancellationToken cancellationToken)
-        {
-            List<ClubMembershipResponse> result = new List<ClubMembershipResponse>();
-
-            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(playerId, cancellationToken);
-
-            List<ClubMembershipDataTransferObject> membershipList = player.GetClubMemberships();
-
-            foreach (ClubMembershipDataTransferObject clubMembershipDataTransferObject in membershipList)
-            {
-                result.Add(new ClubMembershipResponse
-                           {
-                               MembershipNumber = clubMembershipDataTransferObject.MembershipNumber,
-                               MembershipId = clubMembershipDataTransferObject.MembershipId,
-                               GolfClubId = clubMembershipDataTransferObject.GolfClubId,
-                               RejectionReason = clubMembershipDataTransferObject.RejectionReason,
-                               Status = (MembershipStatus)clubMembershipDataTransferObject.Status,
-                               RejectedDateTime = clubMembershipDataTransferObject.RejectedDateTime,
-                               AcceptedDateTime = clubMembershipDataTransferObject.AcceptedDateTime
-                           });
-            }
-
-            return result;
         }
 
         #endregion

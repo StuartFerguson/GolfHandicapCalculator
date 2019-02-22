@@ -195,14 +195,14 @@
         [HttpGet]
         [Authorize(Policy = PolicyNames.GetGolfClubMembersListPolicy)]
         [Route("MembersList")]
-        [SwaggerResponse(200, type:typeof(List<GolfClubMembershipDetails>))]
+        [SwaggerResponse(200, type:typeof(List<GetGolfClubMembershipDetailsResponse>))]
         [SwaggerResponseExample(200, typeof(GolfClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         public async Task<IActionResult> GetGolfClubMembersList(CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user
             Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
 
-            List<GolfClubMembershipDetails> golfClubMembersList = await this.Manager.GetGolfClubMembersList(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
+            List<GetGolfClubMembershipDetailsResponse> golfClubMembersList = await this.Manager.GetGolfClubMembersList(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
 
             return this.Ok(golfClubMembersList);
         }

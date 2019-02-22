@@ -63,6 +63,25 @@
 
         public static Int32 HandicapCategoryCat1 = 1;
 
+        public static Int32 PlayingHandicapCat1 = 1;
+
+        public static GetPlayerDetailsResponse GetPlayerDetailsResponse = new GetPlayerDetailsResponse
+                                                                          {
+                                                                              FullName = PlayerTestData.FullName,
+                                                                              EmailAddress = PlayerTestData.EmailAddress,
+                                                                              Gender = PlayerTestData.Gender,
+                                                                              HasBeenRegistered = true,
+                                                                              DateOfBirth = PlayerTestData.DateOfBirth,
+                                                                              LastName = PlayerTestData.LastName,
+                                                                              FirstName = PlayerTestData.FirstName,
+                                                                              MiddleName = PlayerTestData.MiddleName,
+                                                                              ExactHandicap = PlayerTestData.ExactHandicapCat1,
+                                                                              HandicapCategory = PlayerTestData.HandicapCategoryCat1,
+                                                                              PlayingHandicap = PlayerTestData.PlayingHandicapCat1
+                                                                          };
+
+        public static Int32 HandicapCategory = 2;
+
         public static Int32 HandicapCategoryCat2 = 2;
 
         public static Int32 HandicapCategoryCat3 = 3;
@@ -73,7 +92,7 @@
 
         public static DateTime MembershipRejectedDateTime = new DateTime(2019, 1, 12);
 
-        public static Int32 PlayingHandicapCat1 = 1;
+        public static Int32 PlayingHandicap = 11;
 
         public static Int32 PlayingHandicapCat2 = 6;
 
@@ -141,7 +160,7 @@
                                      PlayerTestData.LastName,
                                      PlayerTestData.Gender,
                                      PlayerTestData.DateOfBirth,
-                                     PlayerTestData.ExactHandicapCat1,
+                                     PlayerTestData.ExactHandicap,
                                      PlayerTestData.EmailAddress);
 
             return playerAggregate;

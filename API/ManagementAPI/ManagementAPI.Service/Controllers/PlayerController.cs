@@ -54,6 +54,19 @@
 
         #region Methods
 
+        [HttpGet]
+        //[SwaggerResponse(200, type:typeof(List<ClubMembershipResponse>))]
+        //[SwaggerResponseExample(200, typeof(ClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        public async Task<IActionResult> GetPlayer(CancellationToken cancellationToken)
+        {
+            // Get the Player Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId);
+
+            GetPlayerDetailsResponse player = await this.Manager.GetPlayerDetails(Guid.Parse(playerIdClaim.Value), cancellationToken);
+
+            return this.Ok(player);
+        }
+
         /// <summary>
         /// Gets the player memberships.
         /// </summary>

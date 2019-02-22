@@ -241,5 +241,23 @@
             this.PlayerTestingContext.ClubMembershipResponses.ShouldNotBeEmpty();
         }
 
+        [When(@"I request my player details")]
+        public async Task WhenIRequestMyPlayerDetails()
+        {
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
+
+            String bearerToken = this.PlayerTestingContext.PlayerToken;
+
+            await Retry.For(async () => { this.PlayerTestingContext.GetPlayerDetailsResponse = await client.GetPlayer(bearerToken, CancellationToken.None); });
+        }
+        
+        [Then(@"a my details will be returned")]
+        public void ThenAMyDetailsWillBeReturned()
+        {
+            this.PlayerTestingContext.GetPlayerDetailsResponse.ShouldNotBeNull();
+        }
+
+
+
     }
 }
