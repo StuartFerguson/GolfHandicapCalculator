@@ -82,6 +82,14 @@
         public String FirstName { get; private set; }
 
         /// <summary>
+        /// Gets the full name.
+        /// </summary>
+        /// <value>
+        /// The full name.
+        /// </value>
+        public String FullName { get; private set; }
+
+        /// <summary>
         /// Gets the gender.
         /// </summary>
         /// <value>
@@ -427,6 +435,8 @@
             this.FirstName = playerRegisteredEvent.FirstName;
             this.MiddleName = playerRegisteredEvent.MiddleName;
             this.LastName = playerRegisteredEvent.LastName;
+            this.FullName =
+                $"{playerRegisteredEvent.FirstName}{(String.IsNullOrEmpty(playerRegisteredEvent.MiddleName) ? " " : " " + playerRegisteredEvent.MiddleName + " ")}{playerRegisteredEvent.LastName}";
             this.Gender = playerRegisteredEvent.Gender;
             this.DateOfBirth = playerRegisteredEvent.DateOfBirth;
             this.ExactHandicap = playerRegisteredEvent.ExactHandicap;

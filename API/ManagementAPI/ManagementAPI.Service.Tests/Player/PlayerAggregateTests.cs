@@ -323,6 +323,7 @@
             playerAggregate.EmailAddress.ShouldBe(PlayerTestData.EmailAddress);
             playerAggregate.PlayingHandicap.ShouldBe(playingHandicap);
             playerAggregate.HandicapCategory.ShouldBe(handicapCategory);
+            playerAggregate.FullName.ShouldBe(PlayerTestData.FullName);
         }
 
         #endregion
