@@ -88,7 +88,7 @@ namespace ManagementAPI.Service.Services
 
             // Ok all the data has been validated, now run through the aggregate rules
             golfClubMembershipAggregate.RequestMembership(playerId, 
-                $"{playerAggregate.FirstName} {playerAggregate.LastName}", 
+                playerAggregate.FullName, 
                 playerAggregate.DateOfBirth,
                 playerAggregate.Gender,
                 DateTime.Now);
