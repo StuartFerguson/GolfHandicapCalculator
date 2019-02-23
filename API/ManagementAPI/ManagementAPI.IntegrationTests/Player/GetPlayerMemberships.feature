@@ -10,6 +10,7 @@ Background:
 	And I am logged in as a player
 	When I request club membership my request is accepted
 
+@EndToEnd
 Scenario: Get Player Memberships
 	When I request a list of my memberships
 	Then a list of my memberships will be retunred

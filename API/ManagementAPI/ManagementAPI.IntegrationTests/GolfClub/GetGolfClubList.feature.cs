@@ -98,19 +98,21 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Xunit.FactAttribute(DisplayName="Get Golf Club List")]
         [Xunit.TraitAttribute("FeatureTitle", "Get Golf Club List")]
         [Xunit.TraitAttribute("Description", "Get Golf Club List")]
+        [Xunit.TraitAttribute("Category", "EndToEnd")]
         public virtual void GetGolfClubList()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Golf Club List", null, ((string[])(null)));
-#line 14
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Golf Club List", null, new string[] {
+                        "EndToEnd"});
+#line 15
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
-#line 15
- testRunner.Given("I am logged in as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 16
- testRunner.When("I request the list of golf clubs", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("I am logged in as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 17
+ testRunner.When("I request the list of golf clubs", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 18
  testRunner.Then("a list of golf clubs will be returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

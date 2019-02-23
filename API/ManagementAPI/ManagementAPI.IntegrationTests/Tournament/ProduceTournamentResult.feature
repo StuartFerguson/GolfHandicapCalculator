@@ -16,5 +16,6 @@ Background:
 	And some scores have been recorded
 	And I have completed the tournament
 
+@EndToEnd
 Scenario: Produce Tournament Result
 	When I request to produce a tournament result the results are produced

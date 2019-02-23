@@ -101,17 +101,19 @@ namespace ManagementAPI.IntegrationTests.Player
         [Xunit.FactAttribute(DisplayName="Get Player Memberships")]
         [Xunit.TraitAttribute("FeatureTitle", "Get Player Memberships")]
         [Xunit.TraitAttribute("Description", "Get Player Memberships")]
+        [Xunit.TraitAttribute("Category", "EndToEnd")]
         public virtual void GetPlayerMemberships()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Player Memberships", null, ((string[])(null)));
-#line 13
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Player Memberships", null, new string[] {
+                        "EndToEnd"});
+#line 14
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 14
- testRunner.When("I request a list of my memberships", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 15
+ testRunner.When("I request a list of my memberships", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 16
  testRunner.Then("a list of my memberships will be retunred", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
