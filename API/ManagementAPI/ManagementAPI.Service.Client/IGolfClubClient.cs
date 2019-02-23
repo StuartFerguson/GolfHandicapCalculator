@@ -47,7 +47,7 @@
         /// <param name="passwordToken">The password token.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<List<GolfClubMembershipDetails>> GetGolfClubMembershipList(String passwordToken,
+        Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembershipList(String passwordToken,
                                                                         CancellationToken cancellationToken);
 
         /// <summary>

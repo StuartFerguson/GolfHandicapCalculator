@@ -11,6 +11,15 @@
         #region Methods
 
         /// <summary>
+        /// Gets the player.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetPlayerDetailsResponse> GetPlayer(String passwordToken,
+                                                 CancellationToken cancellationToken);
+
+        /// <summary>
         /// Gets the player memberships.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>

@@ -40,6 +40,44 @@
         #region Methods
 
         /// <summary>
+        /// Gets the player.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetPlayerDetailsResponse> GetPlayer(String passwordToken,
+                                                              CancellationToken cancellationToken)
+        {
+            GetPlayerDetailsResponse response = null;
+
+            String requestUri = $"{this.BaseAddress}/api/Player";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<GetPlayerDetailsResponse>(content);
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception("Error getting player details.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Gets the player memberships.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
@@ -69,7 +107,7 @@
             catch(Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error getting memberships for player.", ex);
+                Exception exception = new Exception("Error getting memberships for player.", ex);
 
                 throw exception;
             }

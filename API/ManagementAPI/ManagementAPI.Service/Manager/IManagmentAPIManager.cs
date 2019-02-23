@@ -33,8 +33,17 @@
         /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<List<GolfClubMembershipDetails>> GetGolfClubMembersList(Guid golfClubId,
-                                                                     CancellationToken cancellationToken);
+        Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembersList(Guid golfClubId,
+                                                                                CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the player details.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetPlayerDetailsResponse> GetPlayerDetails(Guid playerId,
+                                                        CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the players club memberships.
@@ -42,7 +51,8 @@
         /// <param name="playerId">The player identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<List<ClubMembershipResponse>> GetPlayersClubMemberships(Guid playerId, CancellationToken cancellationToken);
+        Task<List<ClubMembershipResponse>> GetPlayersClubMemberships(Guid playerId,
+                                                                     CancellationToken cancellationToken);
 
         /// <summary>
         /// Inserts the golf club to read model.
