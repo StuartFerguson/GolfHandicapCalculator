@@ -343,6 +343,22 @@ namespace ManagementAPI.Service
 
             #region Player Policies
 
+            policies.AddPolicy(PolicyNames.GetPlayerPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+                               });
+
+            policies.AddPolicy(PolicyNames.GetPlayerMembershipsPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+                               });
+
             #endregion
 
             #region Tournament Policies
