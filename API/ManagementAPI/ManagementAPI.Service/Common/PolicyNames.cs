@@ -66,6 +66,16 @@
         /// </summary>
         public const String RequestClubMembershipPolicy = "RequestClubMembershipPolicy";
 
+        /// <summary>
+        /// The get player policy
+        /// </summary>
+        public const String GetPlayerPolicy = "GetPlayerPolicy";
+
+        /// <summary>
+        /// The get player memberships policy
+        /// </summary>
+        public const String GetPlayerMembershipsPolicy = "GetPlayerMembershipsPolicy";
+
         #endregion
     }
 }

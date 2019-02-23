@@ -55,8 +55,9 @@
         #region Methods
 
         [HttpGet]
-        //[SwaggerResponse(200, type:typeof(List<ClubMembershipResponse>))]
-        //[SwaggerResponseExample(200, typeof(ClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [SwaggerResponse(200, type:typeof(GetPlayerDetailsResponse))]
+        [SwaggerResponseExample(200, typeof(ClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [Authorize(Policy = PolicyNames.GetPlayerPolicy)]
         public async Task<IActionResult> GetPlayer(CancellationToken cancellationToken)
         {
             // Get the Player Id claim from the user            
@@ -75,6 +76,7 @@
         [HttpGet]
         [SwaggerResponse(200, type:typeof(List<ClubMembershipResponse>))]
         [SwaggerResponseExample(200, typeof(ClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [Authorize(Policy = PolicyNames.GetPlayerMembershipsPolicy)]
         [Route("Memberships")]
         public async Task<IActionResult> GetPlayerMemberships(CancellationToken cancellationToken)
         {
