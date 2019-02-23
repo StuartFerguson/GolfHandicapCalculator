@@ -40,24 +40,7 @@ namespace ManagementAPI.IntegrationTests.Common
         [AfterTestRun]
         protected static void GlobalTearDown()
         {
-            if (DatabaseServerContainer != null)
-            {
-                IList<INetworkService> networks = DatabaseServerContainer.GetNetworks();
-
-                foreach (INetworkService networkService in networks)
-                {
-                    networkService.Stop();
-                    networkService.Remove(true);
-                }
-
-                // Kill the DB Server 
-                DatabaseServerContainer.StopOnDispose = true;
-                DatabaseServerContainer.RemoveOnDispose = true;
-                DatabaseServerContainer.Dispose();
-            }
-
-            // Kill the Network 
-            //DatabaseServerNetwork?.Stop();
+            
         }
 
         private static String StartMySqlContainerWithOpenConnection()

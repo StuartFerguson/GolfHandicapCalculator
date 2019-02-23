@@ -11,6 +11,7 @@ Background:
 	And my golf club has been created
 	And a player has been registered
 
+@EndToEnd
 Scenario: Get Golf Club List	
 	Given I am logged in as a player
 	When I request the list of golf clubs

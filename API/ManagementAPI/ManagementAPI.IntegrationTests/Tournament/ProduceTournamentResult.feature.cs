@@ -108,15 +108,17 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Xunit.FactAttribute(DisplayName="Produce Tournament Result")]
         [Xunit.TraitAttribute("FeatureTitle", "Produce Tournament Result")]
         [Xunit.TraitAttribute("Description", "Produce Tournament Result")]
+        [Xunit.TraitAttribute("Category", "EndToEnd")]
         public virtual void ProduceTournamentResult()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Produce Tournament Result", null, ((string[])(null)));
-#line 19
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Produce Tournament Result", null, new string[] {
+                        "EndToEnd"});
+#line 20
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
-#line 20
+#line 21
  testRunner.When("I request to produce a tournament result the results are produced", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             this.ScenarioCleanup();
