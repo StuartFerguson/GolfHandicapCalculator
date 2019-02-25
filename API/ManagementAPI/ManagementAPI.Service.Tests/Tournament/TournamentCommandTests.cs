@@ -65,5 +65,16 @@ namespace ManagementAPI.Service.Tests.Tournament
             command.CommandId.ShouldNotBe(Guid.Empty);
             command.TournamentId.ShouldBe(TournamentTestData.AggregateId);
         }
+
+        [Fact]
+        public void SignUpForTournamentCommand_CanBeCreated_IsCreated()
+        {
+            SignUpForTournamentCommand command = SignUpForTournamentCommand.Create(TournamentTestData.AggregateId, TournamentTestData.PlayerId);
+
+            command.ShouldNotBeNull();
+            command.CommandId.ShouldNotBe(Guid.Empty);
+            command.TournamentId.ShouldBe(TournamentTestData.AggregateId);
+            command.PlayerId.ShouldBe(TournamentTestData.PlayerId);
+        }
     }
 }

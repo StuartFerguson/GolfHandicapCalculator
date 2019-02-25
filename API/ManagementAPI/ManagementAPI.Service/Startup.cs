@@ -381,6 +381,16 @@ namespace ManagementAPI.Service
                                    policy.AddAuthenticationSchemes("Bearer");
                                    policy.RequireAuthenticatedUser();
                                    policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+                                   policy.RequireClaim(CustomClaims.PlayerId);
+                               });
+
+            policies.AddPolicy(PolicyNames.PlayerTournamentSignUpPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+                                   policy.RequireClaim(CustomClaims.PlayerId);
                                });
 
             policies.AddPolicy(PolicyNames.CompleteTournamentPolicy,

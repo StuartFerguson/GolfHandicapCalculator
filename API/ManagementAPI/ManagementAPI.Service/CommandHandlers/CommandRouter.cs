@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using ManagementAPI.GolfClub;
-using ManagementAPI.Player;
-using ManagementAPI.Service.Commands;
-using ManagementAPI.Service.Services;
-using ManagementAPI.Tournament;
-using Shared.CommandHandling;
-using Shared.EventStore;
-namespace ManagementAPI.Service.CommandHandlers
+﻿namespace ManagementAPI.Service.CommandHandlers
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Commands;
+    using GolfClub;
+    using Player;
+    using Services;
+    using Services.DomainServices;
+    using Shared.CommandHandling;
+    using Shared.EventStore;
+    using Tournament;
+
     public class CommandRouter : ICommandRouter
     {
         #region Fields
@@ -22,9 +21,9 @@ namespace ManagementAPI.Service.CommandHandlers
         private readonly IAggregateRepository<GolfClubAggregate> ClubRepository;
 
         /// <summary>
-        /// The tournament repository
+        /// The golf club membership application service
         /// </summary>
-        private readonly IAggregateRepository<TournamentAggregate> TournamentRepository;
+        private readonly IGolfClubMembershipApplicationService GolfClubMembershipApplicationService;
 
         /// <summary>
         /// The handicap adjustment calculator service
@@ -32,19 +31,24 @@ namespace ManagementAPI.Service.CommandHandlers
         private readonly IHandicapAdjustmentCalculatorService HandicapAdjustmentCalculatorService;
 
         /// <summary>
-        /// The player repository
-        /// </summary>
-        private readonly IAggregateRepository<PlayerAggregate> PlayerRepository;
-
-        /// <summary>
         /// The o auth2 security service
         /// </summary>
         private readonly IOAuth2SecurityService OAuth2SecurityService;
 
         /// <summary>
-        /// The golf club membership application service
+        /// The player repository
         /// </summary>
-        private readonly IGolfClubMembershipApplicationService GolfClubMembershipApplicationService;
+        private readonly IAggregateRepository<PlayerAggregate> PlayerRepository;
+
+        /// <summary>
+        /// The tournament application service
+        /// </summary>
+        private readonly ITournamentApplicationService TournamentApplicationService;
+
+        /// <summary>
+        /// The tournament repository
+        /// </summary>
+        private readonly IAggregateRepository<TournamentAggregate> TournamentRepository;
 
         #endregion
 
@@ -59,12 +63,14 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <param name="playerRepository">The player repository.</param>
         /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
         /// <param name="golfClubMembershipApplicationService">The golf club membership application service.</param>
+        /// <param name="tournamentApplicationService">The tournament application service.</param>
         public CommandRouter(IAggregateRepository<GolfClubAggregate> clubRepository,
-            IAggregateRepository<TournamentAggregate> tournamentRepository,
-            IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService,
-            IAggregateRepository<PlayerAggregate> playerRepository,
-            IOAuth2SecurityService oAuth2SecurityService,
-            IGolfClubMembershipApplicationService golfClubMembershipApplicationService)
+                             IAggregateRepository<TournamentAggregate> tournamentRepository,
+                             IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService,
+                             IAggregateRepository<PlayerAggregate> playerRepository,
+                             IOAuth2SecurityService oAuth2SecurityService,
+                             IGolfClubMembershipApplicationService golfClubMembershipApplicationService,
+                             ITournamentApplicationService tournamentApplicationService)
         {
             this.ClubRepository = clubRepository;
             this.TournamentRepository = tournamentRepository;
@@ -72,11 +78,13 @@ namespace ManagementAPI.Service.CommandHandlers
             this.PlayerRepository = playerRepository;
             this.OAuth2SecurityService = oAuth2SecurityService;
             this.GolfClubMembershipApplicationService = golfClubMembershipApplicationService;
+            this.TournamentApplicationService = tournamentApplicationService;
         }
 
         #endregion
 
-        #region Public Methods
+        #region Methods
+
         /// <summary>
         /// Routes the specified command.
         /// </summary>
@@ -84,18 +92,14 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public async Task Route(ICommand command, CancellationToken cancellationToken)
+        public async Task Route(ICommand command,
+                                CancellationToken cancellationToken)
         {
             ICommandHandler commandHandler = CreateHandler((dynamic)command);
 
             await commandHandler.Handle(command, cancellationToken);
         }
 
-        #endregion
-
-        #region Private Methods
-
-        #region private ICommandHandler CreateHandler(CreateGolfClubCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -105,9 +109,7 @@ namespace ManagementAPI.Service.CommandHandlers
         {
             return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService, this.GolfClubMembershipApplicationService);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(AddMeasuredCourseToClubCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -117,9 +119,7 @@ namespace ManagementAPI.Service.CommandHandlers
         {
             return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService, this.GolfClubMembershipApplicationService);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(CreateTournamentCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -127,11 +127,25 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(CreateTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
+            return new TournamentCommandHandler(this.ClubRepository,
+                                                this.TournamentRepository,
+                                                this.HandicapAdjustmentCalculatorService,
+                                                this.TournamentApplicationService);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(RecordMemberTournamentScoreCommand command)        
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(SignUpForTournamentCommand command)
+        {
+            return new TournamentCommandHandler(this.ClubRepository,
+                                                this.TournamentRepository,
+                                                this.HandicapAdjustmentCalculatorService,
+                                                this.TournamentApplicationService);
+        }
+
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -139,11 +153,12 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(RecordMemberTournamentScoreCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
+            return new TournamentCommandHandler(this.ClubRepository,
+                                                this.TournamentRepository,
+                                                this.HandicapAdjustmentCalculatorService,
+                                                this.TournamentApplicationService);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(CompleteTournamentCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -151,11 +166,12 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(CompleteTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
+            return new TournamentCommandHandler(this.ClubRepository,
+                                                this.TournamentRepository,
+                                                this.HandicapAdjustmentCalculatorService,
+                                                this.TournamentApplicationService);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(CancelTournamentCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -163,11 +179,12 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(CancelTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
+            return new TournamentCommandHandler(this.ClubRepository,
+                                                this.TournamentRepository,
+                                                this.HandicapAdjustmentCalculatorService,
+                                                this.TournamentApplicationService);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(ProduceTournamentResultCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -175,11 +192,12 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <returns></returns>
         private ICommandHandler CreateHandler(ProduceTournamentResultCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository,this.HandicapAdjustmentCalculatorService);
+            return new TournamentCommandHandler(this.ClubRepository,
+                                                this.TournamentRepository,
+                                                this.HandicapAdjustmentCalculatorService,
+                                                this.TournamentApplicationService);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(RegisterPlayerCommand command)
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -189,9 +207,7 @@ namespace ManagementAPI.Service.CommandHandlers
         {
             return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(AddAcceptedMembershipToPlayerCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -201,9 +217,7 @@ namespace ManagementAPI.Service.CommandHandlers
         {
             return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(AddRejectedMembershipToPlayerCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -213,9 +227,7 @@ namespace ManagementAPI.Service.CommandHandlers
         {
             return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
         }
-        #endregion
 
-        #region private ICommandHandler CreateHandler(RequestClubMembershipCommand command)        
         /// <summary>
         /// Creates the handler.
         /// </summary>
@@ -225,7 +237,6 @@ namespace ManagementAPI.Service.CommandHandlers
         {
             return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService, this.GolfClubMembershipApplicationService);
         }
-        #endregion
 
         #endregion
     }

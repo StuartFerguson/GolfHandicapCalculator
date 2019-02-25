@@ -76,6 +76,11 @@
         /// </summary>
         public const String GetPlayerMembershipsPolicy = "GetPlayerMembershipsPolicy";
 
+        /// <summary>
+        /// The player tournament sign up policy
+        /// </summary>
+        public const String PlayerTournamentSignUpPolicy = "PlayerTournamentSignUpPolicy";
+
         #endregion
     }
 }
