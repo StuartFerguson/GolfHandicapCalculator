@@ -23,11 +23,12 @@ namespace ManagementAPI.Service.Tests.Tournament
         public void RecordMemberTournamentScoreCommand_CanBeCreated_IsCreated()
         {
             RecordMemberTournamentScoreCommand command =
-                RecordMemberTournamentScoreCommand.Create(TournamentTestData.AggregateId, TournamentTestData.RecordMemberTournamentScoreRequest);
+                RecordMemberTournamentScoreCommand.Create(TournamentTestData.PlayerId, TournamentTestData.AggregateId, TournamentTestData.RecordMemberTournamentScoreRequest);
 
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
             command.TournamentId.ShouldBe(TournamentTestData.AggregateId);
+            command.PlayerId.ShouldBe(TournamentTestData.PlayerId);
             command.RecordMemberTournamentScoreRequest.ShouldNotBeNull();
             command.RecordMemberTournamentScoreRequest.ShouldBe(TournamentTestData.RecordMemberTournamentScoreRequest); 
         }

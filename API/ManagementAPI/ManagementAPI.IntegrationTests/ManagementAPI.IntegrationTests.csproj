@@ -42,6 +42,9 @@
     <None Update="Player\GetPlayerMemberships.feature">
       <Generator></Generator>
     </None>                   
+    <None Update="Tournament\SignUpForTournament.feature">
+      <Generator></Generator>
+    </None>                   
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

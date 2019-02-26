@@ -85,8 +85,11 @@
                                                        [FromBody] RecordMemberTournamentScoreRequest request,
                                                        CancellationToken cancellationToken)
         {
+            // Get the Player Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId);
+
             // Create the command
-            RecordMemberTournamentScoreCommand command = RecordMemberTournamentScoreCommand.Create(tournamentId, request);
+            RecordMemberTournamentScoreCommand command = RecordMemberTournamentScoreCommand.Create( Guid.Parse(playerIdClaim.Value), tournamentId, request);
 
             // Route the command
             await this.CommandRouter.Route(command, cancellationToken);
@@ -99,7 +102,6 @@
         /// Posts the tournament.
         /// </summary>
         /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPut]

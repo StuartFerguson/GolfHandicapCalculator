@@ -391,7 +391,6 @@
 
                         RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest = new RecordMemberTournamentScoreRequest
                                                                                                 {
-                                                                                                    MemberId = player.PlayerId,
                                                                                                     PlayingHandicap = player.PlayingHandicap,
                                                                                                     HoleScores =
                                                                                                         Program.GetHoleScores(player.PlayingHandicap, scoreResult)

@@ -208,7 +208,7 @@
 
             Mock<IAggregateRepository<TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate>>();
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                                .ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregate);
+                                .ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregateWithPlayerSignedUp);
 
             Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();

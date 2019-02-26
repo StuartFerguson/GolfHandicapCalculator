@@ -134,7 +134,7 @@
             // Rehydrate the aggregate
             TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
-            tournament.RecordMemberScore(command.RecordMemberTournamentScoreRequest.MemberId,
+            tournament.RecordPlayerScore(command.PlayerId,
                                          command.RecordMemberTournamentScoreRequest.PlayingHandicap,
                                          command.RecordMemberTournamentScoreRequest.HoleScores);
 

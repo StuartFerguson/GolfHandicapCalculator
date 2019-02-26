@@ -428,16 +428,16 @@
         /// <summary>
         /// Records the member score.
         /// </summary>
-        /// <param name="memberId">The member identifier.</param>
+        /// <param name="playerId">The member identifier.</param>
         /// <param name="playingHandicap">The playing handicap.</param>
         /// <param name="holeScores">The hole scores.</param>
-        public void RecordMemberScore(Guid memberId,
+        public void RecordPlayerScore(Guid playerId,
                                       Int32 playingHandicap,
                                       Dictionary<Int32, Int32> holeScores)
         {
-            Guard.ThrowIfInvalidGuid(memberId, typeof(ArgumentNullException), "Member Id must be provided to record a score");
+            Guard.ThrowIfInvalidGuid(playerId, typeof(ArgumentNullException), "Player Id must be provided to record a score");
             Guard.ThrowIfNull(holeScores, typeof(ArgumentNullException), "Hole Scores must be provided to record a score");
-
+            
             // Check the members playing handicap is valid
             if (playingHandicap > 36)
             {
@@ -453,17 +453,33 @@
             // Tournament is not cancelled
             this.CheckTournamentNotAlreadyCancelled();
 
+            // Player has signed up
+            this.CheckPlayerHasSignedUp(playerId);
+
             // Member must not have already entered a score
-            this.CheckForDuplicateMemberScoreRecord(memberId);
+            this.CheckForDuplicateMemberScoreRecord(playerId);
 
             // Must have 18 hole scores
             this.ValidateHoleScores(holeScores);
 
             // Crete the event to record the score
-            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(this.AggregateId, memberId, playingHandicap, holeScores);
+            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(this.AggregateId, playerId, playingHandicap, holeScores);
 
             // Apply and Pend
             this.ApplyAndPend(memberScoreRecordedEvent);
+        }
+
+        /// <summary>
+        /// Checks the player has signed up.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <exception cref="InvalidOperationException">Player Id {playerId}</exception>
+        private void CheckPlayerHasSignedUp(Guid playerId)
+        {
+            if (this.SignedUpPlayers.All(x => x != playerId))
+            {
+                throw new InvalidOperationException($"Player Id {playerId} has not signed up for this tournament");
+            }
         }
 
         /// <summary>

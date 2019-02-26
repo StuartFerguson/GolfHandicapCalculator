@@ -327,27 +327,27 @@
         [InlineData(false, 6, true, typeof(ArgumentNullException))]
         [InlineData(true, 40, true, typeof(InvalidDataException))]
         [InlineData(true, 6, false, typeof(ArgumentNullException))]
-        public void TournamentAggregate_RecordMemberScore_InvalidData_ErrorThrown(Boolean validMemberId,
+        public void TournamentAggregate_RecordPlayerScore_InvalidData_ErrorThrown(Boolean validPlayerId,
                                                                                   Int32 playingHandicap,
                                                                                   Boolean validHoleScores,
                                                                                   Type exceptionType)
         {
             TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
-            Guid memberId = validMemberId ? TournamentTestData.PlayerId : Guid.Empty;
+            Guid playerId = validPlayerId ? TournamentTestData.PlayerId : Guid.Empty;
             Dictionary<Int32, Int32> holeScores = validHoleScores ? TournamentTestData.HoleScores : null;
 
-            Should.Throw(() => { aggregate.RecordMemberScore(memberId, playingHandicap, holeScores); }, exceptionType);
+            Should.Throw(() => { aggregate.RecordPlayerScore(playerId, playingHandicap, holeScores); }, exceptionType);
         }
 
         [Fact]
-        public void TournamentAggregate_RecordMemberScore_InvalidData_ExtraHoleScores_ErrorThrown()
+        public void TournamentAggregate_RecordPlayerScore_InvalidData_ExtraHoleScores_ErrorThrown()
         {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregateWithPlayerSignedUp();
 
             Should.Throw<InvalidDataException>(() =>
                                                {
-                                                   aggregate.RecordMemberScore(TournamentTestData.PlayerId,
+                                                   aggregate.RecordPlayerScore(TournamentTestData.PlayerId,
                                                                                TournamentTestData.PlayingHandicap,
                                                                                TournamentTestData.HoleScoresExtraScores);
                                                });
@@ -372,26 +372,26 @@
         [InlineData(16)]
         [InlineData(17)]
         [InlineData(18)]
-        public void TournamentAggregate_RecordMemberScore_InvalidData_MissingHoleScores_ErrorThrown(Int32 holeNumber)
+        public void TournamentAggregate_RecordPlayerScore_InvalidData_MissingHoleScores_ErrorThrown(Int32 holeNumber)
         {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregateWithPlayerSignedUp();
 
             Should.Throw<InvalidDataException>(() =>
                                                {
-                                                   aggregate.RecordMemberScore(TournamentTestData.PlayerId,
+                                                   aggregate.RecordPlayerScore(TournamentTestData.PlayerId,
                                                                                TournamentTestData.PlayingHandicap,
                                                                                TournamentTestData.HoleScoresMissingHole(holeNumber));
                                                });
         }
 
         [Fact]
-        public void TournamentAggregate_RecordMemberScore_InvalidData_MissinHoleScores_ErrorThrown()
+        public void TournamentAggregate_RecordPlayerScore_InvalidData_MissingHoleScores_MissingHole_ErrorThrown()
         {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregateWithPlayerSignedUp();
 
             Should.Throw<InvalidDataException>(() =>
                                                {
-                                                   aggregate.RecordMemberScore(TournamentTestData.PlayerId,
+                                                   aggregate.RecordPlayerScore(TournamentTestData.PlayerId,
                                                                                TournamentTestData.PlayingHandicap,
                                                                                TournamentTestData.HoleScoresMissingHoles);
                                                });
@@ -416,62 +416,68 @@
         [InlineData(16)]
         [InlineData(17)]
         [InlineData(18)]
-        public void TournamentAggregate_RecordMemberScore_InvalidData_NegativeHoleScores_ErrorThrown(Int32 holeNumber)
+        public void TournamentAggregate_RecordPlayerScore_InvalidData_NegativeHoleScores_ErrorThrown(Int32 holeNumber)
         {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregateWithPlayerSignedUp();
 
             Should.Throw<InvalidDataException>(() =>
                                                {
-                                                   aggregate.RecordMemberScore(TournamentTestData.PlayerId,
+                                                   aggregate.RecordPlayerScore(TournamentTestData.PlayerId,
                                                                                TournamentTestData.PlayingHandicap,
                                                                                TournamentTestData.HoleScoresNegativeScore(holeNumber));
                                                });
         }
 
         [Fact]
-        public void TournamentAggregate_RecordMemberScore_InvalidData_NotAllHoleScores_ErrorThrown()
+        public void TournamentAggregate_RecordPlayerScore_InvalidData_NotAllHoleScores_ErrorThrown()
         {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregateWithPlayerSignedUp();
 
             Should.Throw<InvalidDataException>(() =>
                                                {
-                                                   aggregate.RecordMemberScore(TournamentTestData.PlayerId,
+                                                   aggregate.RecordPlayerScore(TournamentTestData.PlayerId,
                                                                                TournamentTestData.PlayingHandicap,
                                                                                TournamentTestData.HoleScoresNotAllPresent);
                                                });
         }
 
         [Fact]
-        public void TournamentAggregate_RecordMemberScore_MemberScoreAlreadyRecorded_ErrorThrown()
+        public void TournamentAggregate_RecordPlayerScore_PlayerScoreAlreadyRecorded_ErrorThrown()
         {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
-
-            aggregate.RecordMemberScore(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScores);
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
                                                     {
-                                                        aggregate.RecordMemberScore(TournamentTestData.PlayerId,
+                                                        aggregate.RecordPlayerScore(TournamentTestData.PlayerId,
                                                                                     TournamentTestData.PlayingHandicap,
                                                                                     TournamentTestData.HoleScores);
                                                     });
         }
 
         [Fact]
-        public void TournamentAggregate_RecordMemberScore_MemberScoreRecorded()
+        public void TournamentAggregate_RecordPlayerScore_PlayerScoreRecorded()
         {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregateWithPlayerSignedUp();
 
-            Should.NotThrow(() => { aggregate.RecordMemberScore(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScores); });
+            Should.NotThrow(() => { aggregate.RecordPlayerScore(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScores); });
         }
 
         [Fact]
-        public void TournamentAggregate_RecordMemberScore_TournamentNotCreated_ErrorThrown()
+        public void TournamentAggregate_RecordPlayerScore_PlayerNotSignedUp_ErrorThrown()
+        {
+            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentAggregate();
+
+            Should.Throw<InvalidOperationException>(() => { aggregate.RecordPlayerScore(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScores); });
+        }
+
+        [Fact]
+        public void TournamentAggregate_RecordPlayerScore_TournamentNotCreated_ErrorThrown()
         {
             TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
 
             Should.Throw<InvalidOperationException>(() =>
                                                     {
-                                                        aggregate.RecordMemberScore(TournamentTestData.PlayerId,
+                                                        aggregate.RecordPlayerScore(TournamentTestData.PlayerId,
                                                                                     TournamentTestData.PlayingHandicap,
                                                                                     TournamentTestData.HoleScores);
                                                     });

@@ -102,7 +102,7 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             return aggregate;
         }
-
+        
         public static TournamentAggregate GetCreatedTournamentAggregateWithPlayerSignedUp()
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
@@ -120,7 +120,9 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId,TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
-            aggregate.RecordMemberScore(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScores);
+            aggregate.SignUpForTournament(TournamentTestData.PlayerId);
+
+            aggregate.RecordPlayerScore(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScores);
 
             return aggregate;
         }
@@ -132,10 +134,11 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
-            List<GeneratedMemberScore> scoresToRecord = TournamentTestData.GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
-            foreach (GeneratedMemberScore memberScoreForTest in scoresToRecord)
+            List<GeneratedPlayerScore> scoresToRecord = TournamentTestData.GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
+            foreach (GeneratedPlayerScore playerScoreForTest in scoresToRecord)
             {
-                aggregate.RecordMemberScore(memberScoreForTest.MemberId, memberScoreForTest.Handicap, memberScoreForTest.HoleScores);
+                aggregate.SignUpForTournament(playerScoreForTest.PlayerId);
+                aggregate.RecordPlayerScore(playerScoreForTest.PlayerId, playerScoreForTest.Handicap, playerScoreForTest.HoleScores);
             }
 
             aggregate.CompleteTournament(TournamentTestData.CompletedDateTime);
@@ -149,7 +152,9 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
-            aggregate.RecordMemberScore(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScores);
+            aggregate.SignUpForTournament(TournamentTestData.PlayerId);
+
+            aggregate.RecordPlayerScore(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScores);
 
             aggregate.CancelTournament(TournamentTestData.CancelledDateTime, TournamentTestData.CancellationReason);
 
@@ -163,10 +168,11 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
-            List<GeneratedMemberScore> scoresToRecord = TournamentTestData.GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
-            foreach (GeneratedMemberScore memberScoreForTest in scoresToRecord)
+            List<GeneratedPlayerScore> scoresToRecord = TournamentTestData.GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
+            foreach (GeneratedPlayerScore playerScoreForTest in scoresToRecord)
             {
-                aggregate.RecordMemberScore(memberScoreForTest.MemberId, memberScoreForTest.Handicap, memberScoreForTest.HoleScores);
+                aggregate.SignUpForTournament(playerScoreForTest.PlayerId);
+                aggregate.RecordPlayerScore(playerScoreForTest.PlayerId, playerScoreForTest.Handicap, playerScoreForTest.HoleScores);
             }
 
             aggregate.CompleteTournament(TournamentTestData.CompletedDateTime);
@@ -197,13 +203,12 @@ namespace ManagementAPI.Service.Tests.Tournament
 
         public static RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest = new RecordMemberTournamentScoreRequest
         {
-            MemberId = TournamentTestData.PlayerId,
             HoleScores = TournamentTestData.HoleScores
         };
 
         public static RecordMemberTournamentScoreCommand GetRecordMemberTournamentScoreCommand()
         {
-            return RecordMemberTournamentScoreCommand.Create(TournamentTestData.AggregateId, TournamentTestData.RecordMemberTournamentScoreRequest);
+            return RecordMemberTournamentScoreCommand.Create( TournamentTestData.PlayerId, TournamentTestData.AggregateId, TournamentTestData.RecordMemberTournamentScoreRequest);
         }
 
         public static SignUpForTournamentCommand GetSignUpForTournamentCommand()
@@ -537,18 +542,18 @@ namespace ManagementAPI.Service.Tests.Tournament
         //    return result;
         //}
 
-        private static List<GeneratedMemberScore> GenerateScores(Int32 category1Scores, Int32 category2Scores, Int32 category3Scores,
+        private static List<GeneratedPlayerScore> GenerateScores(Int32 category1Scores, Int32 category2Scores, Int32 category3Scores,
             Int32 category4Scores, Int32 category5Scores, Int32 bufferorbetter)
         {
             Random random = new Random();
 
-            List<GeneratedMemberScore> scores = new List<GeneratedMemberScore>();
+            List<GeneratedPlayerScore> scores = new List<GeneratedPlayerScore>();
 
             for (Int32 i = 0; i < category1Scores; i++)
             {
-                GeneratedMemberScore generatedMemberScore = new GeneratedMemberScore
+                GeneratedPlayerScore generatedMemberScore = new GeneratedPlayerScore
                 {
-                    MemberId = Guid.NewGuid(),
+                    PlayerId = Guid.NewGuid(),
                     Handicap = random.Next(0, 5),
                     HoleScores = new Dictionary<Int32, Int32>()
                     {
@@ -566,9 +571,9 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             for (Int32 i = 0; i < category2Scores; i++)
             {
-                GeneratedMemberScore generatedMemberScore = new GeneratedMemberScore
+                GeneratedPlayerScore generatedMemberScore = new GeneratedPlayerScore
                 {
-                    MemberId = Guid.NewGuid(),
+                    PlayerId = Guid.NewGuid(),
                     Handicap = random.Next(6, 12),
                     HoleScores = new Dictionary<Int32, Int32>()
                     {
@@ -586,9 +591,9 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             for (Int32 i = 0; i < category3Scores; i++)
             {
-                GeneratedMemberScore generatedMemberScore = new GeneratedMemberScore
+                GeneratedPlayerScore generatedMemberScore = new GeneratedPlayerScore
                 {
-                    MemberId = Guid.NewGuid(),
+                    PlayerId = Guid.NewGuid(),
                     Handicap = random.Next(13, 20),
                     HoleScores = new Dictionary<Int32, Int32>()
                     {
@@ -606,9 +611,9 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             for (Int32 i = 0; i < category4Scores; i++)
             {
-                GeneratedMemberScore generatedMemberScore = new GeneratedMemberScore
+                GeneratedPlayerScore generatedMemberScore = new GeneratedPlayerScore
                 {
-                    MemberId = Guid.NewGuid(),
+                    PlayerId = Guid.NewGuid(),
                     Handicap = random.Next(21, 28),
                     HoleScores = new Dictionary<Int32, Int32>()
                     {
@@ -626,9 +631,9 @@ namespace ManagementAPI.Service.Tests.Tournament
 
             for (Int32 i = 0; i < category5Scores; i++)
             {
-                GeneratedMemberScore generatedMemberScore = new GeneratedMemberScore
+                GeneratedPlayerScore generatedMemberScore = new GeneratedPlayerScore
                 {
-                    MemberId = Guid.NewGuid(),
+                    PlayerId = Guid.NewGuid(),
                     Handicap = random.Next(29, 36),
                     HoleScores = new Dictionary<Int32, Int32>()
                     {
@@ -663,16 +668,9 @@ namespace ManagementAPI.Service.Tests.Tournament
         }
     }
 
-    //public class MemberScoreForTest
-    //{
-    //    public Guid MemberId { get; set; }
-    //    public Int32 PlayingHandicap { get; set; }
-    //    public Dictionary<Int32, Int32> HoleScores  { get; set; }
-    //}
-
-    public class GeneratedMemberScore
+    public class GeneratedPlayerScore
     {
-        public Guid MemberId { get; set; }
+        public Guid PlayerId { get; set; }
         public Int32 Handicap { get; set; }
         public Dictionary<Int32, Int32> HoleScores { get; set; }
 

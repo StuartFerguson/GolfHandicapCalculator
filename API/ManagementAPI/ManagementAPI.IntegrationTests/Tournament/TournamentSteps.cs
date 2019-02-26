@@ -11,8 +11,13 @@ using TechTalk.SpecFlow;
 
 namespace ManagementAPI.IntegrationTests.Tournament
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using Ductus.FluentDocker.Services.Extensions;
     using GolfClub;
     using Microsoft.VisualStudio.TestPlatform.Common;
+    using MySql.Data.MySqlClient;
 
     [Binding]
     [Scope(Tag = "tournament")]
@@ -184,6 +189,47 @@ namespace ManagementAPI.IntegrationTests.Tournament
             }); 
         }
         
+        [Given(@"I have signed in to play the tournament")]
+        public async Task GivenIHaveSignedInToPlayTheTournament()
+        {
+            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+
+            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
+
+            String bearerToken = this.TournamentTestingContext.PlayerToken;
+
+            await client.SignUpPlayerForTournament(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Given(@"I am requested membership of the golf club")]
+        public async Task  GivenIAmRequestedMembershipOfTheGolfClub()
+        {
+            String bearerToken = this.TournamentTestingContext.PlayerToken;
+
+            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+
+            await client.RequestClubMembership(bearerToken, this.TournamentTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
+        }
+        
+        [Given(@"my membership has been accepted")]
+        public async Task GivenMyMembershipHasBeenAccepted()
+        {
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
+
+            String bearerToken = this.TournamentTestingContext.PlayerToken;
+            
+            await Retry.For(async () =>
+                            {
+
+                                List<ClubMembershipResponse> response = await client.GetPlayerMemberships(bearerToken, CancellationToken.None).ConfigureAwait(false);
+
+                                if (response.All(r => r.GolfClubId != this.TournamentTestingContext.GolfClubId))
+                                {
+                                    throw new Exception("Not a member of Golf Club");
+                                }
+                            });    
+        }
+        
         [Given(@"some scores have been recorded")]
         public void GivenSomeScoresHaveBeenRecorded()
         {
@@ -271,9 +317,96 @@ namespace ManagementAPI.IntegrationTests.Tournament
             });
         }
         
+        [Given(@"I sign up to play the tournament")]
+        public void GivenISignUpToPlayTheTournament()
+        {
+            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+
+            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
+
+            String bearerToken = this.TournamentTestingContext.PlayerToken;
+
+            Should.NotThrow(async () =>
+                            {
+                                await client.SignUpPlayerForTournament(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
+                            });
+        }
+        
+        [Then(@"I am recorded as signed up")]
+        public void ThenIAmRecordedAsSignedUp()
+        {
+            // Nothing to check here at the moment
+        }
+
+
         protected override void SetupSubscriptionServiceConfig()
         {
-            // Nothing here
+            String streamName = string.Empty;
+            String subscriptionGroup = string.Empty;
+
+            // Set the stream name
+            switch(this.ScenarioContext.ScenarioInfo.Title)
+            {
+                case "Complete Tournament":
+                case "Produce Tournament Result":
+                case "Record Member Score For Tournament":
+                case "Sign Up For Tournament":
+                    streamName = "$ce-GolfClubMembershipAggregate";
+                    subscriptionGroup = "GolfClubMembershipAggregate";
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(streamName))
+            {
+                IPEndPoint mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
+
+                String server = "127.0.0.1";
+                String database = "SubscriptionServiceConfiguration";
+                String user = "root";
+                String password = "Pa55word";
+                String port = mysqlEndpoint.Port.ToString();
+                String sslM = "none";
+
+                String connectionString = $"server={server};port={port};user id={user}; password={password}; database={database}; SslMode={sslM}";
+
+                MySqlConnection connection = new MySqlConnection(connectionString);
+
+                connection.Open();
+
+                Guid subscriptionStreamId = Guid.NewGuid();
+                Guid endpointId = Guid.NewGuid();
+                Guid subscriptionServiceGroup = Guid.NewGuid();
+                Guid subscriptionGroupId = Guid.NewGuid();
+
+                // Insert the Subscription Stream
+                String endpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClubMembership";
+
+                MySqlCommand streamInsert = connection.CreateCommand();
+                streamInsert.CommandText = $"insert into SubscriptionStream(Id, StreamName, SubscriptionType) select '{subscriptionStreamId}', '{streamName}', 0";
+                streamInsert.ExecuteNonQuery();
+
+                MySqlCommand endpointInsert = connection.CreateCommand();
+                endpointInsert.CommandText = $"insert into EndPoints(EndpointId, name, url) select '{endpointId}', 'Golf Club Read Model', '{endpointUrl}'";
+                endpointInsert.ExecuteNonQuery();
+
+                MySqlCommand groupInsert = connection.CreateCommand();
+                groupInsert.CommandText =
+                    $"insert into SubscriptionGroups(Id, BufferSize, EndpointId, Name, StreamPosition, SubscriptionStreamId) select '{subscriptionGroupId}', 10, '{endpointId}', '{subscriptionGroup}', null, '{subscriptionStreamId}'";
+                groupInsert.ExecuteNonQuery();
+
+                // Insert the subscription service
+                MySqlCommand subscriptionServiceInsert = connection.CreateCommand();
+                subscriptionServiceInsert.CommandText =
+                    $"insert into SubscriptionServices(SubscriptionServiceId, Description) select '{this.SubscriberServiceId}', 'Test Service'";
+                subscriptionServiceInsert.ExecuteNonQuery();
+
+                MySqlCommand subscriptonServiceGroupInsert = connection.CreateCommand();
+                subscriptonServiceGroupInsert.CommandText =
+                    $"insert into SubscriptionServiceGroups(SubscriptionServiceGroupId, SubscriptionGroupId, SubscriptionServiceId) select '{subscriptionServiceGroup}', '{subscriptionGroupId}', '{this.SubscriberServiceId}' ";
+                subscriptonServiceGroupInsert.ExecuteNonQuery();
+
+                connection.Close();
+            }
         }
     }
 }

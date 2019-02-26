@@ -235,7 +235,7 @@
             catch(Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error recording tournament {tournamentId} score for player {request.MemberId}.", ex);
+                Exception exception = new Exception($"Error recording tournament {tournamentId} score for player.", ex);
 
                 throw exception;
             }

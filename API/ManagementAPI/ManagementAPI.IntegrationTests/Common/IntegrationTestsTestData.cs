@@ -70,7 +70,6 @@ namespace ManagementAPI.IntegrationTests.Common
         public static RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest =
             new RecordMemberTournamentScoreRequest
             {
-                MemberId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6"),
                 HoleScores = new Dictionary<Int32, Int32>()
                 {
                     {1, 4}, {2, 4}, {3, 3}, {4, 4}, {5, 4}, {6, 5}, {7, 3}, {8, 4}, {9, 3},
