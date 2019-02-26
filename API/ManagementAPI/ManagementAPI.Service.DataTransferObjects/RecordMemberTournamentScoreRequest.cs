@@ -8,14 +8,6 @@ namespace ManagementAPI.Service.DataTransferObjects
     public class RecordMemberTournamentScoreRequest
     {
         /// <summary>
-        /// Gets or sets the member identifier.
-        /// </summary>
-        /// <value>
-        /// The member identifier.
-        /// </value>
-        public Guid MemberId { get; set; }
-
-        /// <summary>
         /// Gets or sets the playing handicap.
         /// </summary>
         /// <value>

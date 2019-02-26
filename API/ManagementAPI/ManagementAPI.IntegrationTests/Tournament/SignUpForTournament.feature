@@ -1,8 +1,5 @@
 ﻿@tournament
-Feature: Record Member Score For Tournament
-	In order to run a golf club handicapping system
-	As a club administrator
-	I want members to be able to record their tournament scores
+Feature: Sign Up For Tournament
 
 Background: 
 	Given The Golf Handicapping System Is Running
@@ -13,11 +10,9 @@ Background:
 	And I have created a tournament
 	And a player has been registered
 
-Scenario: Record Member Score For Tournament
+Scenario: Sign Up For Tournament
 	Given I am logged in as a player	
 	And I am requested membership of the golf club
 	And my membership has been accepted	
-	And I have signed in to play the tournament
-	When a player records their score
-	Then the score is recorded against the tournament
-
+	And I sign up to play the tournament
+	Then I am recorded as signed up

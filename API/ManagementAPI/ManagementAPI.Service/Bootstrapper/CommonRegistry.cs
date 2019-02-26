@@ -23,6 +23,7 @@ using ESLogger = EventStore.ClientAPI;
 namespace ManagementAPI.Service.Bootstrapper
 {
     using EventHandling;
+    using Services.DomainServices;
 
     [ExcludeFromCodeCoverage]
     public class CommonRegistry : Registry
@@ -76,6 +77,7 @@ namespace ManagementAPI.Service.Bootstrapper
             For<IManagmentAPIManager>().Use<ManagementAPIManager>().Singleton();
             For<IOAuth2SecurityService>().Use<OAuth2SecurityService>().Singleton();
             For<IGolfClubMembershipApplicationService>().Use<GolfClubMembershipApplicationService>().Singleton();
+            For<ITournamentApplicationService>().Use<TournamentApplicationService>().Singleton();
         }
     }
 }

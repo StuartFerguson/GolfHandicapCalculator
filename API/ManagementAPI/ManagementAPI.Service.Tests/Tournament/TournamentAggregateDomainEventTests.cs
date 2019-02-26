@@ -32,13 +32,13 @@ namespace ManagementAPI.Service.Tests.Tournament
         public void MemberScoreRecordedEvent_CanBeCreated_IsCreated()
         {
             MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(TournamentTestData.AggregateId,                
-                TournamentTestData.MemberId,
+                TournamentTestData.PlayerId,
                 TournamentTestData.PlayingHandicap,
                 TournamentTestData.HoleScores);
 
             memberScoreRecordedEvent.ShouldNotBeNull();
             memberScoreRecordedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
-            memberScoreRecordedEvent.MemberId.ShouldBe(TournamentTestData.MemberId);
+            memberScoreRecordedEvent.MemberId.ShouldBe(TournamentTestData.PlayerId);
             memberScoreRecordedEvent.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
             memberScoreRecordedEvent.HoleScores.ShouldBe(TournamentTestData.HoleScores);            
             memberScoreRecordedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
@@ -90,13 +90,13 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             HandicapAdjustmentRecordedEvent handicapAdjustmentRecordedEvent = HandicapAdjustmentRecordedEvent.Create(
                 TournamentTestData.AggregateId,
-                TournamentTestData.MemberId, TournamentTestData.GrossScore, TournamentTestData.NetScore,
+                TournamentTestData.PlayerId, TournamentTestData.GrossScore, TournamentTestData.NetScore,
                 TournamentTestData.CSS, TournamentTestData.PlayingHandicap, TournamentTestData.Adjustments,
                 TournamentTestData.Adjustments.Sum());
 
             handicapAdjustmentRecordedEvent.ShouldNotBeNull();
             handicapAdjustmentRecordedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
-            handicapAdjustmentRecordedEvent.MemberId.ShouldBe(TournamentTestData.MemberId);
+            handicapAdjustmentRecordedEvent.MemberId.ShouldBe(TournamentTestData.PlayerId);
             handicapAdjustmentRecordedEvent.GrossScore.ShouldBe(TournamentTestData.GrossScore);
             handicapAdjustmentRecordedEvent.NetScore.ShouldBe(TournamentTestData.NetScore);
             handicapAdjustmentRecordedEvent.CSS.ShouldBe(TournamentTestData.CSS);

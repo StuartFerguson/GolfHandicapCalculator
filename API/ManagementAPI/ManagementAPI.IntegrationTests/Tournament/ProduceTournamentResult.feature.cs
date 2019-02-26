@@ -94,8 +94,14 @@ namespace ManagementAPI.IntegrationTests.Tournament
 #line 15
  testRunner.And("I am logged in as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 16
- testRunner.And("some scores have been recorded", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I am requested membership of the golf club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 17
+ testRunner.And("my membership has been accepted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 18
+ testRunner.And("I have signed in to play the tournament", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 19
+ testRunner.And("some scores have been recorded", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 20
  testRunner.And("I have completed the tournament", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
@@ -113,12 +119,12 @@ namespace ManagementAPI.IntegrationTests.Tournament
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Produce Tournament Result", null, new string[] {
                         "EndToEnd"});
-#line 20
+#line 23
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
-#line 21
+#line 24
  testRunner.When("I request to produce a tournament result the results are produced", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             this.ScenarioCleanup();

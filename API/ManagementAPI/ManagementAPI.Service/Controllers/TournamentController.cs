@@ -54,7 +54,7 @@
         [SwaggerResponse(201, type:typeof(CreateTournamentResponse))]
         [SwaggerResponseExample(201, typeof(CreateTournamentResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Authorize(Policy = PolicyNames.CreateTournamentPolicy)]
-        public async Task<IActionResult> PostTournament([FromBody] CreateTournamentRequest request,
+        public async Task<IActionResult> CreateTournament([FromBody] CreateTournamentRequest request,
                                                         CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user            
@@ -81,12 +81,15 @@
         [SwaggerResponse(204)]
         [Route("{tournamentId}/RecordMemberScore")]
         [Authorize(Policy = PolicyNames.RecordPlayerScoreForTournamentPolicy)]
-        public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId,
+        public async Task<IActionResult> RecordPlayerScore([FromRoute] Guid tournamentId,
                                                        [FromBody] RecordMemberTournamentScoreRequest request,
                                                        CancellationToken cancellationToken)
         {
+            // Get the Player Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId);
+
             // Create the command
-            RecordMemberTournamentScoreCommand command = RecordMemberTournamentScoreCommand.Create(tournamentId, request);
+            RecordMemberTournamentScoreCommand command = RecordMemberTournamentScoreCommand.Create( Guid.Parse(playerIdClaim.Value), tournamentId, request);
 
             // Route the command
             await this.CommandRouter.Route(command, cancellationToken);
@@ -99,14 +102,13 @@
         /// Posts the tournament.
         /// </summary>
         /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPut]
         [SwaggerResponse(204)]
         [Route("{tournamentId}/Complete")]
         [Authorize(Policy = PolicyNames.CompleteTournamentPolicy)]
-        public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId,
+        public async Task<IActionResult> Complete([FromRoute] Guid tournamentId,
                                                        CancellationToken cancellationToken)
         {
             // Create the command
@@ -130,7 +132,7 @@
         [SwaggerResponse(204)]
         [Route("{tournamentId}/Cancel")]
         [Authorize(Policy = PolicyNames.CancelTournamentPolicy)]
-        public async Task<IActionResult> PutTournament([FromRoute] Guid tournamentId,
+        public async Task<IActionResult> Cancel([FromRoute] Guid tournamentId,
                                                        [FromBody] CancelTournamentRequest request,
                                                        CancellationToken cancellationToken)
         {
@@ -154,7 +156,7 @@
         [SwaggerResponse(204)]
         [Route("{tournamentId}/ProduceResult")]
         [Authorize(Policy = PolicyNames.ProduceTournamentResultPolicy)]
-        public async Task<IActionResult> PutTournamentProduceResult([FromRoute] Guid tournamentId,
+        public async Task<IActionResult> ProduceResult([FromRoute] Guid tournamentId,
                                                                     CancellationToken cancellationToken)
         {
             // Create the command
@@ -167,6 +169,25 @@
             return this.NoContent();
         }
 
+        [HttpPut]
+        [SwaggerResponse(204)]
+        [Route("{tournamentId}/SignUp")]
+        [Authorize(Policy = PolicyNames.PlayerTournamentSignUpPolicy)]
+        public async Task<IActionResult> SignupPlayer([FromRoute] Guid tournamentId,
+                                                      CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId);
+
+            // Create the command
+            SignUpForTournamentCommand command = SignUpForTournamentCommand.Create(tournamentId, Guid.Parse(playerIdClaim.Value));
+
+            // Route the command
+            await this.CommandRouter.Route(command, cancellationToken);
+
+            // return the result
+            return this.NoContent();
+        }
         #endregion
     }
 }

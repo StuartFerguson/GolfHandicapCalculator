@@ -119,6 +119,55 @@ namespace ManagementAPI.Service.Tests.ClientTests
         }
 
         [Fact]
+        public async Task TournamentClient_SignUpPlayer_SuccessfulResponse()
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.NoContent,
+                Content =new StringContent(String.Empty)
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "passwordToken";
+
+            TournamentClient client = new TournamentClient(resolver, httpClient);
+
+            await client.SignUpPlayerForTournament(passwordToken, TournamentTestData.AggregateId, CancellationToken.None);            
+        }
+
+        [Theory]
+        [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
+        [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
+        [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
+        public async Task TournamentClient_SignUpPlayer_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = statusCode,
+                Content =new StringContent(String.Empty)
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "passwordToken";
+
+            TournamentClient client = new TournamentClient(resolver, httpClient);
+            
+            Exception exception = Should.Throw(async () =>
+            {
+                await client.SignUpPlayerForTournament(passwordToken, TournamentTestData.AggregateId, CancellationToken.None);
+            }, exceptionType);
+
+            exception.InnerException.ShouldBeOfType(innerExceptionType);
+        }
+
+        [Fact]
         public async Task TournamentClient_CancelTournament_SuccessfulResponse()
         {
             Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
