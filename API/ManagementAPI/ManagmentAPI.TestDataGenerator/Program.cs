@@ -408,6 +408,8 @@
                                                                                 "managementapi"
                                                                             });
 
+                        await tournamentClient.SignUpPlayerForTournament(playerPasswordToken, createTournamentResponse.TournamentId, cancellationToken);
+
                         await tournamentClient.RecordPlayerScore(playerPasswordToken,
                                                                  createTournamentResponse.TournamentId,
                                                                  recordMemberTournamentScoreRequest,
@@ -619,8 +621,8 @@
         /// <returns></returns>
         private static async Task Main(String[] args)
         {
-            const Int32 clubCount = 10;
-            const Int32 playersPerClub = 36;
+            const Int32 clubCount = 1;
+            const Int32 playersPerClub = 37;
 
             CancellationToken cancellationToken = new CancellationToken();
 
