@@ -17,17 +17,25 @@
     using Manager;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Moq;
     using Player;
     using Services;
     using Services.DataTransferObjects;
     using Shared.EventStore;
     using Shared.Exceptions;
+    using Shared.General;
     using Shouldly;
     using Xunit;
 
     public class ManagmentAPIManagerTests
     {
+
+        public ManagmentAPIManagerTests()
+        {
+            Logger.Initialise(NullLogger.Instance);      
+        }
+
         #region Methods
 
         [Fact]
