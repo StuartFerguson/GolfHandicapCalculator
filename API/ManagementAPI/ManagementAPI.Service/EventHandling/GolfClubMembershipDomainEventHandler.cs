@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using Commands;
     using GolfClubMembership.DomainEvents;
+    using Manager;
     using Shared.CommandHandling;
     using Shared.EventSourcing;
     using Shared.General;
@@ -23,6 +24,11 @@
         private readonly ICommandRouter CommandRouter;
 
         /// <summary>
+        /// The manager
+        /// </summary>
+        private readonly IManagmentAPIManager Manager;
+
+        /// <summary>
         /// The event types to silently handle
         /// </summary>
         private readonly IDomainEventTypesToSilentlyHandle EventTypesToSilentlyHandle;
@@ -35,11 +41,14 @@
         /// Initializes a new instance of the <see cref="GolfClubMembershipDomainEventHandler" /> class.
         /// </summary>
         /// <param name="commandRouter">The command router.</param>
+        /// <param name="manager">The manager.</param>
         /// <param name="eventTypesToSilentlyHandle">The event types to silently handle.</param>
         public GolfClubMembershipDomainEventHandler(ICommandRouter commandRouter,
+                                                    IManagmentAPIManager manager,
                                                     IDomainEventTypesToSilentlyHandle eventTypesToSilentlyHandle)
         {
             this.CommandRouter = commandRouter;
+            this.Manager = manager;
             this.EventTypesToSilentlyHandle = eventTypesToSilentlyHandle;
         }
 
@@ -68,13 +77,9 @@
         private async Task HandleSpecificDomainEvent(ClubMembershipRequestAcceptedEvent domainEvent,
                                                      CancellationToken cancellationToken)
         {
-            AddAcceptedMembershipToPlayerCommand command = AddAcceptedMembershipToPlayerCommand.Create(domainEvent.PlayerId,
-                                                                                                       domainEvent.AggregateId,
-                                                                                                       domainEvent.MembershipId,
-                                                                                                       domainEvent.MembershipNumber,
-                                                                                                       domainEvent.AcceptedDateAndTime);
+            await this.Manager.InsertPlayerMembershipToReadModel(domainEvent, cancellationToken);
 
-            await this.CommandRouter.Route(command, cancellationToken);
+            Logger.LogDebug($"Added Player Id {domainEvent.PlayerId} to Golf Club {domainEvent.AggregateId}");
         }
 
         /// <summary>
@@ -86,13 +91,7 @@
         private async Task HandleSpecificDomainEvent(ClubMembershipRequestRejectedEvent domainEvent,
                                                      CancellationToken cancellationToken)
         {
-            AddRejectedMembershipToPlayerCommand command = AddRejectedMembershipToPlayerCommand.Create(domainEvent.PlayerId,
-                                                                                                       domainEvent.AggregateId,
-                                                                                                       domainEvent.MembershipId,
-                                                                                                       domainEvent.RejectionReason,
-                                                                                                       domainEvent.RejectionDateAndTime);
-
-            await this.CommandRouter.Route(command, cancellationToken);
+            await this.Manager.InsertPlayerMembershipToReadModel(domainEvent, cancellationToken);
         }
 
         /// <summary>

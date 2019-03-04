@@ -16,12 +16,16 @@
         private readonly IAggregateRepository<TournamentAggregate> TournamentRepository;
 
         private readonly IAggregateRepository<PlayerAggregate> PlayerRepository;
+
+        private readonly IAggregateRepository<GolfClubMembershipAggregate> ClubMembershipRepository;
         
         public TournamentApplicationService(IAggregateRepository<TournamentAggregate> tournamentRepository,
-                                            IAggregateRepository<PlayerAggregate> playerRepository)
+                                            IAggregateRepository<PlayerAggregate> playerRepository,
+                                            IAggregateRepository<GolfClubMembershipAggregate> clubMembershipRepository)
         {
             this.TournamentRepository = tournamentRepository;
             this.PlayerRepository = playerRepository;
+            this.ClubMembershipRepository = clubMembershipRepository;
         }
 
         public async Task SignUpPlayerForTournament(Guid tournamentId,
@@ -39,14 +43,9 @@
             
             try
             {
-                List<ClubMembershipDataTransferObject> memberships = player.GetClubMemberships();
+                GolfClubMembershipAggregate golfClubMembership= await this.ClubMembershipRepository.GetLatestVersion(tournament.GolfClubId, cancellationToken);
 
-                ClubMembershipDataTransferObject membership = memberships.SingleOrDefault(m => m.GolfClubId == tournament.GolfClubId);
-
-                if (membership == null)
-                {
-                    throw new NotFoundException();
-                }
+                golfClubMembership.GetMembership(player.AggregateId, player.DateOfBirth, player.Gender);                
             }
             catch(NotFoundException nex)
             {

@@ -15,6 +15,9 @@ using TechTalk.SpecFlow;
 
 namespace ManagementAPI.IntegrationTests.Common
 {
+    using System.Net;
+    using MySql.Data.MySqlClient;
+
     [Binding]
     public abstract class GenericSteps
     {
@@ -122,7 +125,55 @@ namespace ManagementAPI.IntegrationTests.Common
             }
         }
 
-        protected abstract void SetupSubscriptionServiceConfig();
+        protected void SetupSubscriptionServiceConfig()
+        {
+            IPEndPoint mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
+
+            String server = "127.0.0.1";
+            String database = "SubscriptionServiceConfiguration";
+            String user = "root";
+            String password = "Pa55word";
+            String port = mysqlEndpoint.Port.ToString();
+            String sslM = "none";
+
+            String connectionString = $"server={server};port={port};user id={user}; password={password}; database={database}; SslMode={sslM}";
+
+            MySqlConnection connection = new MySqlConnection(connectionString);
+
+            connection.Open();
+
+            // Insert the subscription service
+            SubscriptionServiceHelper.CreateSubscriptionService(connection, this.SubscriberServiceId, "Test Service");
+
+            // Create the Endpoints
+            Guid golfClubEndpointId = Guid.NewGuid();
+            String golfClubEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClub";
+            SubscriptionServiceHelper.CreateEndpoint(connection, golfClubEndpointId, "Golf Club Read Model",golfClubEndpointUrl);
+
+            Guid golfClubMembershipEndpointId = Guid.NewGuid();
+            String golfClubMembershipEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClubMembership";
+            SubscriptionServiceHelper.CreateEndpoint(connection, golfClubMembershipEndpointId, "Golf Club Membership Read Model",golfClubMembershipEndpointUrl);
+
+            // Create the Streams
+            Guid catergoryGolfClubAggregateStream = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionStream(connection, catergoryGolfClubAggregateStream, "$ce-GolfClubAggregate");
+            
+            Guid catergoryGolfClubMembershipAggregateStream = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionStream(connection, catergoryGolfClubMembershipAggregateStream, "$ce-GolfClubMembershipAggregate");
+
+            // Create the groups
+            Guid subscriptionGroupGolfClubAggregateId = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubAggregateId, golfClubEndpointId, "GolfClubAggregate", catergoryGolfClubAggregateStream);
+
+            Guid subscriptionGroupGolfClubMembershipAggregateId = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubMembershipAggregateId, golfClubMembershipEndpointId, "GolfClubMembershipAggregate", catergoryGolfClubMembershipAggregateStream);
+
+            // Add the groups to the Subscription Service
+            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubAggregateId, this.SubscriberServiceId);
+            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubMembershipAggregateId, this.SubscriberServiceId);
+
+            connection.Close();
+        }
         
         protected async Task<HttpResponseMessage> MakeHttpGet(String requestUri, String bearerToken = "")
         {
@@ -251,7 +302,8 @@ namespace ManagementAPI.IntegrationTests.Common
                 .WithEnvironment("SeedingType=IntegrationTest", "ASPNETCORE_ENVIRONMENT=IntegrationTest", 
                     $"ServiceOptions:PublicOrigin=http://{this.SecurityServiceContainerName}:5001",
                     $"ServiceOptions:IssuerUrl=http://{this.SecurityServiceContainerName}:5001")
-                .UseImage("oauth2securityserviceservice")
+                .WithCredential("https://www.docker.com", "stuartferguson", "Sc0tland")
+                .UseImage("stuartferguson/oauth2securityserviceservice")
                 .ExposePort(5001)
                 .UseNetwork(this.TestNetwork)
                 .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)                
@@ -306,7 +358,8 @@ namespace ManagementAPI.IntegrationTests.Common
                     this.EventStoreConnectionString, 
                     "EventStoreSettings:HttpPort=2113",
                     $"ServiceSettings:SubscriptionServiceId={this.SubscriberServiceId}")
-                .UseImage("subscriptionserviceservice")
+                .WithCredential("https://docker.io", "stuartferguson", "Sc0tland")
+                .UseImage("stuartferguson/subscriptionservice")
                 .UseNetwork(new List<INetworkService> {this.TestNetwork, Setup.DatabaseServerNetwork}.ToArray()) 
                 .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)
                 .Build()

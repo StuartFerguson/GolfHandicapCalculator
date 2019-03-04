@@ -6,6 +6,8 @@ namespace ManagementAPI.Service.Tests.Tournament
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using GolfClubMembership;
+    using ManagementAPI.GolfClubMembership;
     using ManagementAPI.Player;
     using ManagementAPI.Tournament;
     using Moq;
@@ -23,9 +25,14 @@ namespace ManagementAPI.Service.Tests.Tournament
             Mock<IAggregateRepository<TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate>>();
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregate);
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithMembershipAdded);
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate());
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+            golfClubMembershipRepository.Setup(g => g.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                                        .ReturnsAsync(GolfClubMembershipTestData.GetCreatedGolfClubMembershipAggregateWithMembershipRequested);
+
             TournamentApplicationService tournamentApplicationService = new TournamentApplicationService(tournamentRepository.Object,
-                                                                                                         playerRepository.Object);
+                                                                                                         playerRepository.Object,
+                                                                                                         golfClubMembershipRepository.Object);
 
             Should.NotThrow(async () =>
                              {
@@ -42,8 +49,13 @@ namespace ManagementAPI.Service.Tests.Tournament
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregate);
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate);
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+            golfClubMembershipRepository.Setup(g => g.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                                        .ReturnsAsync(GolfClubMembershipTestData.GetCreatedGolfClubMembershipAggregateWithMembershipRequested);
+
             TournamentApplicationService tournamentApplicationService = new TournamentApplicationService(tournamentRepository.Object,
-                                                                                                         playerRepository.Object);
+                                                                                                         playerRepository.Object,
+                                                                                                         golfClubMembershipRepository.Object);
 
             Should.Throw<InvalidOperationException>(async () =>
                             {
@@ -59,9 +71,14 @@ namespace ManagementAPI.Service.Tests.Tournament
             Mock<IAggregateRepository<TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate>>();
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregate);
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate());
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+            golfClubMembershipRepository.Setup(g => g.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
+                                        .ReturnsAsync(GolfClubMembershipTestData.GetCreatedGolfClubMembershipAggregate);
+
             TournamentApplicationService tournamentApplicationService = new TournamentApplicationService(tournamentRepository.Object,
-                                                                                                         playerRepository.Object);
+                                                                                                         playerRepository.Object,
+                                                                                                         golfClubMembershipRepository.Object);
 
             Should.Throw<InvalidOperationException>(async () =>
                                                     {
@@ -70,8 +87,5 @@ namespace ManagementAPI.Service.Tests.Tournament
                                                                                                                      CancellationToken.None);
                                                     });
         }
-
-        // Unregistered Player
-        // Not a member of club
     }
 }

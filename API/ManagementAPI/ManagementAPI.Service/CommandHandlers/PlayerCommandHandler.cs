@@ -123,61 +123,7 @@ namespace ManagementAPI.Service.CommandHandlers
             command.Response = new RegisterPlayerResponse {PlayerId = playerAggregateId };
         }
         #endregion
-
-        #region private async Task HandleCommand(AddAcceptedMembershipToPlayerCommand command, CancellationToken cancellationToken)
-        /// <summary>
-        /// Handles the command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        private async Task HandleCommand(AddAcceptedMembershipToPlayerCommand command, CancellationToken cancellationToken)
-        {
-            // Rehydrate the aggregate
-            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(command.PlayerId, cancellationToken);
-
-            // Validate the golf club id
-            GolfClubAggregate golfClubAggregate = await this.GolfClubRepository.GetLatestVersion(command.GolfClubId, cancellationToken);
-
-            if (!golfClubAggregate.HasBeenCreated)
-            {
-                throw new InvalidOperationException("Unable to add a membership to a player for a club which has not been created");
-            }
-            
-            player.AddAcceptedMembership(command.GolfClubId, command.MembershipId, command.MembershipNumber, command.AcceptedDateTime);
-
-            // Save the changes
-            await this.PlayerRepository.SaveChanges(player, cancellationToken);
-        }
-        #endregion
-
-        #region private async Task HandleCommand(AddRejectedMembershipToPlayerCommand command, CancellationToken cancellationToken)
-        /// <summary>
-        /// Handles the command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        private async Task HandleCommand(AddRejectedMembershipToPlayerCommand command, CancellationToken cancellationToken)
-        {
-            // Rehydrate the aggregate
-            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(command.PlayerId, cancellationToken);
-
-            // Validate the golf club id
-            GolfClubAggregate golfClubAggregate = await this.GolfClubRepository.GetLatestVersion(command.GolfClubId, cancellationToken);
-
-            if (!golfClubAggregate.HasBeenCreated)
-            {
-                throw new InvalidOperationException("Unable to add a membership to a player for a club which has not been created");
-            }
-            
-            player.AddRejectedMembership(command.GolfClubId, command.MembershipId, command.RejectionReason, command.RejectedDateTime);
-
-            // Save the changes
-            await this.PlayerRepository.SaveChanges(player, cancellationToken);
-        }
-        #endregion
-
+        
         #endregion
     }
 }
