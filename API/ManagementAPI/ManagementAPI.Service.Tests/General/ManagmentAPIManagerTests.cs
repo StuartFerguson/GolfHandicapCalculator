@@ -17,17 +17,25 @@
     using Manager;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Moq;
     using Player;
     using Services;
     using Services.DataTransferObjects;
     using Shared.EventStore;
     using Shared.Exceptions;
+    using Shared.General;
     using Shouldly;
     using Xunit;
 
     public class ManagmentAPIManagerTests
     {
+
+        public ManagmentAPIManagerTests()
+        {
+            Logger.Initialise(NullLogger.Instance);      
+        }
+
         #region Methods
 
         [Fact]
@@ -182,11 +190,25 @@
             Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
 
             ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            context.PlayerClubMembership.Add(new PlayerClubMembership
+                                             {
+                                                 AcceptedDateTime = GolfClubMembershipTestData.AcceptedDateAndTime,
+                                                 PlayerId = GolfClubMembershipTestData.PlayerId,
+                                                 MembershipNumber = GolfClubMembershipTestData.MembershipNumber,
+                                                 GolfClubId = GolfClubMembershipTestData.AggregateId,
+                                                 MembershipId = GolfClubMembershipTestData.MembershipId,
+                                                 RejectionReason = null,
+                                                 Status = GolfClubMembershipTestData.AcceptedStatus,
+                                                 RejectedDateTime = null,
+                                                 GolfClubName = GolfClubMembershipTestData.GolfClubName
+                                             });
+            context.SaveChanges();
+
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
-                            .ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregateWithMembershipAdded);
+            
             Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 

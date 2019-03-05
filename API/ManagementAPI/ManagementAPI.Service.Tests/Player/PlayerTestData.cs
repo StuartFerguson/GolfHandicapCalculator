@@ -11,7 +11,7 @@
     {
         #region Fields
 
-        public static Guid AggregateId = Guid.Parse("9A13D29F-484D-4ABD-BF85-813A0A7F075E");
+        public static Guid AggregateId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6");
 
         public static Guid GolfClubId = Guid.Parse("6AF76DC0-3913-4A6D-BF60-2E0A1DE06333");
 
@@ -125,25 +125,7 @@
         #endregion
 
         #region Methods
-
-        public static AddAcceptedMembershipToPlayerCommand GetAddAcceptedMembershipToPlayerCommand()
-        {
-            return AddAcceptedMembershipToPlayerCommand.Create(PlayerTestData.AggregateId,
-                                                               PlayerTestData.GolfClubId,
-                                                               PlayerTestData.MembershipId,
-                                                               PlayerTestData.MembershipNumber,
-                                                               PlayerTestData.MembershipAcceptedDateTime);
-        }
-
-        public static AddRejectedMembershipToPlayerCommand GetAddRejectedMembershipToPlayerCommand()
-        {
-            return AddRejectedMembershipToPlayerCommand.Create(PlayerTestData.AggregateId,
-                                                               PlayerTestData.GolfClubId,
-                                                               PlayerTestData.MembershipId,
-                                                               PlayerTestData.RejectionReason,
-                                                               PlayerTestData.MembershipRejectedDateTime);
-        }
-
+        
         public static PlayerAggregate GetEmptyPlayerAggregate()
         {
             PlayerAggregate playerAggregate = PlayerAggregate.Create(PlayerTestData.AggregateId);
@@ -165,29 +147,7 @@
 
             return playerAggregate;
         }
-
-        public static PlayerAggregate GetRegisteredPlayerAggregateWithMembershipAdded()
-        {
-            PlayerAggregate playerAggregate = PlayerAggregate.Create(PlayerTestData.AggregateId);
-
-            playerAggregate.Register(PlayerTestData.FirstName,
-                                     PlayerTestData.MiddleName,
-                                     PlayerTestData.LastName,
-                                     PlayerTestData.Gender,
-                                     PlayerTestData.DateOfBirth,
-                                     PlayerTestData.ExactHandicapCat1,
-                                     PlayerTestData.EmailAddress);
-
-            playerAggregate.CreateSecurityUser(PlayerTestData.SecurityUserId);
-
-            playerAggregate.AddAcceptedMembership(PlayerTestData.GolfClubId,
-                                                  PlayerTestData.MembershipId,
-                                                  PlayerTestData.MembershipNumber,
-                                                  PlayerTestData.MembershipAcceptedDateTime);
-
-            return playerAggregate;
-        }
-
+        
         public static PlayerAggregate GetRegisteredPlayerAggregateWithSecurityUserCreated()
         {
             PlayerAggregate playerAggregate = PlayerAggregate.Create(PlayerTestData.AggregateId);

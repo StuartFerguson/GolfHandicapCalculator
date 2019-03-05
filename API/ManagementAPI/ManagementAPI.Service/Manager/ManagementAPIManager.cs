@@ -11,6 +11,7 @@
     using GolfClub;
     using GolfClub.DomainEvents;
     using GolfClubMembership;
+    using GolfClubMembership.DomainEvents;
     using Microsoft.EntityFrameworkCore;
     using Player;
     using Services;
@@ -246,22 +247,35 @@
         {
             List<ClubMembershipResponse> result = new List<ClubMembershipResponse>();
 
-            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(playerId, cancellationToken);
-
-            List<ClubMembershipDataTransferObject> membershipList = player.GetClubMemberships();
-
-            foreach (ClubMembershipDataTransferObject clubMembershipDataTransferObject in membershipList)
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
             {
-                result.Add(new ClubMembershipResponse
-                           {
-                               MembershipNumber = clubMembershipDataTransferObject.MembershipNumber,
-                               MembershipId = clubMembershipDataTransferObject.MembershipId,
-                               GolfClubId = clubMembershipDataTransferObject.GolfClubId,
-                               RejectionReason = clubMembershipDataTransferObject.RejectionReason,
-                               Status = (MembershipStatus)clubMembershipDataTransferObject.Status,
-                               RejectedDateTime = clubMembershipDataTransferObject.RejectedDateTime,
-                               AcceptedDateTime = clubMembershipDataTransferObject.AcceptedDateTime
-                           });
+                List<PlayerClubMembership> debugList = await context.PlayerClubMembership.ToListAsync(cancellationToken);
+                foreach (PlayerClubMembership playerClubMembership in debugList)
+                {
+                    Logger.LogDebug($"Player Id {playerClubMembership.PlayerId} Golf Club Id {playerClubMembership.GolfClubId}");
+                }
+                
+                List<PlayerClubMembership> membershipList = await context.PlayerClubMembership.Where(p => p.PlayerId == playerId).ToListAsync(cancellationToken);
+
+                if (membershipList.Count == 0)
+                {
+                    throw new NotFoundException($"No club memberships found for Player Id {playerId}");
+                }
+
+                foreach (PlayerClubMembership playerClubMembership in membershipList)
+                {
+                    result.Add(new ClubMembershipResponse
+                               {
+                                   MembershipNumber = playerClubMembership.MembershipNumber,
+                                   MembershipId = playerClubMembership.MembershipId,
+                                   GolfClubId = playerClubMembership.GolfClubId,
+                                   RejectionReason = playerClubMembership.RejectionReason,
+                                   Status = (MembershipStatus)playerClubMembership.Status,
+                                   RejectedDateTime = playerClubMembership.RejectedDateTime,
+                                   AcceptedDateTime = playerClubMembership.AcceptedDateTime,
+                                   GolfClubName = playerClubMembership.GolfClubName
+                               });
+                }
             }
 
             return result;
@@ -300,6 +314,102 @@
                                         };
 
                     context.GolfClub.Add(golfClub);
+
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Inserts the player membership to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">Golf Club with Id {domainEvent.AggregateId}</exception>
+        public async Task InsertPlayerMembershipToReadModel(ClubMembershipRequestAcceptedEvent domainEvent,
+                                                            CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the club has not already been added to the read model
+                Boolean isDuplicate = await context.PlayerClubMembership.Where(p => p.PlayerId == domainEvent.PlayerId &&
+                                                                                    p.GolfClubId == domainEvent.AggregateId &&
+                                                                                    p.Status == (Int32)MembershipStatus.Accepted).AnyAsync(cancellationToken);
+
+                if (!isDuplicate)
+                {
+                    GolfClub golfClub = await context.GolfClub.SingleOrDefaultAsync(g => g.GolfClubId == domainEvent.AggregateId, cancellationToken);
+
+                    if (golfClub == null)
+                    {
+                        throw new NotFoundException($"Golf Club with Id {domainEvent.AggregateId} not found in read model");
+                    }
+
+                    PlayerClubMembership playerClubMembership = new PlayerClubMembership
+                                                                {
+                                                                    PlayerId = domainEvent.PlayerId,
+                                                                    MembershipNumber = domainEvent.MembershipNumber,
+                                                                    GolfClubId = domainEvent.AggregateId,
+                                                                    MembershipId = domainEvent.MembershipId,
+                                                                    RejectionReason = null,
+                                                                    Status = (Int32)MembershipStatus.Accepted,
+                                                                    AcceptedDateTime = domainEvent.AcceptedDateAndTime,
+                                                                    RejectedDateTime = null,
+                                                                    GolfClubName = golfClub.Name
+                                                                };
+
+                    context.PlayerClubMembership.Add(playerClubMembership);
+
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Inserts the player membership to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">Golf Club with Id {domainEvent.AggregateId}</exception>
+        public async Task InsertPlayerMembershipToReadModel(ClubMembershipRequestRejectedEvent domainEvent,
+                                                            CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the club has not already been added to the read model
+                Boolean isDuplicate = await context.PlayerClubMembership.Where(p => p.PlayerId == domainEvent.PlayerId &&
+                                                                                    p.GolfClubId == domainEvent.AggregateId &&
+                                                                                    p.Status == (Int32)MembershipStatus.Rejected).AnyAsync(cancellationToken);
+
+                if (!isDuplicate)
+                {
+                    GolfClub golfClub = await context.GolfClub.SingleOrDefaultAsync(g => g.GolfClubId == domainEvent.AggregateId, cancellationToken);
+
+                    if (golfClub == null)
+                    {
+                        throw new NotFoundException($"Golf Club with Id {domainEvent.AggregateId} not found in read model");
+                    }
+
+                    PlayerClubMembership playerClubMembership = new PlayerClubMembership
+                                                                {
+                                                                    PlayerId = domainEvent.PlayerId,
+                                                                    MembershipNumber = null,
+                                                                    GolfClubId = domainEvent.AggregateId,
+                                                                    MembershipId = domainEvent.MembershipId,
+                                                                    RejectionReason = domainEvent.RejectionReason,
+                                                                    Status = (Int32)MembershipStatus.Rejected,
+                                                                    AcceptedDateTime = null,
+                                                                    RejectedDateTime = domainEvent.RejectionDateAndTime,
+                                                                    GolfClubName = golfClub.Name
+                                                                };
+
+                    context.PlayerClubMembership.Add(playerClubMembership);
 
                     await context.SaveChangesAsync(cancellationToken);
                 }

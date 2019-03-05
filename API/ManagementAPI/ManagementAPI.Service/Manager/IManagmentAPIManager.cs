@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using DataTransferObjects;
     using GolfClub.DomainEvents;
+    using GolfClubMembership.DomainEvents;
 
     public interface IManagmentAPIManager
     {
@@ -71,6 +72,24 @@
         /// <returns></returns>
         Task RegisterClubAdministrator(RegisterClubAdministratorRequest request,
                                        CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the player membership to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerMembershipToReadModel(ClubMembershipRequestAcceptedEvent domainEvent,
+                                               CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the player membership to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerMembershipToReadModel(ClubMembershipRequestRejectedEvent domainEvent,
+                                               CancellationToken cancellationToken);
 
         #endregion
     }

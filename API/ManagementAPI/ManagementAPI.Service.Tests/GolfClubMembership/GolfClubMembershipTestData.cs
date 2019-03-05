@@ -14,8 +14,8 @@ namespace ManagementAPI.Service.Tests.GolfClubMembership
         public static String GolfClubName = "Test Club 1";
 
         public static Guid MembershipId = Guid.Parse("8BEE01CC-369B-4D7B-BA34-CF7B4345D7BB");
-
-        public static Guid PlayerId = Guid.Parse("0738EC4F-2D20-497B-895C-5F685191C172");
+        
+        public static Guid PlayerId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6");
         public static Guid PlayerId2 = Guid.Parse("0B065AF7-7D8D-4E67-8BD2-ECA6F2C87F5E");
 
         public static String PlayerFullName = "Test Player";
@@ -37,7 +37,10 @@ namespace ManagementAPI.Service.Tests.GolfClubMembership
 
         public static String MembershipNumber = "000001";
         public static String MembershipNumber2 = "000002";
-        
+
+        public static Int32 AcceptedStatus = (Int32)MembershipStatus.Accepted;
+        public static Int32 RejectedStatus = (Int32)MembershipStatus.Rejected;
+
         public static GolfClubMembershipAggregate GetCreatedGolfClubMembershipAggregate()
         {
             GolfClubMembershipAggregate aggregate = GolfClubMembershipAggregate.Create(GolfClubMembershipTestData.AggregateId);

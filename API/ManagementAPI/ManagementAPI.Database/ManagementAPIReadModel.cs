@@ -1,14 +1,16 @@
-﻿using ManagementAPI.Database.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ManagementAPI.Database
+﻿namespace ManagementAPI.Database
 {
+    using System;
+    using Microsoft.EntityFrameworkCore;
+    using Models;
+
     public class ManagementAPIReadModel : DbContext
     {
+        #region Fields
+
         private readonly String ConnectionString;
+
+        #endregion
 
         #region Constructors
 
@@ -40,7 +42,28 @@ namespace ManagementAPI.Database
 
         #endregion
 
-        #region protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)        
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the golf club.
+        /// </summary>
+        /// <value>
+        /// The golf club.
+        /// </value>
+        public DbSet<GolfClub> GolfClub { get; set; }
+
+        /// <summary>
+        /// Gets or sets the player club membership.
+        /// </summary>
+        /// <value>
+        /// The player club membership.
+        /// </value>
+        public DbSet<PlayerClubMembership> PlayerClubMembership { get; set; }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// <para>
         /// Override this method to configure the database (and other options) to be used for this context.
@@ -57,32 +80,34 @@ namespace ManagementAPI.Database
         /// typically define extension methods on this object that allow you to configure the context.</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!String.IsNullOrWhiteSpace(this.ConnectionString))
+            if (!string.IsNullOrWhiteSpace(this.ConnectionString))
             {
                 optionsBuilder.UseMySql(this.ConnectionString);
             }
 
             base.OnConfiguring(optionsBuilder);
         }
-        #endregion
-
-        #region Entities
 
         /// <summary>
-        /// Gets or sets the golf club.
+        /// Override this method to further configure the model that was discovered by convention from the entity types
+        /// exposed in <see cref="T:Microsoft.EntityFrameworkCore.DbSet`1" /> properties on your derived context. The resulting model may be cached
+        /// and re-used for subsequent instances of your derived context.
         /// </summary>
-        /// <value>
-        /// The golf club.
-        /// </value>
-        public DbSet<GolfClub> GolfClub { get; set; }
-
-        /// <summary>
-        /// Gets or sets the club membership request.
-        /// </summary>
-        /// <value>
-        /// The club membership request.
-        /// </value>
-        public DbSet<ClubMembershipRequest> ClubMembershipRequest { get; set; }
+        /// <param name="modelBuilder">The builder being used to construct the model for this context. Databases (and other extensions) typically
+        /// define extension methods on this object that allow you to configure aspects of the model that are specific
+        /// to a given database.</param>
+        /// <remarks>
+        /// If a model is explicitly set on the options for this context (via <see cref="M:Microsoft.EntityFrameworkCore.DbContextOptionsBuilder.UseModel(Microsoft.EntityFrameworkCore.Metadata.IModel)" />)
+        /// then this method will not be run.
+        /// </remarks>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PlayerClubMembership>().HasKey(p => new
+                                                                    {
+                                                                        p.PlayerId,
+                                                                        p.GolfClubId
+                                                                    });
+        }
 
         #endregion
     }

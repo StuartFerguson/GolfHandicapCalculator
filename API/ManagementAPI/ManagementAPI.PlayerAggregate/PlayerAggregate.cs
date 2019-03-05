@@ -12,15 +12,6 @@
 
     public class PlayerAggregate : Aggregate
     {
-        #region Fields
-
-        /// <summary>
-        /// The memberships
-        /// </summary>
-        private readonly List<ClubMembership> Memberships;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -29,8 +20,7 @@
         [ExcludeFromCodeCoverage]
         public PlayerAggregate()
         {
-            // Nothing here
-            this.Memberships = new List<ClubMembership>();
+            // Nothing here            
         }
 
         /// <summary>
@@ -42,7 +32,6 @@
             Guard.ThrowIfInvalidGuid(aggregateId, "Aggregate Id cannot be an Empty Guid");
 
             this.AggregateId = aggregateId;
-            this.Memberships = new List<ClubMembership>();
         }
 
         #endregion
@@ -158,66 +147,6 @@
         #region Methods
 
         /// <summary>
-        /// Adds the accepted membership.
-        /// </summary>
-        /// <param name="golfClubId">The golf club identifier.</param>
-        /// <param name="membershipId">The membership identifier.</param>
-        /// <param name="membershipNumber">The membership number.</param>
-        /// <param name="acceptedDateTime">The accepted date time.</param>
-        public void AddAcceptedMembership(Guid golfClubId,
-                                          Guid membershipId,
-                                          String membershipNumber,
-                                          DateTime acceptedDateTime)
-        {
-            Guard.ThrowIfInvalidGuid(golfClubId, typeof(ArgumentNullException), "A golf club Id must be provided to add an accepted membership to a player.");
-            Guard.ThrowIfInvalidGuid(membershipId, typeof(ArgumentNullException), "A membership Id must be provided to add an accepted membership to a player.");
-            Guard.ThrowIfNullOrEmpty(membershipNumber, typeof(ArgumentNullException), "A membership number must be provided to add an accepted membership to a player.");
-
-            // Check if player is registered
-            this.CheckIfPlayerHasBeenRegistered();
-
-            // Ensure not a duplicate membership
-            this.EnsureNotADuplicateMembershipAcceptance(membershipId);
-
-            // Create the domain event
-            AcceptedMembershipAddedEvent acceptedMembershipAddedEvent =
-                AcceptedMembershipAddedEvent.Create(this.AggregateId, golfClubId, membershipId, membershipNumber, acceptedDateTime);
-
-            // Apply and Pend
-            this.ApplyAndPend(acceptedMembershipAddedEvent);
-        }
-
-        /// <summary>
-        /// Adds the rejected membership.
-        /// </summary>
-        /// <param name="golfClubId">The golf club identifier.</param>
-        /// <param name="membershipId">The membership identifier.</param>
-        /// <param name="rejectionReason">The rejection reason.</param>
-        /// <param name="rejectedDateTime">The rejected date time.</param>
-        public void AddRejectedMembership(Guid golfClubId,
-                                          Guid membershipId,
-                                          String rejectionReason,
-                                          DateTime rejectedDateTime)
-        {
-            Guard.ThrowIfInvalidGuid(golfClubId, typeof(ArgumentNullException), "A golf club Id must be provided to add an rejected membership to a player.");
-            Guard.ThrowIfInvalidGuid(membershipId, typeof(ArgumentNullException), "A membership Id must be provided to add an rejected membership to a player.");
-            Guard.ThrowIfNullOrEmpty(rejectionReason, typeof(ArgumentNullException), "A membership number must be provided to add an rejected membership to a player.");
-
-            // Check if player is registered
-            this.CheckIfPlayerHasBeenRegistered();
-
-            // Ensure not a duplicate membership
-            this.EnsureNotADuplicateMembershipAcceptance(membershipId);
-
-            // Create the domain event
-            RejectedMembershipAddedEvent rejectedMembershipAddedEvent =
-                RejectedMembershipAddedEvent.Create(this.AggregateId, golfClubId, membershipId, rejectionReason, rejectedDateTime);
-
-            // Apply and Pend
-            this.ApplyAndPend(rejectedMembershipAddedEvent);
-        }
-
-        /// <summary>
         /// Creates the specified aggregate identifier.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
@@ -243,27 +172,6 @@
 
             // Apply and pend
             this.ApplyAndPend(securityUserCreatedEvent);
-        }
-
-        /// <summary>
-        /// Gets the club memberships.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotFoundException">Player {this.FirstName} {this.LastName}</exception>
-        public List<ClubMembershipDataTransferObject> GetClubMemberships()
-        {
-            if (this.Memberships == null || this.Memberships.Count == 0)
-            {
-                throw new NotFoundException($"Player {this.FirstName} {this.LastName} is not a member of any clubs.");
-            }
-
-            List<ClubMembershipDataTransferObject> membershipList = new List<ClubMembershipDataTransferObject>();
-            foreach (ClubMembership clubMembership in this.Memberships)
-            {
-                membershipList.Add(this.ConvertFrom(clubMembership));
-            }
-
-            return membershipList;
         }
 
         /// <summary>
@@ -410,22 +318,7 @@
                        RejectedDateTime = membership.RejectedDateTime
                    };
         }
-
-        /// <summary>
-        /// Ensures the not a duplicate membership acceptance.
-        /// </summary>
-        /// <param name="membershipId">The membership identifier.</param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void EnsureNotADuplicateMembershipAcceptance(Guid membershipId)
-        {
-            Boolean isDuplicateMembership = this.Memberships.Any(m => m.MembershipId == membershipId);
-
-            if (isDuplicateMembership)
-            {
-                throw new InvalidOperationException($"A accepted membership with Id [{membershipId}] has already been added to Player Id [{this.AggregateId}]");
-            }
-        }
-
+        
         /// <summary>
         /// Plays the event.
         /// </summary>
@@ -455,39 +348,7 @@
             this.SecurityUserId = securityUserCreatedEvent.SecurityUserId;
             this.HasSecurityUserBeenCreated = true;
         }
-
-        /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="acceptedMembershipAddedEvent">The accepted membership added event.</param>
-        private void PlayEvent(AcceptedMembershipAddedEvent acceptedMembershipAddedEvent)
-        {
-            ClubMembership membership = ClubMembership.Create();
-
-            membership.Approve(acceptedMembershipAddedEvent.GolfClubId,
-                               acceptedMembershipAddedEvent.MembershipId,
-                               acceptedMembershipAddedEvent.MembershipNumber,
-                               acceptedMembershipAddedEvent.AcceptedDateTime);
-
-            this.Memberships.Add(membership);
-        }
-
-        /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="rejectedMembershipAddedEvent">The rejected membership added event.</param>
-        private void PlayEvent(RejectedMembershipAddedEvent rejectedMembershipAddedEvent)
-        {
-            ClubMembership membership = ClubMembership.Create();
-
-            membership.Reject(rejectedMembershipAddedEvent.GolfClubId,
-                              rejectedMembershipAddedEvent.MembershipId,
-                              rejectedMembershipAddedEvent.RejectionReason,
-                              rejectedMembershipAddedEvent.RejectedDateTime);
-
-            this.Memberships.Add(membership);
-        }
-
+        
         /// <summary>
         /// Validates the date of birth.
         /// </summary>

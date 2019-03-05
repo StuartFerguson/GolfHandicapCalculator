@@ -207,27 +207,7 @@
         {
             return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
         }
-
-        /// <summary>
-        /// Creates the handler.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <returns></returns>
-        private ICommandHandler CreateHandler(AddAcceptedMembershipToPlayerCommand command)
-        {
-            return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
-        }
-
-        /// <summary>
-        /// Creates the handler.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <returns></returns>
-        private ICommandHandler CreateHandler(AddRejectedMembershipToPlayerCommand command)
-        {
-            return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
-        }
-
+        
         /// <summary>
         /// Creates the handler.
         /// </summary>
