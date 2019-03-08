@@ -1,4 +1,4 @@
-﻿namespace DataGenerator
+﻿namespace ManagmentAPI.TestDataGenerator
 {
     using System;
     using Newtonsoft.Json;

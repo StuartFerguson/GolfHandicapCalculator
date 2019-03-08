@@ -1,16 +1,14 @@
-﻿namespace DataGenerator
+﻿namespace ManagmentAPI.TestDataGenerator
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using ManagementAPI.Service.Client;
     using ManagementAPI.Service.DataTransferObjects;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// 
@@ -179,37 +177,22 @@
         #region Methods
 
         /// <summary>
-        /// Gets the response object.
+        /// Creates the golf club datav2.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="responseMessage">The response message.</param>
-        /// <returns></returns>
-        protected static async Task<T> GetResponseObject<T>(HttpResponseMessage responseMessage)
-        {
-            T result = default;
-
-            result = JsonConvert.DeserializeObject<T>(await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false));
-
-            return result;
-        }
-
-        /// <summary>
-        /// Creates the golf club data.
-        /// </summary>
-        /// <param name="numberOfClubs">The number of clubs.</param>
+        /// <param name="testDataGenerator">The test data generator.</param>
+        /// <param name="numberOfGolfClubs">The number of golf clubs.</param>
+        /// <param name="lastClubCount">The last club count.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private static async Task CreateGolfClubData(Int32 numberOfClubs,
-                                                     CancellationToken cancellationToken)
+        private static async Task CreateGolfClubDatav2(ITestDataGenerator testDataGenerator,
+                                                       Int32 numberOfGolfClubs,
+                                                       Int32 lastClubCount,
+                                                       CancellationToken cancellationToken)
         {
-            String BaseAddressResolver(String service)
-            {
-                return Program.BaseAddress;
-            }
-
-            IGolfClubClient golfClubClient = new GolfClubClient(BaseAddressResolver, Program.HttpClient);
-
-            for (Int32 i = 0; i < numberOfClubs; i++)
+            List<Task> tasks = new List<Task>();
+            Int32 startIndex = 0 + lastClubCount;
+            Int32 endIndex = numberOfGolfClubs + lastClubCount;
+            for (Int32 i = startIndex; i < endIndex; i++)
             {
                 RegisterClubAdministratorRequest registerClubAdministratorRequest = new RegisterClubAdministratorRequest
                                                                                     {
@@ -219,19 +202,19 @@
                                                                                         TelephoneNumber = "1234567890"
                                                                                     };
 
-                await golfClubClient.RegisterGolfClubAdministrator(registerClubAdministratorRequest, cancellationToken);
+                await testDataGenerator.RegisterGolfClubAdministrator(registerClubAdministratorRequest, cancellationToken);
 
-                String passwordToken = await Program.GetToken(TokenType.Password,
-                                                              "developerClient",
-                                                              "developerClient",
-                                                              registerClubAdministratorRequest.EmailAddress,
-                                                              registerClubAdministratorRequest.Password,
-                                                              new List<String>
-                                                              {
-                                                                  "openid",
-                                                                  "profile",
-                                                                  "managementapi"
-                                                              });
+                String token = await testDataGenerator.GetToken(TokenType.Password,
+                                                                "developerClient",
+                                                                "developerClient",
+                                                                registerClubAdministratorRequest.EmailAddress,
+                                                                registerClubAdministratorRequest.Password,
+                                                                new List<String>
+                                                                {
+                                                                    "openid",
+                                                                    "profile",
+                                                                    "managementapi"
+                                                                });
 
                 CreateGolfClubRequest createGolfClubRequest = new CreateGolfClubRequest
                                                               {
@@ -246,9 +229,9 @@
                                                                   Website = string.Empty
                                                               };
 
-                CreateGolfClubResponse createGolfClubResponse = await golfClubClient.CreateGolfClub(passwordToken, createGolfClubRequest, cancellationToken);
+                CreateGolfClubResponse createGolfClubResponse = await testDataGenerator.CreateGolfClub(token, createGolfClubRequest, cancellationToken);
 
-                await golfClubClient.AddMeasuredCourseToGolfClub(passwordToken, Program.AddMeasuredCourseToClubRequest, cancellationToken);
+                await testDataGenerator.AddMeasuredCourseToGolfClub(token, Program.AddMeasuredCourseToClubRequest, cancellationToken);
 
                 Program.GolfClubs.Add(new GolfClubDetails
                                       {
@@ -258,28 +241,22 @@
                                           MeasuredCourseId = Program.AddMeasuredCourseToClubRequest.MeasuredCourseId,
                                           GolfClubName = createGolfClubRequest.Name
                                       });
-
-                Console.WriteLine($"Created Golf Club {createGolfClubRequest.Name}");
             }
         }
 
         /// <summary>
-        /// Creates the player data.
+        /// Creates the player datav2.
         /// </summary>
+        /// <param name="testDataGenerator">The test data generator.</param>
         /// <param name="numberPlayersPerClub">The number players per club.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private static async Task CreatePlayerData(Int32 numberPlayersPerClub,
-                                                   CancellationToken cancellationToken)
+        private static async Task CreatePlayerDatav2(ITestDataGenerator testDataGenerator,
+                                                     Int32 lastClub,
+                                                     Int32 numberPlayersPerClub,
+                                                     CancellationToken cancellationToken)
         {
-            String BaseAddressResolver(String service)
-            {
-                return Program.BaseAddress;
-            }
-
-            IGolfClubClient golfClubClient = new GolfClubClient(BaseAddressResolver, Program.HttpClient);
-            IPlayerClient playerClient = new PlayerClient(BaseAddressResolver, Program.HttpClient);
-            Int32 clubCounter = 0;
+            Int32 clubCounter = lastClub + 1;
             foreach (GolfClubDetails golfClubDetails in Program.GolfClubs)
             {
                 for (Int32 i = 0; i < numberPlayersPerClub; i++)
@@ -287,7 +264,7 @@
                     RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest
                                                                   {
                                                                       DateOfBirth = DateTime.Now.AddYears(-30),
-                                                                      EmailAddress = $"player{i}{clubCounter}@testplayer.co.uk",
+                                                                      EmailAddress = $"player{i}.{clubCounter}@testplayer.co.uk",
                                                                       ExactHandicap = i,
                                                                       FirstName = $"Club {clubCounter}",
                                                                       Gender = "M",
@@ -295,23 +272,23 @@
                                                                       MiddleName = string.Empty
                                                                   };
 
-                    RegisterPlayerResponse registerPlayerResponse = await playerClient.RegisterPlayer(registerPlayerRequest, cancellationToken);
+                    RegisterPlayerResponse registerPlayerResponse = await testDataGenerator.RegisterPlayer(registerPlayerRequest, cancellationToken);
 
                     Console.WriteLine($"Created Player {registerPlayerRequest.FirstName} {registerPlayerRequest.LastName}");
 
-                    String passwordToken = await Program.GetToken(TokenType.Password,
-                                                                  "developerClient",
-                                                                  "developerClient",
-                                                                  registerPlayerRequest.EmailAddress,
-                                                                  "123456",
-                                                                  new List<String>
-                                                                  {
-                                                                      "openid",
-                                                                      "profile",
-                                                                      "managementapi"
-                                                                  });
+                    String token = await testDataGenerator.GetToken(TokenType.Password,
+                                                                    "developerClient",
+                                                                    "developerClient",
+                                                                    registerPlayerRequest.EmailAddress,
+                                                                    "123456",
+                                                                    new List<String>
+                                                                    {
+                                                                        "openid",
+                                                                        "profile",
+                                                                        "managementapi"
+                                                                    });
 
-                    await golfClubClient.RequestClubMembership(passwordToken, golfClubDetails.GolfClubId, cancellationToken);
+                    await testDataGenerator.RequestClubMembership(token, golfClubDetails.GolfClubId, cancellationToken);
 
                     Console.WriteLine($"Player {registerPlayerRequest.FirstName} {registerPlayerRequest.LastName} membership requested");
 
@@ -329,39 +306,24 @@
         }
 
         /// <summary>
-        /// Creates the tournament data.
+        /// Creates the tournament datav2.
         /// </summary>
+        /// <param name="testDataGenerator">The test data generator.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private static async Task CreateTournamentData(CancellationToken cancellationToken)
+        private static async Task CreateTournamentDatav2(ITestDataGenerator testDataGenerator,
+                                                         CancellationToken cancellationToken)
         {
-            String BaseAddressResolver(String service)
-            {
-                return Program.BaseAddress;
-            }
-
-            ITournamentClient tournamentClient = new TournamentClient(BaseAddressResolver, Program.HttpClient);
-
             foreach (GolfClubDetails golfClubDetails in Program.GolfClubs)
             {
                 List<CreateTournamentRequest> requests = Program.GetCreateTournamentRequests(golfClubDetails.MeasuredCourseId);
 
-                String passwordToken = await Program.GetToken(TokenType.Password,
-                                                              "developerClient",
-                                                              "developerClient",
-                                                              golfClubDetails.AdminEmailAddress,
-                                                              golfClubDetails.AdminPassword,
-                                                              new List<String>
-                                                              {
-                                                                  "openid",
-                                                                  "profile",
-                                                                  "managementapi"
-                                                              });
+                String passwordToken = testDataGenerator.GetToken(golfClubDetails.AdminEmailAddress);
 
                 foreach (CreateTournamentRequest createTournamentRequest in requests)
                 {
                     CreateTournamentResponse createTournamentResponse =
-                        await tournamentClient.CreateTournament(passwordToken, createTournamentRequest, cancellationToken);
+                        await testDataGenerator.CreateTournament(passwordToken, createTournamentRequest, cancellationToken);
 
                     Console.WriteLine($"Tournament {createTournamentRequest.Name} created for Club {golfClubDetails.GolfClubName}");
 
@@ -396,24 +358,14 @@
                                                                                                         Program.GetHoleScores(player.PlayingHandicap, scoreResult)
                                                                                                 };
 
-                        String playerPasswordToken = await Program.GetToken(TokenType.Password,
-                                                                            "developerClient",
-                                                                            "developerClient",
-                                                                            player.EmailAddress,
-                                                                            "123456",
-                                                                            new List<String>
-                                                                            {
-                                                                                "openid",
-                                                                                "profile",
-                                                                                "managementapi"
-                                                                            });
+                        String playerPasswordToken = testDataGenerator.GetToken(player.EmailAddress);
 
-                        await tournamentClient.SignUpPlayerForTournament(playerPasswordToken, createTournamentResponse.TournamentId, cancellationToken);
+                        await testDataGenerator.SignUpPlayerForTournament(playerPasswordToken, createTournamentResponse.TournamentId, cancellationToken);
 
-                        await tournamentClient.RecordPlayerScore(playerPasswordToken,
-                                                                 createTournamentResponse.TournamentId,
-                                                                 recordMemberTournamentScoreRequest,
-                                                                 cancellationToken);
+                        await testDataGenerator.RecordPlayerScore(playerPasswordToken,
+                                                                  createTournamentResponse.TournamentId,
+                                                                  recordMemberTournamentScoreRequest,
+                                                                  cancellationToken);
 
                         Console.WriteLine($"Tournament Score Recorded for Player {player.EmailAddress} for Tournament {createTournamentRequest.Name} at Golf Club {golfClubDetails.GolfClubName}");
                     }
@@ -563,142 +515,54 @@
         }
 
         /// <summary>
-        /// Gets the token.
-        /// </summary>
-        /// <param name="tokenType">Type of the token.</param>
-        /// <param name="clientId">The client identifier.</param>
-        /// <param name="clientSecret">The client secret.</param>
-        /// <param name="userName">Name of the user.</param>
-        /// <param name="password">The password.</param>
-        /// <param name="scopes">The scopes.</param>
-        /// <returns></returns>
-        private static async Task<String> GetToken(TokenType tokenType,
-                                                   String clientId,
-                                                   String clientSecret,
-                                                   String userName = "",
-                                                   String password = "",
-                                                   List<String> scopes = null)
-        {
-            StringBuilder queryString = new StringBuilder();
-            if (tokenType == TokenType.Client)
-            {
-                queryString.Append("grant_type=client_credentials");
-                queryString.Append($"&client_id={clientId}");
-                queryString.Append($"&client_secret={clientSecret}");
-            }
-            else if (tokenType == TokenType.Password)
-            {
-                queryString.Append("grant_type=password");
-                queryString.Append($"&client_id={clientId}");
-                queryString.Append($"&client_secret={clientSecret}");
-                queryString.Append($"&username={userName}");
-
-                queryString.Append($"&password={password}");
-
-                if (scopes != null && scopes.Count > 0)
-                {
-                    String scopeString = "";
-                    foreach (String scope in scopes) scopeString = $"{scopeString} {scope}";
-
-                    queryString.Append($"&scope={scopeString}");
-                }
-            }
-
-            String requestUri = $"{Program.SecurityServiceAddress}/connect/token";
-
-            HttpResponseMessage httpResponse =
-                await Program.MakeHttpPost(requestUri, queryString.ToString(), mediaType:"application/x-www-form-urlencoded").ConfigureAwait(false);
-
-            TokenResponse token = await Program.GetResponseObject<TokenResponse>(httpResponse).ConfigureAwait(false);
-
-            return token.AccessToken;
-        }
-
-        /// <summary>
         /// Mains the specified arguments.
         /// </summary>
         /// <param name="args">The arguments.</param>
         /// <returns></returns>
         private static async Task Main(String[] args)
         {
-            const Int32 clubCount = 1;
+            const Int32 lastClub = 15;
+            const Int32 clubCount = 10;
             const Int32 playersPerClub = 37;
 
+            // Create the data generator class
+            String BaseAddressResolver(String service)
+            {
+                if (service == "SecurityService")
+                {
+                    return Program.SecurityServiceAddress;
+                }
+
+                return Program.BaseAddress;
+            }
+
+            IGolfClubClient golfClubClient = new GolfClubClient(BaseAddressResolver, Program.HttpClient);
+            IPlayerClient playerClient = new PlayerClient(BaseAddressResolver, Program.HttpClient);
+            ITournamentClient tournamentClient = new TournamentClient(BaseAddressResolver, Program.HttpClient);
+
+            ITestDataGenerator testDataGenerator = new TestDataGenerator(golfClubClient, playerClient, tournamentClient, BaseAddressResolver);
+
             CancellationToken cancellationToken = new CancellationToken();
+            Stopwatch sw = Stopwatch.StartNew();
 
             Console.WriteLine($"About to create {clubCount} Golf Clubs");
-            await Program.CreateGolfClubData(clubCount, cancellationToken);
-            Console.WriteLine($"{clubCount} Golf Clubs Created");
+            await Program.CreateGolfClubDatav2(testDataGenerator, clubCount, lastClub, cancellationToken);
+            sw.Stop();
+            Console.WriteLine($"{clubCount} Golf Clubs Created in {sw.ElapsedMilliseconds} ms");
 
             Console.WriteLine($"About to create {clubCount * playersPerClub} Players");
-            await Program.CreatePlayerData(playersPerClub, cancellationToken);
-            Console.WriteLine($"Created {clubCount * playersPerClub} Players");
+            sw = Stopwatch.StartNew();
+            await Program.CreatePlayerDatav2(testDataGenerator, lastClub, playersPerClub, cancellationToken);
+            sw.Stop();
+            Console.WriteLine($"Created {clubCount * playersPerClub} Players in {sw.ElapsedMilliseconds} ms");
 
             Console.WriteLine("About to create Tournament Data");
-            await Program.CreateTournamentData(cancellationToken);
-            Console.WriteLine("Created Tournament Data");
+            sw = Stopwatch.StartNew();
+            await Program.CreateTournamentDatav2(testDataGenerator, cancellationToken);
+            sw.Stop();
+            Console.WriteLine($"Created Tournament Data in {sw.ElapsedMilliseconds} ms");
 
             Console.WriteLine("Process Completed");
-            Console.ReadKey();
-        }
-
-        /// <summary>
-        /// Makes the HTTP get.
-        /// </summary>
-        /// <param name="requestUri">The request URI.</param>
-        /// <param name="bearerToken">The bearer token.</param>
-        /// <returns></returns>
-        private static async Task<HttpResponseMessage> MakeHttpGet(String requestUri,
-                                                                   String bearerToken = "")
-        {
-            HttpResponseMessage result = null;
-
-            using(HttpClient client = new HttpClient())
-            {
-                if (!string.IsNullOrEmpty(bearerToken))
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
-
-                result = await client.GetAsync(requestUri, CancellationToken.None).ConfigureAwait(false);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Makes the HTTP post.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="requestUri">The request URI.</param>
-        /// <param name="requestObject">The request object.</param>
-        /// <param name="bearerToken">The bearer token.</param>
-        /// <param name="mediaType">Type of the media.</param>
-        /// <returns></returns>
-        private static async Task<HttpResponseMessage> MakeHttpPost<T>(String requestUri,
-                                                                       T requestObject,
-                                                                       String bearerToken = "",
-                                                                       String mediaType = "application/json")
-        {
-            HttpResponseMessage result = null;
-            StringContent httpContent = null;
-            if (requestObject is String)
-            {
-                httpContent = new StringContent(requestObject.ToString(), Encoding.UTF8, mediaType);
-            }
-            else
-            {
-                String requestSerialised = JsonConvert.SerializeObject(requestObject);
-                httpContent = new StringContent(requestSerialised, Encoding.UTF8, mediaType);
-            }
-
-            using(HttpClient client = new HttpClient())
-            {
-                if (!string.IsNullOrEmpty(bearerToken))
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
-
-                result = await client.PostAsync(requestUri, httpContent, CancellationToken.None).ConfigureAwait(false);
-            }
-
-            return result;
         }
 
         #endregion
