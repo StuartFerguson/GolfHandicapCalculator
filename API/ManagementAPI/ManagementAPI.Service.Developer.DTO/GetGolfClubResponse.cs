@@ -1,9 +1,22 @@
 ﻿namespace ManagementAPI.Service.Developer.DataTransferObjects
 {
     using System;
+    using System.Collections.Generic;
 
-    public class GetGolfClubListResponse
+    public class GetGolfClubResponse
     {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetGolfClubResponse"/> class.
+        /// </summary>
+        public GetGolfClubResponse()
+        {
+            this.GolfClubMemberships = new List<GolfClubMembershipResponse>();
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -23,6 +36,14 @@
         public String AddressLine2 { get; set; }
 
         /// <summary>
+        /// Gets or sets the aggregate identifier.
+        /// </summary>
+        /// <value>
+        /// The aggregate identifier.
+        /// </value>
+        public Guid AggregateId { get; set; }
+
+        /// <summary>
         /// Gets the email address.
         /// </summary>
         /// <value>
@@ -31,12 +52,20 @@
         public String EmailAddress { get; set; }
 
         /// <summary>
-        /// Gets or sets the club configuration identifier.
+        /// Gets or sets the golf club memberships.
         /// </summary>
         /// <value>
-        /// The club configuration identifier.
+        /// The golf club memberships.
         /// </value>
-        public Guid Id { get; set; }
+        public List<GolfClubMembershipResponse> GolfClubMemberships { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has been created.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has been created; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean HasBeenCreated { get; set; }
 
         /// <summary>
         /// Gets the name.
