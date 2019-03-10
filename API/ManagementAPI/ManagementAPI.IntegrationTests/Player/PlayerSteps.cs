@@ -52,8 +52,8 @@
         public async Task GivenIAmLoggedInAsAGolfClubAdministrator()
         {
             this.PlayerTestingContext.ClubAdministratorToken = await this.GetToken(TokenType.Password,
-                                                                                   "integrationTestClient",
-                                                                                   "integrationTestClient",
+                                                                                   "golfhandicap.mobile",
+                                                                                   "golfhandicap.mobile",
                                                                                    IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress,
                                                                                    IntegrationTestsTestData.RegisterClubAdministratorRequest.Password)
                                                                          .ConfigureAwait(false);
@@ -63,8 +63,8 @@
         public async Task GivenIAmLoggedInAsAPlayer()
         {
             this.PlayerTestingContext.PlayerToken = await this.GetToken(TokenType.Password,
-                                                                        "integrationTestClient",
-                                                                        "integrationTestClient",
+                                                                        "golfhandicap.mobile",
+                                                                        "golfhandicap.mobile",
                                                                         IntegrationTestsTestData.RegisterPlayerRequest.EmailAddress,
                                                                         "123456").ConfigureAwait(false);
         }

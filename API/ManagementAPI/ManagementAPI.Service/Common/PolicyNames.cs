@@ -2,6 +2,7 @@
 {
     using System;
 
+    /// <summary></summary>
     public class PolicyNames
     {
         #region Others
@@ -80,7 +81,12 @@
         /// The player tournament sign up policy
         /// </summary>
         public const String PlayerTournamentSignUpPolicy = "PlayerTournamentSignUpPolicy";
-
+        
+        /// <summary>
+        /// The developer controller policy
+        /// </summary>
+        public const String DeveloperControllerPolicy = "DeveloperControllerPolicy";
+        
         #endregion
     }
 }

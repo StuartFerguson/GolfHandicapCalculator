@@ -427,6 +427,19 @@ namespace ManagementAPI.Service
                                });
 
             #endregion
+
+            #region Developer Controller Policies
+
+            policies.AddPolicy(PolicyNames.DeveloperControllerPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.Developer, RoleNames.Developer.ToUpper(),
+                                                      RoleNames.TestDataGenerator, RoleNames.TestDataGenerator.ToUpper());
+                               });
+            
+            #endregion
         }
 
         /// <summary>

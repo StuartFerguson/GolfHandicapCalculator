@@ -66,7 +66,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"I am logged in as a golf club administrator")]
         public async Task GivenIAmLoggedInAsAGolfClubAdministrator()
         {
-            this.TournamentTestingContext.ClubAdministratorToken = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
+            this.TournamentTestingContext.ClubAdministratorToken = await GetToken(TokenType.Password, "golfhandicap.mobile", "golfhandicap.mobile",
                 IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress,
                 IntegrationTestsTestData.RegisterClubAdministratorRequest.Password).ConfigureAwait(false);
         }
@@ -161,7 +161,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"I am logged in as a player")]
         public async Task GivenIAmLoggedInAsAPlayer()
         {
-            this.TournamentTestingContext.PlayerToken = await GetToken(TokenType.Password, "integrationTestClient", "integrationTestClient",
+            this.TournamentTestingContext.PlayerToken = await GetToken(TokenType.Password, "golfhandicap.mobile", "golfhandicap.mobile",
                 IntegrationTestsTestData.RegisterPlayerRequest.EmailAddress,
                 "123456").ConfigureAwait(false);
         }
