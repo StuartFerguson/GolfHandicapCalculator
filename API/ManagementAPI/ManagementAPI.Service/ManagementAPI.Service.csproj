@@ -32,13 +32,11 @@
     <ProjectReference Include="..\ManagementAPI.GolfClubMembershipAggregate\ManagementAPI.GolfClubMembershipAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.PlayerAggregate\ManagementAPI.PlayerAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.Service.DataTransferObjects\ManagementAPI.Service.DataTransferObjects.csproj" />
+    <ProjectReference Include="..\ManagementAPI.Service.Developer.DTO\ManagementAPI.Service.Developer.DTO.csproj" />
     <ProjectReference Include="..\ManagementAPI.TournamentAggregate\ManagementAPI.TournamentAggregate.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

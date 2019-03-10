@@ -148,6 +148,9 @@
                                    Id = golfClub.GolfClubId
                                });
                 }
+
+                // Order the result by name
+                result = result.OrderBy(g => g.Name).ToList();
             }
 
             return result;

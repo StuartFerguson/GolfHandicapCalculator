@@ -25,7 +25,7 @@
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerAggregate"/> class.
-        /// </summary>
+        /// </summary>D:\Projects\StuartFerguson\GolfHandicapCalculatorAPI\API\ManagementAPI\ManagementAPI.Service\Dockerfile
         /// <param name="aggregateId">The aggregate identifier.</param>
         private PlayerAggregate(Guid aggregateId)
         {
