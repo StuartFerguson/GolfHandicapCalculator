@@ -62,8 +62,8 @@
         {
             this.GolfClubTestingContext.ClubAdministratorToken = await this
                                                                        .GetToken(TokenType.Password,
-                                                                                 "integrationTestClient",
-                                                                                 "integrationTestClient",
+                                                                                 "golfhandicap.mobile",
+                                                                                 "golfhandicap.mobile",
                                                                                  IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress,
                                                                                  IntegrationTestsTestData.RegisterClubAdministratorRequest.Password)
                                                                        .ConfigureAwait(false);
@@ -73,8 +73,8 @@
         public async Task GivenIAmLoggedInAsAPlayer()
         {
             this.GolfClubTestingContext.PlayerToken = await this.GetToken(TokenType.Password,
-                                                                          "integrationTestClient",
-                                                                          "integrationTestClient",
+                                                                          "golfhandicap.mobile",
+                                                                          "golfhandicap.mobile",
                                                                           IntegrationTestsTestData.RegisterPlayerRequest.EmailAddress,
                                                                           "123456").ConfigureAwait(false);
         }
@@ -175,8 +175,8 @@
 
                 this.GolfClubTestingContext.PlayerToken = await this
                                                                 .GetToken(TokenType.Password,
-                                                                          "integrationTestClient",
-                                                                          "integrationTestClient",
+                                                                          "golfhandicap.mobile",
+                                                                          "golfhandicap.mobile",
                                                                           registeredPlayer.Request.EmailAddress,
                                                                           "123456").ConfigureAwait(false);
 
