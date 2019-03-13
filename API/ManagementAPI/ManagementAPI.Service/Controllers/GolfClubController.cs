@@ -167,6 +167,26 @@
             return this.NoContent();
         }
 
+        [HttpPut]
+        [Authorize(Policy = PolicyNames.AddTournamentDivisionToGolfClubPolicy)]
+        [SwaggerResponse(204)]
+        [Route("AddTournamentDivision")]
+        public async Task<IActionResult> AddTournamentDivision([FromBody] AddTournamentDivisionToGolfClubRequest request,
+                                                                       CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user            
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
+            // Create the command
+            AddTournamentDivisionToGolfClubCommand command = AddTournamentDivisionToGolfClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
+
+            // Route the command
+            await this.CommandRouter.Route(command, cancellationToken);
+
+            // return the result
+            return this.NoContent();
+        }
+
         /// <summary>
         /// Requests the club membership.
         /// </summary>
@@ -174,6 +194,7 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize(Policy = PolicyNames.RequestClubMembershipPolicy)]
         [Route("{golfClubId}/RequestClubMembership")]
         [SwaggerResponse(204)]
         public async Task<IActionResult> RequestClubMembership([FromRoute] Guid golfClubId,

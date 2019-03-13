@@ -54,6 +54,25 @@ namespace ManagementAPI.Service.Tests.GolfClub
         }
 
         [Fact]
+        public void GolfClubCommandHandler_HandleCommand_AddTournamentDivisionToGolfClubCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate);
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            oAuth2SecurityService
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(GolfClubTestData.GetRegisterUserResponse());
+            Mock<IGolfClubMembershipApplicationService> golfClubMembershipApplicationService = new Mock<IGolfClubMembershipApplicationService>();
+
+            GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object,
+                                                                        golfClubMembershipApplicationService.Object);
+
+            AddMeasuredCourseToClubCommand command = GolfClubTestData.GetAddMeasuredCourseToClubCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
+
+        [Fact]
         public void GolfClubCommandHandler_HandleCommand_RequestClubMembershipCommand_CommandHandled()
         {
             Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();            

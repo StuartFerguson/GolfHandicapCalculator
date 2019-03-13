@@ -328,7 +328,35 @@
                                 }
                             });
         }
+
+        [When(@"I add tournament division (.*) with a start handicap of (.*) and and end handicap of (.*)")]
+        public async Task WhenIAddTournmentDivisionWithAStartHandicapOfAndAndEndHandicapOf(Int32 division, Int32 startHandicap, Int32 endHandicap)
+        {
+            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+
+            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
+
+            AddTournamentDivisionToGolfClubRequest request = new AddTournamentDivisionToGolfClubRequest
+                                                             {
+                                                                 Division = division,
+                                                                 StartHandicap = startHandicap,
+                                                                 EndHandicap = endHandicap
+                                                             };
+
+            await client.AddTournamentDivision(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+
+            // Get the last response
+            GolfClubClient g = client as GolfClubClient;
+            this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
+        }
         
+        [Then(@"the divsion is addded successfully with an Http Status Code (.*)")]
+        public void ThenTheDivsionIsAdddedSuccessfullyWithAnHttpStatusCode(Int32 httpStatusCode)
+        {
+            Int32 actualStatusCode = (Int32)this.GolfClubTestingContext.LastHttpResponseMessage.StatusCode;
+            actualStatusCode.ShouldBe(httpStatusCode);                
+        }
+
         #endregion
     }
 }
