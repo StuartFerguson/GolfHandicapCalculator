@@ -398,5 +398,98 @@ namespace ManagementAPI.Service.Tests.GolfClub
         }
 
         #endregion
+
+        [Fact]
+        public void GolfClubAggregate_AddTournamentDivision_DivisionAdded()
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse();
+            TournamentDivisionDataTransferObject tournamentDivision = GolfClubTestData.GetTournamentDivision1();
+
+            Should.NotThrow(() => { aggregate.AddTournamentDivision(tournamentDivision); });
+        }
+
+        [Fact]
+        public void GolfClubAggregate_AddTournamentDivision_ClubNotCreated_ErrorThrown()
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetEmptyGolfClubAggregate();
+            TournamentDivisionDataTransferObject tournamentDivision = GolfClubTestData.GetTournamentDivision1();
+
+            Should.Throw<InvalidOperationException>(() => { aggregate.AddTournamentDivision(tournamentDivision); });
+        }
+
+        [Fact]
+        public void GolfClubAggregate_AddTournamentDivision_NullTournamentDivision_ErrorThrown()
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse();
+            TournamentDivisionDataTransferObject tournamentDivision = null;
+
+            Should.Throw<ArgumentNullException>(() => { aggregate.AddTournamentDivision(tournamentDivision); });
+        }
+
+        [Theory]
+        [InlineData(-1, 0, 5, typeof(ArgumentOutOfRangeException))]
+        [InlineData(0, 0, 5, typeof(ArgumentOutOfRangeException))]
+        [InlineData(6, 0, 5, typeof(ArgumentOutOfRangeException))]
+        [InlineData(1, -11, 5, typeof(ArgumentOutOfRangeException))]
+        [InlineData(1, 37, 5, typeof(ArgumentOutOfRangeException))]
+        [InlineData(1, 0, -11, typeof(ArgumentOutOfRangeException))]
+        [InlineData(1, 0, 37, typeof(ArgumentOutOfRangeException))]
+        [InlineData(1, 5, 0, typeof(ArgumentOutOfRangeException))]
+        public void GolfClubAggregate_AddTournamentDivision_InvalidDivisionData_ErrorThrown(Int32 division, Int32 startHandicap, Int32 endHandicap, Type exceptionType)
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse();
+            TournamentDivisionDataTransferObject tournamentDivision = new TournamentDivisionDataTransferObject
+                                                                      {
+                                                                          Division = division,
+                                                                          EndHandicap = endHandicap,
+                                                                          StartHandicap = startHandicap
+                                                                      };
+
+            Should.Throw(() => { aggregate.AddTournamentDivision(tournamentDivision); }, exceptionType);
+        }
+
+        [Fact]
+        public void GolfClubAggregate_AddTournamentDivision_DuplicateDivision_ErrorThrown()
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse();
+            TournamentDivisionDataTransferObject tournamentDivision = GolfClubTestData.GetTournamentDivision1();
+            aggregate.AddTournamentDivision(tournamentDivision);
+
+            Should.Throw<InvalidOperationException>(() => { aggregate.AddTournamentDivision(tournamentDivision); });
+        }
+
+        [Fact]
+        public void GolfClubAggregate_AddTournamentDivision_DivisionStartHandicapClashesWithExistingRange_ErrorThrown()
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse();
+            TournamentDivisionDataTransferObject tournamentDivision = GolfClubTestData.GetTournamentDivision1();
+            aggregate.AddTournamentDivision(tournamentDivision);
+
+            TournamentDivisionDataTransferObject tournamentDivisionInvalid = new TournamentDivisionDataTransferObject
+                                                                             {
+                                                                                 Division = 2,
+                                                                                 EndHandicap = 12,
+                                                                                 StartHandicap = GolfClubTestData.GetTournamentDivision1().StartHandicap
+                                                                             };
+
+            Should.Throw<InvalidDataException>(() => { aggregate.AddTournamentDivision(tournamentDivisionInvalid); });
+        }
+
+        [Fact]
+        public void GolfClubAggregate_AddTournamentDivision_DivisionEndHandicapClashesWithExistingRange_ErrorThrown()
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse();
+            TournamentDivisionDataTransferObject tournamentDivision = GolfClubTestData.GetTournamentDivision1();
+            aggregate.AddTournamentDivision(tournamentDivision);
+
+            TournamentDivisionDataTransferObject tournamentDivisionInvalid = new TournamentDivisionDataTransferObject
+                                                                             {
+                                                                                 Division = 2,
+                                                                                 EndHandicap = GolfClubTestData.GetTournamentDivision1().EndHandicap,
+                                                                                 StartHandicap = 2
+                                                                             };
+
+            Should.Throw<InvalidDataException>(() => { aggregate.AddTournamentDivision(tournamentDivisionInvalid); });
+        }
     }
 }

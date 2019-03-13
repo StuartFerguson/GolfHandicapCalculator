@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
@@ -19,6 +20,11 @@
         /// The base address
         /// </summary>
         private readonly String BaseAddress;
+
+        /// <summary>
+        /// The last request status code
+        /// </summary>
+        internal HttpResponseMessage LastRequesthHttpResponseMessage;
 
         #endregion
 
@@ -63,7 +69,7 @@
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
-
+                
                 // Process the response
                 String content = await this.HandleResponse(httpResponse, cancellationToken);
 
@@ -73,6 +79,38 @@
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception("Error Adding a measured course to Golf Club.", ex);
+
+                throw exception;
+            }
+        }
+
+        public async Task AddTournamentDivision(String passwordToken,
+                                                AddTournamentDivisionToGolfClubRequest request,
+                                                CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/AddTournamentDivision";
+
+            try
+            {
+                String requestSerialised = JsonConvert.SerializeObject(request);
+
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful, no response data to deserialise
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception("Error Adding a tournament divisionto Golf Club.", ex);
 
                 throw exception;
             }

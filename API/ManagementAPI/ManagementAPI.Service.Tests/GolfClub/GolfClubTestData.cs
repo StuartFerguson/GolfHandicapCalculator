@@ -1,75 +1,348 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ManagementAPI.GolfClub;
-using ManagementAPI.GolfClub.DomainEvents;
-using ManagementAPI.Service.Commands;
-using ManagementAPI.Service.DataTransferObjects;
-using ManagementAPI.Service.Services.DataTransferObjects;
-using HoleDataTransferObject = ManagementAPI.GolfClub.HoleDataTransferObject;
-using DTOHoleDataTransferObject = ManagementAPI.Service.DataTransferObjects.HoleDataTransferObject;
+﻿using DTOHoleDataTransferObject = ManagementAPI.Service.DataTransferObjects.HoleDataTransferObject;
 
 namespace ManagementAPI.Service.Tests.GolfClub
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Commands;
+    using DataTransferObjects;
+    using ManagementAPI.GolfClub;
+    using ManagementAPI.GolfClub.DomainEvents;
+    using Services.DataTransferObjects;
+    using HoleDataTransferObject = ManagementAPI.GolfClub.HoleDataTransferObject;
+
     public class GolfClubTestData
     {
-        public static Guid AggregateId = Guid.Parse("CD64A469-9593-49D6-988D-3842C532D23E");
-        public static String Name = "Test Club Name";
-        public static String AddressLine1 = "Address Line 1";
-        public static String AddressLine2 = "Address Line 2";
-        public static String Town = "Test Town";
-        public static String Region = "Test Region";
-        public static String PostalCode = "TE57 1NG";
-        public static String TelephoneNumber = "123456789";
-        public static String EmailAddress = "1@2.com";
-        public static String Website = "www.website.com";
+        #region Fields
 
-        public static Guid MeasuredCourseId= Guid.Parse("B2F334C2-03D3-48DB-9C6F-45FB1133F071");
-        public static Guid InvalidMeasuredCourseId= Guid.Parse("F9FAB99E-D315-46FC-A3C6-DDC10FB4FA0E");
         public static String MeasuredCourseName = "Test Measured Course";
-        public static String TeeColour = "White";
+
         public static Int32 StandardScratchScore = 70;
 
-        public static Int32 HoleNumber = 1;
-        public static Int32 LengthInYards = 150;
-        public static Int32 LengthInMeters = 175;
-        public static Int32 HolePar = 3;
-        public static Int32 HoleStrokeIndex = 1;
-            
+        public static String TeeColour = "White";
+
+        public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest = new AddMeasuredCourseToClubRequest
+                                                                                      {
+                                                                                          Name = GolfClubTestData.MeasuredCourseName,
+                                                                                          StandardScratchScore = GolfClubTestData.StandardScratchScore,
+                                                                                          TeeColour = GolfClubTestData.TeeColour,
+                                                                                          Holes = new List<DTOHoleDataTransferObject>
+                                                                                                  {
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 1,
+                                                                                                          LengthInYards = 348,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 10
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 2,
+                                                                                                          LengthInYards = 402,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 4
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 3,
+                                                                                                          LengthInYards = 207,
+                                                                                                          Par = 3,
+                                                                                                          StrokeIndex = 14
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 4,
+                                                                                                          LengthInYards = 405,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 8
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 5,
+                                                                                                          LengthInYards = 428,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 2
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 6,
+                                                                                                          LengthInYards = 477,
+                                                                                                          Par = 5,
+                                                                                                          StrokeIndex = 12
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 7,
+                                                                                                          LengthInYards = 186,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 16
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 8,
+                                                                                                          LengthInYards = 397,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 6
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 9,
+                                                                                                          LengthInYards = 130,
+                                                                                                          Par = 3,
+                                                                                                          StrokeIndex = 18
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 10,
+                                                                                                          LengthInYards = 399,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 3
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 11,
+                                                                                                          LengthInYards = 401,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 13
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 12,
+                                                                                                          LengthInYards = 421,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 1
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 13,
+                                                                                                          LengthInYards = 530,
+                                                                                                          Par = 5,
+                                                                                                          StrokeIndex = 11
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 14,
+                                                                                                          LengthInYards = 196,
+                                                                                                          Par = 3,
+                                                                                                          StrokeIndex = 5
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 15,
+                                                                                                          LengthInYards = 355,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 7
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 16,
+                                                                                                          LengthInYards = 243,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 15
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 17,
+                                                                                                          LengthInYards = 286,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 17
+                                                                                                      },
+                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      {
+                                                                                                          HoleNumber = 18,
+                                                                                                          LengthInYards = 399,
+                                                                                                          Par = 4,
+                                                                                                          StrokeIndex = 9
+                                                                                                      }
+                                                                                                  }
+                                                                                      };
+
+        public static String AddressLine1 = "Address Line 1";
+
+        public static String AddressLine2 = "Address Line 2";
+
+        public static Int32 Division = 1;
+
+        public static Int32 EndHandicap = 28;
+
+        public static Int32 StartHandicap = 0;
+
+        public static AddTournamentDivisionToGolfClubRequest AddTournamentDivisionToGolfClubRequest = new AddTournamentDivisionToGolfClubRequest
+                                                                                                      {
+                                                                                                          Division = GolfClubTestData.Division,
+                                                                                                          StartHandicap = GolfClubTestData.StartHandicap,
+                                                                                                          EndHandicap = GolfClubTestData.EndHandicap
+                                                                                                      };
+
+        public static Guid AggregateId = Guid.Parse("CD64A469-9593-49D6-988D-3842C532D23E");
+
+        public static String EmailAddress = "1@2.com";
+
+        public static String Name = "Test Club Name";
+
+        public static String PostalCode = "TE57 1NG";
+
+        public static String Region = "Test Region";
+
+        public static String TelephoneNumber = "123456789";
+
+        public static String Town = "Test Town";
+
+        public static String Website = "www.website.com";
+
+        public static CreateGolfClubRequest CreateGolfClubRequest = new CreateGolfClubRequest
+                                                                    {
+                                                                        Name = GolfClubTestData.Name,
+                                                                        AddressLine1 = GolfClubTestData.AddressLine1,
+                                                                        EmailAddress = GolfClubTestData.EmailAddress,
+                                                                        PostalCode = GolfClubTestData.PostalCode,
+                                                                        Town = GolfClubTestData.Town,
+                                                                        Website = GolfClubTestData.Website,
+                                                                        Region = GolfClubTestData.Region,
+                                                                        TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                                                                        AddressLine2 = GolfClubTestData.AddressLine2
+                                                                    };
+
+        public static CreateGolfClubResponse CreateGolfClubResponse = new CreateGolfClubResponse
+                                                                      {
+                                                                          GolfClubId = GolfClubTestData.AggregateId
+                                                                      };
+
+        public static DateTime MembershipRequestedDateAndTime = new DateTime(2019, 1, 1);
+
+        public static Guid PlayerId = Guid.Parse("357B70E6-8810-40FB-A6AD-9D193D4F6376");
+
+        public static List<GetClubMembershipRequestResponse> GetClubMembershipRequestResponse = new List<GetClubMembershipRequestResponse>
+                                                                                                {
+                                                                                                    new GetClubMembershipRequestResponse
+                                                                                                    {
+                                                                                                        ClubId = GolfClubTestData.AggregateId,
+                                                                                                        PlayerId = GolfClubTestData.PlayerId,
+                                                                                                        MembershipRequestedDateAndTime =
+                                                                                                            GolfClubTestData.MembershipRequestedDateAndTime,
+                                                                                                        Status = 0 // Pending
+                                                                                                    }
+                                                                                                };
+
+        public static List<GetGolfClubResponse> GetGolfClubListResponse = new List<GetGolfClubResponse>
+                                                                          {
+                                                                              new GetGolfClubResponse
+                                                                              {
+                                                                                  Id = GolfClubTestData.AggregateId,
+                                                                                  AddressLine1 = GolfClubTestData.AddressLine1,
+                                                                                  Name = GolfClubTestData.Name,
+                                                                                  AddressLine2 = GolfClubTestData.AddressLine2,
+                                                                                  EmailAddress = GolfClubTestData.EmailAddress,
+                                                                                  PostalCode = GolfClubTestData.PostalCode,
+                                                                                  Region = GolfClubTestData.Region,
+                                                                                  TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                                                                                  Town = GolfClubTestData.Town,
+                                                                                  Website = GolfClubTestData.Website
+                                                                              }
+                                                                          };
+
         public static Guid GolfClubAdministratorSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
 
-        public static GolfClubAggregate GetEmptyGolfClubAggregate()
-        {
-            GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
+        public static Int32 HoleNumber = 1;
 
-            return aggregate;
+        public static Int32 HolePar = 3;
+
+        public static Int32 HoleStrokeIndex = 1;
+
+        public static Guid InvalidMeasuredCourseId = Guid.Parse("F9FAB99E-D315-46FC-A3C6-DDC10FB4FA0E");
+
+        public static Int32 LengthInMeters = 175;
+
+        public static Int32 LengthInYards = 150;
+
+        public static Guid MeasuredCourseId = Guid.Parse("B2F334C2-03D3-48DB-9C6F-45FB1133F071");
+
+        public static RegisterClubAdministratorRequest RegisterClubAdministratorRequest = new RegisterClubAdministratorRequest
+                                                                                          {
+                                                                                              EmailAddress = "testclubadministrator@test.co.uk",
+                                                                                              Password = "123456",
+                                                                                              ConfirmPassword = "123456",
+                                                                                              TelephoneNumber = "123456789"
+                                                                                          };
+
+        #endregion
+
+        #region Methods
+
+        public static AddMeasuredCourseToClubCommand GetAddMeasuredCourseToClubCommand()
+        {
+            return AddMeasuredCourseToClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest);
+        }
+
+        public static AddTournamentDivisionToGolfClubCommand GetAddTournamentDivisionToGolfClubCommand()
+        {
+            return AddTournamentDivisionToGolfClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.AddTournamentDivisionToGolfClubRequest);
         }
 
         public static GolfClubAggregate GetCreatedGolfClubAggregate()
         {
-            GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(GolfClubTestData.AggregateId);
 
-            aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+            aggregate.CreateGolfClub(GolfClubTestData.Name,
+                                     GolfClubTestData.AddressLine1,
+                                     GolfClubTestData.AddressLine2,
+                                     GolfClubTestData.Town,
+                                     GolfClubTestData.Region,
+                                     GolfClubTestData.PostalCode,
+                                     GolfClubTestData.TelephoneNumber,
+                                     GolfClubTestData.Website,
+                                     GolfClubTestData.EmailAddress);
 
             return aggregate;
         }
 
         public static GolfClubAggregate GetCreatedGolfClubAggregateWithGolfClubAdministratorUser()
         {
-            GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(GolfClubTestData.AggregateId);
 
-            aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+            aggregate.CreateGolfClub(GolfClubTestData.Name,
+                                     GolfClubTestData.AddressLine1,
+                                     GolfClubTestData.AddressLine2,
+                                     GolfClubTestData.Town,
+                                     GolfClubTestData.Region,
+                                     GolfClubTestData.PostalCode,
+                                     GolfClubTestData.TelephoneNumber,
+                                     GolfClubTestData.Website,
+                                     GolfClubTestData.EmailAddress);
 
             aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
-            
+
+            return aggregate;
+        }
+
+        public static CreateGolfClubCommand GetCreateGolfClubCommand()
+        {
+            return CreateGolfClubCommand.Create(GolfClubTestData.AggregateId,
+                                                GolfClubTestData.GolfClubAdministratorSecurityUserId,
+                                                GolfClubTestData.CreateGolfClubRequest);
+        }
+
+        public static GolfClubAggregate GetEmptyGolfClubAggregate()
+        {
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(GolfClubTestData.AggregateId);
+
             return aggregate;
         }
 
         public static GolfClubAggregate GetGolfClubAggregateWithMeasuredCourse()
         {
-            GolfClubAggregate aggregate= GolfClubAggregate.Create(AggregateId);
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(GolfClubTestData.AggregateId);
 
-            aggregate.CreateGolfClub(Name, AddressLine1, AddressLine2, Town, Region,PostalCode, TelephoneNumber, Website, EmailAddress);
+            aggregate.CreateGolfClub(GolfClubTestData.Name,
+                                     GolfClubTestData.AddressLine1,
+                                     GolfClubTestData.AddressLine2,
+                                     GolfClubTestData.Town,
+                                     GolfClubTestData.Region,
+                                     GolfClubTestData.PostalCode,
+                                     GolfClubTestData.TelephoneNumber,
+                                     GolfClubTestData.Website,
+                                     GolfClubTestData.EmailAddress);
 
             aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
 
@@ -79,39 +352,244 @@ namespace ManagementAPI.Service.Tests.GolfClub
 
             return aggregate;
         }
-        
+
+        public static GolfClubCreatedEvent GetGolfClubCreatedEvent()
+        {
+            GolfClubCreatedEvent domainEvent = GolfClubCreatedEvent.Create(GolfClubTestData.AggregateId,
+                                                                           GolfClubTestData.Name,
+                                                                           GolfClubTestData.AddressLine1,
+                                                                           GolfClubTestData.AddressLine2,
+                                                                           GolfClubTestData.Town,
+                                                                           GolfClubTestData.Region,
+                                                                           GolfClubTestData.PostalCode,
+                                                                           GolfClubTestData.TelephoneNumber,
+                                                                           GolfClubTestData.Website,
+                                                                           GolfClubTestData.EmailAddress);
+
+            return domainEvent;
+        }
+
         public static MeasuredCourseDataTransferObject GetMeasuredCourseToAdd(Int32 numberHoles = 18)
         {
             MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject();
 
-            result.MeasuredCourseId = MeasuredCourseId;
-            result.Name = MeasuredCourseName;
-            result.MeasuredCourseId = MeasuredCourseId;
-            result.StandardScratchScore = StandardScratchScore;
-            result.TeeColour = TeeColour;
+            result.MeasuredCourseId = GolfClubTestData.MeasuredCourseId;
+            result.Name = GolfClubTestData.MeasuredCourseName;
+            result.MeasuredCourseId = GolfClubTestData.MeasuredCourseId;
+            result.StandardScratchScore = GolfClubTestData.StandardScratchScore;
+            result.TeeColour = GolfClubTestData.TeeColour;
 
             result.Holes = new List<HoleDataTransferObject>();
 
-            if (numberHoles >= 1) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 1, LengthInYards = 348, Par = 4, StrokeIndex = 10}); }
-            if (numberHoles >= 2) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 2, LengthInYards = 402, Par = 4, StrokeIndex = 4}); }
-            if (numberHoles >= 3) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 3, LengthInYards = 207, Par = 3, StrokeIndex = 14});}
-            if (numberHoles >= 4) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 4, LengthInYards = 405, Par = 4, StrokeIndex = 8});}
-            if (numberHoles >= 5) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 5, LengthInYards = 428, Par = 4, StrokeIndex = 2});}
-            if (numberHoles >= 6) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 6, LengthInYards = 477, Par = 5, StrokeIndex = 12});}
-            if (numberHoles >= 7) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 7, LengthInYards = 186, Par = 4, StrokeIndex = 16});}
-            if (numberHoles >= 8) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 8, LengthInYards = 397, Par = 4, StrokeIndex = 6});}
-            if (numberHoles >= 9) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 9, LengthInYards = 130, Par = 3, StrokeIndex = 18});}
-            if (numberHoles >= 10) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 10, LengthInYards = 399, Par = 4, StrokeIndex = 3});}
-            if (numberHoles >= 11) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 11, LengthInYards = 401, Par = 4, StrokeIndex = 13});}
-            if (numberHoles >= 12) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 12, LengthInYards = 421, Par = 4, StrokeIndex = 1});}
-            if (numberHoles >= 13) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 13, LengthInYards = 530, Par = 5, StrokeIndex = 11});}
-            if (numberHoles >= 14) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 14, LengthInYards = 196, Par = 3, StrokeIndex = 5});}
-            if (numberHoles >= 15) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 15, LengthInYards = 355, Par = 4, StrokeIndex = 7});}
-            if (numberHoles >= 16) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 16, LengthInYards = 243, Par = 4, StrokeIndex = 15});}
-            if (numberHoles >= 17) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 17, LengthInYards = 286, Par = 4, StrokeIndex = 17});}
-            if (numberHoles >= 18) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9});}
-            if (numberHoles >= 19) { result.Holes.Add(new HoleDataTransferObject {HoleNumber = 19, LengthInYards = 399, Par = 4, StrokeIndex = 9});}
-            
+            if (numberHoles >= 1)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 1,
+                                     LengthInYards = 348,
+                                     Par = 4,
+                                     StrokeIndex = 10
+                                 });
+            }
+
+            if (numberHoles >= 2)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 2,
+                                     LengthInYards = 402,
+                                     Par = 4,
+                                     StrokeIndex = 4
+                                 });
+            }
+
+            if (numberHoles >= 3)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 3,
+                                     LengthInYards = 207,
+                                     Par = 3,
+                                     StrokeIndex = 14
+                                 });
+            }
+
+            if (numberHoles >= 4)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 4,
+                                     LengthInYards = 405,
+                                     Par = 4,
+                                     StrokeIndex = 8
+                                 });
+            }
+
+            if (numberHoles >= 5)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 5,
+                                     LengthInYards = 428,
+                                     Par = 4,
+                                     StrokeIndex = 2
+                                 });
+            }
+
+            if (numberHoles >= 6)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 6,
+                                     LengthInYards = 477,
+                                     Par = 5,
+                                     StrokeIndex = 12
+                                 });
+            }
+
+            if (numberHoles >= 7)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 7,
+                                     LengthInYards = 186,
+                                     Par = 4,
+                                     StrokeIndex = 16
+                                 });
+            }
+
+            if (numberHoles >= 8)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 8,
+                                     LengthInYards = 397,
+                                     Par = 4,
+                                     StrokeIndex = 6
+                                 });
+            }
+
+            if (numberHoles >= 9)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 9,
+                                     LengthInYards = 130,
+                                     Par = 3,
+                                     StrokeIndex = 18
+                                 });
+            }
+
+            if (numberHoles >= 10)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 10,
+                                     LengthInYards = 399,
+                                     Par = 4,
+                                     StrokeIndex = 3
+                                 });
+            }
+
+            if (numberHoles >= 11)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 11,
+                                     LengthInYards = 401,
+                                     Par = 4,
+                                     StrokeIndex = 13
+                                 });
+            }
+
+            if (numberHoles >= 12)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 12,
+                                     LengthInYards = 421,
+                                     Par = 4,
+                                     StrokeIndex = 1
+                                 });
+            }
+
+            if (numberHoles >= 13)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 13,
+                                     LengthInYards = 530,
+                                     Par = 5,
+                                     StrokeIndex = 11
+                                 });
+            }
+
+            if (numberHoles >= 14)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 14,
+                                     LengthInYards = 196,
+                                     Par = 3,
+                                     StrokeIndex = 5
+                                 });
+            }
+
+            if (numberHoles >= 15)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 15,
+                                     LengthInYards = 355,
+                                     Par = 4,
+                                     StrokeIndex = 7
+                                 });
+            }
+
+            if (numberHoles >= 16)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 16,
+                                     LengthInYards = 243,
+                                     Par = 4,
+                                     StrokeIndex = 15
+                                 });
+            }
+
+            if (numberHoles >= 17)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 17,
+                                     LengthInYards = 286,
+                                     Par = 4,
+                                     StrokeIndex = 17
+                                 });
+            }
+
+            if (numberHoles >= 18)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 18,
+                                     LengthInYards = 399,
+                                     Par = 4,
+                                     StrokeIndex = 9
+                                 });
+            }
+
+            if (numberHoles >= 19)
+            {
+                result.Holes.Add(new HoleDataTransferObject
+                                 {
+                                     HoleNumber = 19,
+                                     LengthInYards = 399,
+                                     Par = 4,
+                                     StrokeIndex = 9
+                                 });
+            }
+
             return result;
         }
 
@@ -119,34 +597,142 @@ namespace ManagementAPI.Service.Tests.GolfClub
         {
             MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject();
 
-            result.Name = MeasuredCourseName;
-            result.MeasuredCourseId = MeasuredCourseId;
-            result.StandardScratchScore = StandardScratchScore;
-            result.TeeColour = TeeColour;
+            result.Name = GolfClubTestData.MeasuredCourseName;
+            result.MeasuredCourseId = GolfClubTestData.MeasuredCourseId;
+            result.StandardScratchScore = GolfClubTestData.StandardScratchScore;
+            result.TeeColour = GolfClubTestData.TeeColour;
 
             result.Holes = new List<HoleDataTransferObject>();
 
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 1, LengthInYards = 348, Par = 4, StrokeIndex = 10}); 
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 2, LengthInYards = 402, Par = 4, StrokeIndex = 4}); 
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 3, LengthInYards = 207, Par = 3, StrokeIndex = 14});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 4, LengthInYards = 405, Par = 4, StrokeIndex = 8});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 5, LengthInYards = 428, Par = 4, StrokeIndex = 2});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 6, LengthInYards = 477, Par = 5, StrokeIndex = 12});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 7, LengthInYards = 186, Par = 4, StrokeIndex = 16});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 8, LengthInYards = 397, Par = 4, StrokeIndex = 6});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 9, LengthInYards = 130, Par = 3, StrokeIndex = 18});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 10, LengthInYards = 399, Par = 4, StrokeIndex = 3});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 11, LengthInYards = 401, Par = 4, StrokeIndex = 13});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 12, LengthInYards = 421, Par = 4, StrokeIndex = 1});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 13, LengthInYards = 530, Par = 5, StrokeIndex = 11});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 14, LengthInYards = 196, Par = 3, StrokeIndex = 5});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 15, LengthInYards = 355, Par = 4, StrokeIndex = 7});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 16, LengthInYards = 243, Par = 4, StrokeIndex = 15});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 17, LengthInYards = 286, Par = 4, StrokeIndex = 17});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9});
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 1,
+                                 LengthInYards = 348,
+                                 Par = 4,
+                                 StrokeIndex = 10
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 2,
+                                 LengthInYards = 402,
+                                 Par = 4,
+                                 StrokeIndex = 4
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 3,
+                                 LengthInYards = 207,
+                                 Par = 3,
+                                 StrokeIndex = 14
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 4,
+                                 LengthInYards = 405,
+                                 Par = 4,
+                                 StrokeIndex = 8
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 5,
+                                 LengthInYards = 428,
+                                 Par = 4,
+                                 StrokeIndex = 2
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 6,
+                                 LengthInYards = 477,
+                                 Par = 5,
+                                 StrokeIndex = 12
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 7,
+                                 LengthInYards = 186,
+                                 Par = 4,
+                                 StrokeIndex = 16
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 8,
+                                 LengthInYards = 397,
+                                 Par = 4,
+                                 StrokeIndex = 6
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 9,
+                                 LengthInYards = 130,
+                                 Par = 3,
+                                 StrokeIndex = 18
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 10,
+                                 LengthInYards = 399,
+                                 Par = 4,
+                                 StrokeIndex = 3
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 11,
+                                 LengthInYards = 401,
+                                 Par = 4,
+                                 StrokeIndex = 13
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 12,
+                                 LengthInYards = 421,
+                                 Par = 4,
+                                 StrokeIndex = 1
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 13,
+                                 LengthInYards = 530,
+                                 Par = 5,
+                                 StrokeIndex = 11
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 14,
+                                 LengthInYards = 196,
+                                 Par = 3,
+                                 StrokeIndex = 5
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 15,
+                                 LengthInYards = 355,
+                                 Par = 4,
+                                 StrokeIndex = 7
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 16,
+                                 LengthInYards = 243,
+                                 Par = 4,
+                                 StrokeIndex = 15
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 17,
+                                 LengthInYards = 286,
+                                 Par = 4,
+                                 StrokeIndex = 17
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 18,
+                                 LengthInYards = 399,
+                                 Par = 4,
+                                 StrokeIndex = 9
+                             });
 
             result.Holes.Remove(result.Holes.Where(h => h.HoleNumber == holeNumber).Single());
-            
+
             return result;
         }
 
@@ -154,156 +740,198 @@ namespace ManagementAPI.Service.Tests.GolfClub
         {
             MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject();
 
-            result.Name = MeasuredCourseName;
-            result.MeasuredCourseId = MeasuredCourseId;
-            result.StandardScratchScore = StandardScratchScore;
-            result.TeeColour = TeeColour;
+            result.Name = GolfClubTestData.MeasuredCourseName;
+            result.MeasuredCourseId = GolfClubTestData.MeasuredCourseId;
+            result.StandardScratchScore = GolfClubTestData.StandardScratchScore;
+            result.TeeColour = GolfClubTestData.TeeColour;
 
             result.Holes = new List<HoleDataTransferObject>();
 
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 1, LengthInYards = 348, Par = 4, StrokeIndex = 10}); 
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 2, LengthInYards = 402, Par = 4, StrokeIndex = 4}); 
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 3, LengthInYards = 207, Par = 3, StrokeIndex = 14});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 4, LengthInYards = 405, Par = 4, StrokeIndex = 8});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 5, LengthInYards = 428, Par = 4, StrokeIndex = 2});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 6, LengthInYards = 477, Par = 5, StrokeIndex = 12});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 7, LengthInYards = 186, Par = 4, StrokeIndex = 16});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 8, LengthInYards = 397, Par = 4, StrokeIndex = 6});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 9, LengthInYards = 130, Par = 3, StrokeIndex = 18});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 10, LengthInYards = 399, Par = 4, StrokeIndex = 3});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 11, LengthInYards = 401, Par = 4, StrokeIndex = 13});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 12, LengthInYards = 421, Par = 4, StrokeIndex = 1});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 13, LengthInYards = 530, Par = 5, StrokeIndex = 11});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 14, LengthInYards = 196, Par = 3, StrokeIndex = 5});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 15, LengthInYards = 355, Par = 4, StrokeIndex = 7});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 16, LengthInYards = 243, Par = 4, StrokeIndex = 15});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 17, LengthInYards = 286, Par = 4, StrokeIndex = 17});
-            result.Holes.Add(new HoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9});            
-            
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 1,
+                                 LengthInYards = 348,
+                                 Par = 4,
+                                 StrokeIndex = 10
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 2,
+                                 LengthInYards = 402,
+                                 Par = 4,
+                                 StrokeIndex = 4
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 3,
+                                 LengthInYards = 207,
+                                 Par = 3,
+                                 StrokeIndex = 14
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 4,
+                                 LengthInYards = 405,
+                                 Par = 4,
+                                 StrokeIndex = 8
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 5,
+                                 LengthInYards = 428,
+                                 Par = 4,
+                                 StrokeIndex = 2
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 6,
+                                 LengthInYards = 477,
+                                 Par = 5,
+                                 StrokeIndex = 12
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 7,
+                                 LengthInYards = 186,
+                                 Par = 4,
+                                 StrokeIndex = 16
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 8,
+                                 LengthInYards = 397,
+                                 Par = 4,
+                                 StrokeIndex = 6
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 9,
+                                 LengthInYards = 130,
+                                 Par = 3,
+                                 StrokeIndex = 18
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 10,
+                                 LengthInYards = 399,
+                                 Par = 4,
+                                 StrokeIndex = 3
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 11,
+                                 LengthInYards = 401,
+                                 Par = 4,
+                                 StrokeIndex = 13
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 12,
+                                 LengthInYards = 421,
+                                 Par = 4,
+                                 StrokeIndex = 1
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 13,
+                                 LengthInYards = 530,
+                                 Par = 5,
+                                 StrokeIndex = 11
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 14,
+                                 LengthInYards = 196,
+                                 Par = 3,
+                                 StrokeIndex = 5
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 15,
+                                 LengthInYards = 355,
+                                 Par = 4,
+                                 StrokeIndex = 7
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 16,
+                                 LengthInYards = 243,
+                                 Par = 4,
+                                 StrokeIndex = 15
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 17,
+                                 LengthInYards = 286,
+                                 Par = 4,
+                                 StrokeIndex = 17
+                             });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 18,
+                                 LengthInYards = 399,
+                                 Par = 4,
+                                 StrokeIndex = 9
+                             });
+
             result.Holes.Remove(result.Holes.Where(h => h.StrokeIndex == strokeIndex).Single());
 
             return result;
         }
 
-        public static CreateGolfClubRequest CreateGolfClubRequest = new CreateGolfClubRequest
-        {
-            Name = Name,
-            AddressLine1 = AddressLine1,
-            EmailAddress = EmailAddress,
-            PostalCode = PostalCode,
-            Town = Town,
-            Website = Website,
-            Region = Region,
-            TelephoneNumber = TelephoneNumber,
-            AddressLine2 = AddressLine2
-        };
-
-        public static CreateGolfClubResponse CreateGolfClubResponse =
-            new CreateGolfClubResponse
-            {
-                GolfClubId = AggregateId
-            };
-
-        public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest =
-            new AddMeasuredCourseToClubRequest()
-            {
-                Name = MeasuredCourseName,
-                StandardScratchScore = StandardScratchScore,
-                TeeColour = TeeColour,
-                Holes = new List<DataTransferObjects.HoleDataTransferObject>
-                {
-                    new DTOHoleDataTransferObject {HoleNumber = 1, LengthInYards = 348, Par = 4, StrokeIndex = 10},
-                    new DTOHoleDataTransferObject {HoleNumber = 2, LengthInYards = 402, Par = 4, StrokeIndex = 4},
-                    new DTOHoleDataTransferObject {HoleNumber = 3, LengthInYards = 207, Par = 3, StrokeIndex = 14},
-                    new DTOHoleDataTransferObject {HoleNumber = 4, LengthInYards = 405, Par = 4, StrokeIndex = 8},
-                    new DTOHoleDataTransferObject {HoleNumber = 5, LengthInYards = 428, Par = 4, StrokeIndex = 2},
-                    new DTOHoleDataTransferObject {HoleNumber = 6, LengthInYards = 477, Par = 5, StrokeIndex = 12},
-                    new DTOHoleDataTransferObject {HoleNumber = 7, LengthInYards = 186, Par = 4, StrokeIndex = 16},
-                    new DTOHoleDataTransferObject {HoleNumber = 8, LengthInYards = 397, Par = 4, StrokeIndex = 6},
-                    new DTOHoleDataTransferObject {HoleNumber = 9, LengthInYards = 130, Par = 3, StrokeIndex = 18},
-                    new DTOHoleDataTransferObject {HoleNumber = 10, LengthInYards = 399, Par = 4, StrokeIndex = 3},
-                    new DTOHoleDataTransferObject {HoleNumber = 11, LengthInYards = 401, Par = 4, StrokeIndex = 13},
-                    new DTOHoleDataTransferObject {HoleNumber = 12, LengthInYards = 421, Par = 4, StrokeIndex = 1},
-                    new DTOHoleDataTransferObject {HoleNumber = 13, LengthInYards = 530, Par = 5, StrokeIndex = 11},
-                    new DTOHoleDataTransferObject {HoleNumber = 14, LengthInYards = 196, Par = 3, StrokeIndex = 5},
-                    new DTOHoleDataTransferObject {HoleNumber = 15, LengthInYards = 355, Par = 4, StrokeIndex = 7},
-                    new DTOHoleDataTransferObject {HoleNumber = 16, LengthInYards = 243, Par = 4, StrokeIndex = 15},
-                    new DTOHoleDataTransferObject {HoleNumber = 17, LengthInYards = 286, Par = 4, StrokeIndex = 17},
-                    new DTOHoleDataTransferObject {HoleNumber = 18, LengthInYards = 399, Par = 4, StrokeIndex = 9}
-                }
-            };
-
-        public static CreateGolfClubCommand GetCreateGolfClubCommand()
-        {            
-            return CreateGolfClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.GolfClubAdministratorSecurityUserId, GolfClubTestData.CreateGolfClubRequest);
-        }
-
-        public static AddMeasuredCourseToClubCommand GetAddMeasuredCourseToClubCommand()
-        {
-            return AddMeasuredCourseToClubCommand.Create(AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest);
-        }
-        
         public static RegisterUserResponse GetRegisterUserResponse()
         {
-            return new RegisterUserResponse()
-            {
-                UserId = GolfClubAdministratorSecurityUserId
-            };
+            return new RegisterUserResponse
+                   {
+                       UserId = GolfClubTestData.GolfClubAdministratorSecurityUserId
+                   };
         }
-
-        public static GolfClubCreatedEvent GetGolfClubCreatedEvent()
-        {
-            GolfClubCreatedEvent domainEvent = GolfClubCreatedEvent.Create(GolfClubTestData.AggregateId, GolfClubTestData.Name,
-                GolfClubTestData.AddressLine1, GolfClubTestData.AddressLine2, GolfClubTestData.Town,
-                GolfClubTestData.Region, GolfClubTestData.PostalCode, GolfClubTestData.TelephoneNumber,
-                GolfClubTestData.Website, GolfClubTestData.EmailAddress);
-
-            return domainEvent;
-        }
-
-        public static List<GetGolfClubResponse> GetGolfClubListResponse = new List<GetGolfClubResponse>
-        {
-            new GetGolfClubResponse
-            {
-                Id = AggregateId,
-                AddressLine1 = AddressLine1,
-                Name = Name,
-                AddressLine2 = AddressLine2,
-                EmailAddress = EmailAddress,
-                PostalCode = PostalCode,
-                Region = Region,
-                TelephoneNumber = TelephoneNumber,
-                Town = Town,
-                Website = Website
-            }
-        };
-
-        public static Guid PlayerId = Guid.Parse("357B70E6-8810-40FB-A6AD-9D193D4F6376");
-        public static DateTime MembershipRequestedDateAndTime = new DateTime(2019,1,1);
-
-        public static List<GetClubMembershipRequestResponse> GetClubMembershipRequestResponse =
-            new List<GetClubMembershipRequestResponse>
-            {
-                new GetClubMembershipRequestResponse()
-                {
-                    ClubId = AggregateId,
-                    PlayerId = PlayerId,
-                    MembershipRequestedDateAndTime = MembershipRequestedDateAndTime,
-                    Status = 0 // Pending
-                }
-            };
-
-        public static RegisterClubAdministratorRequest RegisterClubAdministratorRequest = new RegisterClubAdministratorRequest
-        {
-            EmailAddress = "testclubadministrator@test.co.uk",
-            Password = "123456",
-            ConfirmPassword = "123456",
-            TelephoneNumber = "123456789"
-        };
 
         public static RequestClubMembershipCommand GetRequestClubMembershipCommand()
         {
-            return RequestClubMembershipCommand.Create(PlayerId, AggregateId);
+            return RequestClubMembershipCommand.Create(GolfClubTestData.PlayerId, GolfClubTestData.AggregateId);
         }
+
+        public static TournamentDivisionDataTransferObject GetTournamentDivision1()
+        {
+            return new TournamentDivisionDataTransferObject
+                   {
+                       Division = 1,
+                       StartHandicap = 0,
+                       EndHandicap = 5
+                   };
+        }
+
+        public static TournamentDivisionDataTransferObject GetTournamentDivision2()
+        {
+            return new TournamentDivisionDataTransferObject
+                   {
+                       Division = 2,
+                       StartHandicap = 6,
+                       EndHandicap = 12
+                   };
+        }
+
+        public static TournamentDivisionDataTransferObject GetTournamentDivision3()
+        {
+            return new TournamentDivisionDataTransferObject
+                   {
+                       Division = 3,
+                       StartHandicap = 13,
+                       EndHandicap = 21
+                   };
+        }
+
+        public static TournamentDivisionDataTransferObject GetTournamentDivision4()
+        {
+            return new TournamentDivisionDataTransferObject
+                   {
+                       Division = 4,
+                       StartHandicap = 22,
+                       EndHandicap = 28
+                   };
+        }
+
+        #endregion
     }
 }

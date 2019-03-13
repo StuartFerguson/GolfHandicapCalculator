@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ManagementAPI.GolfClub
+﻿namespace ManagementAPI.GolfClub
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// 
     /// </summary>
     internal class MeasuredCourse
     {
-        #region Constructor
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MeasuredCourse" /> class.
@@ -18,7 +17,10 @@ namespace ManagementAPI.GolfClub
         /// <param name="name">The name.</param>
         /// <param name="teeColour">The tee colour.</param>
         /// <param name="standardScratchScore">The standard scratch score.</param>
-        private MeasuredCourse(Guid measuredCourseId, String name, String teeColour, Int32 standardScratchScore)
+        private MeasuredCourse(Guid measuredCourseId,
+                               String name,
+                               String teeColour,
+                               Int32 standardScratchScore)
         {
             this.MeasuredCourseId = measuredCourseId;
             this.Name = name;
@@ -29,39 +31,7 @@ namespace ManagementAPI.GolfClub
 
         #endregion
 
-        #region Internal Properties
-
-        /// <summary>
-        /// Gets the course identifier.
-        /// </summary>
-        /// <value>
-        /// The course identifier.
-        /// </value>
-        internal Guid MeasuredCourseId { get; private set; }
-
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
-        internal String Name { get; private set; }
-        
-        /// <summary>
-        /// Gets the tee colour.
-        /// </summary>
-        /// <value>
-        /// The tee colour.
-        /// </value>
-        internal String TeeColour { get; private set; }
-
-        /// <summary>
-        /// Gets the standard scratch score.
-        /// </summary>
-        /// <value>
-        /// The standard scratch score.
-        /// </value>
-        internal Int32 StandardScratchScore { get; private set; }
+        #region Properties
 
         /// <summary>
         /// Gets the holes.
@@ -69,28 +39,44 @@ namespace ManagementAPI.GolfClub
         /// <value>
         /// The holes.
         /// </value>
-        internal List<Hole> Holes{ get; private set; }
+        internal List<Hole> Holes { get; }
 
-        #endregion
-
-        #region Internal Methods
-
-        #region internal static MeasuredCourse Create(Guid measuredCourseId, String name, String teeColour, Int32 standardScratchScore)
         /// <summary>
-        /// Creates the specified tee colour.
+        /// Gets the course identifier.
         /// </summary>
-        /// <param name="measuredCourseId">The measured course identifier.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="teeColour">The tee colour.</param>
-        /// <param name="standardScratchScore">The standard scratch score.</param>
-        /// <returns></returns>
-        internal static MeasuredCourse Create(Guid measuredCourseId, String name, String teeColour, Int32 standardScratchScore)
-        {
-            return new MeasuredCourse(measuredCourseId, name, teeColour, standardScratchScore);
-        }
+        /// <value>
+        /// The course identifier.
+        /// </value>
+        internal Guid MeasuredCourseId { get; }
+
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
+        internal String Name { get; }
+
+        /// <summary>
+        /// Gets the standard scratch score.
+        /// </summary>
+        /// <value>
+        /// The standard scratch score.
+        /// </value>
+        internal Int32 StandardScratchScore { get; }
+
+        /// <summary>
+        /// Gets the tee colour.
+        /// </summary>
+        /// <value>
+        /// The tee colour.
+        /// </value>
+        internal String TeeColour { get; }
+
         #endregion
 
-        #region internal AddHole(Hole hole)        
+        #region Methods
+
         /// <summary>
         /// Adds the hole.
         /// </summary>
@@ -99,7 +85,22 @@ namespace ManagementAPI.GolfClub
         {
             this.Holes.Add(hole);
         }
-        #endregion
+
+        /// <summary>
+        /// Creates the specified tee colour.
+        /// </summary>
+        /// <param name="measuredCourseId">The measured course identifier.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="teeColour">The tee colour.</param>
+        /// <param name="standardScratchScore">The standard scratch score.</param>
+        /// <returns></returns>
+        internal static MeasuredCourse Create(Guid measuredCourseId,
+                                              String name,
+                                              String teeColour,
+                                              Int32 standardScratchScore)
+        {
+            return new MeasuredCourse(measuredCourseId, name, teeColour, standardScratchScore);
+        }
 
         #endregion
     }

@@ -43,6 +43,11 @@
         public const String GetGolfClubMembersListPolicy = "GetGolfClubMembersListPolicy";
 
         /// <summary>
+        /// The add tournament division to golf club policy
+        /// </summary>
+        public const String AddTournamentDivisionToGolfClubPolicy = "AddTournamentDivisionToGolfClubPolicy";
+
+        /// <summary>
         /// The get single golf club policy
         /// </summary>
         public const String GetSingleGolfClubPolicy = "GetSingleGolfClubPolicy";

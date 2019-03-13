@@ -78,5 +78,13 @@ namespace ManagementAPI.Service.DataTransferObjects
         /// The email address.
         /// </value>
         public String EmailAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tournament divisions.
+        /// </summary>
+        /// <value>
+        /// The tournament divisions.
+        /// </value>
+        public List<TournamentDivision> TournamentDivisions { get; set; }
     }
 }

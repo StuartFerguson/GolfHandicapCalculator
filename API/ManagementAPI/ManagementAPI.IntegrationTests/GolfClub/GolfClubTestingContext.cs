@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.Http;
     using Service.DataTransferObjects;
 
     public class GolfClubTestingContext
@@ -29,6 +30,8 @@
         public Dictionary<Int32, RegisteredPlayer> RegisteredPlayers;
 
         public List<GetGolfClubMembershipDetailsResponse> GolfClubMembersList;
+
+        public HttpResponseMessage LastHttpResponseMessage;
     }
 
     public class RegisteredPlayer

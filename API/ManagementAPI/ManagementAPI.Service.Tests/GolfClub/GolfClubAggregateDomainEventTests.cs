@@ -88,5 +88,20 @@ namespace ManagementAPI.Service.Tests.GolfClub
             golfClubAdministratorSecurityUserCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
             golfClubAdministratorSecurityUserCreatedEvent.GolfClubAdministratorSecurityUserId.ShouldBe(GolfClubTestData.GolfClubAdministratorSecurityUserId);
         }
+
+        [Fact]
+        public void TournamentDivisionAddedEvent_CanBeCreated_IsCreated()
+        {
+            TournamentDivisionAddedEvent tournamentDivisionAddedEvent = TournamentDivisionAddedEvent.Create(GolfClubTestData.AggregateId, GolfClubTestData.Division, GolfClubTestData.StartHandicap,
+                                                                                                            GolfClubTestData.EndHandicap);
+
+            tournamentDivisionAddedEvent.ShouldNotBeNull();
+            tournamentDivisionAddedEvent.AggregateId.ShouldBe(GolfClubTestData.AggregateId);
+            tournamentDivisionAddedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            tournamentDivisionAddedEvent.EventId.ShouldNotBe(Guid.Empty);
+            tournamentDivisionAddedEvent.Division.ShouldBe(GolfClubTestData.Division);
+            tournamentDivisionAddedEvent.StartHandicap.ShouldBe(GolfClubTestData.StartHandicap);
+            tournamentDivisionAddedEvent.EndHandicap.ShouldBe(GolfClubTestData.EndHandicap);
+        }
     }
 }

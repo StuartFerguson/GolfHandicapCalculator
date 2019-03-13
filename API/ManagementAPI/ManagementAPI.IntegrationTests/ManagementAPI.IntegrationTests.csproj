@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>                   
+    <None Update="GolfClub\AddTournamentDivisionToGolfClub.feature">
+      <Generator></Generator>
+    </None>                   
     <None Update="GolfClub\GetClubMembersList.feature">
       <Generator></Generator>
     </None>                   

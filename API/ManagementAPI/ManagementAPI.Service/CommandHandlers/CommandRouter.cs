@@ -207,13 +207,23 @@
         {
             return new PlayerCommandHandler(this.PlayerRepository, this.OAuth2SecurityService, this.ClubRepository);
         }
-        
+
         /// <summary>
         /// Creates the handler.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
         private ICommandHandler CreateHandler(RequestClubMembershipCommand command)
+        {
+            return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService, this.GolfClubMembershipApplicationService);
+        }
+
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(AddTournamentDivisionToGolfClubCommand command)
         {
             return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService, this.GolfClubMembershipApplicationService);
         }
