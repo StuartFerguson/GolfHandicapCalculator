@@ -160,6 +160,45 @@
         }
 
         /// <summary>
+        /// Creates the match secretary.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task CreateMatchSecretary(String passwordToken,
+                                               CreateMatchSecretaryRequest request,
+                                               CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/CreateMatchSecretary";
+
+            try
+            {
+                String requestSerialised = JsonConvert.SerializeObject(request);
+
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful, no response data to deserialise
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error creating the new match secretary.", ex);
+
+                throw exception;
+            }
+        }
+
+        /// <summary>
         /// Gets the golf club list.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>

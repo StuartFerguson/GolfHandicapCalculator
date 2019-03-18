@@ -16,6 +16,11 @@
         #region Fields
 
         /// <summary>
+        /// The match secretary security user identifier list
+        /// </summary>
+        private List<Guid> MatchSecretarySecurityUserIdList;
+
+        /// <summary>
         /// The measured courses
         /// </summary>
         private List<MeasuredCourse> MeasuredCourses;
@@ -35,7 +40,7 @@
         [ExcludeFromCodeCoverage]
         public GolfClubAggregate()
         {
-            // Nothing here
+            // Nothing here            
         }
 
         /// <summary>
@@ -290,11 +295,32 @@
         }
 
         /// <summary>
+        /// Creates the match secretary security user.
+        /// </summary>
+        /// <param name="matchSecretarySecurityUserId">The match secretary security user identifier.</param>
+        public void CreateMatchSecretarySecurityUser(Guid matchSecretarySecurityUserId)
+        {
+            Guard.ThrowIfInvalidGuid(matchSecretarySecurityUserId,
+                                     typeof(ArgumentNullException),
+                                     "A match secretary admin security user id is required to create a match secretary security user");
+
+            this.CheckHasGolfClubAlreadyBeenCreated();
+            this.CheckHasMatchSecretarySecurityUserAlreadyBeenCreated(matchSecretarySecurityUserId);
+
+            // Create the domain event
+            MatchSecretarySecurityUserCreatedEvent matchSecretarySecurityUserCreatedEvent =
+                MatchSecretarySecurityUserCreatedEvent.Create(this.AggregateId, matchSecretarySecurityUserId);
+
+            // Apply and pend
+            this.ApplyAndPend(matchSecretarySecurityUserCreatedEvent);
+        }
+
+        /// <summary>
         /// Gets the measured course.
         /// </summary>
         /// <param name="measuredCourseId">The measured course identifier.</param>
         /// <returns></returns>
-        /// <exception cref="NotFoundException"></exception>
+        /// <exception cref="NotFoundException">No measured course found for Club {this.Name} with Measured Course Id {measuredCourseId}</exception>
         public MeasuredCourseDataTransferObject GetMeasuredCourse(Guid measuredCourseId)
         {
             Boolean measuredCourseFound = this.MeasuredCourses.Any(m => m.MeasuredCourseId == measuredCourseId);
@@ -377,6 +403,19 @@
         }
 
         /// <summary>
+        /// Checks the has match secretary security user already been created.
+        /// </summary>
+        /// <param name="securityUserId">The security user identifier.</param>
+        /// <exception cref="InvalidDataException">Match secretary user with Id {securityUserId}</exception>
+        private void CheckHasMatchSecretarySecurityUserAlreadyBeenCreated(Guid securityUserId)
+        {
+            if (this.MatchSecretarySecurityUserIdList.Any(m => m == securityUserId))
+            {
+                throw new InvalidOperationException($"Match secretary user with Id {securityUserId} has already been added to this Golf Club");
+            }
+        }
+
+        /// <summary>
         /// Checks the not duplicate measured course.
         /// </summary>
         /// <param name="measuredCourse">The measured course.</param>
@@ -387,6 +426,15 @@
             {
                 throw new InvalidOperationException("Unable to add measured course as this has a duplicate Course Id");
             }
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(MatchSecretarySecurityUserCreatedEvent domainEvent)
+        {
+            this.MatchSecretarySecurityUserIdList.Add(domainEvent.MatchSecretarySecurityUserId);
         }
 
         /// <summary>
@@ -418,6 +466,7 @@
             this.HasBeenCreated = true;
             this.MeasuredCourses = new List<MeasuredCourse>();
             this.TournamentDivisions = new List<TournamentDivision>();
+            this.MatchSecretarySecurityUserIdList = new List<Guid>();
         }
 
         /// <summary>

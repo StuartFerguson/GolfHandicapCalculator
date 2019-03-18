@@ -228,6 +228,16 @@
             return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService, this.GolfClubMembershipApplicationService);
         }
 
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(CreateMatchSecretaryCommand command)
+        {
+            return new GolfClubCommandHandler(this.ClubRepository, this.OAuth2SecurityService, this.GolfClubMembershipApplicationService);
+        }
+
         #endregion
     }
 }

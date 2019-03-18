@@ -88,5 +88,24 @@ namespace ManagementAPI.Service.Tests.GolfClub
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }
+
+        [Fact]
+        public void GolfClubCommandHandler_HandleCommand_CreateMatchSecretaryCommand_CommandHandled()
+        {
+            Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate);
+            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            Mock<IGolfClubMembershipApplicationService> golfClubMembershipApplicationService = new Mock<IGolfClubMembershipApplicationService>();
+            GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object,
+                                                                        golfClubMembershipApplicationService.Object);
+
+            oAuth2SecurityService
+                .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
+                .ReturnsAsync(GolfClubTestData.GetRegisterUserResponse());
+
+            CreateMatchSecretaryCommand command = GolfClubTestData.GetCreateMatchSecretaryCommand();
+
+            Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
+        }
     }
 }

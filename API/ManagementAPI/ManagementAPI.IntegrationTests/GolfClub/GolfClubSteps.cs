@@ -357,6 +357,28 @@
             actualStatusCode.ShouldBe(httpStatusCode);                
         }
 
+        [Given(@"I have the details of the match secretary")]
+        public void GivenIHaveTheDetailsOfTheMatchSecretary()
+        {
+            this.GolfClubTestingContext.CreateMatchSecretaryRequest = IntegrationTestsTestData.CreateMatchSecretaryRequest;
+        }
+
+        [When(@"I create the Match Secretary")]
+        public async Task WhenICreateTheMatchSecretary()
+        {
+            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+
+            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
+
+            CreateMatchSecretaryRequest request = this.GolfClubTestingContext.CreateMatchSecretaryRequest;
+
+            await client.CreateMatchSecretary(bearerToken, request, CancellationToken.None);
+
+            // Get the last response
+            GolfClubClient g = client as GolfClubClient;
+            this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
+        }
+        
         #endregion
     }
 }

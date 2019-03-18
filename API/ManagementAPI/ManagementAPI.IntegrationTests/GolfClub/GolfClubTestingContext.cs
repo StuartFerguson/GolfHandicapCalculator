@@ -9,6 +9,8 @@
     {
         public RegisterClubAdministratorRequest RegisterClubAdministratorRequest;
 
+        public CreateMatchSecretaryRequest CreateMatchSecretaryRequest;
+
         public CreateGolfClubRequest CreateGolfClubRequest;
 
         public String ClubAdministratorToken;
