@@ -244,6 +244,8 @@ namespace ManagementAPI.Service.Tests.GolfClub
 
         public static Guid GolfClubAdministratorSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
 
+        public static Guid MatchSecretarySecurityUserId = Guid.Parse("028D3AFB-C104-457F-A4EA-5EB0345F56CD");
+
         public static Int32 HoleNumber = 1;
 
         public static Int32 HolePar = 3;
@@ -265,6 +267,14 @@ namespace ManagementAPI.Service.Tests.GolfClub
                                                                                               ConfirmPassword = "123456",
                                                                                               TelephoneNumber = "123456789"
                                                                                           };
+
+        public static CreateMatchSecretaryRequest CreateMatchSecretaryRequest = new CreateMatchSecretaryRequest
+                                                                                {
+            EmailAddress = "testmatchsecretary@test.co.uk",
+            Password = "123456",
+            ConfirmPassword = "123456",
+            TelephoneNumber = "123456789"
+        };
 
         #endregion
 
@@ -312,6 +322,27 @@ namespace ManagementAPI.Service.Tests.GolfClub
                                      GolfClubTestData.EmailAddress);
 
             aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
+
+            return aggregate;
+        }
+
+        public static GolfClubAggregate GetCreatedGolfClubAggregateWithMatchSecretaryUser()
+        {
+            GolfClubAggregate aggregate = GolfClubAggregate.Create(GolfClubTestData.AggregateId);
+
+            aggregate.CreateGolfClub(GolfClubTestData.Name,
+                                     GolfClubTestData.AddressLine1,
+                                     GolfClubTestData.AddressLine2,
+                                     GolfClubTestData.Town,
+                                     GolfClubTestData.Region,
+                                     GolfClubTestData.PostalCode,
+                                     GolfClubTestData.TelephoneNumber,
+                                     GolfClubTestData.Website,
+                                     GolfClubTestData.EmailAddress);
+
+            aggregate.CreateGolfClubAdministratorSecurityUser(GolfClubTestData.GolfClubAdministratorSecurityUserId);
+
+            aggregate.CreateMatchSecretarySecurityUser(GolfClubTestData.MatchSecretarySecurityUserId);
 
             return aggregate;
         }
@@ -890,6 +921,11 @@ namespace ManagementAPI.Service.Tests.GolfClub
         public static RequestClubMembershipCommand GetRequestClubMembershipCommand()
         {
             return RequestClubMembershipCommand.Create(GolfClubTestData.PlayerId, GolfClubTestData.AggregateId);
+        }
+
+        public static CreateMatchSecretaryCommand GetCreateMatchSecretaryCommand()
+        {
+            return CreateMatchSecretaryCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.CreateMatchSecretaryRequest);
         }
 
         public static TournamentDivisionDataTransferObject GetTournamentDivision1()

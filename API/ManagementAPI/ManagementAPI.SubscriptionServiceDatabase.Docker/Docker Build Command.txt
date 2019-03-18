@@ -1,0 +1,1 @@
+docker build -t "stuartferguson/subscriptionservicedatabasemysqlmanagementapi" -f "D:\Projects\StuartFerguson\GolfHandicapCalculatorAPI\API\ManagementAPI\ManagementAPI.SubscriptionServiceDatabase.Docker\Dockerfile" --label "com.microsoft.created-by=visual-studio" ".."

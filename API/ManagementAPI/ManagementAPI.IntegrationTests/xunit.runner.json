@@ -1,7 +1,7 @@
 {
   "parallelizeAssembly": true,
   "parallelizeTestCollections": true,
-  "maxParallelThreads": 2,
+  "maxParallelThreads": 3,
   "internalDiagnosticMessages": true,
   "diagnosticMessages": true,
   "longRunningTestSeconds": 120

@@ -37,7 +37,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.GolfClubMembe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagmentAPI.TestDataGenerator", "ManagmentAPI.TestDataGenerator\ManagmentAPI.TestDataGenerator.csproj", "{695C18E3-7F7E-4104-9040-5BD7D54C1863}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementAPI.Service.Developer.DTO", "ManagementAPI.Service.Developer.DTO\ManagementAPI.Service.Developer.DTO.csproj", "{A50BE375-E55C-4ED7-8DD8-31039F5CC386}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI.Service.Developer.DTO", "ManagementAPI.Service.Developer.DTO\ManagementAPI.Service.Developer.DTO.csproj", "{A50BE375-E55C-4ED7-8DD8-31039F5CC386}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{40CEFD77-23FE-4623-BC1F-B44D862856FC}"
+	ProjectSection(SolutionItems) = preProject
+		ManagementAPI.SubscriptionServiceDatabase.Docker\Dockerfile = ManagementAPI.SubscriptionServiceDatabase.Docker\Dockerfile
+		ManagementAPI.SubscriptionServiceDatabase.Docker\SetupConfiguration.sql = ManagementAPI.SubscriptionServiceDatabase.Docker\SetupConfiguration.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

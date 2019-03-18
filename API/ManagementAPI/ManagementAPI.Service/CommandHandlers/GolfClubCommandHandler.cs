@@ -5,9 +5,11 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Commands;
+    using Common;
     using DataTransferObjects;
     using GolfClub;
     using Services;
+    using Services.DataTransferObjects;
     using Shared.CommandHandling;
     using Shared.EventStore;
     using HoleDataTransferObject = GolfClub.HoleDataTransferObject;
@@ -79,23 +81,24 @@
             Guid golfClubAggregateId = command.GolfClubId;
 
             // Rehydrate the aggregate
-            GolfClubAggregate club = await this.GolfClubRepository.GetLatestVersion(golfClubAggregateId, cancellationToken);
+            GolfClubAggregate golfClubAggregate = await this.GolfClubRepository.GetLatestVersion(golfClubAggregateId, cancellationToken);
 
             // Call the aggregate method
-            club.CreateGolfClub(command.CreateGolfClubRequest.Name,
-                                command.CreateGolfClubRequest.AddressLine1,
-                                command.CreateGolfClubRequest.AddressLine2,
-                                command.CreateGolfClubRequest.Town,
-                                command.CreateGolfClubRequest.Region,
-                                command.CreateGolfClubRequest.PostalCode,
-                                command.CreateGolfClubRequest.TelephoneNumber,
-                                command.CreateGolfClubRequest.Website,
-                                command.CreateGolfClubRequest.EmailAddress);
+            golfClubAggregate.CreateGolfClub(command.CreateGolfClubRequest.Name,
+                                             command.CreateGolfClubRequest.AddressLine1,
+                                             command.CreateGolfClubRequest.AddressLine2,
+                                             command.CreateGolfClubRequest.Town,
+                                             command.CreateGolfClubRequest.Region,
+                                             command.CreateGolfClubRequest.PostalCode,
+                                             command.CreateGolfClubRequest.TelephoneNumber,
+                                             command.CreateGolfClubRequest.Website,
+                                             command.CreateGolfClubRequest.EmailAddress);
 
-            // TODO: Record club admin user against aggregate
+            // Record club admin user against aggregate
+            golfClubAggregate.CreateGolfClubAdministratorSecurityUser(command.SecurityUserId);
 
             // Save the changes
-            await this.GolfClubRepository.SaveChanges(club, cancellationToken);
+            await this.GolfClubRepository.SaveChanges(golfClubAggregate, cancellationToken);
 
             // Setup the response
             command.Response = new CreateGolfClubResponse
@@ -110,11 +113,51 @@
         /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
+        private async Task HandleCommand(CreateMatchSecretaryCommand command,
+                                         CancellationToken cancellationToken)
+        {
+            Guid golfClubAggregateId = command.GolfClubId;
+
+            // Rehydrate the aggregate
+            GolfClubAggregate golfClubAggregate = await this.GolfClubRepository.GetLatestVersion(golfClubAggregateId, cancellationToken);
+
+            // Create the user
+            RegisterUserRequest registerUserRequest = new RegisterUserRequest
+                                                      {
+                                                          EmailAddress = command.CreateMatchSecretaryRequest.EmailAddress,
+                                                          Claims = new Dictionary<String, String>
+                                                                   {
+                                                                       {"GolfClubId", golfClubAggregateId.ToString()}
+                                                                   },
+                                                          Password = "123456",
+                                                          PhoneNumber = command.CreateMatchSecretaryRequest.TelephoneNumber,
+                                                          Roles = new List<String>
+                                                                  {
+                                                                      RoleNames.MatchSecretary
+                                                                  }
+                                                      };
+
+            // Create the user
+            RegisterUserResponse registerUserResponse = await this.OAuth2SecurityService.RegisterUser(registerUserRequest, cancellationToken);
+
+            // Record against the aggregate
+            golfClubAggregate.CreateMatchSecretarySecurityUser(registerUserResponse.UserId);
+
+            // Save the changes
+            await this.GolfClubRepository.SaveChanges(golfClubAggregate, cancellationToken);
+        }
+
+        /// <summary>
+        /// Handles the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         private async Task HandleCommand(AddMeasuredCourseToClubCommand command,
                                          CancellationToken cancellationToken)
         {
             // Rehydrate the aggregate
-            GolfClubAggregate club = await this.GolfClubRepository.GetLatestVersion(command.GolfClubId, cancellationToken);
+            GolfClubAggregate golfClubAggregate = await this.GolfClubRepository.GetLatestVersion(command.GolfClubId, cancellationToken);
 
             // Translate the request to the input for AddMeasuredCourse
             MeasuredCourseDataTransferObject measuredCourse = new MeasuredCourseDataTransferObject
@@ -139,10 +182,10 @@
             }
 
             // Add the measured course
-            club.AddMeasuredCourse(measuredCourse);
+            golfClubAggregate.AddMeasuredCourse(measuredCourse);
 
             // Save the changes
-            await this.GolfClubRepository.SaveChanges(club, cancellationToken);
+            await this.GolfClubRepository.SaveChanges(golfClubAggregate, cancellationToken);
 
             // No Response to set
         }

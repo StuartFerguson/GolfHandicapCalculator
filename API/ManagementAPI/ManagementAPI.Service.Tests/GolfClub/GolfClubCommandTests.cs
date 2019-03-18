@@ -50,6 +50,18 @@
         }
 
         [Fact]
+        public void CreateMatchSecretaryCommand_CanBeCreated_IsCreated()
+        {
+            CreateMatchSecretaryCommand command = CreateMatchSecretaryCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.CreateMatchSecretaryRequest);
+
+            command.ShouldNotBeNull();
+            command.CommandId.ShouldNotBe(Guid.Empty);
+            command.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            command.CreateMatchSecretaryRequest.ShouldNotBeNull();
+            command.CreateMatchSecretaryRequest.ShouldBe(GolfClubTestData.CreateMatchSecretaryRequest);
+        }
+
+        [Fact]
         public void RequestClubMembershipCommand_CanBeCreated_IsCreated()
         {
             RequestClubMembershipCommand command = RequestClubMembershipCommand.Create(GolfClubTestData.PlayerId, GolfClubTestData.AggregateId);

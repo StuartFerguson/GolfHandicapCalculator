@@ -26,22 +26,28 @@ namespace ManagementAPI.IntegrationTests.Common
         protected IContainerService SubscriptionServiceContainer;
         protected IContainerService EventStoreContainer;
         protected IContainerService SecurityServiceContainer;
+        protected IContainerService MessagingServiceContainer;
+        
         protected INetworkService TestNetwork;
+        
         protected Int32 ManagementApiPort;
         protected Int32 EventStorePort;
         protected Int32 SecurityServicePort;
+        protected Int32 MessagingServicePort;
         protected Guid SubscriberServiceId;
 
         private String ManagementAPIContainerName;
         private String EventStoreContainerName;
         private String SecurityServiceContainerName;
         private String SubscriptionServiceContainerName;
+        private String MessagingServiceContainerName;
 
         private String EventStoreConnectionString;
         private String SecurityServiceAddress;
         private String AuthorityAddress;
         private String SubscriptionServiceConnectionString;
         private String ManagementAPISeedingType;
+        private String MessagingServiceAddress;
 
         protected GenericSteps(ScenarioContext scenarioContext) 
         {
@@ -60,23 +66,27 @@ namespace ManagementAPI.IntegrationTests.Common
             this.SecurityServiceContainerName = $"auth{testGuid:N}";
             this.SubscriberServiceId = testGuid;
             this.SubscriptionServiceContainerName = $"subService{testGuid:N}";
-            
+            this.MessagingServiceContainerName = $"messaging{testGuid:N}";
+
             this.EventStoreConnectionString = $"EventStoreSettings:ConnectionString=ConnectTo=tcp://admin:changeit@{this.EventStoreContainerName}:1113;VerboseLogging=true;";
             this.SecurityServiceAddress = $"AppSettings:OAuth2SecurityService=http://{this.SecurityServiceContainerName}:5001";
             this.AuthorityAddress = $"SecurityConfiguration:Authority=http://{this.SecurityServiceContainerName}:5001";
             this.SubscriptionServiceConnectionString = $"\"ConnectionStrings:SubscriptionServiceConfigurationContext={Setup.GetConnectionString("SubscriptionServiceConfiguration")}\"";
             this.ManagementAPISeedingType = "SeedingType=IntegrationTest";
-            
+            this.MessagingServiceAddress = $"ServiceAddresses:MessagingService=http://{this.MessagingServiceContainerName}:5002";
+
             this.SetupTestNetwork();
             this.SetupSecurityServiceContainer(testFolder);
             this.SetupManagementAPIContainer(testFolder);
             this.SetupEventStoreContainer(testFolder);
             this.SetupSubscriptionServiceContainer(testFolder);
+            this.SetupMessagingService(testFolder);
             
             // Cache the ports
             this.ManagementApiPort = this.ManagementAPIContainer.ToHostExposedEndpoint("5000/tcp").Port;
             this.EventStorePort = this.EventStoreContainer.ToHostExposedEndpoint("2113/tcp").Port;
             this.SecurityServicePort = this.SecurityServiceContainer.ToHostExposedEndpoint("5001/tcp").Port;
+            this.MessagingServicePort= this.MessagingServiceContainer.ToHostExposedEndpoint("5002/tcp").Port;
 
             this.SetupSubscriptionServiceConfig();
         }
@@ -90,6 +100,13 @@ namespace ManagementAPI.IntegrationTests.Common
                     this.ManagementAPIContainer.StopOnDispose = true;
                     this.ManagementAPIContainer.RemoveOnDispose = true;
                     this.ManagementAPIContainer.Dispose();
+                }
+
+                if (this.MessagingServiceContainer != null)
+                {
+                    this.MessagingServiceContainer.StopOnDispose = true;
+                    this.MessagingServiceContainer.RemoveOnDispose = true;
+                    this.MessagingServiceContainer.Dispose();
                 }
 
                 if (this.EventStoreContainer != null)
@@ -301,7 +318,8 @@ namespace ManagementAPI.IntegrationTests.Common
                 .WithName(this.SecurityServiceContainerName)
                 .WithEnvironment("SeedingType=IntegrationTest", "ASPNETCORE_ENVIRONMENT=IntegrationTest", 
                     $"ServiceOptions:PublicOrigin=http://{this.SecurityServiceContainerName}:5001",
-                    $"ServiceOptions:IssuerUrl=http://{this.SecurityServiceContainerName}:5001")
+                    $"ServiceOptions:IssuerUrl=http://{this.SecurityServiceContainerName}:5001",
+                    this.MessagingServiceAddress)
                 .WithCredential("https://www.docker.com", "stuartferguson", "Sc0tland")
                 .UseImage("stuartferguson/oauth2securityserviceservice")
                 .ExposePort(5001)
@@ -329,6 +347,26 @@ namespace ManagementAPI.IntegrationTests.Common
                 .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)
                 .Build()
                 .Start().WaitForPort("5000/tcp", 30000);      
+        }
+        
+        /// <summary>
+        /// Setups the messaging service.
+        /// </summary>
+        /// <param name="testFolder">The test folder.</param>
+        private void SetupMessagingService(String testFolder)
+        {
+            this.MessagingServiceContainer = new Builder()
+                                             .UseContainer()
+                                             .WithName(this.MessagingServiceContainerName)
+                                             .WithEnvironment("ASPNETCORE_ENVIRONMENT=IntegrationTest")
+                                             .WithCredential("https://www.docker.com", "stuartferguson", "Sc0tland")
+                                             .UseImage("stuartferguson/messagingservice")
+                                             .ExposePort(5002)
+                                             .UseNetwork(this.TestNetwork)
+                                             .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)
+                                             .Build()
+                                             .Start()
+                                             .WaitForPort("5002/tcp", 30000);
         }
 
         private void SetupEventStoreContainer(String testFolder)
