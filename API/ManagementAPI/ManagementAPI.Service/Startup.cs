@@ -15,6 +15,7 @@ namespace ManagementAPI.Service
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using Bootstrapper;
     using Common;
@@ -33,6 +34,9 @@ namespace ManagementAPI.Service
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
     using NLog.Extensions.Logging;
+    using Services;
+    using Services.ExternalServices.DataTransferObjects;
+    using Shared.Exceptions;
     using Shared.Extensions;
     using Shared.General;
     using StructureMap;
@@ -140,6 +144,8 @@ namespace ManagementAPI.Service
                 this.InitialiseDatabase(app, env).Wait();
             }
 
+            this.InitialiseSecurityRoles(app).Wait();
+
             app.AddExceptionHandler();
             app.AddRequestLogging();
             app.AddResponseLogging();
@@ -149,6 +155,55 @@ namespace ManagementAPI.Service
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Golf Handicapping API v1"); });
+        }
+
+        /// <summary>
+        /// Initialises the security roles.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <returns></returns>
+        private async Task InitialiseSecurityRoles(IApplicationBuilder app)
+        {
+            Logger.LogInformation($"In InitialiseSecurityRoles");
+
+            List<String> rolesList = new List<String>();
+
+            rolesList.Add(RoleNames.Developer);
+            rolesList.Add(RoleNames.TestDataGenerator);
+            rolesList.Add(RoleNames.ClubAdministrator);
+            rolesList.Add(RoleNames.MatchSecretary);
+            rolesList.Add(RoleNames.Player);
+
+            using (IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                IOAuth2SecurityService securityService = scope.ServiceProvider.GetRequiredService<IOAuth2SecurityService>();
+
+                foreach (String roleName in rolesList)
+                {
+                    Logger.LogInformation($"Creating role {roleName}");
+
+                    Boolean createRole = false;
+                    try
+                    {
+                        await securityService.GetRoleByName(roleName, CancellationToken.None);
+                    }
+                    catch(Exception nex)
+                    {
+                        createRole = true;
+                    }
+
+                    if (createRole)
+                    {
+                        CreateRoleRequest createRoleRequest = new CreateRoleRequest
+                                                              {
+                                                                  RoleName = roleName
+                                                              };
+                        await securityService.CreateRole(createRoleRequest, CancellationToken.None);
+
+                        Logger.LogInformation($"Created role {roleName}");
+                    }                    
+                }
+            }
         }
 
         /// <summary>
@@ -334,6 +389,15 @@ namespace ManagementAPI.Service
                                    policy.AddAuthenticationSchemes("Bearer");
                                    policy.RequireAuthenticatedUser();
                                    policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+                               });
+
+            policies.AddPolicy(PolicyNames.CreateMatchSecretaryPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
+                                   policy.RequireClaim(CustomClaims.GolfClubId);
                                });
 
             #endregion

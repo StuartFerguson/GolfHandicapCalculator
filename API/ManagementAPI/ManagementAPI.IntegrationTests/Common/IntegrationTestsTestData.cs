@@ -15,6 +15,14 @@ namespace ManagementAPI.IntegrationTests.Common
             TelephoneNumber = "123456789"
         };
 
+        public static CreateMatchSecretaryRequest CreateMatchSecretaryRequest = new CreateMatchSecretaryRequest
+        {
+                                                                                              EmailAddress = "testmatchsecretary@golfclub.com",
+                                                                                              ConfirmPassword = "123456",
+                                                                                              Password = "123456",
+                                                                                              TelephoneNumber = "123456789"
+                                                                                          };
+
         public static CreateGolfClubRequest CreateGolfClubRequest = new CreateGolfClubRequest
         {
             Name = "Name",

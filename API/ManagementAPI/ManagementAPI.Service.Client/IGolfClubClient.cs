@@ -44,6 +44,17 @@
                                                     CancellationToken cancellationToken);
 
         /// <summary>
+        /// Creates the match secretary.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task CreateMatchSecretary(String passwordToken,
+                                  CreateMatchSecretaryRequest request,
+                                  CancellationToken cancellationToken);
+
+        /// <summary>
         /// Gets the golf club list.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
@@ -59,7 +70,7 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembershipList(String passwordToken,
-                                                                        CancellationToken cancellationToken);
+                                                                                   CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the single golf club.

@@ -228,6 +228,22 @@
             return this.Ok(golfClubMembersList);
         }
 
+        [HttpPut]
+        [Authorize(Policy = PolicyNames.CreateMatchSecretaryPolicy)]
+        [Route("CreateMatchSecretary")]
+        [SwaggerResponse(204)]
+        public async Task<IActionResult> CreateMatchSecretary([FromBody] CreateMatchSecretaryRequest request,
+                                                              CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
+            CreateMatchSecretaryCommand command = CreateMatchSecretaryCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
+
+            await this.CommandRouter.Route(command, cancellationToken);
+
+            return this.NoContent();
+        }
         #endregion
     }
 }

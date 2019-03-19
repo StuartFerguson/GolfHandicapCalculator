@@ -1,0 +1,3 @@
+FROM stuartferguson/subscriptionservicedatabasemysql
+
+COPY ManagementAPI.SubscriptionServiceDatabase.Docker/SetupConfiguration.sql /docker-entrypoint-initdb.d/setupconfig.sql

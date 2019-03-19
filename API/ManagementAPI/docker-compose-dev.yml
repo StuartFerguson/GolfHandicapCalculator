@@ -1,0 +1,63 @@
+version: '3'
+services:
+
+  mysqldatabase:
+    image: stuartferguson/managementapidbmysql
+    container_name: mysqldatabase
+    ports:
+      - "33306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=Pa55word
+      - MYSQL_ROOT_HOST=%
+
+  eventstore:
+    image: eventstore/eventstore
+    container_name: eventstore
+    ports:
+      - "3113:1113"
+      - "4113:2113"
+    environment:
+      EVENTSTORE_RUN_PROJECTIONS: All
+      EVENTSTORE_START_STANDARD_PROJECTIONS: 1
+      EVENTSTORE_SKIP_DB_VERIFY: 1
+      EVENTSTORE_STATS_PERIOD_SEC: 1
+
+  subscriptionservice:
+    image: stuartferguson/subscriptionservice
+    container_name: subscriptionservice
+    volumes:
+      - D:\home\ubuntu\commonservices\trace:/home/ubuntu/commonservices/trace/
+    environment:
+      - ConnectionStrings__SubscriptionServiceConfigurationContext=server=mysqldatabase;database=SubscriptionServiceConfiguration;user id=root;password=Pa55word";
+      - EventStoreSettings__ConnectionString=ConnectTo=tcp://admin:changeit@eventstore:1113;VerboseLogging=true;
+      - EventStoreSettings__HttpPort=2113
+    depends_on:
+      - mysqldatabase
+
+  messagingservice:
+    image: stuartferguson/messagingservice
+    container_name: messagingservice
+    volumes:
+      - D:\home\ubuntu\commonservices\trace:/home/ubuntu/commonservices/trace/
+    environment:
+      - ASPNETCORE_ENVIRONMENT=IntegrationTest
+    ports:
+      - "5002:5002"
+
+  securityservice:
+    image: stuartferguson/oauth2securityserviceservice
+    container_name: securityservice
+    volumes:
+      - D:\home\ubuntu\securityservice\trace:/home/ubuntu/securityservice/trace/
+    ports:
+      - "5001:5001"
+    environment:
+      - SeedingType=Development
+      - ConnectionStrings__PersistedGrantDbContext=server=mysqldatabase;database=PersistedGrantStore;user id=root;password=Pa55word;
+      - ConnectionStrings__ConfigurationDbContext=server=mysqldatabase;database=Configuration;user id=root;password=Pa55word;
+      - ConnectionStrings__AuthenticationDbContext=server=mysqldatabase;database=Authentication;user id=root;password=Pa55word;
+      - ServiceOptions__PublicOrigin=http://securityservice:5001
+      - ServiceOptions__IssuerUrl=http://securityservice:5001
+    depends_on:
+      - mysqldatabase
+      - messagingservice

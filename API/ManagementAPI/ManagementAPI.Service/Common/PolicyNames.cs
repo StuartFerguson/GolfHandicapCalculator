@@ -13,6 +13,11 @@
         public const String AddMeasuredCourseToGolfClubPolicy = "AddMeasuredCourseToGolfClubPolicy";
 
         /// <summary>
+        /// The add tournament division to golf club policy
+        /// </summary>
+        public const String AddTournamentDivisionToGolfClubPolicy = "AddTournamentDivisionToGolfClubPolicy";
+
+        /// <summary>
         /// The cancel tournament policy
         /// </summary>
         public const String CancelTournamentPolicy = "CancelTournamentPolicy";
@@ -28,9 +33,19 @@
         public const String CreateGolfClubPolicy = "CreateGolfClubPolicy";
 
         /// <summary>
+        /// The create match secretary policy
+        /// </summary>
+        public const String CreateMatchSecretaryPolicy = "CreateMatchSecretaryPolicy";
+
+        /// <summary>
         /// The create tournament policy
         /// </summary>
         public const String CreateTournamentPolicy = "CreateTournamentPolicy";
+
+        /// <summary>
+        /// The developer controller policy
+        /// </summary>
+        public const String DeveloperControllerPolicy = "DeveloperControllerPolicy";
 
         /// <summary>
         /// The get golf club list policy
@@ -43,14 +58,24 @@
         public const String GetGolfClubMembersListPolicy = "GetGolfClubMembersListPolicy";
 
         /// <summary>
-        /// The add tournament division to golf club policy
+        /// The get player memberships policy
         /// </summary>
-        public const String AddTournamentDivisionToGolfClubPolicy = "AddTournamentDivisionToGolfClubPolicy";
+        public const String GetPlayerMembershipsPolicy = "GetPlayerMembershipsPolicy";
+
+        /// <summary>
+        /// The get player policy
+        /// </summary>
+        public const String GetPlayerPolicy = "GetPlayerPolicy";
 
         /// <summary>
         /// The get single golf club policy
         /// </summary>
         public const String GetSingleGolfClubPolicy = "GetSingleGolfClubPolicy";
+
+        /// <summary>
+        /// The player tournament sign up policy
+        /// </summary>
+        public const String PlayerTournamentSignUpPolicy = "PlayerTournamentSignUpPolicy";
 
         /// <summary>
         /// The produce tournament result policy
@@ -72,26 +97,6 @@
         /// </summary>
         public const String RequestClubMembershipPolicy = "RequestClubMembershipPolicy";
 
-        /// <summary>
-        /// The get player policy
-        /// </summary>
-        public const String GetPlayerPolicy = "GetPlayerPolicy";
-
-        /// <summary>
-        /// The get player memberships policy
-        /// </summary>
-        public const String GetPlayerMembershipsPolicy = "GetPlayerMembershipsPolicy";
-
-        /// <summary>
-        /// The player tournament sign up policy
-        /// </summary>
-        public const String PlayerTournamentSignUpPolicy = "PlayerTournamentSignUpPolicy";
-        
-        /// <summary>
-        /// The developer controller policy
-        /// </summary>
-        public const String DeveloperControllerPolicy = "DeveloperControllerPolicy";
-        
         #endregion
     }
 }
