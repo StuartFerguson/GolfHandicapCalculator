@@ -140,12 +140,17 @@ namespace ManagementAPI.Service
 
             // Setup the database
             if (!Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
-            {
-                this.InitialiseDatabase(app, env).Wait();
+            {                 
+                Task.WaitAll(Task.Run(async () =>
+                                      {
+                                          // Setup the database
+                                          await this.InitialiseDatabase(app, env);
+
+                                          // Setup the security service
+                                          await this.InitialiseSecurityRoles(app);
+                                      }));
             }
-
-            this.InitialiseSecurityRoles(app).Wait();
-
+            
             app.AddExceptionHandler();
             app.AddRequestLogging();
             app.AddResponseLogging();
@@ -180,20 +185,27 @@ namespace ManagementAPI.Service
 
                 foreach (String roleName in rolesList)
                 {
-                    Logger.LogInformation($"Creating role {roleName}");
-
+                   
                     Boolean createRole = false;
                     try
                     {
+                        Logger.LogInformation($"Getting role {roleName}");
                         await securityService.GetRoleByName(roleName, CancellationToken.None);
                     }
                     catch(Exception nex)
                     {
+                        Logger.LogError(nex);
+                        if (nex.InnerException != null)
+                        {
+                            Logger.LogError(nex.InnerException);
+                        }
+                        Logger.LogInformation($"Role {roleName} not found");
                         createRole = true;
                     }
 
                     if (createRole)
                     {
+                        Logger.LogInformation($"Creating role {roleName}");
                         CreateRoleRequest createRoleRequest = new CreateRoleRequest
                                                               {
                                                                   RoleName = roleName
