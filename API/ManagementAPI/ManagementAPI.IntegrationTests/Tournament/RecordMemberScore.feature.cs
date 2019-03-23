@@ -18,7 +18,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "tournament")]
-    public partial class RecordMemberScoreForTournamentFeature : Xunit.IClassFixture<RecordMemberScoreForTournamentFeature.FixtureData>, System.IDisposable
+    public partial class RecordPlayerScoreForTournamentFeature : Xunit.IClassFixture<RecordPlayerScoreForTournamentFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
@@ -28,7 +28,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 #line 1 "RecordMemberScore.feature"
 #line hidden
         
-        public RecordMemberScoreForTournamentFeature(RecordMemberScoreForTournamentFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public RecordPlayerScoreForTournamentFeature(RecordPlayerScoreForTournamentFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -37,8 +37,8 @@ namespace ManagementAPI.IntegrationTests.Tournament
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Record Member Score For Tournament", "\tIn order to run a golf club handicapping system\r\n\tAs a club administrator\r\n\tI wa" +
-                    "nt members to be able to record their tournament scores", ProgrammingLanguage.CSharp, new string[] {
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Record Player Score For Tournament", "\tIn order to run a golf club handicapping system\r\n\tAs a club administrator\r\n\tI wa" +
+                    "nt players to be able to record their tournament scores", ProgrammingLanguage.CSharp, new string[] {
                         "tournament"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -99,12 +99,12 @@ namespace ManagementAPI.IntegrationTests.Tournament
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Record Member Score For Tournament")]
-        [Xunit.TraitAttribute("FeatureTitle", "Record Member Score For Tournament")]
-        [Xunit.TraitAttribute("Description", "Record Member Score For Tournament")]
-        public virtual void RecordMemberScoreForTournament()
+        [Xunit.FactAttribute(DisplayName="Record Player Score For Tournament")]
+        [Xunit.TraitAttribute("FeatureTitle", "Record Player Score For Tournament")]
+        [Xunit.TraitAttribute("Description", "Record Player Score For Tournament")]
+        public virtual void RecordPlayerScoreForTournament()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Record Member Score For Tournament", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Record Player Score For Tournament", null, ((string[])(null)));
 #line 16
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -133,12 +133,12 @@ this.FeatureBackground();
             
             public FixtureData()
             {
-                RecordMemberScoreForTournamentFeature.FeatureSetup();
+                RecordPlayerScoreForTournamentFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                RecordMemberScoreForTournamentFeature.FeatureTearDown();
+                RecordPlayerScoreForTournamentFeature.FeatureTearDown();
             }
         }
     }

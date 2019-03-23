@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ManagementAPI.Service.DataTransferObjects
 {
-    public class RecordMemberTournamentScoreRequest
+    public class RecordPlayerTournamentScoreRequest
     {
         /// <summary>
         /// Gets or sets the playing handicap.

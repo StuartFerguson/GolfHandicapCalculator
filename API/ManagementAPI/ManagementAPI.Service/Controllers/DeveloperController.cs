@@ -21,8 +21,8 @@
     using Tournament.DataTransferObjects;
     using DeveloperGetGolfClubResponse = Developer.DataTransferObjects.GetGolfClubResponse;
     using GetGolfClubResponse = DataTransferObjects.GetGolfClubResponse;
-    using MemberCategory = Developer.DataTransferObjects.MemberCategory;
     using MembershipStatus = Developer.DataTransferObjects.MembershipStatus;
+    using PlayerCategory = Developer.DataTransferObjects.PlayerCategory;
     using TournamentFormat = Developer.DataTransferObjects.TournamentFormat;
 
     /// <summary>
@@ -313,13 +313,13 @@
                                                  HasBeenCompleted = tournament.HasBeenCompleted,
                                                  MeasuredCourseId = tournament.MeasuredCourseId,
                                                  MeasuredCourseSSS = tournament.MeasuredCourseSSS,
-                                                 MemberCategory = tournament.MemberCategory.ConvertTo<MemberCategory>(),
+                                                 MemberCategory = tournament.PlayerCategory.ConvertTo<PlayerCategory>(),
                                                  TournamentDate = tournament.TournamentDate
                                              };
 
             if (includeScores)
             {
-                List<MemberScoreRecordDataTransferObject> scores = tournament.GetScores();
+                List<PlayerScoreRecordDataTransferObject> scores = tournament.GetScores();
 
                 if (scores.Count > 0)
                 {
@@ -331,7 +331,7 @@
                                                                PlayingHandicap = s.PlayingHandicap,
                                                                HandicapCategory = s.HandicapCategory,
                                                                HoleScores = s.HoleScores,
-                                                               MemberId = s.MemberId,
+                                                               MemberId = s.PlayerId,
                                                                NetScore = s.NetScore
                                                            });
                                    });

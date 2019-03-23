@@ -218,7 +218,7 @@
                                                                             handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
-            RecordMemberTournamentScoreCommand command = TournamentTestData.GetRecordMemberTournamentScoreCommand();
+            RecordPlayerTournamentScoreCommand command = TournamentTestData.GetRecordMemberTournamentScoreCommand();
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }

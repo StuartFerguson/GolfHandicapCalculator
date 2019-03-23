@@ -79,17 +79,17 @@
         /// <returns></returns>
         [HttpPut]
         [SwaggerResponse(204)]
-        [Route("{tournamentId}/RecordMemberScore")]
+        [Route("{tournamentId}/RecordPlayerScore")]
         [Authorize(Policy = PolicyNames.RecordPlayerScoreForTournamentPolicy)]
         public async Task<IActionResult> RecordPlayerScore([FromRoute] Guid tournamentId,
-                                                       [FromBody] RecordMemberTournamentScoreRequest request,
+                                                       [FromBody] RecordPlayerTournamentScoreRequest request,
                                                        CancellationToken cancellationToken)
         {
             // Get the Player Id claim from the user            
             Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId);
 
             // Create the command
-            RecordMemberTournamentScoreCommand command = RecordMemberTournamentScoreCommand.Create( Guid.Parse(playerIdClaim.Value), tournamentId, request);
+            RecordPlayerTournamentScoreCommand command = RecordPlayerTournamentScoreCommand.Create( Guid.Parse(playerIdClaim.Value), tournamentId, request);
 
             // Route the command
             await this.CommandRouter.Route(command, cancellationToken);

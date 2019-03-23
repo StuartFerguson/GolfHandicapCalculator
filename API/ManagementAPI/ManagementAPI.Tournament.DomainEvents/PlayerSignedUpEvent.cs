@@ -11,7 +11,7 @@
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MemberScoreRecordedEvent" /> class.
+        /// Initializes a new instance of the <see cref="PlayerSignedUpEvent" /> class.
         /// </summary>
         [ExcludeFromCodeCoverage]
         public PlayerSignedUpEvent()
@@ -20,7 +20,7 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MemberScoreRecordedEvent" /> class.
+        /// Initializes a new instance of the <see cref="PlayerSignedUpEvent" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="eventId">The event identifier.</param>

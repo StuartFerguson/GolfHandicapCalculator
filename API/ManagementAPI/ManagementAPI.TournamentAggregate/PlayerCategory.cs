@@ -1,11 +1,11 @@
 ﻿namespace ManagementAPI.Tournament
 {
-    public enum MemberCategory
+    public enum PlayerCategory
     {
         Gents = 1,
         GentsSenior,
         Female,
-        FemaleSenion,
+        FemaleSenior,
         Junior
     }
 }

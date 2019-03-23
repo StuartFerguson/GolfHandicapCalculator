@@ -151,7 +151,7 @@
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
-        private ICommandHandler CreateHandler(RecordMemberTournamentScoreCommand command)
+        private ICommandHandler CreateHandler(RecordPlayerTournamentScoreCommand command)
         {
             return new TournamentCommandHandler(this.ClubRepository,
                                                 this.TournamentRepository,

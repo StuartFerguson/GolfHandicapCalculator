@@ -16,7 +16,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         public static Int32 MeasuredCourseSSS = 70;
         public static String Name = "Test Tournament";
         public static Int32 MemberCategory = 2;
-        public static MemberCategory MemberCategoryEnum = ManagementAPI.Tournament.MemberCategory.Gents;
+        public static PlayerCategory PlayerCategoryEnum = ManagementAPI.Tournament.PlayerCategory.Gents;
         public static Int32 TournamentFormat = 1;
         public static TournamentFormat TournamentFormatEnum = ManagementAPI.Tournament.TournamentFormat.Strokeplay;
         public static Guid PlayerId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6");
@@ -98,7 +98,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
 
-            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.PlayerCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
             return aggregate;
         }
@@ -107,7 +107,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
 
-            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.PlayerCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
             aggregate.SignUpForTournament(TournamentTestData.PlayerId);
 
@@ -118,7 +118,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
 
-            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId,TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId,TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.PlayerCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
             aggregate.SignUpForTournament(TournamentTestData.PlayerId);
 
@@ -132,7 +132,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
 
-            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.PlayerCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
             List<GeneratedPlayerScore> scoresToRecord = TournamentTestData.GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
             foreach (GeneratedPlayerScore playerScoreForTest in scoresToRecord)
@@ -150,7 +150,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
 
-            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.PlayerCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
             aggregate.SignUpForTournament(TournamentTestData.PlayerId);
 
@@ -166,7 +166,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
 
-            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.MemberCategoryEnum, TournamentTestData.TournamentFormatEnum);
+            aggregate.CreateTournament(TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId, TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.PlayerCategoryEnum, TournamentTestData.TournamentFormatEnum);
 
             List<GeneratedPlayerScore> scoresToRecord = TournamentTestData.GenerateScores(category1Scores,category2Scores,category3Scores,category4Scores, category5Scores, bufferorbetter);
             foreach (GeneratedPlayerScore playerScoreForTest in scoresToRecord)
@@ -201,14 +201,14 @@ namespace ManagementAPI.Service.Tests.Tournament
             return CreateTournamentCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.CreateTournamentRequest);
         }
 
-        public static RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest = new RecordMemberTournamentScoreRequest
+        public static RecordPlayerTournamentScoreRequest RecordMemberTournamentScoreRequest = new RecordPlayerTournamentScoreRequest
         {
             HoleScores = TournamentTestData.HoleScores
         };
 
-        public static RecordMemberTournamentScoreCommand GetRecordMemberTournamentScoreCommand()
+        public static RecordPlayerTournamentScoreCommand GetRecordMemberTournamentScoreCommand()
         {
-            return RecordMemberTournamentScoreCommand.Create( TournamentTestData.PlayerId, TournamentTestData.AggregateId, TournamentTestData.RecordMemberTournamentScoreRequest);
+            return RecordPlayerTournamentScoreCommand.Create( TournamentTestData.PlayerId, TournamentTestData.AggregateId, TournamentTestData.RecordMemberTournamentScoreRequest);
         }
 
         public static SignUpForTournamentCommand GetSignUpForTournamentCommand()

@@ -22,27 +22,27 @@ namespace ManagementAPI.Service.Tests.Tournament
             tournamentCreatedEvent.MeasuredCourseId.ShouldBe(TournamentTestData.MeasuredCourseId);
             tournamentCreatedEvent.MeasuredCourseSSS.ShouldBe(TournamentTestData.MeasuredCourseSSS);
             tournamentCreatedEvent.Name.ShouldBe(TournamentTestData.Name);
-            tournamentCreatedEvent.MemberCategory.ShouldBe(TournamentTestData.MemberCategory);
+            tournamentCreatedEvent.PlayerCategory.ShouldBe(TournamentTestData.MemberCategory);
             tournamentCreatedEvent.Format.ShouldBe(TournamentTestData.TournamentFormat);
             tournamentCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             tournamentCreatedEvent.EventId.ShouldNotBe(Guid.Empty);
         }
 
         [Fact]
-        public void MemberScoreRecordedEvent_CanBeCreated_IsCreated()
+        public void PlayerScoreRecordedEvent_CanBeCreated_IsCreated()
         {
-            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(TournamentTestData.AggregateId,                
+            PlayerScoreRecordedEvent playerScoreRecordedEvent = PlayerScoreRecordedEvent.Create(TournamentTestData.AggregateId,                
                 TournamentTestData.PlayerId,
                 TournamentTestData.PlayingHandicap,
                 TournamentTestData.HoleScores);
 
-            memberScoreRecordedEvent.ShouldNotBeNull();
-            memberScoreRecordedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
-            memberScoreRecordedEvent.MemberId.ShouldBe(TournamentTestData.PlayerId);
-            memberScoreRecordedEvent.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
-            memberScoreRecordedEvent.HoleScores.ShouldBe(TournamentTestData.HoleScores);            
-            memberScoreRecordedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
-            memberScoreRecordedEvent.EventId.ShouldNotBe(Guid.Empty);
+            playerScoreRecordedEvent.ShouldNotBeNull();
+            playerScoreRecordedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            playerScoreRecordedEvent.PlayerId.ShouldBe(TournamentTestData.PlayerId);
+            playerScoreRecordedEvent.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
+            playerScoreRecordedEvent.HoleScores.ShouldBe(TournamentTestData.HoleScores);            
+            playerScoreRecordedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            playerScoreRecordedEvent.EventId.ShouldNotBe(Guid.Empty);
         }
 
         [Fact]

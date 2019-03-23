@@ -4,15 +4,15 @@ using System.Text;
 
 namespace ManagementAPI.Tournament.DataTransferObjects
 {
-    public class MemberScoreRecordDataTransferObject
-    {        
+    public class PlayerScoreRecordDataTransferObject
+    {
         /// <summary>
-        /// Gets the member identifier.
+        /// Gets the player identifier.
         /// </summary>
         /// <value>
-        /// The member identifier.
+        /// The player identifier.
         /// </value>
-        public Guid MemberId { get; set; }
+        public Guid PlayerId { get; set; }
 
         /// <summary>
         /// Gets the playing handicap.

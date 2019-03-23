@@ -210,10 +210,10 @@
         /// <returns></returns>
         public async Task RecordPlayerScore(String passwordToken,
                                             Guid tournamentId,
-                                            RecordMemberTournamentScoreRequest request,
+                                            RecordPlayerTournamentScoreRequest request,
                                             CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/RecordMemberScore";
+            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/RecordPlayerScore";
 
             try
             {

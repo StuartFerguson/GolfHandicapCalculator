@@ -169,13 +169,13 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [When(@"a player records their score")]
         public void WhenAPlayerRecordsTheirScore()
         {
-            this.TournamentTestingContext.RecordMemberTournamentScoreRequest = IntegrationTestsTestData.RecordMemberTournamentScoreRequest;            
+            this.TournamentTestingContext.RecordPlayerTournamentScoreRequest = IntegrationTestsTestData.RecordPlayerTournamentScoreRequest;            
         }
         
         [Then(@"the score is recorded against the tournament")]
         public void ThenTheScoreIsRecordedAgainstTheTournament()
         {
-            RecordMemberTournamentScoreRequest request = this.TournamentTestingContext.RecordMemberTournamentScoreRequest;
+            RecordPlayerTournamentScoreRequest request = this.TournamentTestingContext.RecordPlayerTournamentScoreRequest;
 
             CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
 
@@ -233,7 +233,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"some scores have been recorded")]
         public void GivenSomeScoresHaveBeenRecorded()
         {
-            RecordMemberTournamentScoreRequest request = IntegrationTestsTestData.RecordMemberTournamentScoreRequest;
+            RecordPlayerTournamentScoreRequest request = IntegrationTestsTestData.RecordPlayerTournamentScoreRequest;
 
             CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
 

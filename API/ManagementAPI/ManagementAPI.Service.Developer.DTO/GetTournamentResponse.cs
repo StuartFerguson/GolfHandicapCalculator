@@ -126,7 +126,7 @@
         /// <value>
         /// The member category.
         /// </value>
-        public MemberCategory MemberCategory { get; set; }
+        public PlayerCategory MemberCategory { get; set; }
 
         /// <summary>
         /// Gets the name.

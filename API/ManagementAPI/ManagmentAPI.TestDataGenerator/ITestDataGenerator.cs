@@ -80,7 +80,7 @@
         /// <returns></returns>
         Task RecordPlayerScore(String passwordToken,
                                Guid tournamentId,
-                               RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest,
+                               RecordPlayerTournamentScoreRequest recordMemberTournamentScoreRequest,
                                CancellationToken cancellationToken);
 
         /// <summary>

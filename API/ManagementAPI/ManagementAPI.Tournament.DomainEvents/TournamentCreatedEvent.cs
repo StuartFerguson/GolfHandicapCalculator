@@ -40,7 +40,7 @@ namespace ManagementAPI.Tournament.DomainEvents
             this.MeasuredCourseId = measuredCourseId;
             this.MeasuredCourseSSS = measuredCourseSSS;
             this.Name = name;
-            this.MemberCategory = memberCategory;
+            this.PlayerCategory = memberCategory;
             this.Format = format;
         }
         #endregion
@@ -93,13 +93,13 @@ namespace ManagementAPI.Tournament.DomainEvents
         public String Name { get; private set; }
 
         /// <summary>
-        /// Gets the member category.
+        /// Gets the player category.
         /// </summary>
         /// <value>
         /// The member category.
         /// </value>
         [JsonProperty]
-        public Int32 MemberCategory { get; private set; }
+        public Int32 PlayerCategory { get; private set; }
 
         /// <summary>
         /// Gets the format.
@@ -123,13 +123,13 @@ namespace ManagementAPI.Tournament.DomainEvents
         /// <param name="measuredCourseId">The measured course identifier.</param>
         /// <param name="measuredCourseSSS">The measured course SSS.</param>
         /// <param name="name">The name.</param>
-        /// <param name="memberCategory">The member category.</param>
+        /// <param name="playerCategory">The player category.</param>
         /// <param name="format">The format.</param>
         /// <returns></returns>
         public static TournamentCreatedEvent Create(Guid aggregateId, DateTime tournamentDate, Guid golfClubId, Guid measuredCourseId,
-            Int32 measuredCourseSSS, String name, Int32 memberCategory, Int32 format)
+            Int32 measuredCourseSSS, String name, Int32 playerCategory, Int32 format)
         {
-            return new TournamentCreatedEvent(aggregateId, Guid.NewGuid(), tournamentDate, golfClubId,measuredCourseId, measuredCourseSSS, name,memberCategory, format);
+            return new TournamentCreatedEvent(aggregateId, Guid.NewGuid(), tournamentDate, golfClubId,measuredCourseId, measuredCourseSSS, name,playerCategory, format);
         }
 
         #endregion

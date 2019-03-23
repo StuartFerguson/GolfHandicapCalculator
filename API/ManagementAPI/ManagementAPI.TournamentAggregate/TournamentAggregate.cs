@@ -22,9 +22,9 @@
         private List<HandicapAdjustment> HandicapAdjustments;
 
         /// <summary>
-        /// The member score records
+        /// The player score records
         /// </summary>
-        private List<MemberScoreRecord> MemberScoreRecords;
+        private List<PlayerScoreRecord> PlayerScoreRecords;
 
         /// <summary>
         /// The signed up players
@@ -164,12 +164,12 @@
         public Int32 MeasuredCourseSSS { get; private set; }
 
         /// <summary>
-        /// Gets the member category.
+        /// Gets the player category.
         /// </summary>
         /// <value>
-        /// The member category.
+        /// The player category.
         /// </value>
-        public MemberCategory MemberCategory { get; private set; }
+        public PlayerCategory PlayerCategory { get; private set; }
 
         /// <summary>
         /// Gets the name.
@@ -205,7 +205,7 @@
             this.CheckTournamentCSSNotAlreadyCalculated();
 
             // Filter out category 5 players scores
-            List<MemberScoreRecord> filteredScores = this.MemberScoreRecords.Where(m => m.PlayingHandicap <= 28).ToList();
+            List<PlayerScoreRecord> filteredScores = this.PlayerScoreRecords.Where(m => m.PlayingHandicap <= 28).ToList();
 
             // Get the total score count 
             Int32 totalScoreCount = filteredScores.Count();
@@ -216,10 +216,10 @@
             Int32 category3And4ScoreCount = filteredScores.Count(f => f.PlayingHandicap >= 13 && f.PlayingHandicap <= 28);
 
             // Now to get the number of buffers or better (by category excluding NRs)
-            IEnumerable<MemberScoreRecord> cat1Scores = filteredScores.Where(s => s.PlayingHandicap <= 5 && s.NetScore != 0);
-            IEnumerable<MemberScoreRecord> cat2Scores = filteredScores.Where(s => s.PlayingHandicap >= 6 && s.PlayingHandicap <= 12 && s.NetScore != 0);
-            IEnumerable<MemberScoreRecord> cat3Scores = filteredScores.Where(s => s.PlayingHandicap >= 13 && s.PlayingHandicap <= 20 && s.NetScore != 0);
-            IEnumerable<MemberScoreRecord> cat4Scores = filteredScores.Where(s => s.PlayingHandicap >= 21 && s.PlayingHandicap <= 28 && s.NetScore != 0);
+            IEnumerable<PlayerScoreRecord> cat1Scores = filteredScores.Where(s => s.PlayingHandicap <= 5 && s.NetScore != 0);
+            IEnumerable<PlayerScoreRecord> cat2Scores = filteredScores.Where(s => s.PlayingHandicap >= 6 && s.PlayingHandicap <= 12 && s.NetScore != 0);
+            IEnumerable<PlayerScoreRecord> cat3Scores = filteredScores.Where(s => s.PlayingHandicap >= 13 && s.PlayingHandicap <= 20 && s.NetScore != 0);
+            IEnumerable<PlayerScoreRecord> cat4Scores = filteredScores.Where(s => s.PlayingHandicap >= 21 && s.PlayingHandicap <= 28 && s.NetScore != 0);
 
             Int32 cat1BufferorbetterCount = cat1Scores.Count(s => s.NetScore - this.MeasuredCourseSSS <= 1);
             Int32 cat2BufferorbetterCount = cat2Scores.Count(s => s.NetScore - this.MeasuredCourseSSS <= 2);
@@ -326,7 +326,7 @@
                                      Guid measuredCourseId,
                                      Int32 measuredCourseSSS,
                                      String name,
-                                     MemberCategory memberCategory,
+                                     PlayerCategory memberCategory,
                                      TournamentFormat tournamentFormat)
         {
             Guard.ThrowIfInvalidDate(tournamentDate, typeof(ArgumentNullException), " A tournament requires a valid date to be created");
@@ -335,7 +335,7 @@
             Guard.ThrowIfZero(measuredCourseSSS, typeof(ArgumentOutOfRangeException), "Measured Course SS must not be zero");
             Guard.ThrowIfNegative(measuredCourseSSS, typeof(ArgumentOutOfRangeException), "Measured Course SS must not be negative");
             Guard.ThrowIfNullOrEmpty(name, typeof(ArgumentNullException), " A tournament requires a valid Name to be created");
-            Guard.ThrowIfInvalidEnum(typeof(MemberCategory),
+            Guard.ThrowIfInvalidEnum(typeof(PlayerCategory),
                                      memberCategory,
                                      typeof(ArgumentOutOfRangeException),
                                      " A tournament requires a valid member category to be created");
@@ -366,20 +366,20 @@
         /// Gets the scores.
         /// </summary>
         /// <returns></returns>
-        public List<MemberScoreRecordDataTransferObject> GetScores()
+        public List<PlayerScoreRecordDataTransferObject> GetScores()
         {
-            List<MemberScoreRecordDataTransferObject> result = new List<MemberScoreRecordDataTransferObject>();
+            List<PlayerScoreRecordDataTransferObject> result = new List<PlayerScoreRecordDataTransferObject>();
 
-            foreach (MemberScoreRecord memberScoreRecord in this.MemberScoreRecords)
+            foreach (PlayerScoreRecord playerScoreRecord in this.PlayerScoreRecords)
             {
-                result.Add(new MemberScoreRecordDataTransferObject
+                result.Add(new PlayerScoreRecordDataTransferObject
                            {
-                               PlayingHandicap = memberScoreRecord.PlayingHandicap,
-                               HoleScores = memberScoreRecord.HoleScores,
-                               NetScore = memberScoreRecord.NetScore,
-                               MemberId = memberScoreRecord.MemberId,
-                               GrossScore = memberScoreRecord.GrossScore,
-                               HandicapCategory = memberScoreRecord.HandicapCategory
+                               PlayingHandicap = playerScoreRecord.PlayingHandicap,
+                               HoleScores = playerScoreRecord.HoleScores,
+                               NetScore = playerScoreRecord.NetScore,
+                               PlayerId = playerScoreRecord.PlayerId,
+                               GrossScore = playerScoreRecord.GrossScore,
+                               HandicapCategory = playerScoreRecord.HandicapCategory
                            });
             }
 
@@ -387,46 +387,7 @@
         }
         
         /// <summary>
-        /// Records the handicap adjustment.
-        /// </summary>
-        /// <param name="memberId">The member identifier.</param>
-        /// <param name="adjustments">The adjustments.</param>
-        public void RecordHandicapAdjustment(Guid memberId,
-                                             List<Decimal> adjustments)
-        {
-            Guard.ThrowIfInvalidGuid(memberId, typeof(ArgumentNullException), "A valid member Id must be provided to record a handicap adjustment");
-
-            if (!adjustments.Any())
-            {
-                throw new InvalidDataException("At least one adjustment has to be provided to record a handicap adjustment");
-            }
-
-            this.CheckTournamentHasBeenCreated();
-
-            this.CheckTournamentHasBeenCompleted();
-
-            this.CheckTournamentCSSHasBeenCalculated();
-
-            this.CheckMemberHasRecordedScore(memberId);
-
-            // Get the members score
-            MemberScoreRecord memberScore = this.MemberScoreRecords.Single(s => s.MemberId == memberId);
-
-            HandicapAdjustmentRecordedEvent handicapAdjustmentRecordedEvent =
-                HandicapAdjustmentRecordedEvent.Create(this.AggregateId,
-                                                       memberId,
-                                                       memberScore.GrossScore,
-                                                       memberScore.NetScore,
-                                                       this.CSS,
-                                                       memberScore.PlayingHandicap,
-                                                       adjustments,
-                                                       adjustments.Sum());
-
-            this.ApplyAndPend(handicapAdjustmentRecordedEvent);
-        }
-
-        /// <summary>
-        /// Records the member score.
+        /// Records the player score.
         /// </summary>
         /// <param name="playerId">The member identifier.</param>
         /// <param name="playingHandicap">The playing handicap.</param>
@@ -438,7 +399,7 @@
             Guard.ThrowIfInvalidGuid(playerId, typeof(ArgumentNullException), "Player Id must be provided to record a score");
             Guard.ThrowIfNull(holeScores, typeof(ArgumentNullException), "Hole Scores must be provided to record a score");
             
-            // Check the members playing handicap is valid
+            // Check the players playing handicap is valid
             if (playingHandicap > 36)
             {
                 throw new InvalidDataException($"{playingHandicap} is greater than the Maximum Playing handicap of {TournamentAggregate.MaximumPlayingHandicap}");
@@ -456,17 +417,17 @@
             // Player has signed up
             this.CheckPlayerHasSignedUp(playerId);
 
-            // Member must not have already entered a score
-            this.CheckForDuplicateMemberScoreRecord(playerId);
+            // Player must not have already entered a score
+            this.CheckForDuplicatePlayerScoreRecord(playerId);
 
             // Must have 18 hole scores
             this.ValidateHoleScores(holeScores);
 
             // Crete the event to record the score
-            MemberScoreRecordedEvent memberScoreRecordedEvent = MemberScoreRecordedEvent.Create(this.AggregateId, playerId, playingHandicap, holeScores);
+            PlayerScoreRecordedEvent playerScoreRecordedEvent = PlayerScoreRecordedEvent.Create(this.AggregateId, playerId, playingHandicap, holeScores);
 
             // Apply and Pend
-            this.ApplyAndPend(memberScoreRecordedEvent);
+            this.ApplyAndPend(playerScoreRecordedEvent);
         }
 
         /// <summary>
@@ -540,28 +501,28 @@
         }
 
         /// <summary>
-        /// Checks for duplicate member score record.
+        /// Checks for duplicate player score record.
         /// </summary>
-        /// <param name="memberId">The member identifier.</param>
-        /// <exception cref="InvalidOperationException">Member Id {} has already recorded a score for this competition</exception>
-        private void CheckForDuplicateMemberScoreRecord(Guid memberId)
+        /// <param name="playerId">The player identifier.</param>
+        /// <exception cref="InvalidOperationException">Player Id {playerId} has already recorded a score for this competition</exception>
+        private void CheckForDuplicatePlayerScoreRecord(Guid playerId)
         {
-            if (this.MemberScoreRecords.Any(m => m.MemberId == memberId))
+            if (this.PlayerScoreRecords.Any(m => m.PlayerId == playerId))
             {
-                throw new InvalidOperationException("Member Id {} has already recorded a score for this competition");
+                throw new InvalidOperationException($"Player Id {playerId} has already recorded a score for this competition");
             }
         }
 
         /// <summary>
-        /// Checks the member has recorded score.
+        /// Checks the player has recorded score.
         /// </summary>
-        /// <param name="memberId">The member identifier.</param>
+        /// <param name="playerId">The player identifier.</param>
         /// <exception cref="NotFoundException"></exception>
-        private void CheckMemberHasRecordedScore(Guid memberId)
+        private void CheckPlayerHasRecordedScore(Guid playerId)
         {
-            if (!this.MemberScoreRecords.Any(m => m.MemberId == memberId))
+            if (this.PlayerScoreRecords.All(m => m.PlayerId != playerId))
             {
-                throw new NotFoundException($"No score record found for {memberId}");
+                throw new NotFoundException($"No score record found for {playerId}");
             }
         }
 
@@ -3717,9 +3678,9 @@
             this.HasBeenCreated = true;
             this.MeasuredCourseId = domainEvent.MeasuredCourseId;
             this.MeasuredCourseSSS = domainEvent.MeasuredCourseSSS;
-            this.MemberCategory = (MemberCategory)domainEvent.MemberCategory;
+            this.PlayerCategory = (PlayerCategory)domainEvent.PlayerCategory;
             this.TournamentDate = domainEvent.TournamentDate;
-            this.MemberScoreRecords = new List<MemberScoreRecord>();
+            this.PlayerScoreRecords = new List<PlayerScoreRecord>();
             this.HandicapAdjustments = new List<HandicapAdjustment>();
             this.SignedUpPlayers = new List<Guid>();
         }
@@ -3728,11 +3689,11 @@
         /// Plays the event.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
-        private void PlayEvent(MemberScoreRecordedEvent domainEvent)
+        private void PlayEvent(PlayerScoreRecordedEvent domainEvent)
         {
-            MemberScoreRecord memberScoreRecord = MemberScoreRecord.Create(domainEvent.MemberId, domainEvent.PlayingHandicap, domainEvent.HoleScores);
+            PlayerScoreRecord playerScoreRecord = PlayerScoreRecord.Create(domainEvent.PlayerId, domainEvent.PlayingHandicap, domainEvent.HoleScores);
 
-            this.MemberScoreRecords.Add(memberScoreRecord);
+            this.PlayerScoreRecords.Add(playerScoreRecord);
         }
 
         /// <summary>
