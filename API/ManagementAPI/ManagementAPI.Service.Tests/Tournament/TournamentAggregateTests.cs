@@ -177,6 +177,7 @@
 
             aggregate.HasBeenCompleted.ShouldBeTrue();
             aggregate.CompletedDateTime.ShouldBe(TournamentTestData.CompletedDateTime);
+            aggregate.GetScores().All(s=> s.IsPublished).ShouldBeTrue();
         }
 
         [Fact]
@@ -188,21 +189,21 @@
         }
 
         [Theory]
-        [InlineData(false, true, true, 70, "tournament name", MemberCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
-        [InlineData(true, false, true, 70, "tournament name", MemberCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
-        [InlineData(true, true, false, 70, "tournament name", MemberCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
-        [InlineData(true, true, true, 0, "tournament name", MemberCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentOutOfRangeException))]
-        [InlineData(true, true, true, -70, "tournament name", MemberCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentOutOfRangeException))]
-        [InlineData(true, true, true, 70, null, MemberCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
-        [InlineData(true, true, true, 70, "", MemberCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
-        [InlineData(true, true, true, 70, "tournament name", (MemberCategory)99, TournamentFormat.Strokeplay, typeof(ArgumentOutOfRangeException))]
-        [InlineData(true, true, true, 70, "tournament name", MemberCategory.Gents, (TournamentFormat)99, typeof(ArgumentOutOfRangeException))]
+        [InlineData(false, true, true, 70, "tournament name", PlayerCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
+        [InlineData(true, false, true, 70, "tournament name", PlayerCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
+        [InlineData(true, true, false, 70, "tournament name", PlayerCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
+        [InlineData(true, true, true, 0, "tournament name", PlayerCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentOutOfRangeException))]
+        [InlineData(true, true, true, -70, "tournament name", PlayerCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentOutOfRangeException))]
+        [InlineData(true, true, true, 70, null, PlayerCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
+        [InlineData(true, true, true, 70, "", PlayerCategory.Gents, TournamentFormat.Strokeplay, typeof(ArgumentNullException))]
+        [InlineData(true, true, true, 70, "tournament name", (PlayerCategory)99, TournamentFormat.Strokeplay, typeof(ArgumentOutOfRangeException))]
+        [InlineData(true, true, true, 70, "tournament name", PlayerCategory.Gents, (TournamentFormat)99, typeof(ArgumentOutOfRangeException))]
         public void TournamentAggregate_CreateTournament_InvalidData_ErrorThrown(Boolean validTournamentDate,
                                                                                  Boolean validGolfClubId,
                                                                                  Boolean validMeasuredCourseId,
                                                                                  Int32 measuredCourseSSS,
                                                                                  String name,
-                                                                                 MemberCategory memberCategory,
+                                                                                 PlayerCategory memberCategory,
                                                                                  TournamentFormat tournamentFormat,
                                                                                  Type exceptionType)
         {
@@ -228,7 +229,7 @@
                                                                                    TournamentTestData.MeasuredCourseId,
                                                                                    TournamentTestData.MeasuredCourseSSS,
                                                                                    TournamentTestData.Name,
-                                                                                   TournamentTestData.MemberCategoryEnum,
+                                                                                   TournamentTestData.PlayerCategoryEnum,
                                                                                    TournamentTestData.TournamentFormatEnum);
                                                     });
         }
@@ -243,7 +244,7 @@
                                        TournamentTestData.MeasuredCourseId,
                                        TournamentTestData.MeasuredCourseSSS,
                                        TournamentTestData.Name,
-                                       TournamentTestData.MemberCategoryEnum,
+                                       TournamentTestData.PlayerCategoryEnum,
                                        TournamentTestData.TournamentFormatEnum);
 
             aggregate.TournamentDate.ShouldBe(TournamentTestData.TournamentDate);
@@ -251,7 +252,7 @@
             aggregate.MeasuredCourseId.ShouldBe(TournamentTestData.MeasuredCourseId);
             aggregate.MeasuredCourseSSS.ShouldBe(TournamentTestData.MeasuredCourseSSS);
             aggregate.Name.ShouldBe(TournamentTestData.Name);
-            aggregate.MemberCategory.ShouldBe(TournamentTestData.MemberCategoryEnum);
+            aggregate.PlayerCategory.ShouldBe(TournamentTestData.PlayerCategoryEnum);
             aggregate.Format.ShouldBe(TournamentTestData.TournamentFormatEnum);
             aggregate.HasBeenCreated.ShouldBeTrue();
         }
@@ -261,68 +262,12 @@
         {
             TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
 
-            List<MemberScoreRecordDataTransferObject> scores = aggregate.GetScores();
+            List<PlayerScoreRecordDataTransferObject> scores = aggregate.GetScores();
 
             scores.ShouldNotBeNull();
             scores.Count.ShouldBe(1);
         }
-
-        [Theory]
-        [InlineData(false, true, typeof(ArgumentNullException))]
-        [InlineData(true, false, typeof(InvalidDataException))]
-        public void TournamentAggregate_InvalidData_ErrorThrown(Boolean validMemberId,
-                                                                Boolean validAdjustments,
-                                                                Type exceptionType)
-        {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
-
-            Guid memberId = validMemberId ? TournamentTestData.PlayerId : Guid.Empty;
-            List<Decimal> adjustments = validAdjustments ? TournamentTestData.Adjustments : new List<Decimal>();
-
-            Should.Throw(() => { aggregate.RecordHandicapAdjustment(memberId, adjustments); }, exceptionType);
-        }
-
-        [Fact]
-        public void TournamentAggregate_RecordHandicapAdjustment_CSSNotCalculated_ErrorThrown()
-        {
-            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregate();
-
-            Should.Throw<InvalidOperationException>(() => { aggregate.RecordHandicapAdjustment(TournamentTestData.PlayerId, TournamentTestData.Adjustments); });
-        }
-
-        [Fact]
-        public void TournamentAggregate_RecordHandicapAdjustment_HandicapAdjustmentRecorded()
-        {
-            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate();
-
-            MemberScoreRecordDataTransferObject memberScore = aggregate.GetScores().First();
-            Should.NotThrow(() => { aggregate.RecordHandicapAdjustment(memberScore.MemberId, TournamentTestData.Adjustments); });
-        }
-
-        [Fact]
-        public void TournamentAggregate_RecordHandicapAdjustment_MemberNotFound_ErrorThrown()
-        {
-            TournamentAggregate aggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate();
-
-            Should.Throw<NotFoundException>(() => { aggregate.RecordHandicapAdjustment(TournamentTestData.PlayerId, TournamentTestData.Adjustments); });
-        }
-
-        [Fact]
-        public void TournamentAggregate_RecordHandicapAdjustment_TournamentNotCompleted_ErrorThrown()
-        {
-            TournamentAggregate aggregate = TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate();
-
-            Should.Throw<InvalidOperationException>(() => { aggregate.RecordHandicapAdjustment(TournamentTestData.PlayerId, TournamentTestData.Adjustments); });
-        }
-
-        [Fact]
-        public void TournamentAggregate_RecordHandicapAdjustment_TournamentNotCreated_ErrorThrown()
-        {
-            TournamentAggregate aggregate = TournamentTestData.GetEmptyTournamentAggregate();
-
-            Should.Throw<InvalidOperationException>(() => { aggregate.RecordHandicapAdjustment(TournamentTestData.PlayerId, TournamentTestData.Adjustments); });
-        }
-
+        
         [Theory]
         [InlineData(false, 6, true, typeof(ArgumentNullException))]
         [InlineData(true, 40, true, typeof(InvalidDataException))]
@@ -524,5 +469,38 @@
         }
 
         #endregion
+
+        [Fact]
+        public void TournamentAggregate_ProduceResult_ResultIsProduced()
+        {
+            TournamentAggregate tournamentAggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate(20, 15, 23, 16, 0, 5);
+
+            tournamentAggregate.ProduceResult();
+
+            tournamentAggregate.HasResultBeenProduced.ShouldBeTrue();
+
+            List<PlayerScoreRecordDataTransferObject> scores = tournamentAggregate.GetScores();
+            scores.Any(s => s.Last9HolesScore == 0).ShouldBeFalse();
+            scores.Any(s => s.Last6HolesScore == 0).ShouldBeFalse();
+            scores.Any(s => s.Last3HolesScore == 0).ShouldBeFalse();
+            scores.Any(s => s.TournamentDivision == 0).ShouldBeFalse();
+            scores.Any(s => s.Position == 0).ShouldBeFalse();
+        }
+
+        [Fact]
+        public void TournamentAggregate_ProduceResult_CSSNotCalculated_ErrorThrown()
+        {
+            TournamentAggregate tournamentAggregate = TournamentTestData.GetCompletedTournamentAggregate(20, 15, 23, 16, 0, 5);
+
+            Should.Throw<InvalidOperationException>( () => tournamentAggregate.ProduceResult());
+        }
+
+        [Fact]
+        public void TournamentAggregate_ProduceResult_UnsupportedFormat_ErrorThrown()
+        {
+            TournamentAggregate tournamentAggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate(20, 15, 23, 16, 0, 5, TournamentFormat.Stableford);
+
+            Should.Throw<NotSupportedException>(() => tournamentAggregate.ProduceResult());
+        }
     }
 }

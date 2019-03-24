@@ -196,7 +196,7 @@
         /// <returns></returns>
         public async Task RecordPlayerScore(String passwordToken,
                                             Guid tournamentId,
-                                            RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest,
+                                            RecordPlayerTournamentScoreRequest recordMemberTournamentScoreRequest,
                                             CancellationToken cancellationToken)
         {
             await this.TournamentClient.RecordPlayerScore(passwordToken, tournamentId, recordMemberTournamentScoreRequest, cancellationToken);

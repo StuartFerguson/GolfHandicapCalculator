@@ -23,12 +23,7 @@
         /// The club configuration repository
         /// </summary>
         private readonly IAggregateRepository<GolfClubAggregate> GolfClubRepository;
-
-        /// <summary>
-        /// The handicap adjustment calculator service
-        /// </summary>
-        private readonly IHandicapAdjustmentCalculatorService HandicapAdjustmentCalculatorService;
-
+        
         /// <summary>
         /// The tournament application service
         /// </summary>
@@ -48,16 +43,13 @@
         /// </summary>
         /// <param name="golfClubRepository">The golf club repository.</param>
         /// <param name="tournamentRepository">The tournament repository.</param>
-        /// <param name="handicapAdjustmentCalculatorService">The handicap adjustment calculator service.</param>
         /// <param name="tournamentApplicationService">The tournament application service.</param>
         public TournamentCommandHandler(IAggregateRepository<GolfClubAggregate> golfClubRepository,
                                         IAggregateRepository<TournamentAggregate> tournamentRepository,
-                                        IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService,
                                         ITournamentApplicationService tournamentApplicationService)
         {
             this.GolfClubRepository = golfClubRepository;
             this.TournamentRepository = tournamentRepository;
-            this.HandicapAdjustmentCalculatorService = handicapAdjustmentCalculatorService;
             this.TournamentApplicationService = tournamentApplicationService;
         }
 
@@ -109,7 +101,7 @@
                                         command.CreateTournamentRequest.MeasuredCourseId,
                                         measuredCourse.StandardScratchScore,
                                         command.CreateTournamentRequest.Name,
-                                        (MemberCategory)command.CreateTournamentRequest.MemberCategory,
+                                        (PlayerCategory)command.CreateTournamentRequest.MemberCategory,
                                         (TournamentFormat)command.CreateTournamentRequest.Format);
 
             // Save the changes
@@ -128,15 +120,15 @@
         /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private async Task HandleCommand(RecordMemberTournamentScoreCommand command,
+        private async Task HandleCommand(RecordPlayerTournamentScoreCommand command,
                                          CancellationToken cancellationToken)
         {
             // Rehydrate the aggregate
             TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
             tournament.RecordPlayerScore(command.PlayerId,
-                                         command.RecordMemberTournamentScoreRequest.PlayingHandicap,
-                                         command.RecordMemberTournamentScoreRequest.HoleScores);
+                                         command.RecordPlayerTournamentScoreRequest.PlayingHandicap,
+                                         command.RecordPlayerTournamentScoreRequest.HoleScores);
 
             // Save the changes
             await this.TournamentRepository.SaveChanges(tournament, cancellationToken);
@@ -208,24 +200,8 @@
             // Rehydrate the aggregate
             TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
-            // Get the scores from the tournament
-            List<MemberScoreRecordDataTransferObject> scoreRecords = tournament.GetScores();
-
-            // Now process each score
-            foreach (MemberScoreRecordDataTransferObject memberScoreRecordDataTransferObject in scoreRecords)
-            {
-                // Lookup the member record to get the exact handicap
-                // TODO:
-
-                // Calculate the adjustments
-                List<Decimal> adjustments =
-                    this.HandicapAdjustmentCalculatorService.CalculateHandicapAdjustment(Convert.ToDecimal(memberScoreRecordDataTransferObject.PlayingHandicap),
-                                                                                         tournament.CSS,
-                                                                                         memberScoreRecordDataTransferObject.HoleScores);
-
-                // Record the adjustments
-                tournament.RecordHandicapAdjustment(memberScoreRecordDataTransferObject.MemberId, adjustments);
-            }
+            // Produce the result
+            tournament.ProduceResult();
 
             // Save the changes
             await this.TournamentRepository.SaveChanges(tournament, cancellationToken);

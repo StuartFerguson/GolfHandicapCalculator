@@ -3,7 +3,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public enum MemberCategory
+    public enum PlayerCategory
     {
         /// <summary>
         /// The gents
@@ -21,9 +21,9 @@
         Female,
 
         /// <summary>
-        /// The female senion
+        /// The female senior
         /// </summary>
-        FemaleSenion,
+        FemaleSenior,
 
         /// <summary>
         /// The junior

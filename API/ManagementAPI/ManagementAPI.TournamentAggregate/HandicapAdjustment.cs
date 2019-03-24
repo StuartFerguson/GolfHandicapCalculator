@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace ManagementAPI.Tournament
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     internal class HandicapAdjustment
     {
         #region Constructor

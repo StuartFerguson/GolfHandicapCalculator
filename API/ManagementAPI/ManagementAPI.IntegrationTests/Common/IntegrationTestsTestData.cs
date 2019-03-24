@@ -75,8 +75,8 @@ namespace ManagementAPI.IntegrationTests.Common
             MeasuredCourseId = Guid.Parse("47708163-7E3A-4C61-B1C3-64C2CDFC1170")
         };
 
-        public static RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest =
-            new RecordMemberTournamentScoreRequest
+        public static RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest =
+            new RecordPlayerTournamentScoreRequest
             {
                 HoleScores = new Dictionary<Int32, Int32>()
                 {

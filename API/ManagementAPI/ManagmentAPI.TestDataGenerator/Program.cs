@@ -351,7 +351,7 @@
                             counter = 0;
                         }
 
-                        RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest = new RecordMemberTournamentScoreRequest
+                        RecordPlayerTournamentScoreRequest recordMemberTournamentScoreRequest = new RecordPlayerTournamentScoreRequest
                                                                                                 {
                                                                                                     PlayingHandicap = player.PlayingHandicap,
                                                                                                     HoleScores =

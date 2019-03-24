@@ -72,6 +72,6 @@
 
         public CreateTournamentResponse CreateTournamentResponse;
 
-        public RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest;
+        public RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest;
     }
 }

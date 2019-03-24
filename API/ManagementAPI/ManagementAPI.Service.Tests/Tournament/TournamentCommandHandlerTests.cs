@@ -28,13 +28,11 @@
             Mock<IAggregateRepository<TournamentAggregate>> tournamentRepository = new Mock<IAggregateRepository<TournamentAggregate>>();
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate);
-
-            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
+            
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();
 
             TournamentCommandHandler handler = new TournamentCommandHandler(golfClubRepository.Object,
                                                                             tournamentRepository.Object,
-                                                                            handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
             CancelTournamentCommand command = TournamentTestData.GetCancelTournamentCommand();
@@ -51,12 +49,10 @@
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(TournamentTestData.GetCreatedTournamentWithScoresRecordedAggregate);
 
-            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();
 
             TournamentCommandHandler handler = new TournamentCommandHandler(golfClubRepository.Object,
                                                                             tournamentRepository.Object,
-                                                                            handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
             CompleteTournamentCommand command = TournamentTestData.GetCompleteTournamentCommand();
@@ -75,12 +71,10 @@
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(TournamentTestData.GetEmptyTournamentAggregate);
 
-            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();
 
             TournamentCommandHandler handler = new TournamentCommandHandler(golfClubRepository.Object,
                                                                             tournamentRepository.Object,
-                                                                            handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
             CreateTournamentCommand command = TournamentTestData.GetCreateTournamentCommand();
@@ -99,12 +93,10 @@
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(TournamentTestData.GetEmptyTournamentAggregate);
 
-            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();
 
             TournamentCommandHandler handler = new TournamentCommandHandler(golfClubRepository.Object,
                                                                             tournamentRepository.Object,
-                                                                            handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
             CreateTournamentCommand command = TournamentTestData.GetCreateTournamentCommand();
@@ -123,12 +115,10 @@
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(TournamentTestData.GetEmptyTournamentAggregate);
 
-            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();
 
             TournamentCommandHandler handler = new TournamentCommandHandler(golfClubRepository.Object,
                                                                             tournamentRepository.Object,
-                                                                            handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
             CreateTournamentCommand command = TournamentTestData.GetCreateTournamentCommand();
@@ -145,55 +135,10 @@
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate(1, 2, 2, 2, 5, 3));
 
-            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
-            handicapAdjustmentCalculatorService
-                .SetupSequence(h => h.CalculateHandicapAdjustment(It.IsAny<Decimal>(), It.IsAny<Int32>(), It.IsAny<Dictionary<Int32, Int32>>())).Returns(new List<Decimal>
-                                                                                                                                                         {
-                                                                                                                                                             0.1m
-                                                                                                                                                         })
-                .Returns(new List<Decimal>
-                         {
-                             -0.1m
-                         }).Returns(new List<Decimal>
-                                    {
-                                        0.1m
-                                    }).Returns(new List<Decimal>
-                                               {
-                                                   -0.2m,
-                                                   -0.2m
-                                               }).Returns(new List<Decimal>
-                                                          {
-                                                              0.1m
-                                                          }).Returns(new List<Decimal>
-                                                                     {
-                                                                         0.1m
-                                                                     }).Returns(new List<Decimal>
-                                                                                {
-                                                                                    -0.4m
-                                                                                }).Returns(new List<Decimal>
-                                                                                           {
-                                                                                               0.1m
-                                                                                           }).Returns(new List<Decimal>
-                                                                                                      {
-                                                                                                          0.1m
-                                                                                                      }).Returns(new List<Decimal>
-                                                                                                                 {
-                                                                                                                     0.1m
-                                                                                                                 }).Returns(new List<Decimal>
-                                                                                                                            {
-                                                                                                                                -0.2m
-                                                                                                                            }).Returns(new List<Decimal>
-                                                                                                                                       {
-                                                                                                                                           0.1m
-                                                                                                                                       }).Returns(new List<Decimal>
-                                                                                                                                                  {
-                                                                                                                                                      0.1m
-                                                                                                                                                  });
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();
 
             TournamentCommandHandler handler = new TournamentCommandHandler(golfClubRepository.Object,
                                                                             tournamentRepository.Object,
-                                                                            handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
             ProduceTournamentResultCommand command = TournamentTestData.GetProduceTournamentResultCommand();
@@ -210,15 +155,13 @@
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregateWithPlayerSignedUp);
 
-            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();
 
             TournamentCommandHandler handler = new TournamentCommandHandler(golfClubRepository.Object,
                                                                             tournamentRepository.Object,
-                                                                            handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
-            RecordMemberTournamentScoreCommand command = TournamentTestData.GetRecordMemberTournamentScoreCommand();
+            RecordPlayerTournamentScoreCommand command = TournamentTestData.GetRecordMemberTournamentScoreCommand();
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }
@@ -232,12 +175,10 @@
             tournamentRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(TournamentTestData.GetCreatedTournamentAggregate);
 
-            Mock<IHandicapAdjustmentCalculatorService> handicapAdjustmentCalculatorService = new Mock<IHandicapAdjustmentCalculatorService>();
             Mock<ITournamentApplicationService> tournamentApplicationService = new Mock<ITournamentApplicationService>();
 
             TournamentCommandHandler handler = new TournamentCommandHandler(golfClubRepository.Object,
                                                                             tournamentRepository.Object,
-                                                                            handicapAdjustmentCalculatorService.Object,
                                                                             tournamentApplicationService.Object);
 
             SignUpForTournamentCommand command = TournamentTestData.GetSignUpForTournamentCommand();

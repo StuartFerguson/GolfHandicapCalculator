@@ -4,23 +4,23 @@
     using DataTransferObjects;
     using Shared.CommandHandling;
 
-    public class RecordMemberTournamentScoreCommand : Command<String>
+    public class RecordPlayerTournamentScoreCommand : Command<String>
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecordMemberTournamentScoreCommand" /> class.
+        /// Initializes a new instance of the <see cref="RecordPlayerTournamentScoreCommand" /> class.
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="recordMemberTournamentScoreRequest">The record member tournament score request.</param>
+        /// <param name="recordPlayerTournamentScoreRequest">The record player tournament score request.</param>
         /// <param name="commandId">The command identifier.</param>
-        private RecordMemberTournamentScoreCommand(Guid playerId,
+        private RecordPlayerTournamentScoreCommand(Guid playerId,
                                                    Guid tournamentId,
-                                                   RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest,
+                                                   RecordPlayerTournamentScoreRequest recordPlayerTournamentScoreRequest,
                                                    Guid commandId) : base(commandId)
         {
-            this.RecordMemberTournamentScoreRequest = recordMemberTournamentScoreRequest;
+            this.RecordPlayerTournamentScoreRequest = recordPlayerTournamentScoreRequest;
             this.TournamentId = tournamentId;
             this.PlayerId = playerId;
         }
@@ -38,12 +38,12 @@
         public Guid PlayerId { get; }
 
         /// <summary>
-        /// Gets or sets the record member tournament score request.
+        /// Gets the record player tournament score request.
         /// </summary>
         /// <value>
         /// The record member tournament score request.
         /// </value>
-        public RecordMemberTournamentScoreRequest RecordMemberTournamentScoreRequest { get; }
+        public RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest { get; }
 
         /// <summary>
         /// Gets the tournament identifier.
@@ -62,13 +62,13 @@
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="recordMemberTournamentScoreRequest">The record member tournament score request.</param>
+        /// <param name="recordPlayerTournamentScoreRequest">The record player tournament score request.</param>
         /// <returns></returns>
-        public static RecordMemberTournamentScoreCommand Create(Guid playerId,
+        public static RecordPlayerTournamentScoreCommand Create(Guid playerId,
                                                                 Guid tournamentId,
-                                                                RecordMemberTournamentScoreRequest recordMemberTournamentScoreRequest)
+                                                                RecordPlayerTournamentScoreRequest recordPlayerTournamentScoreRequest)
         {
-            return new RecordMemberTournamentScoreCommand(playerId, tournamentId, recordMemberTournamentScoreRequest, Guid.NewGuid());
+            return new RecordPlayerTournamentScoreCommand(playerId, tournamentId, recordPlayerTournamentScoreRequest, Guid.NewGuid());
         }
 
         #endregion

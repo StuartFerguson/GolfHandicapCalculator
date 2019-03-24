@@ -7,6 +7,7 @@ using Shared.EventSourcing;
 namespace ManagementAPI.Tournament.DomainEvents
 {
     [JsonObject]
+    [ExcludeFromCodeCoverage]
     public class HandicapAdjustmentRecordedEvent : DomainEvent
     {
         #region Constructors        
