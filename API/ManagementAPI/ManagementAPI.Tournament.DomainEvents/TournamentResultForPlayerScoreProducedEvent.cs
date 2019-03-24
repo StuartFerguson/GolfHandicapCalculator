@@ -11,7 +11,6 @@
     /// <seealso cref="Shared.EventSourcing.DomainEvent" />
     [JsonObject]
     public class TournamentResultForPlayerScoreProducedEvent : DomainEvent
-
     {
         #region Constructors
 

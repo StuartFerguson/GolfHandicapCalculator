@@ -506,7 +506,6 @@ namespace ManagementAPI.Service.Tests.Tournament
         //        }
         //    });
 
-
         //    #endregion
 
         //    #region Category 5 Scores
