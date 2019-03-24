@@ -177,6 +177,7 @@
 
             aggregate.HasBeenCompleted.ShouldBeTrue();
             aggregate.CompletedDateTime.ShouldBe(TournamentTestData.CompletedDateTime);
+            aggregate.GetScores().All(s=> s.IsPublished).ShouldBeTrue();
         }
 
         [Fact]
@@ -468,5 +469,38 @@
         }
 
         #endregion
+
+        [Fact]
+        public void TournamentAggregate_ProduceResult_ResultIsProduced()
+        {
+            TournamentAggregate tournamentAggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate(20, 15, 23, 16, 0, 5);
+
+            tournamentAggregate.ProduceResult();
+
+            tournamentAggregate.HasResultBeenProduced.ShouldBeTrue();
+
+            List<PlayerScoreRecordDataTransferObject> scores = tournamentAggregate.GetScores();
+            scores.Any(s => s.Last9HolesScore == 0).ShouldBeFalse();
+            scores.Any(s => s.Last6HolesScore == 0).ShouldBeFalse();
+            scores.Any(s => s.Last3HolesScore == 0).ShouldBeFalse();
+            scores.Any(s => s.TournamentDivision == 0).ShouldBeFalse();
+            scores.Any(s => s.Position == 0).ShouldBeFalse();
+        }
+
+        [Fact]
+        public void TournamentAggregate_ProduceResult_CSSNotCalculated_ErrorThrown()
+        {
+            TournamentAggregate tournamentAggregate = TournamentTestData.GetCompletedTournamentAggregate(20, 15, 23, 16, 0, 5);
+
+            Should.Throw<InvalidOperationException>( () => tournamentAggregate.ProduceResult());
+        }
+
+        [Fact]
+        public void TournamentAggregate_ProduceResult_UnsupportedFormat_ErrorThrown()
+        {
+            TournamentAggregate tournamentAggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate(20, 15, 23, 16, 0, 5, TournamentFormat.Stableford);
+
+            Should.Throw<NotSupportedException>(() => tournamentAggregate.ProduceResult());
+        }
     }
 }

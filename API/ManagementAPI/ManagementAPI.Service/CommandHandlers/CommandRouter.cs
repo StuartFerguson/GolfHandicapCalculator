@@ -129,7 +129,6 @@
         {
             return new TournamentCommandHandler(this.ClubRepository,
                                                 this.TournamentRepository,
-                                                this.HandicapAdjustmentCalculatorService,
                                                 this.TournamentApplicationService);
         }
 
@@ -142,7 +141,6 @@
         {
             return new TournamentCommandHandler(this.ClubRepository,
                                                 this.TournamentRepository,
-                                                this.HandicapAdjustmentCalculatorService,
                                                 this.TournamentApplicationService);
         }
 
@@ -155,7 +153,6 @@
         {
             return new TournamentCommandHandler(this.ClubRepository,
                                                 this.TournamentRepository,
-                                                this.HandicapAdjustmentCalculatorService,
                                                 this.TournamentApplicationService);
         }
 
@@ -168,7 +165,6 @@
         {
             return new TournamentCommandHandler(this.ClubRepository,
                                                 this.TournamentRepository,
-                                                this.HandicapAdjustmentCalculatorService,
                                                 this.TournamentApplicationService);
         }
 
@@ -181,7 +177,6 @@
         {
             return new TournamentCommandHandler(this.ClubRepository,
                                                 this.TournamentRepository,
-                                                this.HandicapAdjustmentCalculatorService,
                                                 this.TournamentApplicationService);
         }
 
@@ -194,7 +189,6 @@
         {
             return new TournamentCommandHandler(this.ClubRepository,
                                                 this.TournamentRepository,
-                                                this.HandicapAdjustmentCalculatorService,
                                                 this.TournamentApplicationService);
         }
 

@@ -2,6 +2,7 @@
 {
     public enum TournamentFormat
     {
-        Strokeplay = 1
+        Strokeplay = 1,
+        Stableford = 2
     }
 }

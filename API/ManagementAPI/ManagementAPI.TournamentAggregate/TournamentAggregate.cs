@@ -7,19 +7,19 @@
     using System.Linq;
     using DataTransferObjects;
     using DomainEvents;
+    using Newtonsoft.Json;
     using Shared.EventSourcing;
     using Shared.EventStore;
     using Shared.Exceptions;
     using Shared.General;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Shared.EventStore.Aggregate" />
     public class TournamentAggregate : Aggregate
     {
         #region Fields
-
-        /// <summary>
-        /// The handicap adjustments
-        /// </summary>
-        private List<HandicapAdjustment> HandicapAdjustments;
 
         /// <summary>
         /// The player score records
@@ -36,7 +36,7 @@
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TournamentAggregate"/> class.
+        /// Initializes a new instance of the <see cref="TournamentAggregate" /> class.
         /// </summary>
         [ExcludeFromCodeCoverage]
         public TournamentAggregate()
@@ -45,7 +45,7 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TournamentAggregate"/> class.
+        /// Initializes a new instance of the <see cref="TournamentAggregate" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         private TournamentAggregate(Guid aggregateId)
@@ -164,20 +164,20 @@
         public Int32 MeasuredCourseSSS { get; private set; }
 
         /// <summary>
-        /// Gets the player category.
-        /// </summary>
-        /// <value>
-        /// The player category.
-        /// </value>
-        public PlayerCategory PlayerCategory { get; private set; }
-
-        /// <summary>
         /// Gets the name.
         /// </summary>
         /// <value>
         /// The name.
         /// </value>
         public String Name { get; private set; }
+
+        /// <summary>
+        /// Gets the player category.
+        /// </summary>
+        /// <value>
+        /// The player category.
+        /// </value>
+        public PlayerCategory PlayerCategory { get; private set; }
 
         /// <summary>
         /// Gets the tournament date.
@@ -190,6 +190,147 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Produces the result.
+        /// </summary>
+        public void ProduceResult()
+        {
+            this.CheckTournamentCSSHasBeenCalculated();
+
+            // TODO: Use the divisions configured for the tournament
+            // TODO: Need the measured course and its holes for this (in stableford)
+
+            Int32 division1Start = -10;
+            Int32 division1End = 5;
+
+            Int32 division2Start = 6;
+            Int32 division2End = 12;
+
+            Int32 division3Start = 13;
+            Int32 division3End = 21;
+
+            Int32 division4Start = 22;
+            Int32 division4End = 28;
+
+            // calculate the count back elements of each score
+            foreach (PlayerScoreRecord playerScoreRecord in this.PlayerScoreRecords)
+            {
+                CountbackScores countBackScores = this.CalculateCountBackScores(playerScoreRecord, this.Format);
+                playerScoreRecord.SetCountBackScores(countBackScores.Last9Holes, countBackScores.Last6Holes,
+                                                     countBackScores.Last3Holes);
+            }
+
+            IEnumerable<PlayerScoreRecord> division1Scores = this.PlayerScoreRecords.Where(p => p.PlayingHandicap >= division1Start && p.PlayingHandicap <= division1End);
+            IEnumerable<PlayerScoreRecord> division2Scores = this.PlayerScoreRecords.Where(p => p.PlayingHandicap >= division2Start && p.PlayingHandicap <= division2End);
+            IEnumerable<PlayerScoreRecord> division3Scores = this.PlayerScoreRecords.Where(p => p.PlayingHandicap >= division3Start && p.PlayingHandicap <= division3End);
+            IEnumerable<PlayerScoreRecord> division4Scores = this.PlayerScoreRecords.Where(p => p.PlayingHandicap >= division4Start && p.PlayingHandicap <= division4End);
+
+            IOrderedEnumerable<PlayerScoreRecord> division1Result = division1Scores.OrderBy(s => s.NetScore).ThenBy(s => s.Last9HolesScore).ThenBy(s => s.Last6HolesScore).ThenBy(s => s.Last3HolesScore);
+            IOrderedEnumerable<PlayerScoreRecord> division2Result = division2Scores.OrderBy(s => s.NetScore).ThenBy(s => s.Last9HolesScore).ThenBy(s => s.Last6HolesScore).ThenBy(s => s.Last3HolesScore);
+            IOrderedEnumerable<PlayerScoreRecord> division3Result = division3Scores.OrderBy(s => s.NetScore).ThenBy(s => s.Last9HolesScore).ThenBy(s => s.Last6HolesScore).ThenBy(s => s.Last3HolesScore);
+            IOrderedEnumerable<PlayerScoreRecord> division4Result = division4Scores.OrderBy(s => s.NetScore).ThenBy(s => s.Last9HolesScore).ThenBy(s => s.Last6HolesScore).ThenBy(s => s.Last3HolesScore);
+
+            // Start the position counter at 1 for division 1
+            Int32 position = 1;
+            foreach (PlayerScoreRecord playerScoreRecord in division1Result)
+            {
+                TournamentResultForPlayerScoreProducedEvent tournamentResultForPlayerScoreProducedEvent = TournamentResultForPlayerScoreProducedEvent.Create(this.AggregateId, 
+                                                                                                                                                             playerScoreRecord.PlayerId,
+                                                                                                                                                             1, position, playerScoreRecord.GrossScore,
+                                                                                                                                                             playerScoreRecord.PlayingHandicap,
+                                                                                                                                                             playerScoreRecord.NetScore,
+                                                                                                                                                             playerScoreRecord.Last9HolesScore,
+                                                                                                                                                             playerScoreRecord.Last6HolesScore,
+                                                                                                                                                             playerScoreRecord.Last3HolesScore);
+
+                this.ApplyAndPend(tournamentResultForPlayerScoreProducedEvent);
+                position++;
+            }
+
+            // Reset the position
+            position = 1;
+            foreach (PlayerScoreRecord playerScoreRecord in division2Result)
+            {
+                TournamentResultForPlayerScoreProducedEvent tournamentResultForPlayerScoreProducedEvent = TournamentResultForPlayerScoreProducedEvent.Create(this.AggregateId,
+                                                                                                                                                             playerScoreRecord.PlayerId,
+                                                                                                                                                             2, position, playerScoreRecord.GrossScore,
+                                                                                                                                                             playerScoreRecord.PlayingHandicap,
+                                                                                                                                                             playerScoreRecord.NetScore,
+                                                                                                                                                             playerScoreRecord.Last9HolesScore,
+                                                                                                                                                             playerScoreRecord.Last6HolesScore,
+                                                                                                                                                             playerScoreRecord.Last3HolesScore);
+
+                this.ApplyAndPend(tournamentResultForPlayerScoreProducedEvent);
+                position++;
+            }
+
+            // Reset the position
+            position = 1;
+            foreach (PlayerScoreRecord playerScoreRecord in division3Result)
+            {
+                TournamentResultForPlayerScoreProducedEvent tournamentResultForPlayerScoreProducedEvent = TournamentResultForPlayerScoreProducedEvent.Create(this.AggregateId,
+                                                                                                                                                             playerScoreRecord.PlayerId,
+                                                                                                                                                             3, position, playerScoreRecord.GrossScore,
+                                                                                                                                                             playerScoreRecord.PlayingHandicap,
+                                                                                                                                                             playerScoreRecord.NetScore,
+                                                                                                                                                             playerScoreRecord.Last9HolesScore,
+                                                                                                                                                             playerScoreRecord.Last6HolesScore,
+                                                                                                                                                             playerScoreRecord.Last3HolesScore);
+
+                this.ApplyAndPend(tournamentResultForPlayerScoreProducedEvent);
+                position++;
+            }
+
+            // Reset the position
+            position = 1; 
+            foreach (PlayerScoreRecord playerScoreRecord in division4Result)
+            {
+                TournamentResultForPlayerScoreProducedEvent tournamentResultForPlayerScoreProducedEvent = TournamentResultForPlayerScoreProducedEvent.Create(this.AggregateId,
+                                                                                                                                                             playerScoreRecord.PlayerId,
+                                                                                                                                                             4, position, playerScoreRecord.GrossScore,
+                                                                                                                                                             playerScoreRecord.PlayingHandicap,
+                                                                                                                                                             playerScoreRecord.NetScore,
+                                                                                                                                                             playerScoreRecord.Last9HolesScore,
+                                                                                                                                                             playerScoreRecord.Last6HolesScore,
+                                                                                                                                                             playerScoreRecord.Last3HolesScore);
+
+                this.ApplyAndPend(tournamentResultForPlayerScoreProducedEvent);
+                position++;
+            }
+
+            TournamentResultProducedEvent tournamentResultProducedEvent = TournamentResultProducedEvent.Create(this.AggregateId, DateTime.Now);
+            this.ApplyAndPend(tournamentResultProducedEvent);
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(TournamentResultForPlayerScoreProducedEvent domainEvent)
+        {
+            PlayerScoreRecord playerScoreRecord = this.PlayerScoreRecords.Single(p => p.PlayerId == domainEvent.PlayerId);
+            playerScoreRecord.SetCountBackScores(domainEvent.Last9Holes, domainEvent.Last6Holes, domainEvent.Last3Holes);
+            playerScoreRecord.SetResultDetails(domainEvent.DivisionPosition, domainEvent.Division);
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(TournamentResultProducedEvent domainEvent)
+        {
+            this.HasResultBeenProduced = true;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has result been produced.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has result been produced; otherwise, <c>false</c>.
+        /// </value>
+        [JsonProperty]
+        public Boolean HasResultBeenProduced { get; private set; }
 
         /// <summary>
         /// Calculates the CSS.
@@ -297,6 +438,19 @@
 
             this.CheckTournamentNotAlreadyCancelled();
 
+            foreach (PlayerScoreRecord playerScoreRecord in this.PlayerScoreRecords)
+            {
+                // Create a new event to 'publish' the players score
+                PlayerScorePublishedEvent playerScorePublishedEvent = PlayerScorePublishedEvent.Create(this.AggregateId,
+                                                                                                       playerScoreRecord.PlayerId,
+                                                                                                       playerScoreRecord.PlayingHandicap,
+                                                                                                       playerScoreRecord.HoleScores,
+                                                                                                       this.GolfClubId,
+                                                                                                       this.MeasuredCourseId);
+
+                this.ApplyAndPend(playerScorePublishedEvent);
+            }
+
             TournamentCompletedEvent tournamentCompletedEvent = TournamentCompletedEvent.Create(this.AggregateId, completedDateTime);
             this.ApplyAndPend(tournamentCompletedEvent);
         }
@@ -379,26 +533,33 @@
                                NetScore = playerScoreRecord.NetScore,
                                PlayerId = playerScoreRecord.PlayerId,
                                GrossScore = playerScoreRecord.GrossScore,
-                               HandicapCategory = playerScoreRecord.HandicapCategory
-                           });
+                               HandicapCategory = playerScoreRecord.HandicapCategory,
+                               IsPublished = playerScoreRecord.IsPublished,
+                               Last9HolesScore = playerScoreRecord.Last9HolesScore,
+                               TournamentDivision = playerScoreRecord.TournamentDivision,
+                               Last6HolesScore = playerScoreRecord.Last6HolesScore,
+                               Last3HolesScore = playerScoreRecord.Last3HolesScore,
+                               Position = playerScoreRecord.Position
+                });
             }
 
             return result;
         }
-        
+
         /// <summary>
         /// Records the player score.
         /// </summary>
         /// <param name="playerId">The member identifier.</param>
         /// <param name="playingHandicap">The playing handicap.</param>
         /// <param name="holeScores">The hole scores.</param>
+        /// <exception cref="InvalidDataException"></exception>
         public void RecordPlayerScore(Guid playerId,
                                       Int32 playingHandicap,
                                       Dictionary<Int32, Int32> holeScores)
         {
             Guard.ThrowIfInvalidGuid(playerId, typeof(ArgumentNullException), "Player Id must be provided to record a score");
             Guard.ThrowIfNull(holeScores, typeof(ArgumentNullException), "Hole Scores must be provided to record a score");
-            
+
             // Check the players playing handicap is valid
             if (playingHandicap > 36)
             {
@@ -431,19 +592,6 @@
         }
 
         /// <summary>
-        /// Checks the player has signed up.
-        /// </summary>
-        /// <param name="playerId">The player identifier.</param>
-        /// <exception cref="InvalidOperationException">Player Id {playerId}</exception>
-        private void CheckPlayerHasSignedUp(Guid playerId)
-        {
-            if (this.SignedUpPlayers.All(x => x != playerId))
-            {
-                throw new InvalidOperationException($"Player Id {playerId} has not signed up for this tournament");
-            }
-        }
-
-        /// <summary>
         /// Signs up for tournament.
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
@@ -469,19 +617,6 @@
         }
 
         /// <summary>
-        /// Checks the player not signed up.
-        /// </summary>
-        /// <param name="playerId">The player identifier.</param>
-        /// <exception cref="InvalidOperationException">Player Id {playerId}</exception>
-        private void CheckPlayerNotSignedUp(Guid playerId)
-        {
-            if (this.SignedUpPlayers.Any(x => x == playerId))
-            {
-                throw new InvalidOperationException($"Player Id {playerId} is already signed up for this tournament");
-            }
-        }
-
-        /// <summary>
         /// Plays the event.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -489,15 +624,6 @@
         protected override void PlayEvent(DomainEvent domainEvent)
         {
             this.PlayEvent((dynamic)domainEvent);
-        }
-
-        /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        private void PlayEvent(PlayerSignedUpEvent domainEvent)
-        {
-            this.SignedUpPlayers.Add(domainEvent.PlayerId);
         }
 
         /// <summary>
@@ -512,17 +638,30 @@
                 throw new InvalidOperationException($"Player Id {playerId} has already recorded a score for this competition");
             }
         }
-
+        
         /// <summary>
-        /// Checks the player has recorded score.
+        /// Checks the player has signed up.
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
-        /// <exception cref="NotFoundException"></exception>
-        private void CheckPlayerHasRecordedScore(Guid playerId)
+        /// <exception cref="InvalidOperationException">Player Id {playerId}</exception>
+        private void CheckPlayerHasSignedUp(Guid playerId)
         {
-            if (this.PlayerScoreRecords.All(m => m.PlayerId != playerId))
+            if (this.SignedUpPlayers.All(x => x != playerId))
             {
-                throw new NotFoundException($"No score record found for {playerId}");
+                throw new InvalidOperationException($"Player Id {playerId} has not signed up for this tournament");
+            }
+        }
+
+        /// <summary>
+        /// Checks the player not signed up.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <exception cref="InvalidOperationException">Player Id {playerId}</exception>
+        private void CheckPlayerNotSignedUp(Guid playerId)
+        {
+            if (this.SignedUpPlayers.Any(x => x == playerId))
+            {
+                throw new InvalidOperationException($"Player Id {playerId} is already signed up for this tournament");
             }
         }
 
@@ -541,6 +680,7 @@
         /// <summary>
         /// Checks the tournament CSS not already calculated.
         /// </summary>
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a tournament that has the CSS Calculated</exception>
         private void CheckTournamentCSSNotAlreadyCalculated()
         {
             if (this.CSSHasBeenCalculated)
@@ -552,6 +692,7 @@
         /// <summary>
         /// Checks the tournament has been completed.
         /// </summary>
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a tournament that has not already been completed</exception>
         private void CheckTournamentHasBeenCompleted()
         {
             if (!this.HasBeenCompleted)
@@ -575,6 +716,7 @@
         /// <summary>
         /// Checks the tournament not already cancelled.
         /// </summary>
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a tournament that has already been cancelled</exception>
         /// <exception cref="System.InvalidOperationException">This operation cannot be performed on a tournament that has already been cancelled</exception>
         private void CheckTournamentNotAlreadyCancelled()
         {
@@ -587,6 +729,7 @@
         /// <summary>
         /// Checks the tournament not already completed.
         /// </summary>
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a tournament that has already been completed</exception>
         /// <exception cref="System.InvalidOperationException">This operation cannot be performed on a tournament that has already been completed</exception>
         private void CheckTournamentNotAlreadyCompleted()
         {
@@ -599,6 +742,7 @@
         /// <summary>
         /// Checks the tournament not already created.
         /// </summary>
+        /// <exception cref="InvalidOperationException">This operation cannot be performed on a tournament that has already been created</exception>
         /// <exception cref="System.InvalidOperationException">This operation cannot be performed on a tournament that has already been created</exception>
         private void CheckTournamentNotAlreadyCreated()
         {
@@ -611,6 +755,9 @@
         /// <summary>
         /// Gets the CSS score table.
         /// </summary>
+        /// <param name="category1Percentage">The category1 percentage.</param>
+        /// <param name="category2Percentage">The category2 percentage.</param>
+        /// <param name="category3And4Percentage">The category3 and4 percentage.</param>
         /// <returns></returns>
         private CSSScoreTableEntry GetCSSScoreTableEntry(Int32 category1Percentage,
                                                          Int32 category2Percentage,
@@ -3659,11 +3806,20 @@
             #endregion
 
             // Get the required table entry
-            CSSScoreTableEntry cssScoreTableEntry = cssScoreTableEntries
-                                                    .Where(e => e.Category1Percentage == category1Percentage && e.Category2Percentage == category2Percentage &&
-                                                                e.Category3And4Percentage == category3And4Percentage).Single();
+            CSSScoreTableEntry cssScoreTableEntry = cssScoreTableEntries.Single(e => e.Category1Percentage == category1Percentage &&
+                                                                                     e.Category2Percentage == category2Percentage &&
+                                                                                     e.Category3And4Percentage == category3And4Percentage);
 
             return cssScoreTableEntry;
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(PlayerSignedUpEvent domainEvent)
+        {
+            this.SignedUpPlayers.Add(domainEvent.PlayerId);
         }
 
         /// <summary>
@@ -3681,7 +3837,6 @@
             this.PlayerCategory = (PlayerCategory)domainEvent.PlayerCategory;
             this.TournamentDate = domainEvent.TournamentDate;
             this.PlayerScoreRecords = new List<PlayerScoreRecord>();
-            this.HandicapAdjustments = new List<HandicapAdjustment>();
             this.SignedUpPlayers = new List<Guid>();
         }
 
@@ -3694,6 +3849,17 @@
             PlayerScoreRecord playerScoreRecord = PlayerScoreRecord.Create(domainEvent.PlayerId, domainEvent.PlayingHandicap, domainEvent.HoleScores);
 
             this.PlayerScoreRecords.Add(playerScoreRecord);
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(PlayerScorePublishedEvent domainEvent)
+        {
+            // Find the recorded score
+            PlayerScoreRecord playerScoreRecord = this.PlayerScoreRecords.Single(p => p.PlayerId == domainEvent.PlayerId);
+            playerScoreRecord.Publish();
         }
 
         /// <summary>
@@ -3729,20 +3895,16 @@
         }
 
         /// <summary>
-        /// Plays the event.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        private void PlayEvent(HandicapAdjustmentRecordedEvent domainEvent)
-        {
-            HandicapAdjustment handicapAdjustment = HandicapAdjustment.Create(domainEvent.MemberId, domainEvent.Adjustments, domainEvent.TotalAdjustment);
-
-            this.HandicapAdjustments.Add(handicapAdjustment);
-        }
-
-        /// <summary>
         /// Validates the hole scores.
         /// </summary>
         /// <param name="holeScores">The hole scores.</param>
+        /// <exception cref="InvalidDataException">
+        /// A score to record must have 18 individual scores
+        /// or
+        /// Hole numbers {string.Join(",", missingHoleNumbers)}
+        /// or
+        /// Hole numbers {string.Join(",", missingHoleNumbers)}
+        /// </exception>
         /// <exception cref="NotImplementedException"></exception>
         private void ValidateHoleScores(Dictionary<Int32, Int32> holeScores)
         {
@@ -3771,6 +3933,46 @@
             }
         }
 
+        /// <summary>
+        /// Calculates the count back scores.
+        /// </summary>
+        /// <param name="playerScoreRecord">The player score record.</param>
+        /// <param name="tournamentFormat">The tournament format.</param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException">Tournament Format {tournamentFormat}</exception>
+        private CountbackScores CalculateCountBackScores(PlayerScoreRecord playerScoreRecord, TournamentFormat tournamentFormat)
+        {
+            CountbackScores countBackScores = new CountbackScores();
+            if (tournamentFormat == TournamentFormat.Strokeplay)
+            {
+                countBackScores.Last9Holes = this.CalculateStrokePlayCountBackScores(playerScoreRecord, 9);
+                countBackScores.Last6Holes = this.CalculateStrokePlayCountBackScores(playerScoreRecord, 6);
+                countBackScores.Last3Holes = this.CalculateStrokePlayCountBackScores(playerScoreRecord, 3);
+            }
+            else
+            {
+                throw new NotSupportedException($"Tournament Format {tournamentFormat} is not yet supported");
+            }
+
+            return countBackScores;
+        }
+
+        /// <summary>
+        /// Calculates the stroke play count back scores.
+        /// </summary>
+        /// <param name="playerScoreRecord">The player score record.</param>
+        /// <param name="lastHoleCount">The last hole count.</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private Decimal CalculateStrokePlayCountBackScores(PlayerScoreRecord playerScoreRecord, Int32 lastHoleCount)
+        {
+            Int32 lastHoleCountScores = playerScoreRecord.HoleScores.OrderBy(h => h.Key).TakeLast(lastHoleCount).Sum(h => h.Value);
+
+            Decimal lastHoleCountHandicap = Decimal.Round((Decimal)playerScoreRecord.PlayingHandicap / (Decimal)(18 / lastHoleCount), 2, MidpointRounding.AwayFromZero);
+            
+            return lastHoleCountScores - lastHoleCountHandicap;
+        }
+
         #endregion
 
         #region Others
@@ -3791,5 +3993,33 @@
         private const Int32 MinimumHoleNumber = 1;
 
         #endregion
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class CountbackScores
+    {
+        /// <summary>
+        /// Gets or sets the last9 holes.
+        /// </summary>
+        /// <value>
+        /// The last9 holes.
+        /// </value>
+        internal Decimal Last9Holes { get; set; }
+        /// <summary>
+        /// Gets or sets the last6 holes.
+        /// </summary>
+        /// <value>
+        /// The last6 holes.
+        /// </value>
+        internal Decimal Last6Holes { get; set; }
+        /// <summary>
+        /// Gets or sets the last3 holes.
+        /// </summary>
+        /// <value>
+        /// The last3 holes.
+        /// </value>
+        internal Decimal Last3Holes { get; set; }
     }
 }

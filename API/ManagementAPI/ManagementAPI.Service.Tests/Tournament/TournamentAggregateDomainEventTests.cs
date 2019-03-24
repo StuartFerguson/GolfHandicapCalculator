@@ -46,6 +46,27 @@ namespace ManagementAPI.Service.Tests.Tournament
         }
 
         [Fact]
+        public void PlayerScorePublishedEvent_CanBeCreated_IsCreated()
+        {
+            PlayerScorePublishedEvent playerScorePublishedEvent = PlayerScorePublishedEvent.Create(TournamentTestData.AggregateId,
+                                                                                                TournamentTestData.PlayerId,
+                                                                                                TournamentTestData.PlayingHandicap,
+                                                                                                TournamentTestData.HoleScores,
+                                                                                                   TournamentTestData.GolfClubId,
+                                                                                                   TournamentTestData.MeasuredCourseId);
+
+            playerScorePublishedEvent.ShouldNotBeNull();
+            playerScorePublishedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            playerScorePublishedEvent.PlayerId.ShouldBe(TournamentTestData.PlayerId);
+            playerScorePublishedEvent.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
+            playerScorePublishedEvent.HoleScores.ShouldBe(TournamentTestData.HoleScores);
+            playerScorePublishedEvent.GolfClubId.ShouldBe(TournamentTestData.GolfClubId);
+            playerScorePublishedEvent.MeasuredCourseId.ShouldBe(TournamentTestData.MeasuredCourseId);
+            playerScorePublishedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            playerScorePublishedEvent.EventId.ShouldNotBe(Guid.Empty);
+        }
+
+        [Fact]
         public void TournamentCompletedEvent_CanBeCreated_IsCreated()
         {
             TournamentCompletedEvent tournamentCompletedEvent = TournamentCompletedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.CompletedDateTime);
@@ -84,27 +105,47 @@ namespace ManagementAPI.Service.Tests.Tournament
             tournamentCssCalculatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             tournamentCssCalculatedEvent.EventId.ShouldNotBe(Guid.Empty);
         }
+        
+        [Fact]
+        public void TournamentResultForPlayerScoreProducedEvent_CanBeCreated_IsCreated()
+        {
+            TournamentResultForPlayerScoreProducedEvent tournamentResultForPlayerScoreProducedEvent =
+                TournamentResultForPlayerScoreProducedEvent.Create(TournamentTestData.AggregateId,
+                                                                   TournamentTestData.PlayerId,
+                                                                   TournamentTestData.Division,
+                                                                   TournamentTestData.DivisionPosition,
+                                                                   TournamentTestData.GrossScore,
+                                                                   TournamentTestData.PlayingHandicap,
+                                                                   TournamentTestData.NetScore,
+                                                                   TournamentTestData.Last9HolesScore,
+                                                                   TournamentTestData.Last6HolesScore,
+                                                                   TournamentTestData.Last3HolesScore);
+
+            tournamentResultForPlayerScoreProducedEvent.ShouldNotBeNull();
+            tournamentResultForPlayerScoreProducedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            tournamentResultForPlayerScoreProducedEvent.EventId.ShouldNotBe(Guid.Empty);
+            tournamentResultForPlayerScoreProducedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            tournamentResultForPlayerScoreProducedEvent.PlayerId.ShouldBe(TournamentTestData.PlayerId);
+            tournamentResultForPlayerScoreProducedEvent.Division.ShouldBe(TournamentTestData.Division);
+            tournamentResultForPlayerScoreProducedEvent.DivisionPosition.ShouldBe(TournamentTestData.DivisionPosition);
+            tournamentResultForPlayerScoreProducedEvent.GrossScore.ShouldBe(TournamentTestData.GrossScore);
+            tournamentResultForPlayerScoreProducedEvent.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
+            tournamentResultForPlayerScoreProducedEvent.NetScore.ShouldBe(TournamentTestData.NetScore);
+            tournamentResultForPlayerScoreProducedEvent.Last9Holes.ShouldBe(TournamentTestData.Last9HolesScore);
+            tournamentResultForPlayerScoreProducedEvent.Last6Holes.ShouldBe(TournamentTestData.Last6HolesScore);
+            tournamentResultForPlayerScoreProducedEvent.Last3Holes.ShouldBe(TournamentTestData.Last3HolesScore);
+        }
 
         [Fact]
-        public void HandicapAdjustmentRecordedEvent_CanBeCreated_IsCreated()
+        public void UnitofWork_CanBeCreated_IsCreated()
         {
-            HandicapAdjustmentRecordedEvent handicapAdjustmentRecordedEvent = HandicapAdjustmentRecordedEvent.Create(
-                TournamentTestData.AggregateId,
-                TournamentTestData.PlayerId, TournamentTestData.GrossScore, TournamentTestData.NetScore,
-                TournamentTestData.CSS, TournamentTestData.PlayingHandicap, TournamentTestData.Adjustments,
-                TournamentTestData.Adjustments.Sum());
+            TournamentResultProducedEvent tournamentResultProducedEvent = TournamentResultProducedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.ResultDate);
 
-            handicapAdjustmentRecordedEvent.ShouldNotBeNull();
-            handicapAdjustmentRecordedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
-            handicapAdjustmentRecordedEvent.MemberId.ShouldBe(TournamentTestData.PlayerId);
-            handicapAdjustmentRecordedEvent.GrossScore.ShouldBe(TournamentTestData.GrossScore);
-            handicapAdjustmentRecordedEvent.NetScore.ShouldBe(TournamentTestData.NetScore);
-            handicapAdjustmentRecordedEvent.CSS.ShouldBe(TournamentTestData.CSS);
-            handicapAdjustmentRecordedEvent.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
-            handicapAdjustmentRecordedEvent.Adjustments.ShouldBe(TournamentTestData.Adjustments);            
-            handicapAdjustmentRecordedEvent.TotalAdjustment.ShouldBe(TournamentTestData.Adjustments.Sum());            
-            handicapAdjustmentRecordedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
-            handicapAdjustmentRecordedEvent.EventId.ShouldNotBe(Guid.Empty);
+            tournamentResultProducedEvent.ShouldNotBeNull();
+            tournamentResultProducedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            tournamentResultProducedEvent.EventId.ShouldNotBe(Guid.Empty);
+            tournamentResultProducedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
+            tournamentResultProducedEvent.ResultDate.ShouldBe(TournamentTestData.ResultDate);
         }
     }
 }
