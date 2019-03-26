@@ -79,6 +79,20 @@
         #region Methods
 
         /// <summary>
+        /// Adds the tournament division.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task AddTournamentDivision(String passwordToken,
+                                                AddTournamentDivisionToGolfClubRequest request,
+                                                CancellationToken cancellationToken)
+        {
+            await this.GolfClubClient.AddTournamentDivision(passwordToken, request, cancellationToken);
+        }
+
+        /// <summary>
         /// Adds the measured course to golf club.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
