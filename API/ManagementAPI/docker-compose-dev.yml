@@ -23,7 +23,7 @@ services:
       EVENTSTORE_STATS_PERIOD_SEC: 1
 
   subscriptionservice:
-    image: stuartferguson/subscriptionservice    
+    image: stuartferguson/subscriptionservice
     container_name: subscriptionservice
     volumes:
       - D:\home\ubuntu\commonservices\trace:/home/ubuntu/commonservices/trace/
