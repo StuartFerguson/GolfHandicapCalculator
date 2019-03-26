@@ -19,7 +19,12 @@
     using Shared.EventStore;
     using Shared.Exceptions;
     using Shared.General;
+    using Tournament.DomainEvents;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="ManagementAPI.Service.Manager.IManagmentAPIManager" />
     public class ManagementAPIManager : IManagmentAPIManager
     {
         #region Fields
@@ -162,6 +167,7 @@
         /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
+        /// <exception cref="NotFoundException">Golf Club not found with Id {golfClubId}</exception>
         public async Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembersList(Guid golfClubId,
                                                                                              CancellationToken cancellationToken)
         {
@@ -245,6 +251,7 @@
         /// <param name="playerId">The player identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
+        /// <exception cref="NotFoundException">No club memberships found for Player Id {playerId}</exception>
         public async Task<List<ClubMembershipResponse>> GetPlayersClubMemberships(Guid playerId,
                                                                                   CancellationToken cancellationToken)
         {
@@ -416,6 +423,123 @@
 
                     await context.SaveChangesAsync(cancellationToken);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Inserts the tournament to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">Golf Club with Id {domainEvent.GolfClubId}</exception>
+        public async Task InsertTournamentToReadModel(TournamentCreatedEvent domainEvent,
+                                                      CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the tournament has not already been added to the read model
+                Boolean isDuplicate = await context.Tournament.Where(t => t.TournamentId == domainEvent.AggregateId).AnyAsync(cancellationToken);
+
+                GolfClub golfClub = await context.GolfClub.SingleOrDefaultAsync(g => g.GolfClubId == domainEvent.GolfClubId, cancellationToken);
+
+                if (golfClub == null)
+                {
+                    throw new NotFoundException($"Golf Club with Id {domainEvent.GolfClubId} not found in read model");
+                }
+
+                if (!isDuplicate)
+                {
+                    Tournament tournament = new Tournament
+                    {
+                        PlayerCategory = domainEvent.PlayerCategory,
+                        Name = domainEvent.Name,
+                        Format = domainEvent.Format,
+                        GolfClubId = domainEvent.GolfClubId,
+                        MeasuredCourseId = domainEvent.MeasuredCourseId,
+                        GolfClubName = golfClub.Name,
+                        TournamentDate = domainEvent.TournamentDate,
+                        MeasuredCourseSSS = domainEvent.MeasuredCourseSSS,
+                        TournamentId = domainEvent.AggregateId,
+                        MeasuredCourseName = String.Empty,
+                        MeasuredCourseTeeColour = String.Empty
+                    };
+
+                    context.Tournament.Add(tournament);
+
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Inserts the player tournament score to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task InsertPlayerTournamentScoreToReadModel(TournamentResultForPlayerScoreProducedEvent domainEvent,
+                                                                 CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the club has not already been added to the read model
+                Boolean isDuplicate = await context.TournamentResultForPlayerScore.Where(t => t.TournamentId == domainEvent.AggregateId && t.PlayerId == domainEvent.PlayerId).AnyAsync(cancellationToken);
+                
+                if (!isDuplicate)
+                {
+                    TournamentResultForPlayerScore tournamentResultForPlayerScore = new TournamentResultForPlayerScore
+                                                                                    {
+                                                                                        Division = domainEvent.Division,
+                                                                                        DivisionPosition = domainEvent.DivisionPosition,
+                                                                                        GrossScore = domainEvent.GrossScore,
+                                                                                        Last3Holes = domainEvent.Last3Holes,
+                                                                                        Last6Holes = domainEvent.Last6Holes,
+                                                                                        Last9Holes = domainEvent.Last9Holes,
+                                                                                        NetScore = domainEvent.NetScore,
+                                                                                        PlayerId = domainEvent.PlayerId,
+                                                                                        PlayingHandicap = domainEvent.PlayingHandicap,
+                                                                                        TournamentId = domainEvent.AggregateId,
+                                                                                        TournamentResultForPlayerId = Guid.NewGuid()
+                                                                                    };
+
+                    context.TournamentResultForPlayerScore.Add(tournamentResultForPlayerScore);
+
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates the tournament status in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task UpdateTournamentStatusInReadModel(TournamentResultProducedEvent domainEvent,
+                                                            CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the tournament has not already been added to the read model
+                Tournament tournament = await context.Tournament.Where(t => t.TournamentId == domainEvent.AggregateId).SingleOrDefaultAsync(cancellationToken);
+
+                if (tournament== null)
+                {
+                    throw new NotFoundException($"Tournament with Id {domainEvent.AggregateId} not found in read model");
+                }
+
+                tournament.HasResultBeenProduced= true;
+
+                await context.SaveChangesAsync(cancellationToken);
             }
         }
 

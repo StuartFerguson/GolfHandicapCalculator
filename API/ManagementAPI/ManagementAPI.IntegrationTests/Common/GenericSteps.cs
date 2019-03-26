@@ -171,12 +171,19 @@ namespace ManagementAPI.IntegrationTests.Common
             String golfClubMembershipEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClubMembership";
             SubscriptionServiceHelper.CreateEndpoint(connection, golfClubMembershipEndpointId, "Golf Club Membership Read Model",golfClubMembershipEndpointUrl);
 
+            Guid tournamentEndpointId = Guid.NewGuid();
+            String tournamentEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Tournament";
+            SubscriptionServiceHelper.CreateEndpoint(connection, tournamentEndpointId, "Tournament Read Model", tournamentEndpointUrl);
+
             // Create the Streams
             Guid catergoryGolfClubAggregateStream = Guid.NewGuid();
             SubscriptionServiceHelper.CreateSubscriptionStream(connection, catergoryGolfClubAggregateStream, "$ce-GolfClubAggregate");
             
             Guid catergoryGolfClubMembershipAggregateStream = Guid.NewGuid();
             SubscriptionServiceHelper.CreateSubscriptionStream(connection, catergoryGolfClubMembershipAggregateStream, "$ce-GolfClubMembershipAggregate");
+
+            Guid catergoryTournamentAggregateStream = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionStream(connection, catergoryTournamentAggregateStream, "$ce-TournamentAggregate");
 
             // Create the groups
             Guid subscriptionGroupGolfClubAggregateId = Guid.NewGuid();
@@ -185,9 +192,13 @@ namespace ManagementAPI.IntegrationTests.Common
             Guid subscriptionGroupGolfClubMembershipAggregateId = Guid.NewGuid();
             SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubMembershipAggregateId, golfClubMembershipEndpointId, "GolfClubMembershipAggregate", catergoryGolfClubMembershipAggregateStream);
 
+            Guid subscriptionGroupTournamentAggregateId = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupTournamentAggregateId, tournamentEndpointId, "TournamentAggregate", catergoryTournamentAggregateStream);
+
             // Add the groups to the Subscription Service
             SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubAggregateId, this.SubscriberServiceId);
             SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubMembershipAggregateId, this.SubscriberServiceId);
+            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupTournamentAggregateId, this.SubscriberServiceId);
 
             connection.Close();
         }

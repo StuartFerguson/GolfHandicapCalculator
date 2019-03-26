@@ -17,9 +17,8 @@
     },
     "ManagementAPI.Service with Docker": {
       "commandName": "Project",
-      "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Docker"
+        "ASPNETCORE_ENVIRONMENT": "docker"
       }
     }
   }

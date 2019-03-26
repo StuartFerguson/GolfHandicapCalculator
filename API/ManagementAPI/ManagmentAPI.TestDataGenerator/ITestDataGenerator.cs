@@ -14,6 +14,17 @@
         #region Methods
 
         /// <summary>
+        /// Adds the tournament division.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task AddTournamentDivision(String passwordToken,
+                                   AddTournamentDivisionToGolfClubRequest request,
+                                   CancellationToken cancellationToken);
+
+        /// <summary>
         /// Adds the measured course to golf club.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>

@@ -197,7 +197,7 @@
         {
             this.Last9HolesScore = last9HolesScore;
             this.Last6HolesScore = last6HolesScore;
-            this.Last3HolesScore = last6HolesScore;
+            this.Last3HolesScore = last3HolesScore;
         }
 
         /// <summary>

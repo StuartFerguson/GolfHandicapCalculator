@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Net.Http;
+    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
     using ManagementAPI.Service.Client;
@@ -232,6 +233,35 @@
                 CreateGolfClubResponse createGolfClubResponse = await testDataGenerator.CreateGolfClub(token, createGolfClubRequest, cancellationToken);
 
                 await testDataGenerator.AddMeasuredCourseToGolfClub(token, Program.AddMeasuredCourseToClubRequest, cancellationToken);
+                
+                AddTournamentDivisionToGolfClubRequest division1 = new AddTournamentDivisionToGolfClubRequest
+                                                                   {
+                                                                       Division = 1,
+                                                                       StartHandicap = -10,
+                                                                       EndHandicap = 7
+                                                                   };
+                await testDataGenerator.AddTournamentDivision(token, division1, cancellationToken);
+                AddTournamentDivisionToGolfClubRequest division2 = new AddTournamentDivisionToGolfClubRequest
+                                                                   {
+                                                                       Division = 2,
+                                                                       StartHandicap = 6,
+                                                                       EndHandicap = 12
+                                                                   };
+                await testDataGenerator.AddTournamentDivision(token, division2, cancellationToken);
+                AddTournamentDivisionToGolfClubRequest division3 = new AddTournamentDivisionToGolfClubRequest
+                                                                   {
+                                                                       Division = 3,
+                                                                       StartHandicap = 13,
+                                                                       EndHandicap = 21
+                                                                   };
+                await testDataGenerator.AddTournamentDivision(token, division3, cancellationToken);
+                AddTournamentDivisionToGolfClubRequest division4 = new AddTournamentDivisionToGolfClubRequest
+                                                                   {
+                                                                       Division = 4,
+                                                                       StartHandicap = 22,
+                                                                       EndHandicap = 28
+                                                                   };
+                await testDataGenerator.AddTournamentDivision(token, division4, cancellationToken);
 
                 Program.GolfClubs.Add(new GolfClubDetails
                                       {
@@ -351,7 +381,7 @@
                             counter = 0;
                         }
 
-                        RecordPlayerTournamentScoreRequest recordMemberTournamentScoreRequest = new RecordPlayerTournamentScoreRequest
+                        RecordPlayerTournamentScoreRequest recordPlayerTournamentScoreRequest = new RecordPlayerTournamentScoreRequest
                                                                                                 {
                                                                                                     PlayingHandicap = player.PlayingHandicap,
                                                                                                     HoleScores =
@@ -364,7 +394,7 @@
 
                         await testDataGenerator.RecordPlayerScore(playerPasswordToken,
                                                                   createTournamentResponse.TournamentId,
-                                                                  recordMemberTournamentScoreRequest,
+                                                                  recordPlayerTournamentScoreRequest,
                                                                   cancellationToken);
 
                         Console.WriteLine($"Tournament Score Recorded for Player {player.EmailAddress} for Tournament {createTournamentRequest.Name} at Golf Club {golfClubDetails.GolfClubName}");
@@ -521,8 +551,8 @@
         /// <returns></returns>
         private static async Task Main(String[] args)
         {
-            const Int32 lastClub = 15;
-            const Int32 clubCount = 10;
+            const Int32 lastClub = 0;
+            const Int32 clubCount = 1;
             const Int32 playersPerClub = 37;
 
             // Create the data generator class
@@ -572,12 +602,12 @@
         /// <summary>
         /// The base address
         /// </summary>
-        private const String BaseAddress = "http://192.168.1.132:5000";
+        private const String BaseAddress = "http://127.0.0.1:5000";
 
         /// <summary>
         /// The security service address
         /// </summary>
-        private const String SecurityServiceAddress = "http://192.168.1.132:5001";
+        private const String SecurityServiceAddress = "http://127.0.0.1:5001";
 
         #endregion
     }

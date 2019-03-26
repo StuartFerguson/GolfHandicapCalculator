@@ -54,11 +54,9 @@ namespace ManagementAPI.Service.Bootstrapper
 
             For<IDomainEventHandler>().Use<GolfClubDomainEventHandler>().Named("GolfClub");
             For<IDomainEventHandler>().Use<GolfClubMembershipDomainEventHandler>().Named("GolfClubMembership");
+            For<IDomainEventHandler>().Use<TournamentDomainEventHandler>().Named("Tournament");
 
-            Func<String, IDomainEventHandler> domainEventHanderFunc = (name) =>
-                                                                      {
-                                                                          return Startup.Container.GetInstance<IDomainEventHandler>(name);                                                                          
-                                                                      };
+            Func<String, IDomainEventHandler> domainEventHanderFunc = (name) => Startup.Container.GetInstance<IDomainEventHandler>(name);
 
             For<Func<EventStoreConnectionSettings, IEventStoreConnection>>().Use(eventStoreConnectionFunc);
 

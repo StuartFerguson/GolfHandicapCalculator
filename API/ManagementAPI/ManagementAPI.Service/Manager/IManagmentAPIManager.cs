@@ -7,6 +7,7 @@
     using DataTransferObjects;
     using GolfClub.DomainEvents;
     using GolfClubMembership.DomainEvents;
+    using Tournament.DomainEvents;
 
     public interface IManagmentAPIManager
     {
@@ -90,6 +91,31 @@
         /// <returns></returns>
         Task InsertPlayerMembershipToReadModel(ClubMembershipRequestRejectedEvent domainEvent,
                                                CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the tournament to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertTournamentToReadModel(TournamentCreatedEvent domainEvent, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the player tournament score to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerTournamentScoreToReadModel(TournamentResultForPlayerScoreProducedEvent domainEvent, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Updates the tournament status in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task UpdateTournamentStatusInReadModel(TournamentResultProducedEvent domainEvent,
+                                              CancellationToken cancellationToken);
 
         #endregion
     }

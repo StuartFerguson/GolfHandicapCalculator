@@ -23,12 +23,12 @@ services:
       EVENTSTORE_STATS_PERIOD_SEC: 1
 
   subscriptionservice:
-    image: stuartferguson/subscriptionservice
+    image: stuartferguson/subscriptionservice    
     container_name: subscriptionservice
     volumes:
       - D:\home\ubuntu\commonservices\trace:/home/ubuntu/commonservices/trace/
     environment:
-      - ConnectionStrings__SubscriptionServiceConfigurationContext=server=mysqldatabase;database=SubscriptionServiceConfiguration;user id=root;password=Pa55word";
+      - ConnectionStrings__SubscriptionServiceConfigurationContext=server=mysqldatabase;database=SubscriptionServiceConfiguration;user id=root;password=Pa55word;
       - EventStoreSettings__ConnectionString=ConnectTo=tcp://admin:changeit@eventstore:1113;VerboseLogging=true;
       - EventStoreSettings__HttpPort=2113
     depends_on:
@@ -56,8 +56,8 @@ services:
       - ConnectionStrings__PersistedGrantDbContext=server=mysqldatabase;database=PersistedGrantStore;user id=root;password=Pa55word;
       - ConnectionStrings__ConfigurationDbContext=server=mysqldatabase;database=Configuration;user id=root;password=Pa55word;
       - ConnectionStrings__AuthenticationDbContext=server=mysqldatabase;database=Authentication;user id=root;password=Pa55word;
-      - ServiceOptions__PublicOrigin=http://securityservice:5001
-      - ServiceOptions__IssuerUrl=http://securityservice:5001
+      - ServiceOptions__PublicOrigin=http://127.0.0.1:5001
+      - ServiceOptions__IssuerUrl=http://127.0.0.1:5001
     depends_on:
       - mysqldatabase
       - messagingservice

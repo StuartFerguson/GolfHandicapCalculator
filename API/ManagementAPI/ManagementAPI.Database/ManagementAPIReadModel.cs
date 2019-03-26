@@ -60,6 +60,22 @@
         /// </value>
         public DbSet<PlayerClubMembership> PlayerClubMembership { get; set; }
 
+        /// <summary>
+        /// Gets or sets the tournament.
+        /// </summary>
+        /// <value>
+        /// The tournament.
+        /// </value>
+        public DbSet<Tournament> Tournament { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tournament result for player score.
+        /// </summary>
+        /// <value>
+        /// The tournament result for player score.
+        /// </value>
+        public DbSet<TournamentResultForPlayerScore> TournamentResultForPlayerScore { get; set; }
+
         #endregion
 
         #region Methods

@@ -23,7 +23,7 @@
         /// <summary>
         /// The domian event handler resolver
         /// </summary>
-        private readonly Func<String, IDomainEventHandler> DomianEventHandlerResolver;
+        private readonly Func<String, IDomainEventHandler> DomainEventHandlerResolver;
 
         #endregion
 
@@ -32,10 +32,10 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="DomainEventController" /> class.
         /// </summary>
-        /// <param name="domianEventHandlerResolver">The domian event handler resolver.</param>
-        public DomainEventController(Func<String, IDomainEventHandler> domianEventHandlerResolver)
+        /// <param name="domainEventHandlerResolver">The domain event handler resolver.</param>
+        public DomainEventController(Func<String, IDomainEventHandler> domainEventHandlerResolver)
         {
-            this.DomianEventHandlerResolver = domianEventHandlerResolver;
+            this.DomainEventHandlerResolver = domainEventHandlerResolver;
         }
 
         #endregion
@@ -55,7 +55,7 @@
         {
             try
             {
-                IDomainEventHandler domainEventHandler = this.DomianEventHandlerResolver("GolfClub");
+                IDomainEventHandler domainEventHandler = this.DomainEventHandlerResolver("GolfClub");
                 await domainEventHandler.Handle(@event, cancellationToken);
             }
             catch(WrongExpectedVersionException)
@@ -80,10 +80,35 @@
         {
             try
             {
-                IDomainEventHandler domainEventHandler = this.DomianEventHandlerResolver("GolfClubMembership");
+                IDomainEventHandler domainEventHandler = this.DomainEventHandlerResolver("GolfClubMembership");
                 await domainEventHandler.Handle(@event, cancellationToken);
             }
             catch(WrongExpectedVersionException)
+            {
+                return this.BadRequest();
+            }
+
+            //TODO: Handle NAK scenarios
+            return this.Ok();
+        }
+
+        /// <summary>
+        /// Posts the event golf club membership.
+        /// </summary>
+        /// <param name="event">The event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Tournament")]
+        public async Task<IActionResult> PostEventTournament([FromBody] DomainEvent @event,
+                                                                     CancellationToken cancellationToken)
+        {
+            try
+            {
+                IDomainEventHandler domainEventHandler = this.DomainEventHandlerResolver("Tournament");
+                await domainEventHandler.Handle(@event, cancellationToken);
+            }
+            catch (WrongExpectedVersionException)
             {
                 return this.BadRequest();
             }
