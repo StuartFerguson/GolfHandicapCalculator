@@ -53,7 +53,10 @@ namespace ManagementAPI.Service.Tests.Tournament
                                                                                                 TournamentTestData.PlayingHandicap,
                                                                                                 TournamentTestData.HoleScores,
                                                                                                    TournamentTestData.GolfClubId,
-                                                                                                   TournamentTestData.MeasuredCourseId);
+                                                                                                   TournamentTestData.MeasuredCourseId,
+                                                                                                   TournamentTestData.GrossScore,
+                                                                                                   TournamentTestData.NetScore,
+                                                                                                   TournamentTestData.CSS);
 
             playerScorePublishedEvent.ShouldNotBeNull();
             playerScorePublishedEvent.AggregateId.ShouldBe(TournamentTestData.AggregateId);
@@ -62,6 +65,9 @@ namespace ManagementAPI.Service.Tests.Tournament
             playerScorePublishedEvent.HoleScores.ShouldBe(TournamentTestData.HoleScores);
             playerScorePublishedEvent.GolfClubId.ShouldBe(TournamentTestData.GolfClubId);
             playerScorePublishedEvent.MeasuredCourseId.ShouldBe(TournamentTestData.MeasuredCourseId);
+            playerScorePublishedEvent.GrossScore.ShouldBe(TournamentTestData.GrossScore);
+            playerScorePublishedEvent.NetScore.ShouldBe(TournamentTestData.NetScore);
+            playerScorePublishedEvent.CSS.ShouldBe(TournamentTestData.CSS);
             playerScorePublishedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             playerScorePublishedEvent.EventId.ShouldNotBe(Guid.Empty);
         }

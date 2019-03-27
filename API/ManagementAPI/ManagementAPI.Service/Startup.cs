@@ -12,8 +12,11 @@ namespace ManagementAPI.Service
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
+    using System.Net.Sockets;
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
@@ -28,6 +31,7 @@ namespace ManagementAPI.Service
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -65,8 +69,7 @@ namespace ManagementAPI.Service
         {
             IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
                                                                       .AddJsonFile("appsettings.json", optional:true, reloadOnChange:true)
-                                                                      .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional:true)
-                                                                      .AddEnvironmentVariables();
+                                                                      .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional:true).AddEnvironmentVariables();
 
             Startup.Configuration = builder.Build();
             Startup.HostingEnvironment = env;
@@ -141,7 +144,7 @@ namespace ManagementAPI.Service
 
             // Setup the database
             if (!Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
-            {                 
+            {
                 Task.WaitAll(Task.Run(async () =>
                                       {
                                           // Setup the database
@@ -151,7 +154,7 @@ namespace ManagementAPI.Service
                                           await this.InitialiseSecurityRoles(app);
                                       }));
             }
-            
+
             app.AddExceptionHandler();
             app.AddRequestLogging();
             app.AddResponseLogging();
@@ -161,6 +164,17 @@ namespace ManagementAPI.Service
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Golf Handicapping API v1"); });
+
+            if (String.Compare(ConfigurationReader.GetValue("EventStoreSettings", "START_PROJECTIONS"),
+                               Boolean.TrueString,
+                               StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                app.PreWarm(true).Wait();
+            }
+            else
+            {
+                app.PreWarm();
+            }
         }
 
         /// <summary>
@@ -180,13 +194,13 @@ namespace ManagementAPI.Service
             rolesList.Add(RoleNames.MatchSecretary);
             rolesList.Add(RoleNames.Player);
 
-            using (IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            using(IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 IOAuth2SecurityService securityService = scope.ServiceProvider.GetRequiredService<IOAuth2SecurityService>();
 
                 foreach (String roleName in rolesList)
                 {
-                   
+
                     Boolean createRole = false;
                     try
                     {
@@ -200,6 +214,7 @@ namespace ManagementAPI.Service
                         {
                             Logger.LogError(nex.InnerException);
                         }
+
                         Logger.LogInformation($"Role {roleName} not found");
                         createRole = true;
                     }
@@ -214,7 +229,7 @@ namespace ManagementAPI.Service
                         await securityService.CreateRole(createRoleRequest, CancellationToken.None);
 
                         Logger.LogInformation($"Created role {roleName}");
-                    }                    
+                    }
                 }
             }
         }
@@ -227,7 +242,7 @@ namespace ManagementAPI.Service
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             Startup.ConfigureMiddlewareServices(services);
-            
+
             IContainer container = Startup.GetConfiguredContainer(services, Startup.HostingEnvironment);
 
             return container.GetInstance<IServiceProvider>();
@@ -259,7 +274,7 @@ namespace ManagementAPI.Service
             DomainEventTypesToSilentlyHandle eventTypesToSilentlyHandle = new DomainEventTypesToSilentlyHandle(handlerEventTypesToSilentlyHandle);
 
             //Can we create a static method in this class that returns IContainer?
-            services.AddSingleton<IDomainEventTypesToSilentlyHandle>(eventTypesToSilentlyHandle);  
+            services.AddSingleton<IDomainEventTypesToSilentlyHandle>(eventTypesToSilentlyHandle);
 
             container.Configure(config =>
                                 {
@@ -509,10 +524,12 @@ namespace ManagementAPI.Service
                                {
                                    policy.AddAuthenticationSchemes("Bearer");
                                    policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Developer, RoleNames.Developer.ToUpper(),
-                                                      RoleNames.TestDataGenerator, RoleNames.TestDataGenerator.ToUpper());
+                                   policy.RequireRole(RoleNames.Developer,
+                                                      RoleNames.Developer.ToUpper(),
+                                                      RoleNames.TestDataGenerator,
+                                                      RoleNames.TestDataGenerator.ToUpper());
                                });
-            
+
             #endregion
         }
 

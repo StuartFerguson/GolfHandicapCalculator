@@ -396,9 +396,27 @@
                 }
             }
 
+            Int32 css = this.MeasuredCourseSSS + adjustment;
+
+            foreach (PlayerScoreRecord playerScoreRecord in this.PlayerScoreRecords)
+            {
+                // Create a new event to 'publish' the players score
+                PlayerScorePublishedEvent playerScorePublishedEvent = PlayerScorePublishedEvent.Create(this.AggregateId,
+                                                                                                       playerScoreRecord.PlayerId,
+                                                                                                       playerScoreRecord.PlayingHandicap,
+                                                                                                       playerScoreRecord.HoleScores,
+                                                                                                       this.GolfClubId,
+                                                                                                       this.MeasuredCourseId,
+                                                                                                       playerScoreRecord.GrossScore,
+                                                                                                       playerScoreRecord.NetScore,
+                                                                                                       css);
+
+                this.ApplyAndPend(playerScorePublishedEvent);
+            }
+
             // Record the CSS Calculated Event
             TournamentCSSCalculatedEvent tournamentCssCalculatedEvent =
-                TournamentCSSCalculatedEvent.Create(this.AggregateId, adjustment, this.MeasuredCourseSSS + adjustment);
+                TournamentCSSCalculatedEvent.Create(this.AggregateId, adjustment, css);
 
             this.ApplyAndPend(tournamentCssCalculatedEvent);
         }
@@ -436,20 +454,7 @@
 
             this.CheckTournamentNotAlreadyCompleted();
 
-            this.CheckTournamentNotAlreadyCancelled();
-
-            foreach (PlayerScoreRecord playerScoreRecord in this.PlayerScoreRecords)
-            {
-                // Create a new event to 'publish' the players score
-                PlayerScorePublishedEvent playerScorePublishedEvent = PlayerScorePublishedEvent.Create(this.AggregateId,
-                                                                                                       playerScoreRecord.PlayerId,
-                                                                                                       playerScoreRecord.PlayingHandicap,
-                                                                                                       playerScoreRecord.HoleScores,
-                                                                                                       this.GolfClubId,
-                                                                                                       this.MeasuredCourseId);
-
-                this.ApplyAndPend(playerScorePublishedEvent);
-            }
+            this.CheckTournamentNotAlreadyCancelled();            
 
             TournamentCompletedEvent tournamentCompletedEvent = TournamentCompletedEvent.Create(this.AggregateId, completedDateTime);
             this.ApplyAndPend(tournamentCompletedEvent);

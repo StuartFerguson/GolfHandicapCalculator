@@ -351,7 +351,9 @@ namespace ManagementAPI.IntegrationTests.Common
                     this.EventStoreConnectionString, 
                     this.SecurityServiceAddress, 
                     this.ManagementAPISeedingType,
-                    this.AuthorityAddress)
+                    this.AuthorityAddress,
+                    "EventStoreSettings:START_PROJECTIONS=true",
+                    "EventStoreSettings:ContinuousProjectionsFolder=/app/projections/continuous")
                 .UseImage("managementapiservice")
                 .ExposePort(5000)
                 .UseNetwork(new List<INetworkService> {this.TestNetwork, Setup.DatabaseServerNetwork}.ToArray())     
