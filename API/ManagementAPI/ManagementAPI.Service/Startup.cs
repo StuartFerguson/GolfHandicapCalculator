@@ -16,7 +16,6 @@ namespace ManagementAPI.Service
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using System.Net;
     using System.Net.Sockets;
     using System.Reflection;
     using System.Threading;
@@ -27,9 +26,6 @@ namespace ManagementAPI.Service
     using Database;
     using Database.SeedData;
     using EventHandling;
-    using EventStore.ClientAPI.Common.Log;
-    using EventStore.ClientAPI.Projections;
-    using EventStore.ClientAPI.SystemData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -44,7 +40,6 @@ namespace ManagementAPI.Service
     using NLog.Extensions.Logging;
     using Services;
     using Services.ExternalServices.DataTransferObjects;
-    using Shared.EventStore;
     using Shared.Exceptions;
     using Shared.Extensions;
     using Shared.General;
@@ -553,130 +548,6 @@ namespace ManagementAPI.Service
                 SeedingType seedingType = Startup.Configuration.GetValue<SeedingType>("SeedingType");
 
                 DatabaseSeeding.InitialiseDatabase(managementApiReadModel, seedingType);
-            }
-        }
-
-        #endregion
-    }
-
-    public static class StartupExtensions
-    {
-        public static async Task PreWarm(this IApplicationBuilder applicationBuilder,
-                                         Boolean startProjections = false)
-        {
-            try
-            {
-                if (startProjections)
-                {
-                    await StartupExtensions.StartEventStoreProjections();
-                }
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        private static async Task StartEventStoreProjections()
-        {
-            // TODO: Refactor
-            // This method is a brutal way of getting projections to be run when the API starts up
-            // This needs refactored into a more pleasant function
-            String connString = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString");
-            String connectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
-            Int32 httpPort = Startup.Configuration.GetValue<Int32>("EventStoreSettings:HttpPort");
-
-            EventStoreConnectionSettings settings = EventStoreConnectionSettings.Create(connString, connectionName, httpPort);
-
-            // Do continuous first
-            String continuousProjectionsFolder = ConfigurationReader.GetValue("EventStoreSettings", "ContinuousProjectionsFolder");
-            String[] files = Directory.GetFiles(continuousProjectionsFolder, "*.js");
-
-            foreach (String file in files)
-            {
-                String withoutExtension = Path.GetFileNameWithoutExtension(file);
-                String projectionBody = File.ReadAllText(file);
-                Boolean emitEnabled = continuousProjectionsFolder.ToLower().Contains("emitenabled");
-
-                await Retry.For(async () =>
-                                {
-                                    DnsEndPoint d = new DnsEndPoint(settings.IpAddress, settings.HttpPort);
-
-                                    ProjectionsManager projectionsManager = new ProjectionsManager(new ConsoleLogger(), d, TimeSpan.FromSeconds(5));
-
-                                    UserCredentials userCredentials = new UserCredentials(settings.UserName, settings.Password);
-
-                                    await projectionsManager.CreateContinuousAsync(withoutExtension, projectionBody, userCredentials);
-                                    Logger.LogInformation("After CreateContinuousAsync");
-                                    if (emitEnabled)
-                                    {
-                                        await projectionsManager.AbortAsync(withoutExtension, userCredentials);
-                                        await projectionsManager.UpdateQueryAsync(withoutExtension, projectionBody, new bool?(emitEnabled), userCredentials);
-                                        await projectionsManager.EnableAsync(withoutExtension, userCredentials);
-                                    }
-                                });
-            }
-        }
-    }
-
-    public static class Retry
-    {
-        #region Fields
-
-        /// <summary>
-        /// The default retry for
-        /// </summary>
-        private static readonly TimeSpan DefaultRetryFor = TimeSpan.FromSeconds(60);
-
-        /// <summary>
-        /// The default retry interval
-        /// </summary>
-        private static readonly TimeSpan DefaultRetryInterval = TimeSpan.FromMilliseconds(200);
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Fors the specified action.
-        /// </summary>
-        /// <param name="action">The action.</param>
-        /// <param name="retryFor">The retry for.</param>
-        /// <param name="retryInterval">The retry interval.</param>
-        /// <returns></returns>
-        public static async Task For(Func<Task> action,
-                                     TimeSpan? retryFor = null,
-                                     TimeSpan? retryInterval = null)
-        {
-            DateTime startTime = DateTime.Now;
-            Exception lastException = null;
-
-            if (retryFor == null)
-            {
-                retryFor = Retry.DefaultRetryFor;
-            }
-
-            while (DateTime.Now.Subtract(startTime).TotalMilliseconds < retryFor.Value.TotalMilliseconds)
-            {
-                try
-                {
-                    await action();
-                    lastException = null;
-                    break;
-                }
-                catch(Exception e)
-                {
-                    lastException = e;
-
-                    // wait before retrying
-                    Thread.Sleep(retryInterval ?? Retry.DefaultRetryInterval);
-                }
-            }
-
-            if (lastException != null)
-            {
-                throw lastException;
             }
         }
 
