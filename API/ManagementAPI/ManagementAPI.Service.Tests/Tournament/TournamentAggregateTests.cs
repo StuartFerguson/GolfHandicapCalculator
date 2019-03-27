@@ -47,6 +47,7 @@
 
             aggregate.Adjustment.ShouldBe(expectedAdjustment);
             aggregate.CSS.ShouldBe(expectedCSS);
+            aggregate.GetScores().All(s => s.IsPublished).ShouldBeTrue();
         }
 
         [Fact]
@@ -176,8 +177,7 @@
             aggregate.CompleteTournament(TournamentTestData.CompletedDateTime);
 
             aggregate.HasBeenCompleted.ShouldBeTrue();
-            aggregate.CompletedDateTime.ShouldBe(TournamentTestData.CompletedDateTime);
-            aggregate.GetScores().All(s=> s.IsPublished).ShouldBeTrue();
+            aggregate.CompletedDateTime.ShouldBe(TournamentTestData.CompletedDateTime);            
         }
 
         [Fact]

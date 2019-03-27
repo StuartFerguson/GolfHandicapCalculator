@@ -12,8 +12,12 @@ namespace ManagementAPI.Service
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
@@ -23,11 +27,15 @@ namespace ManagementAPI.Service
     using Database;
     using Database.SeedData;
     using EventHandling;
+    using EventStore.ClientAPI.Common.Log;
+    using EventStore.ClientAPI.Projections;
+    using EventStore.ClientAPI.SystemData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -36,6 +44,7 @@ namespace ManagementAPI.Service
     using NLog.Extensions.Logging;
     using Services;
     using Services.ExternalServices.DataTransferObjects;
+    using Shared.EventStore;
     using Shared.Exceptions;
     using Shared.Extensions;
     using Shared.General;
@@ -65,8 +74,7 @@ namespace ManagementAPI.Service
         {
             IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
                                                                       .AddJsonFile("appsettings.json", optional:true, reloadOnChange:true)
-                                                                      .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional:true)
-                                                                      .AddEnvironmentVariables();
+                                                                      .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional:true).AddEnvironmentVariables();
 
             Startup.Configuration = builder.Build();
             Startup.HostingEnvironment = env;
@@ -141,7 +149,7 @@ namespace ManagementAPI.Service
 
             // Setup the database
             if (!Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
-            {                 
+            {
                 Task.WaitAll(Task.Run(async () =>
                                       {
                                           // Setup the database
@@ -151,7 +159,7 @@ namespace ManagementAPI.Service
                                           await this.InitialiseSecurityRoles(app);
                                       }));
             }
-            
+
             app.AddExceptionHandler();
             app.AddRequestLogging();
             app.AddResponseLogging();
@@ -161,6 +169,17 @@ namespace ManagementAPI.Service
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Golf Handicapping API v1"); });
+
+            if (String.Compare(ConfigurationReader.GetValue("EventStoreSettings", "START_PROJECTIONS"),
+                               Boolean.TrueString,
+                               StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                app.PreWarm(true).Wait();
+            }
+            else
+            {
+                app.PreWarm();
+            }
         }
 
         /// <summary>
@@ -180,13 +199,13 @@ namespace ManagementAPI.Service
             rolesList.Add(RoleNames.MatchSecretary);
             rolesList.Add(RoleNames.Player);
 
-            using (IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            using(IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 IOAuth2SecurityService securityService = scope.ServiceProvider.GetRequiredService<IOAuth2SecurityService>();
 
                 foreach (String roleName in rolesList)
                 {
-                   
+
                     Boolean createRole = false;
                     try
                     {
@@ -200,6 +219,7 @@ namespace ManagementAPI.Service
                         {
                             Logger.LogError(nex.InnerException);
                         }
+
                         Logger.LogInformation($"Role {roleName} not found");
                         createRole = true;
                     }
@@ -214,7 +234,7 @@ namespace ManagementAPI.Service
                         await securityService.CreateRole(createRoleRequest, CancellationToken.None);
 
                         Logger.LogInformation($"Created role {roleName}");
-                    }                    
+                    }
                 }
             }
         }
@@ -227,7 +247,7 @@ namespace ManagementAPI.Service
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             Startup.ConfigureMiddlewareServices(services);
-            
+
             IContainer container = Startup.GetConfiguredContainer(services, Startup.HostingEnvironment);
 
             return container.GetInstance<IServiceProvider>();
@@ -259,7 +279,7 @@ namespace ManagementAPI.Service
             DomainEventTypesToSilentlyHandle eventTypesToSilentlyHandle = new DomainEventTypesToSilentlyHandle(handlerEventTypesToSilentlyHandle);
 
             //Can we create a static method in this class that returns IContainer?
-            services.AddSingleton<IDomainEventTypesToSilentlyHandle>(eventTypesToSilentlyHandle);  
+            services.AddSingleton<IDomainEventTypesToSilentlyHandle>(eventTypesToSilentlyHandle);
 
             container.Configure(config =>
                                 {
@@ -509,10 +529,12 @@ namespace ManagementAPI.Service
                                {
                                    policy.AddAuthenticationSchemes("Bearer");
                                    policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Developer, RoleNames.Developer.ToUpper(),
-                                                      RoleNames.TestDataGenerator, RoleNames.TestDataGenerator.ToUpper());
+                                   policy.RequireRole(RoleNames.Developer,
+                                                      RoleNames.Developer.ToUpper(),
+                                                      RoleNames.TestDataGenerator,
+                                                      RoleNames.TestDataGenerator.ToUpper());
                                });
-            
+
             #endregion
         }
 
@@ -531,6 +553,130 @@ namespace ManagementAPI.Service
                 SeedingType seedingType = Startup.Configuration.GetValue<SeedingType>("SeedingType");
 
                 DatabaseSeeding.InitialiseDatabase(managementApiReadModel, seedingType);
+            }
+        }
+
+        #endregion
+    }
+
+    public static class StartupExtensions
+    {
+        public static async Task PreWarm(this IApplicationBuilder applicationBuilder,
+                                         Boolean startProjections = false)
+        {
+            try
+            {
+                if (startProjections)
+                {
+                    await StartupExtensions.StartEventStoreProjections();
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        private static async Task StartEventStoreProjections()
+        {
+            // TODO: Refactor
+            // This method is a brutal way of getting projections to be run when the API starts up
+            // This needs refactored into a more pleasant function
+            String connString = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString");
+            String connectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
+            Int32 httpPort = Startup.Configuration.GetValue<Int32>("EventStoreSettings:HttpPort");
+
+            EventStoreConnectionSettings settings = EventStoreConnectionSettings.Create(connString, connectionName, httpPort);
+
+            // Do continuous first
+            String continuousProjectionsFolder = ConfigurationReader.GetValue("EventStoreSettings", "ContinuousProjectionsFolder");
+            String[] files = Directory.GetFiles(continuousProjectionsFolder, "*.js");
+
+            foreach (String file in files)
+            {
+                String withoutExtension = Path.GetFileNameWithoutExtension(file);
+                String projectionBody = File.ReadAllText(file);
+                Boolean emitEnabled = continuousProjectionsFolder.ToLower().Contains("emitenabled");
+
+                await Retry.For(async () =>
+                                {
+                                    DnsEndPoint d = new DnsEndPoint(settings.IpAddress, settings.HttpPort);
+
+                                    ProjectionsManager projectionsManager = new ProjectionsManager(new ConsoleLogger(), d, TimeSpan.FromSeconds(5));
+
+                                    UserCredentials userCredentials = new UserCredentials(settings.UserName, settings.Password);
+
+                                    await projectionsManager.CreateContinuousAsync(withoutExtension, projectionBody, userCredentials);
+                                    Logger.LogInformation("After CreateContinuousAsync");
+                                    if (emitEnabled)
+                                    {
+                                        await projectionsManager.AbortAsync(withoutExtension, userCredentials);
+                                        await projectionsManager.UpdateQueryAsync(withoutExtension, projectionBody, new bool?(emitEnabled), userCredentials);
+                                        await projectionsManager.EnableAsync(withoutExtension, userCredentials);
+                                    }
+                                });
+            }
+        }
+    }
+
+    public static class Retry
+    {
+        #region Fields
+
+        /// <summary>
+        /// The default retry for
+        /// </summary>
+        private static readonly TimeSpan DefaultRetryFor = TimeSpan.FromSeconds(60);
+
+        /// <summary>
+        /// The default retry interval
+        /// </summary>
+        private static readonly TimeSpan DefaultRetryInterval = TimeSpan.FromMilliseconds(200);
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Fors the specified action.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <param name="retryFor">The retry for.</param>
+        /// <param name="retryInterval">The retry interval.</param>
+        /// <returns></returns>
+        public static async Task For(Func<Task> action,
+                                     TimeSpan? retryFor = null,
+                                     TimeSpan? retryInterval = null)
+        {
+            DateTime startTime = DateTime.Now;
+            Exception lastException = null;
+
+            if (retryFor == null)
+            {
+                retryFor = Retry.DefaultRetryFor;
+            }
+
+            while (DateTime.Now.Subtract(startTime).TotalMilliseconds < retryFor.Value.TotalMilliseconds)
+            {
+                try
+                {
+                    await action();
+                    lastException = null;
+                    break;
+                }
+                catch(Exception e)
+                {
+                    lastException = e;
+
+                    // wait before retrying
+                    Thread.Sleep(retryInterval ?? Retry.DefaultRetryInterval);
+                }
+            }
+
+            if (lastException != null)
+            {
+                throw lastException;
             }
         }
 
