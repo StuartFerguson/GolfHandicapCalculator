@@ -41,5 +41,26 @@ namespace ManagementAPI.Service.Tests.Player
             securityUserCreatedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
             securityUserCreatedEvent.SecurityUserId.ShouldBe(PlayerTestData.SecurityUserId);
         }
+
+        [Fact]
+        public void HandicapAdjustedEvent_CanBeCreated_IsCreated()
+        {
+            HandicapAdjustedEvent handicapAdjustedEvent = HandicapAdjustedEvent.Create(PlayerTestData.AggregateId, PlayerTestData.NumberOfStrokesBelowCss,
+                                                                                       PlayerTestData.AdjustmentValuePerStroke, PlayerTestData.TotalAdjustment,
+                                                                                       PlayerTestData.TournamentId, PlayerTestData.GolfClubId,
+                                                                                       PlayerTestData.MeasuredCourseId, PlayerTestData.ScoreDate);
+
+            handicapAdjustedEvent.ShouldNotBeNull();
+            handicapAdjustedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
+            handicapAdjustedEvent.EventId.ShouldNotBe(Guid.Empty);
+            handicapAdjustedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            handicapAdjustedEvent.NumberOfStrokesBelowCss.ShouldBe(PlayerTestData.NumberOfStrokesBelowCss);
+            handicapAdjustedEvent.AdjustmentValuePerStroke.ShouldBe(PlayerTestData.AdjustmentValuePerStroke);
+            handicapAdjustedEvent.TotalAdjustment.ShouldBe(PlayerTestData.TotalAdjustment);
+            handicapAdjustedEvent.TournamentId.ShouldBe(PlayerTestData.TournamentId);
+            handicapAdjustedEvent.GolfClubId.ShouldBe(PlayerTestData.GolfClubId);
+            handicapAdjustedEvent.MeasuredCourseId.ShouldBe(PlayerTestData.MeasuredCourseId);
+            handicapAdjustedEvent.ScoreDate.ShouldBe(PlayerTestData.ScoreDate);
+        }
     }
 }

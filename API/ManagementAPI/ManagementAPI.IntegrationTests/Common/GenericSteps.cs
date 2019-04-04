@@ -175,30 +175,41 @@ namespace ManagementAPI.IntegrationTests.Common
             String tournamentEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Tournament";
             SubscriptionServiceHelper.CreateEndpoint(connection, tournamentEndpointId, "Tournament Read Model", tournamentEndpointUrl);
 
-            // Create the Streams
-            Guid catergoryGolfClubAggregateStream = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionStream(connection, catergoryGolfClubAggregateStream, "$ce-GolfClubAggregate");
-            
-            Guid catergoryGolfClubMembershipAggregateStream = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionStream(connection, catergoryGolfClubMembershipAggregateStream, "$ce-GolfClubMembershipAggregate");
+            Guid handicapCalculatorEndpointId = Guid.NewGuid();
+            String handicapCalculatorEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/HandicapCalculator";
+            SubscriptionServiceHelper.CreateEndpoint(connection, handicapCalculatorEndpointId, "Handicap Calculator", handicapCalculatorEndpointUrl);
 
-            Guid catergoryTournamentAggregateStream = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionStream(connection, catergoryTournamentAggregateStream, "$ce-TournamentAggregate");
+            // Create the Streams
+            Guid categoryGolfClubAggregateStream = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryGolfClubAggregateStream, "$ce-GolfClubAggregate");
+            
+            Guid categoryGolfClubMembershipAggregateStream = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryGolfClubMembershipAggregateStream, "$ce-GolfClubMembershipAggregate");
+
+            Guid categoryTournamentAggregateStream = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryTournamentAggregateStream, "$ce-TournamentAggregate");
+
+            Guid categoryHandicapCalculationProcessAggregateStream = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryHandicapCalculationProcessAggregateStream, "$ce-HandicapCalculationProcessAggregate");
 
             // Create the groups
             Guid subscriptionGroupGolfClubAggregateId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubAggregateId, golfClubEndpointId, "GolfClubAggregate", catergoryGolfClubAggregateStream);
+            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubAggregateId, golfClubEndpointId, "GolfClubAggregate", categoryGolfClubAggregateStream);
 
             Guid subscriptionGroupGolfClubMembershipAggregateId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubMembershipAggregateId, golfClubMembershipEndpointId, "GolfClubMembershipAggregate", catergoryGolfClubMembershipAggregateStream);
+            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubMembershipAggregateId, golfClubMembershipEndpointId, "GolfClubMembershipAggregate", categoryGolfClubMembershipAggregateStream);
 
             Guid subscriptionGroupTournamentAggregateId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupTournamentAggregateId, tournamentEndpointId, "TournamentAggregate", catergoryTournamentAggregateStream);
+            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupTournamentAggregateId, tournamentEndpointId, "TournamentAggregate", categoryTournamentAggregateStream);
+
+            Guid subscriptionHandicapCalculationProcessAggregateId = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionHandicapCalculationProcessAggregateId, handicapCalculatorEndpointId, "HandicapCalculationProcessAggregate", categoryHandicapCalculationProcessAggregateStream);
 
             // Add the groups to the Subscription Service
             SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubAggregateId, this.SubscriberServiceId);
             SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubMembershipAggregateId, this.SubscriberServiceId);
             SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupTournamentAggregateId, this.SubscriberServiceId);
+            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionHandicapCalculationProcessAggregateId, this.SubscriberServiceId);
 
             connection.Close();
         }

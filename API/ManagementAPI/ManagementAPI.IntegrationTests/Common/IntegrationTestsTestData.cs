@@ -85,6 +85,40 @@ namespace ManagementAPI.IntegrationTests.Common
                 }
             };
 
+        public static RecordPlayerTournamentScoreRequest GetScoreToRecord(Int32 playingHandicap,Int32 strokesBelowCss)
+        {
+            RecordPlayerTournamentScoreRequest levelParScore = new RecordPlayerTournamentScoreRequest
+                                {
+                                    HoleScores = new Dictionary<Int32, Int32>()
+                                                 {
+                                                     {1, 4},
+                                                     {2, 4},
+                                                     {3, 3},
+                                                     {4, 4},
+                                                     {5, 4},
+                                                     {6, 5},
+                                                     {7, 3},
+                                                     {8, 4},
+                                                     {9, 3},
+                                                     {10, 4},
+                                                     {11, 4},
+                                                     {12, 4},
+                                                     {13, 5},
+                                                     {14, 3},
+                                                     {15, 4},
+                                                     {16, 4},
+                                                     {17, 4},
+                                                     {18, 4}
+                                                 }
+                                };
+
+            Int32 strokesToAdd = playingHandicap - strokesBelowCss;
+
+            levelParScore.HoleScores[1] += strokesToAdd;
+
+            return levelParScore;
+        }
+
         public static CancelTournamentRequest CancelTournamentRequest = new CancelTournamentRequest
         {
             CancellationReason = "Test Reason"

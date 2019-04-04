@@ -97,6 +97,16 @@
         /// </summary>
         public const String RequestClubMembershipPolicy = "RequestClubMembershipPolicy";
 
+        /// <summary>
+        /// The process handicap calculations policy
+        /// </summary>
+        public const String ProcessHandicapCalculationsPolicy = "ProcessHandicapCalculationsPolicy";
+
+        /// <summary>
+        /// The get handicap calculation process status policy
+        /// </summary>
+        public const String GetHandicapCalculationProcessStatusPolicy = "GetHandicapCalculationProcessStatusPolicy";
+
         #endregion
     }
 }

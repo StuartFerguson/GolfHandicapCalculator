@@ -762,6 +762,14 @@ namespace ManagementAPI.Service.Tests.GolfClub
                                  StrokeIndex = 9
                              });
 
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = 19,
+                                 LengthInYards = 100,
+                                 Par = 3,
+                                 StrokeIndex = result.Holes.Where(h => h.HoleNumber == holeNumber).Single().StrokeIndex
+            });
+
             result.Holes.Remove(result.Holes.Where(h => h.HoleNumber == holeNumber).Single());
 
             return result;
@@ -904,6 +912,13 @@ namespace ManagementAPI.Service.Tests.GolfClub
                                  Par = 4,
                                  StrokeIndex = 9
                              });
+            result.Holes.Add(new HoleDataTransferObject
+                             {
+                                 HoleNumber = result.Holes.Where(h => h.StrokeIndex == strokeIndex).Single().HoleNumber,
+                                 LengthInYards = 100,
+                                 Par = 4,
+                                 StrokeIndex = 19
+            });
 
             result.Holes.Remove(result.Holes.Where(h => h.StrokeIndex == strokeIndex).Single());
 

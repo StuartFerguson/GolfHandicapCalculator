@@ -35,11 +35,13 @@
                                                                                  }
                                                                              };
 
-        public static DateTime DateOfBirth = new DateTime(1980, 12, 13);
+        public static DateTime DateOfBirth = new DateTime(1980, 12, 31);
 
         public static String EmailAddress = "test@email.com";
 
         public static Decimal ExactHandicap = 11.4m;
+        public static Decimal NewExactHandicap = 10.4m;
+        public static Decimal NewExactHandicapIncreased = 11.5m;
 
         public static Decimal ExactHandicapCat1 = 0.5m;
 
@@ -58,6 +60,8 @@
         public static String MiddleName = "Middle";
 
         public static String FullName = $"{PlayerTestData.FirstName} {PlayerTestData.MiddleName} {PlayerTestData.LastName}";
+
+        public static String FullNameEmptyMiddleName = $"{PlayerTestData.FirstName} {PlayerTestData.LastName}";
 
         public static String Gender = "M";
 
@@ -93,6 +97,8 @@
         public static DateTime MembershipRejectedDateTime = new DateTime(2019, 1, 12);
 
         public static Int32 PlayingHandicap = 11;
+        public static Int32 NewPlayingHandicap = 10;
+        public static Int32 NewPlayingHandicapIncreased = 12;
 
         public static Int32 PlayingHandicapCat2 = 6;
 
@@ -147,7 +153,55 @@
 
             return playerAggregate;
         }
-        
+
+        public static HandicapAdjustmentDataTransferObject HandicapAdjustmentDecrease = new HandicapAdjustmentDataTransferObject
+        {
+                                                                  TotalAdjustment = -1.0m,
+                                                                  AdjustmentValuePerStroke = 0.2m,
+                                                                  NumberOfStrokesBelowCss = 5
+                                                              };
+
+        public static HandicapAdjustmentDataTransferObject HandicapAdjustmentNoChange = new HandicapAdjustmentDataTransferObject
+        {
+                                                                  TotalAdjustment = 0.0m,
+                                                                  AdjustmentValuePerStroke = 0.2m,
+                                                                  NumberOfStrokesBelowCss = 0
+                                                              };
+        public static HandicapAdjustmentDataTransferObject HandicapAdjustmentIncrease = new HandicapAdjustmentDataTransferObject
+        {
+                                                    TotalAdjustment = 0.1m,
+                                                    AdjustmentValuePerStroke = 0.1m,
+                                                    NumberOfStrokesBelowCss = 0
+                                                };
+
+        public static HandicapAdjustmentDataTransferObject HandicapAdjustment = new HandicapAdjustmentDataTransferObject
+        {
+                                                                  TotalAdjustment = -1.0m,
+                                                                  AdjustmentValuePerStroke = 0.2m,
+                                                                  NumberOfStrokesBelowCss = 5
+                                                              };
+
+        public static PlayerAggregate GetRegisteredPlayerAggregateWithHandicapAdjustment()
+        {
+            PlayerAggregate playerAggregate = PlayerAggregate.Create(PlayerTestData.AggregateId);
+
+            playerAggregate.Register(PlayerTestData.FirstName,
+                                     PlayerTestData.MiddleName,
+                                     PlayerTestData.LastName,
+                                     PlayerTestData.Gender,
+                                     PlayerTestData.DateOfBirth,
+                                     PlayerTestData.ExactHandicap,
+                                     PlayerTestData.EmailAddress);
+
+            playerAggregate.AdjustHandicap(PlayerTestData.HandicapAdjustment,
+                                           PlayerTestData.TournamentId,
+                                           PlayerTestData.GolfClubId,
+                                           PlayerTestData.MeasuredCourseId,
+                                           PlayerTestData.ScoreDate);
+
+            return playerAggregate;
+        }
+
         public static PlayerAggregate GetRegisteredPlayerAggregateWithSecurityUserCreated()
         {
             PlayerAggregate playerAggregate = PlayerAggregate.Create(PlayerTestData.AggregateId);
@@ -179,5 +233,12 @@
         }
 
         #endregion
+
+        public static Int32 NumberOfStrokesBelowCss = 4;
+        public static Decimal AdjustmentValuePerStroke = 0.1m;
+        public static Decimal TotalAdjustment = 0.4m;
+        public static Guid TournamentId = Guid.Parse("5E02B82A-12A3-4283-B13B-A319F3C0596A");
+        public static Guid MeasuredCourseId = Guid.Parse("6B7AA648-FC96-4735-96F0-1E6F0F296D6C");
+        public static DateTime ScoreDate = new DateTime(2019,4,1);
     }
 }

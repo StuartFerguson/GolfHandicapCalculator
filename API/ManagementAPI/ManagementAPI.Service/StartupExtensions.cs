@@ -61,30 +61,33 @@
             String continuousProjectionsFolder = ConfigurationReader.GetValue("EventStoreSettings", "ContinuousProjectionsFolder");
             String[] files = Directory.GetFiles(continuousProjectionsFolder, "*.js");
 
-            foreach (String file in files)
-            {
-                String withoutExtension = Path.GetFileNameWithoutExtension(file);
-                String projectionBody = File.ReadAllText(file);
-                Boolean emitEnabled = continuousProjectionsFolder.ToLower().Contains("emitenabled");
+            // TODO: Improve this later to get status of projection before trying to create
+            //foreach (String file in files)
+            //{
+            //    String withoutExtension = Path.GetFileNameWithoutExtension(file);
+            //    String projectionBody = File.ReadAllText(file);
+            //    Boolean emitEnabled = continuousProjectionsFolder.ToLower().Contains("emitenabled");
 
-                await Retry.For(async () =>
-                                {
-                                    DnsEndPoint d = new DnsEndPoint(settings.IpAddress, settings.HttpPort);
+            //    await Retry.For(async () =>
+            //                    {
+            //                        DnsEndPoint d = new DnsEndPoint(settings.IpAddress, settings.HttpPort);
 
-                                    ProjectionsManager projectionsManager = new ProjectionsManager(new ConsoleLogger(), d, TimeSpan.FromSeconds(5));
+            //                        ProjectionsManager projectionsManager = new ProjectionsManager(new ConsoleLogger(), d, TimeSpan.FromSeconds(5));
 
-                                    UserCredentials userCredentials = new UserCredentials(settings.UserName, settings.Password);
+            //                        UserCredentials userCredentials = new UserCredentials(settings.UserName, settings.Password);
+                                    
+            //                        String projectionStatus = await projectionsManager.GetStatusAsync(withoutExtension, userCredentials);
 
-                                    await projectionsManager.CreateContinuousAsync(withoutExtension, projectionBody, userCredentials);
-                                    Logger.LogInformation("After CreateContinuousAsync");
-                                    if (emitEnabled)
-                                    {
-                                        await projectionsManager.AbortAsync(withoutExtension, userCredentials);
-                                        await projectionsManager.UpdateQueryAsync(withoutExtension, projectionBody, emitEnabled, userCredentials);
-                                        await projectionsManager.EnableAsync(withoutExtension, userCredentials);
-                                    }
-                                });
-            }
+            //                        await projectionsManager.CreateContinuousAsync(withoutExtension, projectionBody, userCredentials);
+            //                        Logger.LogInformation("After CreateContinuousAsync");
+            //                        if (emitEnabled)
+            //                        {
+            //                            await projectionsManager.AbortAsync(withoutExtension, userCredentials);
+            //                            await projectionsManager.UpdateQueryAsync(withoutExtension, projectionBody, emitEnabled, userCredentials);
+            //                            await projectionsManager.EnableAsync(withoutExtension, userCredentials);
+            //                        }
+            //                    });
+            //}
         }
 
         #endregion

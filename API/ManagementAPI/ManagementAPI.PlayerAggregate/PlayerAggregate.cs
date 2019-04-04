@@ -20,7 +20,7 @@
         [ExcludeFromCodeCoverage]
         public PlayerAggregate()
         {
-            // Nothing here            
+            this.HandicapAdjustments = new List<HandicapAdjustment>();
         }
 
         /// <summary>
@@ -32,9 +32,12 @@
             Guard.ThrowIfInvalidGuid(aggregateId, "Aggregate Id cannot be an Empty Guid");
 
             this.AggregateId = aggregateId;
+            this.HandicapAdjustments = new List<HandicapAdjustment>();
         }
 
         #endregion
+
+        private List<HandicapAdjustment> HandicapAdjustments;
 
         #region Properties
 
@@ -154,6 +157,67 @@
         public static PlayerAggregate Create(Guid aggregateId)
         {
             return new PlayerAggregate(aggregateId);
+        }
+
+        /// <summary>
+        /// Adjusts the handicap.
+        /// </summary>
+        /// <param name="handicapAdjustmentDataTransferObject">The handicap adjustment data transfer object.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="measuredCourseId">The measured course identifier.</param>
+        /// <param name="scoreDate">The score date.</param>
+        public void AdjustHandicap(HandicapAdjustmentDataTransferObject handicapAdjustmentDataTransferObject,
+                                   Guid tournamentId,
+                                   Guid golfClubId,
+                                   Guid measuredCourseId,
+                                   DateTime scoreDate)
+        {
+            Guard.ThrowIfNull(handicapAdjustmentDataTransferObject, typeof(ArgumentNullException), "Handicap Adjustment details must be provided to adjust a players handicap");
+            Guard.ThrowIfInvalidGuid(tournamentId, typeof(ArgumentNullException), "Tournament Id must be provided to adjust a players handicap");
+            Guard.ThrowIfInvalidGuid(golfClubId, typeof(ArgumentNullException), "Golf Club Id must be provided to adjust a players handicap");
+            Guard.ThrowIfInvalidGuid(measuredCourseId, typeof(ArgumentNullException), "Measured Course Id must be provided to adjust a players handicap");
+            Guard.ThrowIfInvalidDate(scoreDate, typeof(ArgumentNullException), "Score Date must be provided to adjust a players handicap");
+
+            this.CheckIfPlayerHasBeenRegistered();
+
+            this.CheckNotDuplicateHandicapAdjustment(handicapAdjustmentDataTransferObject, tournamentId, golfClubId, measuredCourseId, scoreDate);
+
+            HandicapAdjustedEvent handicapAdjustedEvent = HandicapAdjustedEvent.Create(this.AggregateId,
+                                                                                       handicapAdjustmentDataTransferObject.NumberOfStrokesBelowCss,
+                                                                                       handicapAdjustmentDataTransferObject.AdjustmentValuePerStroke,
+                                                                                       handicapAdjustmentDataTransferObject.TotalAdjustment,
+                                                                                       tournamentId,
+                                                                                       golfClubId,
+                                                                                       measuredCourseId,
+                                                                                       scoreDate);
+
+            this.ApplyAndPend(handicapAdjustedEvent);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="handicapAdjustmentDataTransferObject"></param>
+        /// <param name="tournamentId"></param>
+        /// <param name="golfClubId"></param>
+        /// <param name="measuredCourseId"></param>
+        /// <param name="scoreDate"></param>
+        private void CheckNotDuplicateHandicapAdjustment(HandicapAdjustmentDataTransferObject handicapAdjustmentDataTransferObject, Guid tournamentId,
+                                                         Guid golfClubId,
+                                                         Guid measuredCourseId,
+                                                         DateTime scoreDate)
+        {
+            if (this.HandicapAdjustments.Any(h => h.GolfClubId == golfClubId &&
+                                                  h.AdjustmentValuePerStroke == handicapAdjustmentDataTransferObject.AdjustmentValuePerStroke &&
+                                                  h.MeasuredCourseId == measuredCourseId &&
+                                                  h.NumberOfStrokesBelowCss == handicapAdjustmentDataTransferObject.NumberOfStrokesBelowCss &&
+                                                  h.TournamentId == tournamentId &&
+                                                  h.ScoreDate == scoreDate &&
+                                                  h.TotalAdjustment == handicapAdjustmentDataTransferObject.TotalAdjustment))
+            {
+                throw new InvalidOperationException("Handicap adjustment has already been applied to this player");
+            }
         }
 
         /// <summary>
@@ -299,25 +363,6 @@
                 throw new InvalidOperationException("This operation is invalid for a player that already has a created security user");
             }
         }
-
-        /// <summary>
-        /// Converts from.
-        /// </summary>
-        /// <param name="membership">The membership.</param>
-        /// <returns></returns>
-        private ClubMembershipDataTransferObject ConvertFrom(ClubMembership membership)
-        {
-            return new ClubMembershipDataTransferObject
-                   {
-                       MembershipNumber = membership.MembershipNumber,
-                       AcceptedDateTime = membership.AcceptedDateTime,
-                       MembershipId = membership.MembershipId,
-                       GolfClubId = membership.GolfClubId,
-                       Status = (MembershipStatusEnum)membership.Status,
-                       RejectionReason = membership.RejectionReason,
-                       RejectedDateTime = membership.RejectedDateTime
-                   };
-        }
         
         /// <summary>
         /// Plays the event.
@@ -335,6 +380,26 @@
             this.ExactHandicap = playerRegisteredEvent.ExactHandicap;
             this.EmailAddress = playerRegisteredEvent.EmailAddress;
             this.HasBeenRegistered = true;
+            this.PlayingHandicap = this.CalculatePlayingHandicap(this.ExactHandicap);
+            this.HandicapCategory = this.CalculateHandicapCategory(this.PlayingHandicap);
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="handicapAdjustedEvent">The handicap adjusted event.</param>
+        private void PlayEvent(HandicapAdjustedEvent handicapAdjustedEvent)
+        {
+            HandicapAdjustment handicapAdjustment = HandicapAdjustment.Create(handicapAdjustedEvent.NumberOfStrokesBelowCss,
+                                                                              handicapAdjustedEvent.AdjustmentValuePerStroke,
+                                                                              handicapAdjustedEvent.TotalAdjustment,
+                                                                              handicapAdjustedEvent.TournamentId,
+                                                                              handicapAdjustedEvent.GolfClubId,
+                                                                              handicapAdjustedEvent.MeasuredCourseId,
+                                                                              handicapAdjustedEvent.ScoreDate);
+
+            this.HandicapAdjustments.Add(handicapAdjustment);
+            this.ExactHandicap += handicapAdjustedEvent.TotalAdjustment;
             this.PlayingHandicap = this.CalculatePlayingHandicap(this.ExactHandicap);
             this.HandicapCategory = this.CalculateHandicapCategory(this.PlayingHandicap);
         }
@@ -388,5 +453,140 @@
         }
 
         #endregion
+    }    
+
+    public class HandicapAdjustmentDataTransferObject
+    {
+        /// <summary>
+        /// Gets or sets the number of strokes below CSS.
+        /// </summary>
+        /// <value>
+        /// The number of strokes below CSS.
+        /// </value>
+        public Int32 NumberOfStrokesBelowCss { get; set; }
+
+        /// <summary>
+        /// Gets or sets the adjustment value per stroke.
+        /// </summary>
+        /// <value>
+        /// The adjustment value per stroke.
+        /// </value>
+        public Decimal AdjustmentValuePerStroke { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total adjustment.
+        /// </summary>
+        /// <value>
+        /// The total adjustment.
+        /// </value>
+        public Decimal TotalAdjustment { get; set; }
+    }
+
+    internal class HandicapAdjustment
+    {
+        /// <summary>
+        /// Gets or sets the number of strokes below CSS.
+        /// </summary>
+        /// <value>
+        /// The number of strokes below CSS.
+        /// </value>
+        internal Int32 NumberOfStrokesBelowCss { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the adjustment value per stroke.
+        /// </summary>
+        /// <value>
+        /// The adjustment value per stroke.
+        /// </value>
+        internal Decimal AdjustmentValuePerStroke { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the total adjustment.
+        /// </summary>
+        /// <value>
+        /// The total adjustment.
+        /// </value>
+        internal Decimal TotalAdjustment { get; private set; }
+
+        /// <summary>
+        /// Gets the tournament identifier.
+        /// </summary>
+        /// <value>
+        /// The tournament identifier.
+        /// </value>
+        internal Guid TournamentId { get; private set; }
+
+        /// <summary>
+        /// Gets the golf club identifier.
+        /// </summary>
+        /// <value>
+        /// The golf club identifier.
+        /// </value>
+        internal Guid GolfClubId { get; private set; }
+
+        /// <summary>
+        /// Gets the measured course identifier.
+        /// </summary>
+        /// <value>
+        /// The measured course identifier.
+        /// </value>
+        internal Guid MeasuredCourseId { get; private set; }
+
+        /// <summary>
+        /// Gets the score date.
+        /// </summary>
+        /// <value>
+        /// The score date.
+        /// </value>
+        internal DateTime ScoreDate { get; private set; }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HandicapAdjustment"/> class.
+        /// </summary>
+        /// <param name="numberOfStrokesBelowCss">The number of strokes below CSS.</param>
+        /// <param name="adjustmentValuePerStroke">The adjustment value per stroke.</param>
+        /// <param name="totalAdjustment">The total adjustment.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="measuredCourseId">The measured course identifier.</param>
+        /// <param name="scoreDate">The score date.</param>
+        private HandicapAdjustment(Int32 numberOfStrokesBelowCss,
+                                    Decimal adjustmentValuePerStroke,
+                                    Decimal totalAdjustment,
+                                    Guid tournamentId,
+                                    Guid golfClubId,
+                                    Guid measuredCourseId,
+                                    DateTime scoreDate)
+        {
+            this.NumberOfStrokesBelowCss = numberOfStrokesBelowCss;
+            this.AdjustmentValuePerStroke = adjustmentValuePerStroke;
+            this.TotalAdjustment = totalAdjustment;
+            this.TournamentId = tournamentId;
+            this.GolfClubId = golfClubId;
+            this.MeasuredCourseId = measuredCourseId;
+            this.ScoreDate = scoreDate;
+        }
+
+        /// <summary>
+        /// Creates the specified number of strokes below CSS.
+        /// </summary>
+        /// <param name="numberOfStrokesBelowCss">The number of strokes below CSS.</param>
+        /// <param name="adjustmentValuePerStroke">The adjustment value per stroke.</param>
+        /// <param name="totalAdjustment">The total adjustment.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="measuredCourseId">The measured course identifier.</param>
+        /// <param name="scoreDate">The score date.</param>
+        /// <returns></returns>
+        internal static HandicapAdjustment Create(Int32 numberOfStrokesBelowCss,
+                                                  Decimal adjustmentValuePerStroke,
+                                                  Decimal totalAdjustment,
+                                                  Guid tournamentId,
+                                                  Guid golfClubId,
+                                                  Guid measuredCourseId,
+                                                  DateTime scoreDate)
+        {
+            return new HandicapAdjustment(numberOfStrokesBelowCss,adjustmentValuePerStroke,totalAdjustment, tournamentId, golfClubId, measuredCourseId, scoreDate);
+        }
     }
 }

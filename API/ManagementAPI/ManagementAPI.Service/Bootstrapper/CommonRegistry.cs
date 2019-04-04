@@ -23,6 +23,7 @@ using ESLogger = EventStore.ClientAPI;
 namespace ManagementAPI.Service.Bootstrapper
 {
     using EventHandling;
+    using HandicapCalculationProcess;
     using Services.DomainServices;
 
     [ExcludeFromCodeCoverage]
@@ -55,6 +56,7 @@ namespace ManagementAPI.Service.Bootstrapper
             For<IDomainEventHandler>().Use<GolfClubDomainEventHandler>().Named("GolfClub");
             For<IDomainEventHandler>().Use<GolfClubMembershipDomainEventHandler>().Named("GolfClubMembership");
             For<IDomainEventHandler>().Use<TournamentDomainEventHandler>().Named("Tournament");
+            For<IDomainEventHandler>().Use<HandicapCalculationDomainEventHandler>().Named("HandicapCalculator");
 
             Func<String, IDomainEventHandler> domainEventHanderFunc = (name) => Startup.Container.GetInstance<IDomainEventHandler>(name);
 
@@ -70,12 +72,16 @@ namespace ManagementAPI.Service.Bootstrapper
                 .Use<AggregateRepository<TournamentAggregate>>().Singleton();
             For<IAggregateRepository<PlayerAggregate>>()
                 .Use<AggregateRepository<PlayerAggregate>>().Singleton();
+            For<IAggregateRepository<HandicapCalculationProcessAggregate>>()
+                .Use<AggregateRepository<HandicapCalculationProcessAggregate>>().Singleton();
 
             For<IHandicapAdjustmentCalculatorService>().Use<HandicapAdjustmentCalculatorService>();
             For<IManagmentAPIManager>().Use<ManagementAPIManager>().Singleton();
             For<IOAuth2SecurityService>().Use<OAuth2SecurityService>().Singleton();
             For<IGolfClubMembershipApplicationService>().Use<GolfClubMembershipApplicationService>().Singleton();
             For<ITournamentApplicationService>().Use<TournamentApplicationService>().Singleton();
+
+            this.For<IHandicapCalculationProcessorService>().Use<HandicapCalculationProcessorService>().Transient();
         }
     }
 }

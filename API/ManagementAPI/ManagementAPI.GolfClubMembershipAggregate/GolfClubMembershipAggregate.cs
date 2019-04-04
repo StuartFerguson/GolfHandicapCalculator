@@ -97,7 +97,7 @@
         {
             List<MembershipDataTransferObject> result = new List<MembershipDataTransferObject>();
 
-            if (this.MembershipList == null || this.MembershipList.Count == 0)
+            if (this.MembershipList.Count == 0)
             {
                 throw new NotFoundException($"No Memberships found for Golf CLub Id {this.AggregateId}.");
             }

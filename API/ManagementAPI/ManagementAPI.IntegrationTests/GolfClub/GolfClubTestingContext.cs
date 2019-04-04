@@ -74,4 +74,19 @@
 
         public RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest;
     }
+
+    public class HandicapCalculationTestingContext
+    {
+        public String ClubAdministratorToken;
+
+        public String PlayerToken;
+
+        public Guid GolfClubId;
+
+        public CreateTournamentRequest CreateTournamentRequest;
+
+        public CreateTournamentResponse CreateTournamentResponse;
+
+        public RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest;
+    }
 }

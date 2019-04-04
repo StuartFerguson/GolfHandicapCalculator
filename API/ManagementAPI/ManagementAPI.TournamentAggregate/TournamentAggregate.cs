@@ -544,7 +544,12 @@
                                TournamentDivision = playerScoreRecord.TournamentDivision,
                                Last6HolesScore = playerScoreRecord.Last6HolesScore,
                                Last3HolesScore = playerScoreRecord.Last3HolesScore,
-                               Position = playerScoreRecord.Position
+                               Position = playerScoreRecord.Position,
+                               CSS = this.CSS,
+                               GolfClubId = this.GolfClubId,
+                               TournamentId = this.AggregateId,
+                               MeasuredCourseId = this.MeasuredCourseId,
+                               ScoreDate = this.TournamentDate.Date
                 });
             }
 
