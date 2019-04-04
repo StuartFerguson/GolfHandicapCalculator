@@ -114,7 +114,6 @@
         private ICommandHandler CreateHandler(StartHandicapCalculationProcessForTournamentCommand command)
         {
             return new HandicapCalculationCommandHandler(this.HandicapCalculationProcessRepository, this.TournamentRepository);
-            ;
         }
 
         /// <summary>

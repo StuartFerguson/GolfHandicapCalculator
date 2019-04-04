@@ -183,7 +183,6 @@
         public void PlayerAggregate_Register_NoMiddleName_PlayerRegistered(String middleName)
         {
             PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
-
             
             Decimal exactHandicap = PlayerTestData.ExactHandicapCat1;
                     Int32 playingHandicap = PlayerTestData.PlayingHandicapCat1;

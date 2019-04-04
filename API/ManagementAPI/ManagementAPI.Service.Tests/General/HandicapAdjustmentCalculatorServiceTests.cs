@@ -6,6 +6,9 @@ using Xunit;
 
 namespace ManagementAPI.Service.Tests.General
 {
+    using Microsoft.Extensions.Logging.Abstractions;
+    using Shared.General;
+
     public class HandicapAdjustmentCalculatorServiceTests
     {
         public List<Dictionary<Int32, Int32>> ScoreList = new List<Dictionary<Int32, Int32>>();
@@ -30,6 +33,8 @@ namespace ManagementAPI.Service.Tests.General
             ScoreList.Add(ThirteenHandicapHoleScoresIncrease);
             ScoreList.Add(TwentyOneHandicapHoleScoresIncrease);
             ScoreList.Add(TwentyNineHandicapHoleScoresIncrease);
+
+            Logger.Initialise(NullLogger.Instance);
         }
 
         /*public static Dictionary<Int32, Int32> HoleScores = new Dictionary<Int32, Int32>()

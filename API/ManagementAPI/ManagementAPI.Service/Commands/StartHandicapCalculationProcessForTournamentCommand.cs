@@ -2,9 +2,7 @@
 {
     using System;
     using Shared.CommandHandling;
-
     public class StartHandicapCalculationProcessForTournamentCommand : Command<String>
-
     {
         #region Constructors
 

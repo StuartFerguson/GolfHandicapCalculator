@@ -106,8 +106,6 @@ namespace ManagementAPI.Service.Services
                                      TotalAdjustment = g.Sum(x => x.TotalAdjustment),
                                      NumberOfStrokesBelowCss = g.Sum(x => x.NumberOfStrokesBelowCss)
                                  }).OrderByDescending(r => r.AdjustmentValuePerStroke).ToList();
-
-
             }
             
             return result;
