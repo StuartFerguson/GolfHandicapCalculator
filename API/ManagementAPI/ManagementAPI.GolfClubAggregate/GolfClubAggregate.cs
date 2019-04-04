@@ -205,9 +205,9 @@
         /// <param name="tournamentDivision">The tournament division.</param>
         public void AddTournamentDivision(TournamentDivisionDataTransferObject tournamentDivision)
         {
-            this.CheckHasGolfClubAlreadyBeenCreated();
+            Guard.ThrowIfNull(tournamentDivision, typeof(ArgumentNullException), "Tournament Division cannot be null");
 
-            this.ValidateTournamentDivision(tournamentDivision);
+            this.CheckHasGolfClubAlreadyBeenCreated();
 
             // Check for duplicate division
             this.ValidateForDuplicateDivision(tournamentDivision.Division);
@@ -215,6 +215,8 @@
             // check for clashing ranges
             this.ValidateDivisionRanges(tournamentDivision);
 
+            this.ValidateTournamentDivision(tournamentDivision);
+            
             // Raise a domain event
             TournamentDivisionAddedEvent tournamentDivisionAddedEvent =
                 TournamentDivisionAddedEvent.Create(this.AggregateId, tournamentDivision.Division, tournamentDivision.StartHandicap, tournamentDivision.EndHandicap);
@@ -577,7 +579,7 @@
             // Check there are no missing stroke indexes
             IEnumerable<Int32> strokeIndexList = measuredCourse.Holes.Select(h => h.StrokeIndex);
             List<Int32> missingStrokeIndexes =
-                Enumerable.Range(strokeIndexList.Min(), strokeIndexList.Max() - strokeIndexList.Min() + 1).Except(strokeIndexList).ToList();
+                Enumerable.Range(GolfClubAggregate.MinimumStrokeIndex, GolfClubAggregate.MaximumStrokeIndex - GolfClubAggregate.MinimumStrokeIndex + 1).Except(strokeIndexList).ToList();
 
             if (missingStrokeIndexes.Count > 0)
             {
@@ -619,8 +621,6 @@
         /// </exception>
         private void ValidateTournamentDivision(TournamentDivisionDataTransferObject tournamentDivision)
         {
-            Guard.ThrowIfNull(tournamentDivision, typeof(ArgumentNullException), "Tournament Division cannot be null");
-
             if (tournamentDivision.Division <= 0 || tournamentDivision.Division > 5)
             {
                 throw new ArgumentOutOfRangeException(nameof(tournamentDivision.Division), "Tournament Division must be between 1 and 5");

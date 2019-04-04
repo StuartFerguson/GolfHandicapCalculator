@@ -24,7 +24,7 @@ namespace ManagementAPI.Service.Tests.GolfClubMembership
         public static String PlayerGender = "M";
         public static String PlayerGender2 = "M";
         
-        public static DateTime PlayerDateOfBirth = new DateTime(1980,12,13);
+        public static DateTime PlayerDateOfBirth = new DateTime(1980,12,31);
         public static DateTime PlayerDateOfBirth2 = new DateTime(1981,12,13);
 
         public static DateTime RequestDateAndTime = new DateTime(2019,1,2);

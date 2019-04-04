@@ -163,7 +163,10 @@ namespace ManagementAPI.Service
 
             app.UseMvc();
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Golf Handicapping API v1"); });
+            app.UseSwaggerUI(c =>
+                             {
+                                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Golf Handicapping API v1");
+                             });
 
             if (String.Compare(ConfigurationReader.GetValue("EventStoreSettings", "START_PROJECTIONS"),
                                Boolean.TrueString,
@@ -528,6 +531,32 @@ namespace ManagementAPI.Service
                                                       RoleNames.Developer.ToUpper(),
                                                       RoleNames.TestDataGenerator,
                                                       RoleNames.TestDataGenerator.ToUpper());
+                               });
+
+            #endregion
+
+            #region Handicap Calculation Process Policies
+
+            policies.AddPolicy(PolicyNames.ProcessHandicapCalculationsPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.ClubAdministrator,
+                                                      RoleNames.ClubAdministrator.ToUpper(),
+                                                      RoleNames.MatchSecretary,
+                                                      RoleNames.MatchSecretary.ToUpper());
+                               });
+
+            policies.AddPolicy(PolicyNames.GetHandicapCalculationProcessStatusPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.ClubAdministrator,
+                                                      RoleNames.ClubAdministrator.ToUpper(),
+                                                      RoleNames.MatchSecretary,
+                                                      RoleNames.MatchSecretary.ToUpper());
                                });
 
             #endregion

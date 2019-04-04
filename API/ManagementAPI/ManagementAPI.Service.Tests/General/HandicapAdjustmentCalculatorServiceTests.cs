@@ -6,6 +6,9 @@ using Xunit;
 
 namespace ManagementAPI.Service.Tests.General
 {
+    using Microsoft.Extensions.Logging.Abstractions;
+    using Shared.General;
+
     public class HandicapAdjustmentCalculatorServiceTests
     {
         public List<Dictionary<Int32, Int32>> ScoreList = new List<Dictionary<Int32, Int32>>();
@@ -30,6 +33,8 @@ namespace ManagementAPI.Service.Tests.General
             ScoreList.Add(ThirteenHandicapHoleScoresIncrease);
             ScoreList.Add(TwentyOneHandicapHoleScoresIncrease);
             ScoreList.Add(TwentyNineHandicapHoleScoresIncrease);
+
+            Logger.Initialise(NullLogger.Instance);
         }
 
         /*public static Dictionary<Int32, Int32> HoleScores = new Dictionary<Int32, Int32>()
@@ -181,10 +186,10 @@ namespace ManagementAPI.Service.Tests.General
         {
             IHandicapAdjustmentCalculatorService service = new HandicapAdjustmentCalculatorService();
             
-            List<Decimal> adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
+            List<HandicapAdjustment> adjustments = service.CalculateHandicapAdjustment(exactHandicap, HandicapAdjustmentCalculatorServiceTests.CSSScore, this.ScoreList[(Int32)holeScoresIndex]);
 
             adjustments.Count.ShouldBe(1);
-            adjustments[0].ShouldBe(adjustment);
+            adjustments[0].TotalAdjustment.ShouldBe(adjustment);
         }
 
         [Theory]
@@ -198,10 +203,10 @@ namespace ManagementAPI.Service.Tests.General
         {
             IHandicapAdjustmentCalculatorService service = new HandicapAdjustmentCalculatorService();
             
-            List<Decimal> adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
+            List<HandicapAdjustment> adjustments = service.CalculateHandicapAdjustment(exactHandicap, HandicapAdjustmentCalculatorServiceTests.CSSScore, this.ScoreList[(Int32)holeScoresIndex]);
 
             adjustments.Count.ShouldBe(1);
-            adjustments[0].ShouldBe(adjustment);
+            adjustments[0].TotalAdjustment.ShouldBe(adjustment);
         }
 
         [Theory]
@@ -215,10 +220,10 @@ namespace ManagementAPI.Service.Tests.General
         {
             IHandicapAdjustmentCalculatorService service = new HandicapAdjustmentCalculatorService();
             
-            List<Decimal> adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, ScoreList[(Int32)holeScoresIndex]);
+            List<HandicapAdjustment> adjustments = service.CalculateHandicapAdjustment(exactHandicap, HandicapAdjustmentCalculatorServiceTests.CSSScore, this.ScoreList[(Int32)holeScoresIndex]);
 
             adjustments.Count.ShouldBe(1);
-            adjustments[0].ShouldBe(adjustment);
+            adjustments[0].TotalAdjustment.ShouldBe(adjustment);
         }
 
         [Fact]
@@ -233,15 +238,15 @@ namespace ManagementAPI.Service.Tests.General
             };
             Decimal exactHandicap = 6.1m;
 
-            List<Decimal> adjustments = service.CalculateHandicapAdjustment(exactHandicap, CSSScore, sixHandicapHoleScoresCut);
+            List<HandicapAdjustment> adjustments = service.CalculateHandicapAdjustment(exactHandicap, HandicapAdjustmentCalculatorServiceTests.CSSScore, sixHandicapHoleScoresCut);
 
-            adjustments.Count.ShouldBe(6);
-            adjustments[0].ShouldBe(-0.2m);
-            adjustments[1].ShouldBe(-0.2m);
-            adjustments[2].ShouldBe(-0.2m);
-            adjustments[3].ShouldBe(-0.2m);
-            adjustments[4].ShouldBe(-0.1m);
-            adjustments[5].ShouldBe(-0.1m);
+            adjustments.Count.ShouldBe(2);
+            adjustments[0].TotalAdjustment.ShouldBe(-0.8m);
+            adjustments[0].AdjustmentValuePerStroke.ShouldBe(0.2m);
+            adjustments[0].NumberOfStrokesBelowCss.ShouldBe(4);
+            adjustments[1].TotalAdjustment.ShouldBe(-0.2m);
+            adjustments[1].AdjustmentValuePerStroke.ShouldBe(0.1m);
+            adjustments[1].NumberOfStrokesBelowCss.ShouldBe(2);
         }
     }
 }

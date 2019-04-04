@@ -11,6 +11,22 @@
         #region Properties
 
         /// <summary>
+        /// Gets or sets the CSS.
+        /// </summary>
+        /// <value>
+        /// The CSS.
+        /// </value>
+        public Int32 CSS { get; set; }
+
+        /// <summary>
+        /// Gets or sets the golf club identifier.
+        /// </summary>
+        /// <value>
+        /// The golf club identifier.
+        /// </value>
+        public Guid GolfClubId { get; set; }
+
+        /// <summary>
         /// Gets the gross score.
         /// </summary>
         /// <value>
@@ -67,6 +83,14 @@
         public Decimal Last9HolesScore { get; set; }
 
         /// <summary>
+        /// Gets or sets the measured course identifier.
+        /// </summary>
+        /// <value>
+        /// The measured course identifier.
+        /// </value>
+        public Guid MeasuredCourseId { get; set; }
+
+        /// <summary>
         /// Gets the net score.
         /// </summary>
         /// <value>
@@ -99,12 +123,28 @@
         public Int32 Position { get; set; }
 
         /// <summary>
+        /// Gets or sets the score date time.
+        /// </summary>
+        /// <value>
+        /// The score date time.
+        /// </value>
+        public DateTime ScoreDate { get; set; }
+
+        /// <summary>
         /// Gets or sets the tournament division.
         /// </summary>
         /// <value>
         /// The tournament division.
         /// </value>
         public Int32 TournamentDivision { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tournament identifier.
+        /// </summary>
+        /// <value>
+        /// The tournament identifier.
+        /// </value>
+        public Guid TournamentId { get; set; }
 
         #endregion
     }

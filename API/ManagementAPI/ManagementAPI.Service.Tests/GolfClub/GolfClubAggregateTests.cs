@@ -155,7 +155,7 @@
 
             Should.Throw<InvalidDataException>(() => { aggregate.AddMeasuredCourse(measuredCourseDataTransferObject); });
         }
-
+        
         [Fact]
         public void GolfClubAggregate_AddMeasuredCourse_MeasuredCourseWithHolesAdded()
         {
@@ -216,7 +216,7 @@
                                                                              {
                                                                                  Division = 2,
                                                                                  EndHandicap = GolfClubTestData.GetTournamentDivision1().EndHandicap,
-                                                                                 StartHandicap = 2
+                                                                                 StartHandicap = 6
                                                                              };
 
             Should.Throw<InvalidDataException>(() => { aggregate.AddTournamentDivision(tournamentDivisionInvalid); });

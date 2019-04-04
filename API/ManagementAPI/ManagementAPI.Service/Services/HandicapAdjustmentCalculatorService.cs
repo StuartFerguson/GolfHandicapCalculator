@@ -4,11 +4,14 @@ using System.Linq;
 
 namespace ManagementAPI.Service.Services
 {
+    using Shared.General;
+
     public class HandicapAdjustmentCalculatorService : IHandicapAdjustmentCalculatorService
     {
         #region Public Methods
 
         #region public Decimal CalculateHandicapAdjustment(Decimal exactHandicap, Int32 CSS, Dictionary<Int32, Int32> grossHoleScores)        
+
         /// <summary>
         /// Calculates the handicap adjustment.
         /// </summary>
@@ -16,12 +19,17 @@ namespace ManagementAPI.Service.Services
         /// <param name="CSS">The CSS.</param>
         /// <param name="grossHoleScores">The gross hole scores.</param>
         /// <returns></returns>
-        public List<Decimal> CalculateHandicapAdjustment(Decimal exactHandicap, Int32 CSS, Dictionary<Int32, Int32> grossHoleScores)
+        public List<HandicapAdjustment> CalculateHandicapAdjustment(Decimal exactHandicap,
+                                                                    Int32 CSS,
+                                                                    Dictionary<Int32, Int32> grossHoleScores)
         {
-            List<Decimal> result = new List<Decimal>();
+            List<HandicapAdjustment> result = new List<HandicapAdjustment>();
 
             // Get the gross score
             Int32 grossScore = grossHoleScores.Values.Sum();
+
+            Logger.LogInformation($"Gross Score {grossScore}");
+            Logger.LogInformation($"CSS {CSS}");
 
             // Now determine the playing handicap
             Decimal playingHandicap = 0;
@@ -37,6 +45,8 @@ namespace ManagementAPI.Service.Services
             // Now the net score
             Int32 netScore = grossScore - (Int32)playingHandicap;
 
+            Logger.LogInformation($"Net Score {netScore}");
+
             // Determine the buffer zone
             Int32 bufferZone = DetermineBufferZone(playingHandicap);
 
@@ -48,13 +58,23 @@ namespace ManagementAPI.Service.Services
                 // Net score is above the CSS then check if within buffer or not
                 if (netDifference > bufferZone)
                 {
-                    // need to adjust handicap up (0.1)
-                    result.Add(0.1m);
+                    // need to adjust handicap up (0.1)                    
+                    result.Add(new HandicapAdjustment
+                               {
+                                   AdjustmentValuePerStroke = 0,
+                                   NumberOfStrokesBelowCss = 0,
+                                   TotalAdjustment = 0.1m
+                               });
                 }
 
                 if (netDifference <= bufferZone)
                 {
-                    result.Add(0);
+                    result.Add(new HandicapAdjustment
+                               {
+                                   AdjustmentValuePerStroke = 0,
+                                   NumberOfStrokesBelowCss = 0,
+                                   TotalAdjustment = 0.0m
+                               });
                 }
             }
             else
@@ -68,8 +88,24 @@ namespace ManagementAPI.Service.Services
                     workingExactHandicap = workingExactHandicap - adjustmentValue;                    
 
                     // Keep a running adjustment total
-                    result.Add(adjustmentValue * -1);
+                    result.Add(new HandicapAdjustment
+                               {
+                                   AdjustmentValuePerStroke = adjustmentValue,
+                                   NumberOfStrokesBelowCss = 1,
+                                   TotalAdjustment = adjustmentValue * -1
+                               });
                 }
+
+                result = (from r in result
+                          group r by r.AdjustmentValuePerStroke
+                          into g
+                          orderby g.Key
+                          select new HandicapAdjustment
+                                 {
+                                     AdjustmentValuePerStroke = g.Key,
+                                     TotalAdjustment = g.Sum(x => x.TotalAdjustment),
+                                     NumberOfStrokesBelowCss = g.Sum(x => x.NumberOfStrokesBelowCss)
+                                 }).OrderByDescending(r => r.AdjustmentValuePerStroke).ToList();
             }
             
             return result;

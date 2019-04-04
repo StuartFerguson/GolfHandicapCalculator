@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ManagementAPI.Service.EventHandling
+﻿namespace ManagementAPI.Service.EventHandling
 {
+    using System;
     using System.Threading;
+    using System.Threading.Tasks;
     using Manager;
     using Shared.EventSourcing;
     using Shared.General;
     using Tournament.DomainEvents;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="ManagementAPI.Service.EventHandling.IDomainEventHandler" />
     public class TournamentDomainEventHandler : IDomainEventHandler
     {
         #region Fields
@@ -35,13 +36,15 @@ namespace ManagementAPI.Service.EventHandling
         /// <param name="manager">The manager.</param>
         /// <param name="eventTypesToSilentlyHandle">The event types to silently handle.</param>
         public TournamentDomainEventHandler(IManagmentAPIManager manager,
-                                          IDomainEventTypesToSilentlyHandle eventTypesToSilentlyHandle)
+                                            IDomainEventTypesToSilentlyHandle eventTypesToSilentlyHandle)
         {
             this.Manager = manager;
             this.EventTypesToSilentlyHandle = eventTypesToSilentlyHandle;
         }
 
         #endregion
+
+        #region Methods
 
         /// <summary>
         /// Handles the specified domain event.
@@ -61,7 +64,8 @@ namespace ManagementAPI.Service.EventHandling
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private async Task HandleSpecificDomainEvent(TournamentCreatedEvent domainEvent, CancellationToken cancellationToken)
+        private async Task HandleSpecificDomainEvent(TournamentCreatedEvent domainEvent,
+                                                     CancellationToken cancellationToken)
         {
             await this.Manager.InsertTournamentToReadModel(domainEvent, cancellationToken);
         }
@@ -72,7 +76,8 @@ namespace ManagementAPI.Service.EventHandling
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private async Task HandleSpecificDomainEvent(TournamentResultForPlayerScoreProducedEvent domainEvent, CancellationToken cancellationToken)
+        private async Task HandleSpecificDomainEvent(TournamentResultForPlayerScoreProducedEvent domainEvent,
+                                                     CancellationToken cancellationToken)
         {
             await this.Manager.InsertPlayerTournamentScoreToReadModel(domainEvent, cancellationToken);
         }
@@ -83,11 +88,19 @@ namespace ManagementAPI.Service.EventHandling
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        private async Task HandleSpecificDomainEvent(TournamentResultProducedEvent domainEvent, CancellationToken cancellationToken)
+        private async Task HandleSpecificDomainEvent(TournamentResultProducedEvent domainEvent,
+                                                     CancellationToken cancellationToken)
         {
             await this.Manager.UpdateTournamentStatusInReadModel(domainEvent, cancellationToken);
         }
 
+        /// <summary>
+        /// Handles the specific domain event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">No event handler for {domainEvent.GetType()}</exception>
         private Task HandleSpecificDomainEvent(DomainEvent domainEvent,
                                                CancellationToken cancellationToken)
         {
@@ -102,5 +115,7 @@ namespace ManagementAPI.Service.EventHandling
             // Not sure yet if/how we want to handle these events. Handler added so nothing is written to log file to prevent them filling up.
             throw new Exception($"No event handler for {domainEvent.GetType()}");
         }
+
+        #endregion
     }
 }

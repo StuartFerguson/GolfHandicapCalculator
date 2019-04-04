@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AssemblyName>ManagementAPI.HandicapCalculationProcessAggregate</AssemblyName>
+    <RootNamespace>ManagementAPI.HandicapCalculationProcess</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Shared" Version="1.0.14.21" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ManagementAPI.HandicapCalcProcess.DomainEvents\ManagementAPI.HandicapCalcProcess.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.TournamentAggregate\ManagementAPI.TournamentAggregate.csproj" />
+  </ItemGroup>
+
+</Project>

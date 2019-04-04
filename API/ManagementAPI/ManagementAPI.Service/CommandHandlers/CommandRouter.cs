@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using Commands;
     using GolfClub;
+    using HandicapCalculationProcess;
     using Player;
     using Services;
     using Services.DomainServices;
@@ -13,6 +14,8 @@
 
     public class CommandRouter : ICommandRouter
     {
+        public IAggregateRepository<HandicapCalculationProcessAggregate> HandicapCalculationProcessRepository { get; private set; }
+
         #region Fields
 
         /// <summary>
@@ -64,14 +67,17 @@
         /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
         /// <param name="golfClubMembershipApplicationService">The golf club membership application service.</param>
         /// <param name="tournamentApplicationService">The tournament application service.</param>
+        /// <param name="handicapCalculationProcessRepository">The handicap calculation process repository.</param>
         public CommandRouter(IAggregateRepository<GolfClubAggregate> clubRepository,
                              IAggregateRepository<TournamentAggregate> tournamentRepository,
                              IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService,
                              IAggregateRepository<PlayerAggregate> playerRepository,
                              IOAuth2SecurityService oAuth2SecurityService,
                              IGolfClubMembershipApplicationService golfClubMembershipApplicationService,
-                             ITournamentApplicationService tournamentApplicationService)
+                             ITournamentApplicationService tournamentApplicationService,
+                             IAggregateRepository<HandicapCalculationProcessAggregate> handicapCalculationProcessRepository)
         {
+            this.HandicapCalculationProcessRepository = handicapCalculationProcessRepository;
             this.ClubRepository = clubRepository;
             this.TournamentRepository = tournamentRepository;
             this.HandicapAdjustmentCalculatorService = handicapAdjustmentCalculatorService;
@@ -98,6 +104,16 @@
             ICommandHandler commandHandler = CreateHandler((dynamic)command);
 
             await commandHandler.Handle(command, cancellationToken);
+        }
+
+        /// <summary>
+        /// Creates the handler.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns></returns>
+        private ICommandHandler CreateHandler(StartHandicapCalculationProcessForTournamentCommand command)
+        {
+            return new HandicapCalculationCommandHandler(this.HandicapCalculationProcessRepository, this.TournamentRepository);
         }
 
         /// <summary>

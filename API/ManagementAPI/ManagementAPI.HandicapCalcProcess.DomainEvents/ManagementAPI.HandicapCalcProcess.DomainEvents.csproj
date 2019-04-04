@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AssemblyName>ManagementAPI.HandicapCalculationProcess.DomainEvents</AssemblyName>
+    <RootNamespace>ManagementAPI.HandicapCalculationProcess.DomainEvents</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Shared" Version="1.0.14.21" />
+  </ItemGroup>
+
+</Project>

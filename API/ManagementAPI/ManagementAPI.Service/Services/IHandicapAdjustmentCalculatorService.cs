@@ -13,6 +13,6 @@ namespace ManagementAPI.Service.Services
         /// <param name="CSS">The CSS.</param>
         /// <param name="grossHoleScores">The gross hole scores.</param>
         /// <returns></returns>
-        List<Decimal> CalculateHandicapAdjustment(Decimal exactHandicap, Int32 CSS, Dictionary<Int32,Int32> grossHoleScores);
+        List<HandicapAdjustment> CalculateHandicapAdjustment(Decimal exactHandicap, Int32 CSS, Dictionary<Int32,Int32> grossHoleScores);
     }
 }

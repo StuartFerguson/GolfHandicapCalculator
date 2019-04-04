@@ -117,6 +117,25 @@
             return this.Ok();
         }
 
+        [HttpPost]
+        [Route("HandicapCalculator")]
+        public async Task<IActionResult> PostEventHandicapCalculator([FromBody] DomainEvent @event,
+                                                             CancellationToken cancellationToken)
+        {
+            try
+            {
+                IDomainEventHandler domainEventHandler = this.DomainEventHandlerResolver("HandicapCalculator");
+                await domainEventHandler.Handle(@event, cancellationToken);
+            }
+            catch (WrongExpectedVersionException)
+            {
+                return this.BadRequest();
+            }
+
+            //TODO: Handle NAK scenarios
+            return this.Ok();
+        }
+
         #endregion
     }
 }

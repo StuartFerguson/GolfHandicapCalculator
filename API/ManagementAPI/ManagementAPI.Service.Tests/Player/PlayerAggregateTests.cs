@@ -115,6 +115,7 @@
 
         [Theory]
         [InlineData(1)]
+        [InlineData(1)]
         [InlineData(2)]
         [InlineData(3)]
         [InlineData(4)]
@@ -174,6 +175,128 @@
             playerAggregate.PlayingHandicap.ShouldBe(playingHandicap);
             playerAggregate.HandicapCategory.ShouldBe(handicapCategory);
             playerAggregate.FullName.ShouldBe(PlayerTestData.FullName);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public void PlayerAggregate_Register_NoMiddleName_PlayerRegistered(String middleName)
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+            
+            Decimal exactHandicap = PlayerTestData.ExactHandicapCat1;
+                    Int32 playingHandicap = PlayerTestData.PlayingHandicapCat1;
+                    Int32 handicapCategory = PlayerTestData.HandicapCategoryCat1;
+            
+
+            playerAggregate.Register(PlayerTestData.FirstName,
+                                     middleName,
+                                     PlayerTestData.LastName,
+                                     PlayerTestData.Gender,
+                                     PlayerTestData.DateOfBirth,
+                                     exactHandicap,
+                                     PlayerTestData.EmailAddress);
+
+            playerAggregate.FirstName.ShouldBe(PlayerTestData.FirstName);
+            playerAggregate.MiddleName.ShouldBe(middleName);
+            playerAggregate.LastName.ShouldBe(PlayerTestData.LastName);
+            playerAggregate.Gender.ShouldBe(PlayerTestData.Gender);
+            playerAggregate.DateOfBirth.ShouldBe(PlayerTestData.DateOfBirth);
+            playerAggregate.ExactHandicap.ShouldBe(exactHandicap);
+            playerAggregate.EmailAddress.ShouldBe(PlayerTestData.EmailAddress);
+            playerAggregate.PlayingHandicap.ShouldBe(playingHandicap);
+            playerAggregate.HandicapCategory.ShouldBe(handicapCategory);
+            playerAggregate.FullName.ShouldBe(PlayerTestData.FullNameEmptyMiddleName);
+        }
+
+        [Fact]
+        public void PlayerAggregate_AdjustHandicap_HandicapAdjusted()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
+            
+            playerAggregate.AdjustHandicap(PlayerTestData.HandicapAdjustmentDecrease, PlayerTestData.TournamentId, PlayerTestData.GolfClubId, PlayerTestData.MeasuredCourseId,
+                                           PlayerTestData.ScoreDate);
+
+            playerAggregate.ExactHandicap.ShouldBe(PlayerTestData.NewExactHandicap);
+            playerAggregate.PlayingHandicap.ShouldBe(PlayerTestData.NewPlayingHandicap);
+        }
+
+        [Fact]
+        public void PlayerAggregate_AdjustHandicap_HandicapAdjustmentIsZero_HandicapNotAdjusted()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
+            
+            playerAggregate.AdjustHandicap(PlayerTestData.HandicapAdjustmentNoChange, PlayerTestData.TournamentId, PlayerTestData.GolfClubId, PlayerTestData.MeasuredCourseId,
+                                           PlayerTestData.ScoreDate);
+
+            playerAggregate.ExactHandicap.ShouldBe(PlayerTestData.ExactHandicap);
+            playerAggregate.PlayingHandicap.ShouldBe(PlayerTestData.PlayingHandicap);
+        }
+
+        [Fact]
+        public void PlayerAggregate_AdjustHandicap_HandicapIncrease_HandicapAdjusted()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
+            
+            playerAggregate.AdjustHandicap(PlayerTestData.HandicapAdjustmentIncrease, PlayerTestData.TournamentId, PlayerTestData.GolfClubId, PlayerTestData.MeasuredCourseId,
+                                           PlayerTestData.ScoreDate);
+
+            playerAggregate.ExactHandicap.ShouldBe(PlayerTestData.NewExactHandicapIncreased);
+            playerAggregate.PlayingHandicap.ShouldBe(PlayerTestData.NewPlayingHandicapIncreased);
+        }
+
+        [Fact]
+        public void PlayerAggregate_AdjustHandicap_DuplicateAdjustment_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregateWithHandicapAdjustment();
+            
+            Should.Throw<InvalidOperationException>(() => playerAggregate.AdjustHandicap(PlayerTestData.HandicapAdjustment,
+                                                                                         PlayerTestData.TournamentId,
+                                                                                         PlayerTestData.GolfClubId,
+                                                                                         PlayerTestData.MeasuredCourseId,
+                                                                                         PlayerTestData.ScoreDate));
+        }
+
+        [Fact]
+        public void PlayerAggregate_AdjustHandicap_PlayerNotRegistered_ErrorThrown()
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Should.Throw<InvalidOperationException>(() => playerAggregate.AdjustHandicap(PlayerTestData.HandicapAdjustment,
+                                                                                         PlayerTestData.TournamentId,
+                                                                                         PlayerTestData.GolfClubId,
+                                                                                         PlayerTestData.MeasuredCourseId,
+                                                                                         PlayerTestData.ScoreDate));
+        }
+
+        [Theory]
+        [InlineData(false,true,true,true,true, typeof(ArgumentNullException))]
+        [InlineData(true, false, true, true, true, typeof(ArgumentNullException))]
+        [InlineData(true, true, false, true, true, typeof(ArgumentNullException))]
+        [InlineData(true, true, true, false, true, typeof(ArgumentNullException))]
+        [InlineData(true, true, true, true, false, typeof(ArgumentNullException))]
+        public void PlayerAggregate_AdjustHandicap_InvalidData_ErrorThrown(Boolean validAdjustment, Boolean validTournamentId, Boolean validGolfClubId,
+                                                                           Boolean validMeasuredCourseId, Boolean validScoreDate, Type exceptionType)
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetRegisteredPlayerAggregate();
+
+            HandicapAdjustmentDataTransferObject handicapAdjustment = validAdjustment
+                ? PlayerTestData.HandicapAdjustment
+                : null;
+
+            Guid tournamentId = validTournamentId ? PlayerTestData.TournamentId : Guid.Empty;
+            Guid golfClubId = validGolfClubId ? PlayerTestData.GolfClubId : Guid.Empty;
+            Guid measuredCourseId = validMeasuredCourseId ? PlayerTestData.MeasuredCourseId : Guid.Empty;
+            DateTime scoreDate = validScoreDate ? PlayerTestData.ScoreDate: DateTime.MinValue;
+
+            Should.Throw(() =>
+                                                {
+                                                    playerAggregate.AdjustHandicap(handicapAdjustment,
+                                                                                   tournamentId,
+                                                                                   golfClubId,
+                                                                                   measuredCourseId,
+                                                                                   scoreDate);
+                                                }, exceptionType);
         }
 
         #endregion
