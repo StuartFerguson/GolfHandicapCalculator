@@ -47,7 +47,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task GolfClubClient_CreateGolfClub_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -100,7 +100,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task GolfClubClient_GetGolfClubList_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -152,7 +152,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task GolfClubClient_GetGolfClubMembersList_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -213,7 +213,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task GolfClubClient_GetSingleGolfClub_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -262,7 +262,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task GolfClubClient_AddMeasuredCourseToGolfClub_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)

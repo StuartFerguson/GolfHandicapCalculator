@@ -15,6 +15,8 @@ using Xunit;
 
 namespace ManagementAPI.Service.Tests.ClientTests
 {
+    using System.Collections.Generic;
+
     public class TournamentClientTests
     {
         [Fact]
@@ -43,7 +45,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_CreateTournament_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -92,7 +94,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_RecordPlayerScore_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -141,7 +143,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_SignUpPlayer_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -190,7 +192,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_CancelTournament_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -239,7 +241,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_CompleteTournament_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
@@ -288,7 +290,7 @@ namespace ManagementAPI.Service.Tests.ClientTests
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception),typeof(Exception))]
         public async Task TournamentClient_ProduceTournamentResult_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)

@@ -23,7 +23,7 @@
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception), typeof(Exception))]
         public async Task PlayerClient_GetPlayer_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode,
@@ -79,7 +79,7 @@
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception), typeof(Exception))]
         public async Task PlayerClient_GetPlayerMemberships_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode,
@@ -136,7 +136,7 @@
         [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
         [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
         [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
-        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(InvalidDataException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
         [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
         [InlineData(HttpStatusCode.BadGateway, typeof(Exception), typeof(Exception))]
         public async Task PlayerClient_RegisterPlayer_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode,
