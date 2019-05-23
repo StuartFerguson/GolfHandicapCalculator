@@ -380,6 +380,26 @@
             GolfClubClient g = client as GolfClubClient;
             this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
         }
+
+        [When(@"I ask for a list of measured courses against the golf club")]
+        public async Task WhenIAskForAListOfMeasuredCoursesAgainstTheGolfClub()
+        {
+            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+
+            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
+
+            this.GolfClubTestingContext.GetMeasuredCourseListResponse = await client.GetMeasuredCourses(bearerToken, CancellationToken.None);
+
+            // Get the last response
+            GolfClubClient g = client as GolfClubClient;
+            this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
+        }
+
+        [Then(@"the list of ""(.*)"" measured courses should be returned")]
+        public void ThenTheListOfMeasuredCoursesShouldBeReturned(Int32 measuredCourseCount)
+        {
+            this.GolfClubTestingContext.GetMeasuredCourseListResponse.MeasuredCourses.Count.ShouldBe(measuredCourseCount);
+        }
         
         #endregion
     }

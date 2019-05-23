@@ -36,6 +36,8 @@
         public List<GetGolfClubMembershipDetailsResponse> GolfClubMembersList;
 
         public HttpResponseMessage LastHttpResponseMessage;
+
+        public GetMeasuredCourseListResponse GetMeasuredCourseListResponse;
     }
 
     public class RegisteredPlayer
