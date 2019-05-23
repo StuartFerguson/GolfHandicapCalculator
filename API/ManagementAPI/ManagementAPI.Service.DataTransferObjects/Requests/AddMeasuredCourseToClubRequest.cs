@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
+    using System;
+    using System.Collections.Generic;
+
     public class AddMeasuredCourseToClubRequest
     {
         /// <summary>
@@ -53,6 +51,6 @@ namespace ManagementAPI.Service.DataTransferObjects
         /// <value>
         /// The holes.
         /// </value>
-        public List<HoleDataTransferObject> Holes { get; set; }
+        public List<HoleDataTransferObjectRequest> Holes { get; set; }
     }
 }

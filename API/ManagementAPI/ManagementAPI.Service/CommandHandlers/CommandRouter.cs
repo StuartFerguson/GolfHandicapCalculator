@@ -1,5 +1,6 @@
 ﻿namespace ManagementAPI.Service.CommandHandlers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Commands;
@@ -12,10 +13,9 @@
     using Shared.EventStore;
     using Tournament;
 
+    [ExcludeFromCodeCoverage]
     public class CommandRouter : ICommandRouter
     {
-        public IAggregateRepository<HandicapCalculationProcessAggregate> HandicapCalculationProcessRepository { get; private set; }
-
         #region Fields
 
         /// <summary>
@@ -32,6 +32,8 @@
         /// The handicap adjustment calculator service
         /// </summary>
         private readonly IHandicapAdjustmentCalculatorService HandicapAdjustmentCalculatorService;
+
+        private readonly IAggregateRepository<HandicapCalculationProcessAggregate> HandicapCalculationProcessRepository;
 
         /// <summary>
         /// The o auth2 security service
@@ -143,9 +145,7 @@
         /// <returns></returns>
         private ICommandHandler CreateHandler(CreateTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository,
-                                                this.TournamentRepository,
-                                                this.TournamentApplicationService);
+            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository, this.TournamentApplicationService);
         }
 
         /// <summary>
@@ -155,9 +155,7 @@
         /// <returns></returns>
         private ICommandHandler CreateHandler(SignUpForTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository,
-                                                this.TournamentRepository,
-                                                this.TournamentApplicationService);
+            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository, this.TournamentApplicationService);
         }
 
         /// <summary>
@@ -167,9 +165,7 @@
         /// <returns></returns>
         private ICommandHandler CreateHandler(RecordPlayerTournamentScoreCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository,
-                                                this.TournamentRepository,
-                                                this.TournamentApplicationService);
+            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository, this.TournamentApplicationService);
         }
 
         /// <summary>
@@ -179,9 +175,7 @@
         /// <returns></returns>
         private ICommandHandler CreateHandler(CompleteTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository,
-                                                this.TournamentRepository,
-                                                this.TournamentApplicationService);
+            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository, this.TournamentApplicationService);
         }
 
         /// <summary>
@@ -191,9 +185,7 @@
         /// <returns></returns>
         private ICommandHandler CreateHandler(CancelTournamentCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository,
-                                                this.TournamentRepository,
-                                                this.TournamentApplicationService);
+            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository, this.TournamentApplicationService);
         }
 
         /// <summary>
@@ -203,9 +195,7 @@
         /// <returns></returns>
         private ICommandHandler CreateHandler(ProduceTournamentResultCommand command)
         {
-            return new TournamentCommandHandler(this.ClubRepository,
-                                                this.TournamentRepository,
-                                                this.TournamentApplicationService);
+            return new TournamentCommandHandler(this.ClubRepository, this.TournamentRepository, this.TournamentApplicationService);
         }
 
         /// <summary>

@@ -13,6 +13,8 @@
     using MySql.Data.MySqlClient;
     using Service.Client;
     using Service.DataTransferObjects;
+    using Service.DataTransferObjects.Requests;
+    using Service.DataTransferObjects.Responses;
     using Shouldly;
     using TechTalk.SpecFlow;
 

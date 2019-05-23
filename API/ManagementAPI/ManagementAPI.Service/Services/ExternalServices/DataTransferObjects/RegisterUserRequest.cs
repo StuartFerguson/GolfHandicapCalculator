@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ManagementAPI.Service.Services.DataTransferObjects
+﻿namespace ManagementAPI.Service.Services.ExternalServices.DataTransferObjects
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+
+    [ExcludeFromCodeCoverage]
     public class RegisterUserRequest
     {
         /// <summary>

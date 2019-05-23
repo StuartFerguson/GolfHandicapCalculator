@@ -1,9 +1,11 @@
 ﻿namespace ManagementAPI.Service
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
 
+    [ExcludeFromCodeCoverage]
     public static class Retry
     {
         #region Fields

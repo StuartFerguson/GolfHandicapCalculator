@@ -1,6 +1,7 @@
 ﻿namespace ManagementAPI.Service.Tests.GolfClub
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using ManagementAPI.GolfClub;
@@ -499,6 +500,32 @@
                 holeDataTransferObject.Par.ShouldBe(orignalHole.Par);
                 holeDataTransferObject.StrokeIndex.ShouldBe(orignalHole.StrokeIndex);
             }
+        }
+
+        [Fact]
+        public void GolfClubAggregate_GetMeasuredCourses_MeasuredCoursesReturned()
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetGolfClubAggregateWithMeasuredCourse();
+
+            MeasuredCourseDataTransferObject measuredCourseDataTransferObject = GolfClubTestData.GetMeasuredCourseToAdd();
+
+            List<MeasuredCourseDataTransferObject> measuredCourses = aggregate.GetMeasuredCourses();
+
+            measuredCourses.ShouldNotBeEmpty();
+            measuredCourses.First().MeasuredCourseId.ShouldBe(measuredCourseDataTransferObject.MeasuredCourseId);
+            measuredCourses.First().Name.ShouldBe(measuredCourseDataTransferObject.Name);
+            measuredCourses.First().TeeColour.ShouldBe(measuredCourseDataTransferObject.TeeColour);
+            measuredCourses.First().StandardScratchScore.ShouldBe(measuredCourseDataTransferObject.StandardScratchScore);
+        }
+
+        [Fact]
+        public void GolfClubAggregate_GetMeasuredCourses_NoCourses_ErrorThrown()
+        {
+            GolfClubAggregate aggregate = GolfClubTestData.GetCreatedGolfClubAggregate();
+
+            MeasuredCourseDataTransferObject measuredCourseDataTransferObject = GolfClubTestData.GetMeasuredCourseToAdd();
+
+            Should.Throw<NotFoundException>(() => { aggregate.GetMeasuredCourses(); });
         }
 
         #endregion

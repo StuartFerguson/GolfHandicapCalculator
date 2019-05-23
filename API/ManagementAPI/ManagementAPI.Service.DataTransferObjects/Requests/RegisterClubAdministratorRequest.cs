@@ -1,8 +1,8 @@
-﻿namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
     using System;
 
-    public class CreateMatchSecretaryRequest
+    public class RegisterClubAdministratorRequest
     {
         /// <summary>
         /// Gets or sets the email address.

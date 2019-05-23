@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
+    using System;
+
     public class RejectMembershipRequestRequest
     {
         /// <summary>

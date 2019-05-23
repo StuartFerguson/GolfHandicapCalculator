@@ -7,6 +7,9 @@ using ManagementAPI.Tournament;
 
 namespace ManagementAPI.Service.Tests.Tournament
 {
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
+
     public class TournamentTestData
     {
         public static Guid AggregateId = Guid.Parse("15650BE2-4F7F-40D9-B5F8-A099A713E959");
@@ -21,6 +24,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         public static TournamentFormat TournamentFormatEnum = ManagementAPI.Tournament.TournamentFormat.Strokeplay;
         public static Guid PlayerId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6");
         public static Int32 PlayingHandicap = 6;
+        public static Int32 HandicapCategory = 2;
         public static Int32 Adjustment = 1;
         public static Int32 CSS = 71;
         public static Int32 GrossScore = 76;
@@ -35,6 +39,12 @@ namespace ManagementAPI.Service.Tests.Tournament
             {1, 4}, {2, 4}, {3, 3}, {4, 4}, {5, 4}, {6, 5}, {7, 3}, {8, 4}, {9, 3},
             {10, 4}, {11, 4}, {12, 4}, {13, 5}, {14, 3}, {15, 4}, {16, 4}, {17, 4}, {18, 4}
         };
+
+        public static Dictionary<Int32, Int32> HoleScoresNoReturn = new Dictionary<Int32, Int32>()
+                                                            {
+                                                                {1, 0}, {2, 4}, {3, 3}, {4, 4}, {5, 4}, {6, 5}, {7, 3}, {8, 4}, {9, 3},
+                                                                {10, 4}, {11, 4}, {12, 4}, {13, 5}, {14, 3}, {15, 4}, {16, 4}, {17, 4}, {18, 4}
+                                                            };
 
         public static Dictionary<Int32, Int32> HoleScoresNotAllPresent = new Dictionary<Int32, Int32>()
         {
@@ -209,7 +219,7 @@ namespace ManagementAPI.Service.Tests.Tournament
             HoleScores = TournamentTestData.HoleScores
         };
 
-        public static RecordPlayerTournamentScoreCommand GetRecordMemberTournamentScoreCommand()
+        public static RecordPlayerTournamentScoreCommand GetRecordPlayerTournamentScoreCommand()
         {
             return RecordPlayerTournamentScoreCommand.Create( TournamentTestData.PlayerId, TournamentTestData.AggregateId, TournamentTestData.RecordMemberTournamentScoreRequest);
         }

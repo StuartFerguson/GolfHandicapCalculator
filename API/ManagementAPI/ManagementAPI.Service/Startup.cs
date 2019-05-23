@@ -405,6 +405,18 @@ namespace ManagementAPI.Service
                                    policy.RequireClaim(CustomClaims.GolfClubId);
                                });
 
+            policies.AddPolicy(PolicyNames.GetMeasuredCoursesPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.ClubAdministrator,
+                                                      RoleNames.ClubAdministrator.ToUpper(),
+                                                      RoleNames.MatchSecretary,
+                                                      RoleNames.MatchSecretary.ToUpper());
+                                   policy.RequireClaim(CustomClaims.GolfClubId);
+                               });
+
             policies.AddPolicy(PolicyNames.AddTournamentDivisionToGolfClubPolicy,
                                policy =>
                                {

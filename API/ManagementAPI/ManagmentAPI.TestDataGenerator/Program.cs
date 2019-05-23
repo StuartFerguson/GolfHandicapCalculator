@@ -10,6 +10,8 @@
     using System.Threading.Tasks;
     using ManagementAPI.Service.Client;
     using ManagementAPI.Service.DataTransferObjects;
+    using ManagementAPI.Service.DataTransferObjects.Requests;
+    using ManagementAPI.Service.DataTransferObjects.Responses;
 
     /// <summary>
     /// 
@@ -27,128 +29,128 @@
                                                                                           Name = "Test Course",
                                                                                           StandardScratchScore = 70,
                                                                                           TeeColour = "White",
-                                                                                          Holes = new List<HoleDataTransferObject>
+                                                                                          Holes = new List<HoleDataTransferObjectRequest>
                                                                                                   {
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 1,
                                                                                                           LengthInYards = 348,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 10
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 2,
                                                                                                           LengthInYards = 402,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 4
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 3,
                                                                                                           LengthInYards = 207,
                                                                                                           Par = 3,
                                                                                                           StrokeIndex = 14
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 4,
                                                                                                           LengthInYards = 405,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 8
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 5,
                                                                                                           LengthInYards = 428,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 2
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 6,
                                                                                                           LengthInYards = 477,
                                                                                                           Par = 5,
                                                                                                           StrokeIndex = 12
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 7,
                                                                                                           LengthInYards = 186,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 16
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 8,
                                                                                                           LengthInYards = 397,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 6
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 9,
                                                                                                           LengthInYards = 130,
                                                                                                           Par = 3,
                                                                                                           StrokeIndex = 18
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 10,
                                                                                                           LengthInYards = 399,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 3
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 11,
                                                                                                           LengthInYards = 401,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 13
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 12,
                                                                                                           LengthInYards = 421,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 1
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 13,
                                                                                                           LengthInYards = 530,
                                                                                                           Par = 5,
                                                                                                           StrokeIndex = 11
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 14,
                                                                                                           LengthInYards = 196,
                                                                                                           Par = 3,
                                                                                                           StrokeIndex = 5
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 15,
                                                                                                           LengthInYards = 355,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 7
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 16,
                                                                                                           LengthInYards = 243,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 15
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 17,
                                                                                                           LengthInYards = 286,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 17
                                                                                                       },
-                                                                                                      new HoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 18,
                                                                                                           LengthInYards = 399,

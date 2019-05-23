@@ -1,15 +1,15 @@
-﻿using DTOHoleDataTransferObject = ManagementAPI.Service.DataTransferObjects.HoleDataTransferObject;
-
-namespace ManagementAPI.Service.Tests.GolfClub
+﻿namespace ManagementAPI.Service.Tests.GolfClub
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Commands;
     using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using ManagementAPI.GolfClub;
     using ManagementAPI.GolfClub.DomainEvents;
-    using Services.DataTransferObjects;
+    using Services.ExternalServices.DataTransferObjects;
     using HoleDataTransferObject = ManagementAPI.GolfClub.HoleDataTransferObject;
 
     public class GolfClubTestData
@@ -27,128 +27,128 @@ namespace ManagementAPI.Service.Tests.GolfClub
                                                                                           Name = GolfClubTestData.MeasuredCourseName,
                                                                                           StandardScratchScore = GolfClubTestData.StandardScratchScore,
                                                                                           TeeColour = GolfClubTestData.TeeColour,
-                                                                                          Holes = new List<DTOHoleDataTransferObject>
+                                                                                          Holes = new List<HoleDataTransferObjectRequest>
                                                                                                   {
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 1,
                                                                                                           LengthInYards = 348,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 10
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 2,
                                                                                                           LengthInYards = 402,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 4
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 3,
                                                                                                           LengthInYards = 207,
                                                                                                           Par = 3,
                                                                                                           StrokeIndex = 14
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 4,
                                                                                                           LengthInYards = 405,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 8
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 5,
                                                                                                           LengthInYards = 428,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 2
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 6,
                                                                                                           LengthInYards = 477,
                                                                                                           Par = 5,
                                                                                                           StrokeIndex = 12
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 7,
                                                                                                           LengthInYards = 186,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 16
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 8,
                                                                                                           LengthInYards = 397,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 6
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 9,
                                                                                                           LengthInYards = 130,
                                                                                                           Par = 3,
                                                                                                           StrokeIndex = 18
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 10,
                                                                                                           LengthInYards = 399,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 3
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 11,
                                                                                                           LengthInYards = 401,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 13
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 12,
                                                                                                           LengthInYards = 421,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 1
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 13,
                                                                                                           LengthInYards = 530,
                                                                                                           Par = 5,
                                                                                                           StrokeIndex = 11
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 14,
                                                                                                           LengthInYards = 196,
                                                                                                           Par = 3,
                                                                                                           StrokeIndex = 5
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 15,
                                                                                                           LengthInYards = 355,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 7
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 16,
                                                                                                           LengthInYards = 243,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 15
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 17,
                                                                                                           LengthInYards = 286,
                                                                                                           Par = 4,
                                                                                                           StrokeIndex = 17
                                                                                                       },
-                                                                                                      new DTOHoleDataTransferObject
+                                                                                                      new HoleDataTransferObjectRequest
                                                                                                       {
                                                                                                           HoleNumber = 18,
                                                                                                           LengthInYards = 399,
@@ -220,10 +220,27 @@ namespace ManagementAPI.Service.Tests.GolfClub
                                                                                                         ClubId = GolfClubTestData.AggregateId,
                                                                                                         PlayerId = GolfClubTestData.PlayerId,
                                                                                                         MembershipRequestedDateAndTime =
-                                                                                                            GolfClubTestData.MembershipRequestedDateAndTime,
+                                                                                                        GolfClubTestData.MembershipRequestedDateAndTime,
                                                                                                         Status = 0 // Pending
                                                                                                     }
                                                                                                 };
+
+        public static MeasuredCourseListResponse MeasuredCourseListResponse = new MeasuredCourseListResponse
+                                                                              {
+                                                                                  StandardScratchScore = GolfClubTestData.StandardScratchScore,
+                                                                                  TeeColour = GolfClubTestData.TeeColour,
+                                                                                  Name = GolfClubTestData.MeasuredCourseName,
+                                                                                  MeasuredCourseId = GolfClubTestData.MeasuredCourseId
+                                                                              };
+
+        public static GetMeasuredCourseListResponse GetMeasuredCourseListResponse = new GetMeasuredCourseListResponse
+                                                                                    {
+                                                                                        GolfClubId = GolfClubTestData.AggregateId,
+                                                                                        MeasuredCourses = new List<MeasuredCourseListResponse>
+                                                                                                          {
+                                                                                                              GolfClubTestData.MeasuredCourseListResponse
+                                                                                                          }
+                                                                                    };
 
         public static List<GetGolfClubResponse> GetGolfClubListResponse = new List<GetGolfClubResponse>
                                                                           {

@@ -6,6 +6,7 @@ namespace ManagementAPI.Service.Tests.GolfClubMembership
 {
     using System.Collections.Generic;
     using DataTransferObjects;
+    using DataTransferObjects.Responses;
 
     public class GolfClubMembershipTestData
     {

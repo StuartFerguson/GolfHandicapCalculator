@@ -4,8 +4,11 @@
     using System.Collections.Generic;
     using Commands;
     using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using ManagementAPI.Player;
-    using Services.DataTransferObjects;
+    using Services.ExternalServices.DataTransferObjects;
+    using MembershipStatus = DataTransferObjects.Responses.MembershipStatus;
 
     public class PlayerTestData
     {

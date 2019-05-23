@@ -7,9 +7,11 @@
     using Commands;
     using Common;
     using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using GolfClub;
     using Services;
-    using Services.DataTransferObjects;
+    using Services.ExternalServices.DataTransferObjects;
     using Shared.CommandHandling;
     using Shared.EventStore;
     using HoleDataTransferObject = GolfClub.HoleDataTransferObject;
@@ -169,7 +171,7 @@
                                                                   Holes = new List<HoleDataTransferObject>()
                                                               };
 
-            foreach (DataTransferObjects.HoleDataTransferObject holeDataTransferObject in command.AddMeasuredCourseToClubRequest.Holes)
+            foreach (HoleDataTransferObjectRequest holeDataTransferObject in command.AddMeasuredCourseToClubRequest.Holes)
             {
                 measuredCourse.Holes.Add(new HoleDataTransferObject
                                          {

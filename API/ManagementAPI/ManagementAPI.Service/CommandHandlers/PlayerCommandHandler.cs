@@ -8,14 +8,16 @@ using ManagementAPI.Player;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Service.Services;
-using ManagementAPI.Service.Services.DataTransferObjects;
 using Shared.CommandHandling;
 using Shared.EventStore;
 using Shared.Exceptions;
 
 namespace ManagementAPI.Service.CommandHandlers
 {
-        public class PlayerCommandHandler : ICommandHandler
+    using DataTransferObjects.Responses;
+    using Services.ExternalServices.DataTransferObjects;
+
+    public class PlayerCommandHandler : ICommandHandler
     {
         #region Fields
 

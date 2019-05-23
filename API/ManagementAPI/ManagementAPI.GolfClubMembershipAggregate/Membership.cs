@@ -61,15 +61,7 @@ namespace ManagementAPI.GolfClubMembership
         /// The status.
         /// </value>
         internal Int32 Status { get; private set; } // NotSet/Requested/Accepted/Rejected
-
-        /// <summary>
-        /// Gets the requested date and time.
-        /// </summary>
-        /// <value>
-        /// The requested date and time.
-        /// </value>
-        internal DateTime RequestedDateAndTime { get; private set; }
-
+        
         /// <summary>
         /// Gets the accepted date and time.
         /// </summary>

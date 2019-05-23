@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Responses
 {
+    using System;
+
     public class GetPlayerDetailsResponse
     {
         /// <summary>

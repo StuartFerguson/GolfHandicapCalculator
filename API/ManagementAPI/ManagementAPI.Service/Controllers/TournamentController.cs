@@ -8,6 +8,8 @@
     using Commands;
     using Common;
     using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Shared.CommandHandling;

@@ -1,8 +1,8 @@
-﻿namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
     using System;
 
-    public class TournamentDivision
+    public class TournamentDivisionRequest
     {
         /// <summary>
         /// Gets or sets the division.

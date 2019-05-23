@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Net.Http;
     using Service.DataTransferObjects;
+    using Service.DataTransferObjects.Requests;
+    using Service.DataTransferObjects.Responses;
 
     public class GolfClubTestingContext
     {

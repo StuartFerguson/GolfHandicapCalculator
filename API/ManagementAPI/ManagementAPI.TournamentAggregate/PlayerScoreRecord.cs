@@ -25,26 +25,28 @@
             this.HoleScores = holeScores;
             this.PlayingHandicap = playingHandicap;
 
+            this.HandicapCategory = 5;
+
             if (this.PlayingHandicap <= 5)
             {
                 this.HandicapCategory = 1;
             }
-            else if (this.PlayingHandicap >= 6 && this.PlayingHandicap <= 12)
+            if (this.PlayingHandicap >= 6 && this.PlayingHandicap <= 12)
             {
                 this.HandicapCategory = 2;
             }
-            else if (this.PlayingHandicap >= 13 && this.PlayingHandicap <= 20)
+            if (this.PlayingHandicap >= 13 && this.PlayingHandicap <= 20)
             {
                 this.HandicapCategory = 3;
             }
-            else if (this.PlayingHandicap >= 21 && this.PlayingHandicap <= 12)
+            if (this.PlayingHandicap >= 21 && this.PlayingHandicap <= 28)
             {
                 this.HandicapCategory = 4;
             }
-            else
-            {
-                this.HandicapCategory = 5;
-            }
+            //else
+            //{
+            //    this.HandicapCategory = 5;
+            //}
 
             if (this.HoleScores.Values.Contains(0))
             {

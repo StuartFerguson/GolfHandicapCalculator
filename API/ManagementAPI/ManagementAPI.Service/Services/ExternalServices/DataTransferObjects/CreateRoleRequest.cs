@@ -1,7 +1,9 @@
 ﻿namespace ManagementAPI.Service.Services.ExternalServices.DataTransferObjects
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public class CreateRoleRequest
     {
         /// <summary>

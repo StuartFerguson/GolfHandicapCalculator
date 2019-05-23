@@ -4,6 +4,8 @@ using Shared.CommandHandling;
 
 namespace ManagementAPI.Service.Commands
 {
+    using DataTransferObjects.Requests;
+
     public class CancelTournamentCommand : Command<String>
     {
         #region Properties

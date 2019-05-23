@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using DataTransferObjects;
+    using DataTransferObjects.Responses;
     using Swashbuckle.AspNetCore.Filters;
 
     [ExcludeFromCodeCoverage]

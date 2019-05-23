@@ -2,14 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using ClientProxyBase;
-    using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using Newtonsoft.Json;
 
     public class GolfClubClient : ClientProxyBase, IGolfClubClient
@@ -17,14 +17,14 @@
         #region Fields
 
         /// <summary>
-        /// The base address
-        /// </summary>
-        private readonly String BaseAddress;
-
-        /// <summary>
         /// The last request status code
         /// </summary>
         internal HttpResponseMessage LastRequesthHttpResponseMessage;
+
+        /// <summary>
+        /// The base address
+        /// </summary>
+        private readonly String BaseAddress;
 
         #endregion
 
@@ -69,7 +69,7 @@
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
-                
+
                 // Process the response
                 String content = await this.HandleResponse(httpResponse, cancellationToken);
 
@@ -107,7 +107,7 @@
 
                 // call was successful, no response data to deserialise
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception("Error Adding a tournament divisionto Golf Club.", ex);
@@ -189,10 +189,10 @@
 
                 // call was successful, no response data to deserialise
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error creating the new match secretary.", ex);
+                Exception exception = new Exception("Error creating the new match secretary.", ex);
 
                 throw exception;
             }
@@ -237,7 +237,7 @@
         }
 
         public async Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembershipList(String passwordToken,
-                                                                                     CancellationToken cancellationToken)
+                                                                                                CancellationToken cancellationToken)
         {
             List<GetGolfClubMembershipDetailsResponse> response = null;
 
@@ -261,6 +261,45 @@
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception("Error getting a golf club members list.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Gets the measured courses.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetMeasuredCourseListResponse> GetMeasuredCourses(String passwordToken,
+                                                                            CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/MeasuredCourses";
+            GetMeasuredCourseListResponse response = new GetMeasuredCourseListResponse();
+            
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+
+                // Make the Http Call here
+                StringContent httpContent = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<GetMeasuredCourseListResponse>(content);
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception("Error requesting Golf Club measured courses.", ex);
 
                 throw exception;
             }
