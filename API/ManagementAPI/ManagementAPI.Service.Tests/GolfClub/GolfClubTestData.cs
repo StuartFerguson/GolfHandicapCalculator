@@ -4,17 +4,17 @@
     using System.Collections.Generic;
     using System.Linq;
     using Commands;
-    using DataTransferObjects;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
     using ManagementAPI.GolfClub;
     using ManagementAPI.GolfClub.DomainEvents;
     using Services.ExternalServices.DataTransferObjects;
-    using HoleDataTransferObject = ManagementAPI.GolfClub.HoleDataTransferObject;
 
     public class GolfClubTestData
     {
         #region Fields
+
+        public static Guid MeasuredCourseId = Guid.Parse("B2F334C2-03D3-48DB-9C6F-45FB1133F071");
 
         public static String MeasuredCourseName = "Test Measured Course";
 
@@ -24,6 +24,7 @@
 
         public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest = new AddMeasuredCourseToClubRequest
                                                                                       {
+                                                                                          MeasuredCourseId = GolfClubTestData.MeasuredCourseId,
                                                                                           Name = GolfClubTestData.MeasuredCourseName,
                                                                                           StandardScratchScore = GolfClubTestData.StandardScratchScore,
                                                                                           TeeColour = GolfClubTestData.TeeColour,
@@ -209,6 +210,14 @@
                                                                           GolfClubId = GolfClubTestData.AggregateId
                                                                       };
 
+        public static CreateMatchSecretaryRequest CreateMatchSecretaryRequest = new CreateMatchSecretaryRequest
+                                                                                {
+                                                                                    EmailAddress = "testmatchsecretary@test.co.uk",
+                                                                                    Password = "123456",
+                                                                                    ConfirmPassword = "123456",
+                                                                                    TelephoneNumber = "123456789"
+                                                                                };
+
         public static DateTime MembershipRequestedDateAndTime = new DateTime(2019, 1, 1);
 
         public static Guid PlayerId = Guid.Parse("357B70E6-8810-40FB-A6AD-9D193D4F6376");
@@ -220,27 +229,10 @@
                                                                                                         ClubId = GolfClubTestData.AggregateId,
                                                                                                         PlayerId = GolfClubTestData.PlayerId,
                                                                                                         MembershipRequestedDateAndTime =
-                                                                                                        GolfClubTestData.MembershipRequestedDateAndTime,
+                                                                                                            GolfClubTestData.MembershipRequestedDateAndTime,
                                                                                                         Status = 0 // Pending
                                                                                                     }
                                                                                                 };
-
-        public static MeasuredCourseListResponse MeasuredCourseListResponse = new MeasuredCourseListResponse
-                                                                              {
-                                                                                  StandardScratchScore = GolfClubTestData.StandardScratchScore,
-                                                                                  TeeColour = GolfClubTestData.TeeColour,
-                                                                                  Name = GolfClubTestData.MeasuredCourseName,
-                                                                                  MeasuredCourseId = GolfClubTestData.MeasuredCourseId
-                                                                              };
-
-        public static GetMeasuredCourseListResponse GetMeasuredCourseListResponse = new GetMeasuredCourseListResponse
-                                                                                    {
-                                                                                        GolfClubId = GolfClubTestData.AggregateId,
-                                                                                        MeasuredCourses = new List<MeasuredCourseListResponse>
-                                                                                                          {
-                                                                                                              GolfClubTestData.MeasuredCourseListResponse
-                                                                                                          }
-                                                                                    };
 
         public static List<GetGolfClubResponse> GetGolfClubListResponse = new List<GetGolfClubResponse>
                                                                           {
@@ -259,9 +251,24 @@
                                                                               }
                                                                           };
 
-        public static Guid GolfClubAdministratorSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
+        public static MeasuredCourseListResponse MeasuredCourseListResponse = new MeasuredCourseListResponse
+                                                                              {
+                                                                                  StandardScratchScore = GolfClubTestData.StandardScratchScore,
+                                                                                  TeeColour = GolfClubTestData.TeeColour,
+                                                                                  Name = GolfClubTestData.MeasuredCourseName,
+                                                                                  MeasuredCourseId = GolfClubTestData.MeasuredCourseId
+                                                                              };
 
-        public static Guid MatchSecretarySecurityUserId = Guid.Parse("028D3AFB-C104-457F-A4EA-5EB0345F56CD");
+        public static GetMeasuredCourseListResponse GetMeasuredCourseListResponse = new GetMeasuredCourseListResponse
+                                                                                    {
+                                                                                        GolfClubId = GolfClubTestData.AggregateId,
+                                                                                        MeasuredCourses = new List<MeasuredCourseListResponse>
+                                                                                                          {
+                                                                                                              GolfClubTestData.MeasuredCourseListResponse
+                                                                                                          }
+                                                                                    };
+
+        public static Guid GolfClubAdministratorSecurityUserId = Guid.Parse("F8EBC624-B103-487A-A68A-6111C22287D6");
 
         public static Int32 HoleNumber = 1;
 
@@ -275,7 +282,7 @@
 
         public static Int32 LengthInYards = 150;
 
-        public static Guid MeasuredCourseId = Guid.Parse("B2F334C2-03D3-48DB-9C6F-45FB1133F071");
+        public static Guid MatchSecretarySecurityUserId = Guid.Parse("028D3AFB-C104-457F-A4EA-5EB0345F56CD");
 
         public static RegisterClubAdministratorRequest RegisterClubAdministratorRequest = new RegisterClubAdministratorRequest
                                                                                           {
@@ -284,14 +291,6 @@
                                                                                               ConfirmPassword = "123456",
                                                                                               TelephoneNumber = "123456789"
                                                                                           };
-
-        public static CreateMatchSecretaryRequest CreateMatchSecretaryRequest = new CreateMatchSecretaryRequest
-                                                                                {
-            EmailAddress = "testmatchsecretary@test.co.uk",
-            Password = "123456",
-            ConfirmPassword = "123456",
-            TelephoneNumber = "123456789"
-        };
 
         #endregion
 
@@ -369,6 +368,11 @@
             return CreateGolfClubCommand.Create(GolfClubTestData.AggregateId,
                                                 GolfClubTestData.GolfClubAdministratorSecurityUserId,
                                                 GolfClubTestData.CreateGolfClubRequest);
+        }
+
+        public static CreateMatchSecretaryCommand GetCreateMatchSecretaryCommand()
+        {
+            return CreateMatchSecretaryCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.CreateMatchSecretaryRequest);
         }
 
         public static GolfClubAggregate GetEmptyGolfClubAggregate()
@@ -785,7 +789,7 @@
                                  LengthInYards = 100,
                                  Par = 3,
                                  StrokeIndex = result.Holes.Where(h => h.HoleNumber == holeNumber).Single().StrokeIndex
-            });
+                             });
 
             result.Holes.Remove(result.Holes.Where(h => h.HoleNumber == holeNumber).Single());
 
@@ -935,7 +939,7 @@
                                  LengthInYards = 100,
                                  Par = 4,
                                  StrokeIndex = 19
-            });
+                             });
 
             result.Holes.Remove(result.Holes.Where(h => h.StrokeIndex == strokeIndex).Single());
 
@@ -953,11 +957,6 @@
         public static RequestClubMembershipCommand GetRequestClubMembershipCommand()
         {
             return RequestClubMembershipCommand.Create(GolfClubTestData.PlayerId, GolfClubTestData.AggregateId);
-        }
-
-        public static CreateMatchSecretaryCommand GetCreateMatchSecretaryCommand()
-        {
-            return CreateMatchSecretaryCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.CreateMatchSecretaryRequest);
         }
 
         public static TournamentDivisionDataTransferObject GetTournamentDivision1()

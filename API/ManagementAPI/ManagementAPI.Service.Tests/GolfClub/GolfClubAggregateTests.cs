@@ -36,19 +36,22 @@
         }
 
         [Theory]
-        [InlineData("", "teeColour", 70)]
-        [InlineData(null, "teeColour", 70)]
-        [InlineData("name", "", 70)]
-        [InlineData("name", null, 70)]
-        [InlineData("name", "teeColour", 0)]
-        [InlineData("name", "teeColour", -70)]
-        public void GolfClubAggregate_AddMeasuredCourse_InvalidCourseData_ErrorThrown(String name,
+        [InlineData(false, "name", "teeColour", 70)]
+        [InlineData(true, "", "teeColour", 70)]
+        [InlineData(true, null, "teeColour", 70)]
+        [InlineData(true, "name", "", 70)]
+        [InlineData(true, "name", null, 70)]
+        [InlineData(true, "name", "teeColour", 0)]
+        [InlineData(true, "name", "teeColour", -70)]
+        public void GolfClubAggregate_AddMeasuredCourse_InvalidCourseData_ErrorThrown(Boolean validMeasuredCourseId,
+                                                                                      String name,
                                                                                       String teeColour,
                                                                                       Int32 standardScratchScore)
         {
             GolfClubAggregate aggregate = GolfClubTestData.GetCreatedGolfClubAggregate();
 
             MeasuredCourseDataTransferObject measuredCourseDataTransferObject = GolfClubTestData.GetMeasuredCourseToAdd();
+            measuredCourseDataTransferObject.MeasuredCourseId = validMeasuredCourseId ? GolfClubTestData.MeasuredCourseId : Guid.Empty;
             measuredCourseDataTransferObject.Name = name;
             measuredCourseDataTransferObject.TeeColour = teeColour;
             measuredCourseDataTransferObject.StandardScratchScore = standardScratchScore;

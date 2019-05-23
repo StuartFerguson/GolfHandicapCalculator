@@ -594,6 +594,7 @@
         /// <param name="measuredCourse">The measured course.</param>
         private void ValidateMeasuredCourse(MeasuredCourseDataTransferObject measuredCourse)
         {
+            Guard.ThrowIfInvalidGuid(measuredCourse.MeasuredCourseId, typeof(ArgumentNullException), "A measured course must have a valid Id");
             Guard.ThrowIfNullOrEmpty(measuredCourse.Name, typeof(ArgumentNullException), "A measured course must have a name");
             Guard.ThrowIfNullOrEmpty(measuredCourse.TeeColour, typeof(ArgumentNullException), "A measured course must have a tee colour");
             Guard.ThrowIfNegative(measuredCourse.StandardScratchScore,
