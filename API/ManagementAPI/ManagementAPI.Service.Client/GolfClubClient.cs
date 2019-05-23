@@ -288,7 +288,7 @@
                 // Make the Http Call here
                 StringContent httpContent = new StringContent(string.Empty, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
 
                 // Process the response
                 String content = await this.HandleResponse(httpResponse, cancellationToken);
