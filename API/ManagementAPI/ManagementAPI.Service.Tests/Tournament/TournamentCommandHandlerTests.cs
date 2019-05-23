@@ -161,7 +161,7 @@
                                                                             tournamentRepository.Object,
                                                                             tournamentApplicationService.Object);
 
-            RecordPlayerTournamentScoreCommand command = TournamentTestData.GetRecordMemberTournamentScoreCommand();
+            RecordPlayerTournamentScoreCommand command = TournamentTestData.GetRecordPlayerTournamentScoreCommand();
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }

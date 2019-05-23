@@ -5,6 +5,8 @@
     using System.Threading;
     using System.Threading.Tasks;
     using ManagementAPI.Service.DataTransferObjects;
+    using ManagementAPI.Service.DataTransferObjects.Requests;
+    using ManagementAPI.Service.DataTransferObjects.Responses;
 
     /// <summary>
     /// 

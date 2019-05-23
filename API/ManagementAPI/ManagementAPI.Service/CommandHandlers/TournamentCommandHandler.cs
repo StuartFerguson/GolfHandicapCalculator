@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Commands;
     using DataTransferObjects;
+    using DataTransferObjects.Responses;
     using GolfClub;
     using Services;
     using Services.DomainServices;

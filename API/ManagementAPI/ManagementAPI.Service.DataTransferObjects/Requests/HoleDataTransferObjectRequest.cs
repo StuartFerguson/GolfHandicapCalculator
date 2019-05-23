@@ -1,8 +1,8 @@
-﻿using System;
-
-namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
-    public class HoleDataTransferObject
+    using System;
+
+    public class HoleDataTransferObjectRequest
     {
         /// <summary>
         /// Gets the hole number.

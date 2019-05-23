@@ -2,6 +2,7 @@
 {
     using System;
     using DataTransferObjects;
+    using DataTransferObjects.Requests;
     using Shared.CommandHandling;
 
     public class RecordPlayerTournamentScoreCommand : Command<String>

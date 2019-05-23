@@ -485,6 +485,19 @@
             scores.Any(s => s.Last3HolesScore == 0).ShouldBeFalse();
             scores.Any(s => s.TournamentDivision == 0).ShouldBeFalse();
             scores.Any(s => s.Position == 0).ShouldBeFalse();
+            scores.Any(s => s.MeasuredCourseId == Guid.Empty).ShouldBeFalse();
+            scores.Any(s => s.PlayerId == Guid.Empty).ShouldBeFalse();
+            scores.Any(s => s.NetScore == 0).ShouldBeFalse();
+            scores.Any(s => s.GrossScore == 0).ShouldBeFalse();
+            scores.Any(s => s.PlayingHandicap < 0).ShouldBeFalse();
+            scores.Any(s => s.PlayingHandicap > 36).ShouldBeFalse();
+            scores.Any(s => s.TournamentId == Guid.Empty).ShouldBeFalse();
+            scores.Any(s => s.ScoreDate == DateTime.MinValue).ShouldBeFalse();
+            scores.Any(s => s.GolfClubId == Guid.Empty).ShouldBeFalse();
+            scores.Any(s => s.HandicapCategory == 0).ShouldBeFalse();
+            scores.Any(s => s.HoleScores.Count() != 18).ShouldBeFalse();
+            scores.Any(s => s.CSS == 0).ShouldBeFalse();
+
         }
 
         [Fact]
@@ -501,6 +514,108 @@
             TournamentAggregate tournamentAggregate = TournamentTestData.GetCompletedTournamentAggregateWithCSSCalculatedAggregate(20, 15, 23, 16, 0, 5, TournamentFormat.Stableford);
 
             Should.Throw<NotSupportedException>(() => tournamentAggregate.ProduceResult());
+        }
+    }
+
+    public class PlayerScoreRecordTests
+    {
+        [Theory]
+        [InlineData(-1, 1)]
+        [InlineData(0, 1)]
+        [InlineData(1, 1)]
+        [InlineData(2, 1)]
+        [InlineData(3, 1)]
+        [InlineData(4, 1)]
+        [InlineData(5, 1)]
+        [InlineData(6, 2)]
+        [InlineData(7, 2)]
+        [InlineData(8, 2)]
+        [InlineData(9, 2)]
+        [InlineData(10, 2)]
+        [InlineData(11, 2)]
+        [InlineData(12, 2)]
+        [InlineData(13, 3)]
+        [InlineData(14, 3)]
+        [InlineData(15, 3)]
+        [InlineData(16, 3)]
+        [InlineData(17, 3)]
+        [InlineData(18, 3)]
+        [InlineData(19, 3)]
+        [InlineData(20, 3)]
+        [InlineData(21, 4)]
+        [InlineData(22, 4)]
+        [InlineData(23, 4)]
+        [InlineData(24, 4)]
+        [InlineData(25, 4)]
+        [InlineData(26, 4)]
+        [InlineData(27, 4)]
+        [InlineData(28, 4)]
+        [InlineData(29, 5)]
+        public void PlayerScoreRecord_Create_IsCreated(Int32 playingHandicap, Int32 expectedCategory)
+        {
+            PlayerScoreRecord playerScoreRecord = PlayerScoreRecord.Create(TournamentTestData.PlayerId, playingHandicap, TournamentTestData.HoleScores);
+            playerScoreRecord.ShouldNotBeNull();
+            playerScoreRecord.PlayerId.ShouldBe(TournamentTestData.PlayerId);
+            playerScoreRecord.PlayingHandicap.ShouldBe(playingHandicap);
+            playerScoreRecord.HandicapCategory.ShouldBe(expectedCategory);
+            playerScoreRecord.HoleScores.ShouldNotBeNull();
+            playerScoreRecord.HoleScores.Count.ShouldBe(TournamentTestData.HoleScores.Count);
+            playerScoreRecord.GrossScore.ShouldBe(TournamentTestData.HoleScores.Values.Sum());
+            playerScoreRecord.NetScore.ShouldBe(TournamentTestData.HoleScores.Values.Sum() - playingHandicap);
+        }
+        
+        [Fact]
+        public void PlayerScoreRecord_Create_NoReturn_IsCreated()
+        {
+            PlayerScoreRecord playerScoreRecord = PlayerScoreRecord.Create(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScoresNoReturn);
+
+            playerScoreRecord.ShouldNotBeNull();
+            playerScoreRecord.PlayerId.ShouldBe(TournamentTestData.PlayerId);
+            playerScoreRecord.PlayingHandicap.ShouldBe(TournamentTestData.PlayingHandicap);
+            playerScoreRecord.HandicapCategory.ShouldBe(TournamentTestData.HandicapCategory);
+            playerScoreRecord.HoleScores.ShouldNotBeNull();
+            playerScoreRecord.HoleScores.Count.ShouldBe(TournamentTestData.HoleScores.Count);
+            playerScoreRecord.GrossScore.ShouldBe(0);
+            playerScoreRecord.NetScore.ShouldBe(0);
+        }
+
+        [Fact]
+        public void PlayerScoreRecord_SetCountBackScore_CountbackScoresRecorded()
+        {
+            PlayerScoreRecord playerScoreRecord = PlayerScoreRecord.Create(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScoresNoReturn);
+
+            playerScoreRecord.SetCountBackScores(TournamentTestData.Last9HolesScore, TournamentTestData.Last6HolesScore, TournamentTestData.Last3HolesScore);
+
+            playerScoreRecord.Last9HolesScore.ShouldBe(TournamentTestData.Last9HolesScore);
+            playerScoreRecord.Last6HolesScore.ShouldBe(TournamentTestData.Last6HolesScore);
+            playerScoreRecord.Last3HolesScore.ShouldBe(TournamentTestData.Last3HolesScore);
+        }
+
+        [Fact]
+        public void PlayerScoreRecord_Publish_ScoreIsPublished()
+        {
+            PlayerScoreRecord playerScoreRecord = PlayerScoreRecord.Create(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScoresNoReturn);
+
+            playerScoreRecord.SetCountBackScores(TournamentTestData.Last9HolesScore, TournamentTestData.Last6HolesScore, TournamentTestData.Last3HolesScore);
+
+            playerScoreRecord.Publish();
+
+            playerScoreRecord.IsPublished.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void PlayerScoreRecord_SetResultDetails_ResultDetailsAreSet()
+        {
+            PlayerScoreRecord playerScoreRecord = PlayerScoreRecord.Create(TournamentTestData.PlayerId, TournamentTestData.PlayingHandicap, TournamentTestData.HoleScoresNoReturn);
+
+            playerScoreRecord.SetCountBackScores(TournamentTestData.Last9HolesScore, TournamentTestData.Last6HolesScore, TournamentTestData.Last3HolesScore);
+
+            playerScoreRecord.Publish();
+
+            playerScoreRecord.SetResultDetails(TournamentTestData.DivisionPosition, TournamentTestData.Division);
+
+            playerScoreRecord.Position.ShouldBe(TournamentTestData.DivisionPosition);
+            playerScoreRecord.TournamentDivision.ShouldBe(TournamentTestData.Division);
         }
     }
 }

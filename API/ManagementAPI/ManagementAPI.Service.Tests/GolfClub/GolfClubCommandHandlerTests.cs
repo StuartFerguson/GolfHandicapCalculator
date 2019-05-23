@@ -5,7 +5,6 @@ using ManagementAPI.GolfClub;
 using ManagementAPI.Service.CommandHandlers;
 using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.Services;
-using ManagementAPI.Service.Services.DataTransferObjects;
 using Moq;
 using Shared.EventStore;
 using Shouldly;
@@ -13,6 +12,8 @@ using Xunit;
 
 namespace ManagementAPI.Service.Tests.GolfClub
 {
+    using Services.ExternalServices.DataTransferObjects;
+
     public class GolfClubCommandHandlerTests
     {
         [Fact]

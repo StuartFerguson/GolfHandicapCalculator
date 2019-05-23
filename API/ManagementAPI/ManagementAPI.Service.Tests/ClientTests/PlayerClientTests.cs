@@ -9,6 +9,7 @@
     using System.Threading.Tasks;
     using Client;
     using DataTransferObjects;
+    using DataTransferObjects.Responses;
     using Moq;
     using Newtonsoft.Json;
     using Player;

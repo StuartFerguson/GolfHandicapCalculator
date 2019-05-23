@@ -7,6 +7,8 @@ using Shared.CommandHandling;
 
 namespace ManagementAPI.Service.Commands
 {
+    using DataTransferObjects.Requests;
+
     public class CreateMatchSecretaryCommand : Command<String>
     {
         #region Properties

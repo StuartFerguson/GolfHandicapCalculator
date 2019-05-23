@@ -216,7 +216,7 @@
             this.ValidateDivisionRanges(tournamentDivision);
 
             this.ValidateTournamentDivision(tournamentDivision);
-            
+
             // Raise a domain event
             TournamentDivisionAddedEvent tournamentDivisionAddedEvent =
                 TournamentDivisionAddedEvent.Create(this.AggregateId, tournamentDivision.Division, tournamentDivision.StartHandicap, tournamentDivision.EndHandicap);
@@ -356,6 +356,49 @@
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the measured courses.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">No measured courses found for Club {this.Name}</exception>
+        public List<MeasuredCourseDataTransferObject> GetMeasuredCourses()
+        {
+            if (this.MeasuredCourses.Any() == false)
+            {
+                throw new NotFoundException($"No measured courses found for Club {this.Name}");
+            }
+
+            List<MeasuredCourseDataTransferObject> measuredCourses = new List<MeasuredCourseDataTransferObject>();
+
+            foreach (MeasuredCourse measuredCourse in this.MeasuredCourses)
+            {
+                MeasuredCourseDataTransferObject result = new MeasuredCourseDataTransferObject
+                                                          {
+                                                              Name = measuredCourse.Name,
+                                                              MeasuredCourseId = measuredCourse.MeasuredCourseId,
+                                                              StandardScratchScore = measuredCourse.StandardScratchScore,
+                                                              TeeColour = measuredCourse.TeeColour,
+                                                              Holes = new List<HoleDataTransferObject>()
+                                                          };
+
+                foreach (Hole measuredCourseHole in measuredCourse.Holes)
+                {
+                    result.Holes.Add(new HoleDataTransferObject
+                                     {
+                                         HoleNumber = measuredCourseHole.HoleNumber,
+                                         Par = measuredCourseHole.Par,
+                                         LengthInYards = measuredCourseHole.LengthInYards,
+                                         StrokeIndex = measuredCourseHole.StrokeIndex,
+                                         LengthInMeters = measuredCourseHole.LengthInMeters
+                                     });
+                }
+
+                measuredCourses.Add(result);
+            }
+
+            return measuredCourses;
         }
 
         /// <summary>
@@ -526,7 +569,7 @@
 
             if (endHandicapInRange)
             {
-                throw new InvalidDataException("Start Handicap Already in a division range.");
+                throw new InvalidDataException("End Handicap Already in a division range.");
             }
         }
 
@@ -578,8 +621,9 @@
 
             // Check there are no missing stroke indexes
             IEnumerable<Int32> strokeIndexList = measuredCourse.Holes.Select(h => h.StrokeIndex);
-            List<Int32> missingStrokeIndexes =
-                Enumerable.Range(GolfClubAggregate.MinimumStrokeIndex, GolfClubAggregate.MaximumStrokeIndex - GolfClubAggregate.MinimumStrokeIndex + 1).Except(strokeIndexList).ToList();
+            List<Int32> missingStrokeIndexes = Enumerable
+                                               .Range(GolfClubAggregate.MinimumStrokeIndex,
+                                                      GolfClubAggregate.MaximumStrokeIndex - GolfClubAggregate.MinimumStrokeIndex + 1).Except(strokeIndexList).ToList();
 
             if (missingStrokeIndexes.Count > 0)
             {

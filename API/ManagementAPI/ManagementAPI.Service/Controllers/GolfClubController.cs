@@ -8,13 +8,12 @@
     using System.Threading.Tasks;
     using Commands;
     using Common;
-    using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using IdentityModel;
     using Manager;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using Shared.CommandHandling;
     using Swashbuckle.AspNetCore.Annotations;
     using Swashbuckle.AspNetCore.Filters;
@@ -83,6 +82,26 @@
             return this.NoContent();
         }
 
+        [HttpPut]
+        [Authorize(Policy = PolicyNames.AddTournamentDivisionToGolfClubPolicy)]
+        [SwaggerResponse(204)]
+        [Route("AddTournamentDivision")]
+        public async Task<IActionResult> AddTournamentDivision([FromBody] AddTournamentDivisionToGolfClubRequest request,
+                                                               CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user            
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
+            // Create the command
+            AddTournamentDivisionToGolfClubCommand command = AddTournamentDivisionToGolfClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
+
+            // Route the command
+            await this.CommandRouter.Route(command, cancellationToken);
+
+            // return the result
+            return this.NoContent();
+        }
+
         /// <summary>
         /// Creates the golf club.
         /// </summary>
@@ -109,7 +128,24 @@
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Created(String.Empty, command.Response);
+            return this.Created(string.Empty, command.Response);
+        }
+
+        [HttpPut]
+        [Authorize(Policy = PolicyNames.CreateMatchSecretaryPolicy)]
+        [Route("CreateMatchSecretary")]
+        [SwaggerResponse(204)]
+        public async Task<IActionResult> CreateMatchSecretary([FromBody] CreateMatchSecretaryRequest request,
+                                                              CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
+            CreateMatchSecretaryCommand command = CreateMatchSecretaryCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
+
+            await this.CommandRouter.Route(command, cancellationToken);
+
+            return this.NoContent();
         }
 
         /// <summary>
@@ -148,6 +184,37 @@
             return this.Ok(golfClubList);
         }
 
+        [HttpGet]
+        [Authorize(Policy = PolicyNames.GetGolfClubMembersListPolicy)]
+        [Route("MembersList")]
+        [SwaggerResponse(200, type:typeof(List<GetGolfClubMembershipDetailsResponse>))]
+        [SwaggerResponseExample(200, typeof(GolfClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        public async Task<IActionResult> GetGolfClubMembersList(CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
+            List<GetGolfClubMembershipDetailsResponse> golfClubMembersList =
+                await this.Manager.GetGolfClubMembersList(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
+
+            return this.Ok(golfClubMembersList);
+        }
+
+        [HttpGet]
+        [Route("MeasuredCourses")]
+        [SwaggerResponse(200, type: typeof(GetMeasuredCourseListResponse))]
+        [SwaggerResponseExample(200, typeof(GetMeasuredCourseListResponseExample), jsonConverter: typeof(SwaggerJsonConverter))]
+        [Authorize(Policy = PolicyNames.GetMeasuredCoursesPolicy)]
+        public async Task<IActionResult> GetMeasuredCourses(CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
+            GetMeasuredCourseListResponse measuredCourseList = await this.Manager.GetMeasuredCourseList(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
+
+            return this.Ok(measuredCourseList);
+        }
+
         /// <summary>
         /// Registers the golf club administrator.
         /// </summary>
@@ -162,26 +229,6 @@
                                                                        CancellationToken cancellationToken)
         {
             await this.Manager.RegisterClubAdministrator(request, cancellationToken);
-
-            // return the result
-            return this.NoContent();
-        }
-
-        [HttpPut]
-        [Authorize(Policy = PolicyNames.AddTournamentDivisionToGolfClubPolicy)]
-        [SwaggerResponse(204)]
-        [Route("AddTournamentDivision")]
-        public async Task<IActionResult> AddTournamentDivision([FromBody] AddTournamentDivisionToGolfClubRequest request,
-                                                                       CancellationToken cancellationToken)
-        {
-            // Get the Golf Club Id claim from the user            
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
-
-            // Create the command
-            AddTournamentDivisionToGolfClubCommand command = AddTournamentDivisionToGolfClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
-
-            // Route the command
-            await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
             return this.NoContent();
@@ -213,37 +260,6 @@
             return this.NoContent();
         }
 
-        [HttpGet]
-        [Authorize(Policy = PolicyNames.GetGolfClubMembersListPolicy)]
-        [Route("MembersList")]
-        [SwaggerResponse(200, type:typeof(List<GetGolfClubMembershipDetailsResponse>))]
-        [SwaggerResponseExample(200, typeof(GolfClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
-        public async Task<IActionResult> GetGolfClubMembersList(CancellationToken cancellationToken)
-        {
-            // Get the Golf Club Id claim from the user
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
-
-            List<GetGolfClubMembershipDetailsResponse> golfClubMembersList = await this.Manager.GetGolfClubMembersList(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
-
-            return this.Ok(golfClubMembersList);
-        }
-
-        [HttpPut]
-        [Authorize(Policy = PolicyNames.CreateMatchSecretaryPolicy)]
-        [Route("CreateMatchSecretary")]
-        [SwaggerResponse(204)]
-        public async Task<IActionResult> CreateMatchSecretary([FromBody] CreateMatchSecretaryRequest request,
-                                                              CancellationToken cancellationToken)
-        {
-            // Get the Golf Club Id claim from the user
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
-
-            CreateMatchSecretaryCommand command = CreateMatchSecretaryCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
-
-            await this.CommandRouter.Route(command, cancellationToken);
-
-            return this.NoContent();
-        }
         #endregion
     }
 }

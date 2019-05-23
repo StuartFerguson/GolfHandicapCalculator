@@ -116,7 +116,6 @@
             membership.PlayerGender.ShouldBe(GolfClubMembershipTestData.PlayerGender);
             membership.RejectedDateAndTime.ShouldBe(GolfClubMembershipTestData.RequestDateAndTime);
             membership.AcceptedDateAndTime.ShouldBe(DateTime.MinValue);
-            membership.RequestedDateAndTime.ShouldBe(DateTime.MinValue);
             membership.RejectionReason.ShouldBe($"No more space at club for Player Id {GolfClubMembershipTestData.PlayerId}");
             membership.Status.ShouldBe(2);
         }
@@ -147,7 +146,6 @@
             membership.PlayerGender.ShouldBe(GolfClubMembershipTestData.PlayerGender);
             membership.RejectedDateAndTime.ShouldBe(GolfClubMembershipTestData.RequestDateAndTime);
             membership.AcceptedDateAndTime.ShouldBe(DateTime.MinValue);
-            membership.RequestedDateAndTime.ShouldBe(DateTime.MinValue);
             membership.RejectionReason.ShouldBe($"Player Id {GolfClubMembershipTestData.PlayerId} is too old.");
             membership.Status.ShouldBe(2);
         }
@@ -178,7 +176,6 @@
             membership.PlayerGender.ShouldBe(GolfClubMembershipTestData.PlayerGender);
             membership.RejectedDateAndTime.ShouldBe(GolfClubMembershipTestData.RequestDateAndTime);
             membership.AcceptedDateAndTime.ShouldBe(DateTime.MinValue);
-            membership.RequestedDateAndTime.ShouldBe(DateTime.MinValue);
             membership.RejectionReason.ShouldBe($"Player Id {GolfClubMembershipTestData.PlayerId} is too young.");
             membership.Status.ShouldBe(2);
         }
@@ -197,7 +194,6 @@
             membership.PlayerGender.ShouldBe(GolfClubMembershipTestData.PlayerGender);
             membership.AcceptedDateAndTime.ShouldBe(GolfClubMembershipTestData.RequestDateAndTime);
             membership.RejectedDateAndTime.ShouldBe(DateTime.MinValue);
-            membership.RequestedDateAndTime.ShouldBe(DateTime.MinValue);
             membership.RejectionReason.ShouldBeNullOrEmpty();
             membership.Status.ShouldBe(1);
         }

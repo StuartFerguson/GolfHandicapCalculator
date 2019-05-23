@@ -1,6 +1,7 @@
 ﻿namespace ManagementAPI.Service.Controllers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Commands;
@@ -13,6 +14,7 @@
     using Shared.Exceptions;
 
     [Route("api/[controller]")]
+    [ExcludeFromCodeCoverage]
     [ApiController]
     [Authorize]
     public class HandicapCalculationController : ControllerBase

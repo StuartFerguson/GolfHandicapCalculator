@@ -4,6 +4,8 @@ using StructureMap;
 
 namespace ManagementAPI.Service.Bootstrapper
 {
+    using Services.ExternalServices;
+
     [ExcludeFromCodeCoverage]
     public class DevelopmentRegistry : Registry
     {

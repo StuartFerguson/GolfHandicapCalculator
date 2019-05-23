@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
+    using System;
+    using System.Collections.Generic;
+
     public class CreateGolfClubRequest
     {
         /// <summary>
@@ -85,6 +83,6 @@ namespace ManagementAPI.Service.DataTransferObjects
         /// <value>
         /// The tournament divisions.
         /// </value>
-        public List<TournamentDivision> TournamentDivisions { get; set; }
+        public List<TournamentDivisionRequest> TournamentDivisions { get; set; }
     }
 }

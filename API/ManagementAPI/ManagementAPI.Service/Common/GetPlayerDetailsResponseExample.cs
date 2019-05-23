@@ -1,9 +1,12 @@
 ﻿namespace ManagementAPI.Service.Common
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using DataTransferObjects;
+    using DataTransferObjects.Responses;
     using Swashbuckle.AspNetCore.Filters;
 
+    [ExcludeFromCodeCoverage]
     public class GetPlayerDetailsResponseExample : IExamplesProvider
     {
         #region Methods

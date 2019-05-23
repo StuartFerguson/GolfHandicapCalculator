@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
-    public class RegisterClubAdministratorRequest
+    using System;
+
+    public class CreateMatchSecretaryRequest
     {
         /// <summary>
         /// Gets or sets the email address.

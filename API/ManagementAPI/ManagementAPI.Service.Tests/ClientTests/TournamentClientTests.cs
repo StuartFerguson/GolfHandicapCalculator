@@ -16,6 +16,7 @@ using Xunit;
 namespace ManagementAPI.Service.Tests.ClientTests
 {
     using System.Collections.Generic;
+    using DataTransferObjects.Responses;
 
     public class TournamentClientTests
     {

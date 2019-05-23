@@ -15,6 +15,8 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
     using GolfClub;
     using Service.Client;
     using Service.DataTransferObjects;
+    using Service.DataTransferObjects.Requests;
+    using Service.DataTransferObjects.Responses;
     using Shouldly;
 
     [Binding]

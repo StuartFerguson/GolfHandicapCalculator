@@ -7,6 +7,9 @@ using Shared.CommandHandling;
 
 namespace ManagementAPI.Service.Commands
 {
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
+
     public class CreateGolfClubCommand : Command<CreateGolfClubResponse>
     {
         #region Properties

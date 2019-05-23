@@ -7,6 +7,9 @@ using ManagementAPI.Service.DataTransferObjects;
 
 namespace ManagementAPI.Service.Commands
 {
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
+
     public class CreateTournamentCommand : Command<CreateTournamentResponse>
     {
         #region Properties

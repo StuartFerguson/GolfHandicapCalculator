@@ -32,8 +32,9 @@ Included items must then not match any entries in the exclude list to remain inc
                 <ModulePath>.*managementapi.*</ModulePath>
               </Include>
               <Exclude>
-                <ModulePath>.*managementapi.database.dll.*</ModulePath>
+              	<ModulePath>.*managementapi.database.dll.*</ModulePath>
                 <ModulePath>.*managementapi.service.developer.datatransferobjects.dll.*</ModulePath>
+                <ModulePath>.*managementapi.service.datatransferobjects.dll.*</ModulePath>
                 <ModulePath>.*managementapi.service.tests.dll.*</ModulePath>
               </Exclude>
             </ModulePaths>
@@ -52,13 +53,14 @@ Included items must then not match any entries in the exclude list to remain inc
             </Functions>-->
 
             <!-- Match attributes on any code element: -->
-            <Attributes>
+             <Attributes>
               <Exclude>
                 <!-- Don't forget "Attribute" at the end of the name -->
+                <!--
                 <Attribute>^System\.Diagnostics\.DebuggerHiddenAttribute$</Attribute>
                 <Attribute>^System\.Diagnostics\.DebuggerNonUserCodeAttribute$</Attribute>
                 <Attribute>^System\.Runtime\.CompilerServices.CompilerGeneratedAttribute$</Attribute>
-                <Attribute>^System\.CodeDom\.Compiler.GeneratedCodeAttribute$</Attribute>
+                <Attribute>^System\.CodeDom\.Compiler.GeneratedCodeAttribute$</Attribute>-->
                 <Attribute>^System\.Diagnostics\.CodeAnalysis.ExcludeFromCodeCoverageAttribute$</Attribute>
               </Exclude>
             </Attributes>

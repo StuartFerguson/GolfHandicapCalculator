@@ -58,6 +58,16 @@
         public const String GetGolfClubMembersListPolicy = "GetGolfClubMembersListPolicy";
 
         /// <summary>
+        /// The get handicap calculation process status policy
+        /// </summary>
+        public const String GetHandicapCalculationProcessStatusPolicy = "GetHandicapCalculationProcessStatusPolicy";
+
+        /// <summary>
+        /// The get measured courses policy
+        /// </summary>
+        public const String GetMeasuredCoursesPolicy = "GetMeasuredCoursesPolicy";
+
+        /// <summary>
         /// The get player memberships policy
         /// </summary>
         public const String GetPlayerMembershipsPolicy = "GetPlayerMembershipsPolicy";
@@ -78,6 +88,11 @@
         public const String PlayerTournamentSignUpPolicy = "PlayerTournamentSignUpPolicy";
 
         /// <summary>
+        /// The process handicap calculations policy
+        /// </summary>
+        public const String ProcessHandicapCalculationsPolicy = "ProcessHandicapCalculationsPolicy";
+
+        /// <summary>
         /// The produce tournament result policy
         /// </summary>
         public const String ProduceTournamentResultPolicy = "ProduceTournamentResultPolicy";
@@ -96,16 +111,6 @@
         /// The request club membership policy
         /// </summary>
         public const String RequestClubMembershipPolicy = "RequestClubMembershipPolicy";
-
-        /// <summary>
-        /// The process handicap calculations policy
-        /// </summary>
-        public const String ProcessHandicapCalculationsPolicy = "ProcessHandicapCalculationsPolicy";
-
-        /// <summary>
-        /// The get handicap calculation process status policy
-        /// </summary>
-        public const String GetHandicapCalculationProcessStatusPolicy = "GetHandicapCalculationProcessStatusPolicy";
 
         #endregion
     }

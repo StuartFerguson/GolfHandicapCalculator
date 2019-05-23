@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Responses
 {
+    using System;
+
     public class RegisterPlayerResponse
     {
         /// <summary>

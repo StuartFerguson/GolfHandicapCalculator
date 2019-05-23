@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using Common;
     using DataTransferObjects;
+    using DataTransferObjects.Responses;
     using Developer.DataTransferObjects;
     using GolfClub;
     using GolfClubMembership;
@@ -20,7 +21,7 @@
     using Tournament;
     using Tournament.DataTransferObjects;
     using DeveloperGetGolfClubResponse = Developer.DataTransferObjects.GetGolfClubResponse;
-    using GetGolfClubResponse = DataTransferObjects.GetGolfClubResponse;
+    using GetGolfClubResponse = DataTransferObjects.Responses.GetGolfClubResponse;
     using MembershipStatus = Developer.DataTransferObjects.MembershipStatus;
     using PlayerCategory = Developer.DataTransferObjects.PlayerCategory;
     using TournamentFormat = Developer.DataTransferObjects.TournamentFormat;
@@ -148,7 +149,6 @@
                                                                              PlayerId = m.PlayerId,
                                                                              RejectedDateAndTime = m.RejectedDateAndTime,
                                                                              RejectionReason = m.RejectionReason,
-                                                                             RequestedDateAndTime = m.RequestedDateAndTime,
                                                                              Status = m.Status
                                                                          });
                                     });

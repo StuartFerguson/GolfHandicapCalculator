@@ -235,7 +235,6 @@
                        AcceptedDateAndTime = membership.AcceptedDateAndTime,
                        RejectedDateAndTime = membership.RejectedDateAndTime,
                        Status = membership.Status,
-                       RequestedDateAndTime = membership.RequestedDateAndTime,
                        MembershipNumber = membership.MembershipNumber
                    };
         }

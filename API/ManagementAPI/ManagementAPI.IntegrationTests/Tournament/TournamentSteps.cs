@@ -18,6 +18,8 @@ namespace ManagementAPI.IntegrationTests.Tournament
     using GolfClub;
     using Microsoft.VisualStudio.TestPlatform.Common;
     using MySql.Data.MySqlClient;
+    using Service.DataTransferObjects.Requests;
+    using Service.DataTransferObjects.Responses;
 
     [Binding]
     [Scope(Tag = "tournament")]

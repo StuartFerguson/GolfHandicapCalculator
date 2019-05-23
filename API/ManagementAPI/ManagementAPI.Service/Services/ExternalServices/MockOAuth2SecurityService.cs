@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using ManagementAPI.Service.Services.DataTransferObjects;
-
-namespace ManagementAPI.Service.Services
+﻿namespace ManagementAPI.Service.Services.ExternalServices
 {
-    using ExternalServices.DataTransferObjects;
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using DataTransferObjects;
 
+    [ExcludeFromCodeCoverage]
     /// <summary>
     /// 
     /// </summary>

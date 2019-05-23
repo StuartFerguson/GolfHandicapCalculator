@@ -8,6 +8,8 @@
     using System.Threading.Tasks;
     using ClientProxyBase;
     using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using Newtonsoft.Json;
 
     /// <summary>

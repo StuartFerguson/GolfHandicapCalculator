@@ -10,6 +10,8 @@
     using System.Threading.Tasks;
     using ManagementAPI.Service.Client;
     using ManagementAPI.Service.DataTransferObjects;
+    using ManagementAPI.Service.DataTransferObjects.Requests;
+    using ManagementAPI.Service.DataTransferObjects.Responses;
     using Newtonsoft.Json;
 
     /// <summary>

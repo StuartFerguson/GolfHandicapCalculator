@@ -1,4 +1,4 @@
-﻿namespace ManagementAPI.Service.DataTransferObjects
+﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
     using System;
 

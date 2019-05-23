@@ -4,6 +4,8 @@
     using System.Threading;
     using System.Threading.Tasks;
     using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
 
     public interface ITournamentClient
     {

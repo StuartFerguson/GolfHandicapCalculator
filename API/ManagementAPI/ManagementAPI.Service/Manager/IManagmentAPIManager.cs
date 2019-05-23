@@ -4,7 +4,8 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using DataTransferObjects;
+    using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using GolfClub.DomainEvents;
     using GolfClubMembership.DomainEvents;
     using Tournament.DomainEvents;
@@ -39,6 +40,15 @@
                                                                                 CancellationToken cancellationToken);
 
         /// <summary>
+        /// Gets the measured course list.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetMeasuredCourseListResponse> GetMeasuredCourseList(Guid golfClubId,
+                                                                  CancellationToken cancellationToken);
+
+        /// <summary>
         /// Gets the player details.
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
@@ -66,15 +76,6 @@
                                        CancellationToken cancellationToken);
 
         /// <summary>
-        /// Registers the club administrator.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task RegisterClubAdministrator(RegisterClubAdministratorRequest request,
-                                       CancellationToken cancellationToken);
-
-        /// <summary>
         /// Inserts the player membership to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -93,20 +94,31 @@
                                                CancellationToken cancellationToken);
 
         /// <summary>
-        /// Inserts the tournament to read model.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task InsertTournamentToReadModel(TournamentCreatedEvent domainEvent, CancellationToken cancellationToken);
-
-        /// <summary>
         /// Inserts the player tournament score to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task InsertPlayerTournamentScoreToReadModel(TournamentResultForPlayerScoreProducedEvent domainEvent, CancellationToken cancellationToken);
+        Task InsertPlayerTournamentScoreToReadModel(TournamentResultForPlayerScoreProducedEvent domainEvent,
+                                                    CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the tournament to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertTournamentToReadModel(TournamentCreatedEvent domainEvent,
+                                         CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Registers the club administrator.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task RegisterClubAdministrator(RegisterClubAdministratorRequest request,
+                                       CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates the tournament status in read model.
@@ -115,7 +127,7 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task UpdateTournamentStatusInReadModel(TournamentResultProducedEvent domainEvent,
-                                              CancellationToken cancellationToken);
+                                               CancellationToken cancellationToken);
 
         #endregion
     }
