@@ -58,7 +58,7 @@
 
         [HttpGet]
         [SwaggerResponse(200, type:typeof(GetPlayerDetailsResponse))]
-        [SwaggerResponseExample(200, typeof(ClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [SwaggerResponseExample(200, typeof(GetPlayerDetailsResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Authorize(Policy = PolicyNames.GetPlayerPolicy)]
         public async Task<IActionResult> GetPlayer(CancellationToken cancellationToken)
         {
