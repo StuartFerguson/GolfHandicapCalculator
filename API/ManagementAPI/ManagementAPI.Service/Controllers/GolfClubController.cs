@@ -173,7 +173,7 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerResponse(200, type:typeof(List<CreateGolfClubResponse>))]
+        [SwaggerResponse(200, type:typeof(List<GetGolfClubResponse>))]
         [SwaggerResponseExample(200, typeof(GetGolfClubListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
         [Authorize(Policy = PolicyNames.GetGolfClubListPolicy)]
         [Route("List")]
