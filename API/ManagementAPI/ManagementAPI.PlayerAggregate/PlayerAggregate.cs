@@ -268,12 +268,18 @@
 
             this.CheckIfPlayerAlreadyRegistered();
 
-            // Create the domain event
+            // Create the Player Registered domain event
             PlayerRegisteredEvent playerRegisteredEvent =
                 PlayerRegisteredEvent.Create(this.AggregateId, firstName, middleName, lastName, gender, dateOfBirth, exactHandicap, emailAddress);
 
             // Apply and pend
             this.ApplyAndPend(playerRegisteredEvent);
+
+            // Create the Opening Handicap Added domain event
+            OpeningExactHandicapAddedEvent openingExactHandicapAddedEvent = OpeningExactHandicapAddedEvent.Create(this.AggregateId, exactHandicap);
+
+            // Apply and pend
+            this.ApplyAndPend(openingExactHandicapAddedEvent);
         }
 
         /// <summary>
@@ -363,7 +369,18 @@
                 throw new InvalidOperationException("This operation is invalid for a player that already has a created security user");
             }
         }
-        
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="openingExactHandicapAddedEvent">The opening handicap added event.</param>
+        private void PlayEvent(OpeningExactHandicapAddedEvent openingExactHandicapAddedEvent)
+        {
+            this.ExactHandicap = openingExactHandicapAddedEvent.ExactHandicap;
+            this.PlayingHandicap = this.CalculatePlayingHandicap(this.ExactHandicap);
+            this.HandicapCategory = this.CalculateHandicapCategory(this.PlayingHandicap);
+        }
+
         /// <summary>
         /// Plays the event.
         /// </summary>
@@ -377,11 +394,8 @@
                 $"{playerRegisteredEvent.FirstName}{(String.IsNullOrEmpty(playerRegisteredEvent.MiddleName) ? " " : " " + playerRegisteredEvent.MiddleName + " ")}{playerRegisteredEvent.LastName}";
             this.Gender = playerRegisteredEvent.Gender;
             this.DateOfBirth = playerRegisteredEvent.DateOfBirth;
-            this.ExactHandicap = playerRegisteredEvent.ExactHandicap;
             this.EmailAddress = playerRegisteredEvent.EmailAddress;
             this.HasBeenRegistered = true;
-            this.PlayingHandicap = this.CalculatePlayingHandicap(this.ExactHandicap);
-            this.HandicapCategory = this.CalculateHandicapCategory(this.PlayingHandicap);
         }
 
         /// <summary>
