@@ -43,7 +43,7 @@
         /// <summary>
         /// The o auth2 security service
         /// </summary>
-        private readonly IOAuth2SecurityService OAuth2SecurityService;
+        private readonly ISecurityService OAuth2SecurityService;
 
         /// <summary>
         /// The player repository
@@ -70,7 +70,7 @@
         public ManagementAPIManager(IAggregateRepository<GolfClubAggregate> golfClubRepository,
                                     Func<ManagementAPIReadModel> readModelResolver,
                                     IAggregateRepository<PlayerAggregate> playerRepository,
-                                    IOAuth2SecurityService oAuth2SecurityService,
+                                    ISecurityService oAuth2SecurityService,
                                     IAggregateRepository<GolfClubMembershipAggregate> golfClubMembershipRepository)
         {
             this.GolfClubRepository = golfClubRepository;
@@ -583,6 +583,9 @@
                                                                    },
                                                           Password = "123456",
                                                           PhoneNumber = request.TelephoneNumber,
+                                                          FamilyName = request.FamilyName,
+                                                          GivenName = request.GivenName,
+                                                          MiddleName = request.MiddleName,
                                                           Roles = new List<String>
                                                                   {
                                                                       "Club Administrator"

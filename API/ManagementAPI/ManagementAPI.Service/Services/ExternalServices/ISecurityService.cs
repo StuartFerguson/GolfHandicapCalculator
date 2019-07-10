@@ -7,7 +7,7 @@ namespace ManagementAPI.Service.Services
     using System;
     using ExternalServices.DataTransferObjects;
 
-    public interface IOAuth2SecurityService
+    public interface ISecurityService
     {
         /// <summary>
         /// Registers the user.

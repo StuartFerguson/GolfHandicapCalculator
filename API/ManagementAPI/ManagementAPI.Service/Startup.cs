@@ -199,7 +199,7 @@ namespace ManagementAPI.Service
 
             using(IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                IOAuth2SecurityService securityService = scope.ServiceProvider.GetRequiredService<IOAuth2SecurityService>();
+                ISecurityService securityService = scope.ServiceProvider.GetRequiredService<ISecurityService>();
 
                 foreach (String roleName in rolesList)
                 {

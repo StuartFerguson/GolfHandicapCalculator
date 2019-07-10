@@ -115,9 +115,9 @@
                                                                     {
                                                                         DateOfBirth = PlayerTestData.DateOfBirth,
                                                                         EmailAddress = PlayerTestData.EmailAddress,
-                                                                        FirstName = PlayerTestData.FirstName,
+                                                                        GivenName = PlayerTestData.FirstName,
                                                                         MiddleName = PlayerTestData.MiddleName,
-                                                                        LastName = PlayerTestData.LastName,
+                                                                        FamilyName = PlayerTestData.LastName,
                                                                         Gender = PlayerTestData.Gender,
                                                                         ExactHandicap = PlayerTestData.ExactHandicap
                                                                     };

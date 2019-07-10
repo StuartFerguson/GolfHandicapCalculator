@@ -38,7 +38,7 @@
         /// <summary>
         /// The o auth2 security service
         /// </summary>
-        private readonly IOAuth2SecurityService OAuth2SecurityService;
+        private readonly ISecurityService OAuth2SecurityService;
 
         /// <summary>
         /// The player repository
@@ -74,7 +74,7 @@
                              IAggregateRepository<TournamentAggregate> tournamentRepository,
                              IHandicapAdjustmentCalculatorService handicapAdjustmentCalculatorService,
                              IAggregateRepository<PlayerAggregate> playerRepository,
-                             IOAuth2SecurityService oAuth2SecurityService,
+                             ISecurityService oAuth2SecurityService,
                              IGolfClubMembershipApplicationService golfClubMembershipApplicationService,
                              ITournamentApplicationService tournamentApplicationService,
                              IAggregateRepository<HandicapCalculationProcessAggregate> handicapCalculationProcessRepository)

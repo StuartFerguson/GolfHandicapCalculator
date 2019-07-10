@@ -10,7 +10,7 @@
         /// <value>
         /// The first name.
         /// </value>
-        public String FirstName { get; set; }
+        public String GivenName { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the middle.
@@ -26,7 +26,7 @@
         /// <value>
         /// The last name.
         /// </value>
-        public String LastName { get; set; }
+        public String FamilyName { get; set; }
 
         /// <summary>
         /// Gets the gender.

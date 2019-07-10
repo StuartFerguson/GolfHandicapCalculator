@@ -14,7 +14,10 @@ namespace ManagementAPI.IntegrationTests.Common
             EmailAddress = "testclubadministrator@golfclub.com",
             ConfirmPassword = "123456",
             Password = "123456",
-            TelephoneNumber = "123456789"
+            TelephoneNumber = "123456789",
+            GivenName = "Test",
+            FamilyName = "Club Administrator"
+            
         };
 
         public static CreateMatchSecretaryRequest CreateMatchSecretaryRequest = new CreateMatchSecretaryRequest
@@ -22,8 +25,10 @@ namespace ManagementAPI.IntegrationTests.Common
                                                                                               EmailAddress = "testmatchsecretary@golfclub.com",
                                                                                               ConfirmPassword = "123456",
                                                                                               Password = "123456",
-                                                                                              TelephoneNumber = "123456789"
-                                                                                          };
+                                                                                              TelephoneNumber = "123456789",
+                                                                                              GivenName = "Test",
+                                                                                              FamilyName = "Match Secretary"
+        };
 
         public static CreateGolfClubRequest CreateGolfClubRequest = new CreateGolfClubRequest
         {
@@ -129,9 +134,9 @@ namespace ManagementAPI.IntegrationTests.Common
         public static RegisterPlayerRequest RegisterPlayerRequest = new RegisterPlayerRequest
         {
             EmailAddress = "testemail@myemailaddress.com",
-            FirstName = "Test",
+            GivenName = "Test",
             MiddleName = String.Empty,
-            LastName = "Player 1",
+            FamilyName = "Player 1",
             DateOfBirth = new DateTime(1980,12,13),
             Gender = "M",
             ExactHandicap = 6.1m

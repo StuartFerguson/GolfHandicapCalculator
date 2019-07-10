@@ -150,8 +150,8 @@
                                                     DateOfBirth = DateTime.ParseExact(tableRow["DateOfBirth"], "dd/MM/yyyy", null),
                                                     EmailAddress = tableRow["EmailAddress"],
                                                     Gender = tableRow["Gender"],
-                                                    FirstName = tableRow["FirstName"],
-                                                    LastName = tableRow["LastName"],
+                                                    GivenName = tableRow["GivenName"],
+                                                    FamilyName = tableRow["FamilyName"],
                                                     ExactHandicap = decimal.Parse(tableRow["ExactHandicap"])
                                                 };
 

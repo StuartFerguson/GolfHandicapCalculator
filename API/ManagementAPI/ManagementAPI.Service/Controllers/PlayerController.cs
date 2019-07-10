@@ -1,14 +1,7 @@
 ﻿namespace ManagementAPI.Service.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Security.Claims;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Commands;
     using Common;
-    using DataTransferObjects;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
     using Manager;
@@ -17,6 +10,12 @@
     using Shared.CommandHandling;
     using Swashbuckle.AspNetCore.Annotations;
     using Swashbuckle.AspNetCore.Filters;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Security.Claims;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -57,8 +56,8 @@
         #region Methods
 
         [HttpGet]
-        [SwaggerResponse(200, type:typeof(GetPlayerDetailsResponse))]
-        [SwaggerResponseExample(200, typeof(GetPlayerDetailsResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [SwaggerResponse(200, type: typeof(GetPlayerDetailsResponse))]
+        [SwaggerResponseExample(200, typeof(GetPlayerDetailsResponseExample), jsonConverter: typeof(SwaggerJsonConverter))]
         [Authorize(Policy = PolicyNames.GetPlayerPolicy)]
         public async Task<IActionResult> GetPlayer(CancellationToken cancellationToken)
         {
@@ -76,8 +75,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerResponse(200, type:typeof(List<ClubMembershipResponse>))]
-        [SwaggerResponseExample(200, typeof(ClubMembershipListResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [SwaggerResponse(200, type: typeof(List<ClubMembershipResponse>))]
+        [SwaggerResponseExample(200, typeof(ClubMembershipListResponseExample), jsonConverter: typeof(SwaggerJsonConverter))]
         [Authorize(Policy = PolicyNames.GetPlayerMembershipsPolicy)]
         [Route("Memberships")]
         public async Task<IActionResult> GetPlayerMemberships(CancellationToken cancellationToken)
@@ -97,8 +96,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerResponse(201, type:typeof(RegisterPlayerResponse))]
-        [SwaggerResponseExample(201, typeof(RegisterPlayerResponseExample), jsonConverter:typeof(SwaggerJsonConverter))]
+        [SwaggerResponse(201, type: typeof(RegisterPlayerResponse))]
+        [SwaggerResponseExample(201, typeof(RegisterPlayerResponseExample), jsonConverter: typeof(SwaggerJsonConverter))]
         [AllowAnonymous]
         public async Task<IActionResult> PostPlayer([FromBody] RegisterPlayerRequest request,
                                                     CancellationToken cancellationToken)

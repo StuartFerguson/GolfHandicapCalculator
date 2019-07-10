@@ -10,8 +10,8 @@
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="ManagementAPI.Service.Services.IOAuth2SecurityService" />
-    public class MockOAuth2SecurityService : IOAuth2SecurityService
+    /// <seealso cref="ManagementAPI.Service.Services.ISecurityService" />
+    public class MockSecurityService : ISecurityService
     {
         /// <summary>
         /// Registers the user.

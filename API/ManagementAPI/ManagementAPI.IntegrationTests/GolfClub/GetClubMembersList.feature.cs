@@ -88,8 +88,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
                         "PlayerId",
                         "EmailAddress",
-                        "FirstName",
-                        "LastName",
+                        "GivenName",
+                        "FamilyName",
                         "DateOfBirth",
                         "Gender",
                         "ExactHandicap"});

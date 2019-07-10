@@ -11,7 +11,7 @@ namespace ManagementAPI.Service.Bootstrapper
     {
         public DevelopmentRegistry()
         {
-            For<IOAuth2SecurityService>().Use<MockOAuth2SecurityService>().Singleton();
+            For<ISecurityService>().Use<MockSecurityService>().Singleton();
         }
     }
 }
