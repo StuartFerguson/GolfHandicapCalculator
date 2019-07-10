@@ -77,7 +77,7 @@ namespace ManagementAPI.Service.Bootstrapper
 
             For<IHandicapAdjustmentCalculatorService>().Use<HandicapAdjustmentCalculatorService>();
             For<IManagmentAPIManager>().Use<ManagementAPIManager>().Singleton();
-            For<IOAuth2SecurityService>().Use<OAuth2SecurityService>().Singleton();
+            For<ISecurityService>().Use<SecurityService>().Singleton();
             For<IGolfClubMembershipApplicationService>().Use<GolfClubMembershipApplicationService>().Singleton();
             For<ITournamentApplicationService>().Use<TournamentApplicationService>().Singleton();
 

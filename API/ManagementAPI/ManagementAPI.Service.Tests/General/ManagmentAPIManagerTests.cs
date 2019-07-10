@@ -67,7 +67,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
             ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
@@ -93,7 +93,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
             ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
@@ -119,7 +119,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
             golfClubMembershipRepository.Setup(x => x.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                                         .ReturnsAsync(GolfClubMembershipTestData.GetCreatedGolfClubMembershipAggregate);
@@ -145,7 +145,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
             golfClubMembershipRepository.Setup(x => x.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                                         .ReturnsAsync(GolfClubMembershipTestData.GetCreatedGolfClubMembershipAggregate);
@@ -171,7 +171,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
             golfClubMembershipRepository.Setup(x => x.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None))
                                         .ReturnsAsync(GolfClubMembershipTestData.GetCreatedGolfClubMembershipAggregateWithMultipleMembershipRequested);
@@ -213,7 +213,7 @@
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
             ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
@@ -238,7 +238,7 @@
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
             ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
@@ -274,7 +274,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
             ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
@@ -298,7 +298,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
             ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
@@ -322,7 +322,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
             ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
@@ -350,7 +350,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
             ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
@@ -371,7 +371,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
 
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
@@ -395,7 +395,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
 
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
@@ -428,7 +428,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
 
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
@@ -452,7 +452,7 @@
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
 
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             securityService.Setup(s => s.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None)).ReturnsAsync(new RegisterUserResponse
                                                                                                                              {
                                                                                                                                  UserId = Guid.NewGuid()
@@ -481,7 +481,7 @@
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
 
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
             securityService.Setup(s => s.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None)).ThrowsAsync(new InvalidOperationException("Error"));
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
@@ -517,7 +517,7 @@
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
 
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
@@ -554,7 +554,7 @@
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate);
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
 
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
@@ -580,7 +580,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
 
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 
@@ -616,7 +616,7 @@
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
-            Mock<IOAuth2SecurityService> securityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
 
             Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
 

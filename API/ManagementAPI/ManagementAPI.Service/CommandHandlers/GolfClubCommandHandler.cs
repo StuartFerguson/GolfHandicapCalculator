@@ -33,7 +33,7 @@
         /// <summary>
         /// The o auth2 security service
         /// </summary>
-        private readonly IOAuth2SecurityService OAuth2SecurityService;
+        private readonly ISecurityService OAuth2SecurityService;
 
         #endregion
 
@@ -46,7 +46,7 @@
         /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
         /// <param name="golfClubMembershipApplicationService">The golf club membership application service.</param>
         public GolfClubCommandHandler(IAggregateRepository<GolfClubAggregate> golfClubRepository,
-                                      IOAuth2SecurityService oAuth2SecurityService,
+                                      ISecurityService oAuth2SecurityService,
                                       IGolfClubMembershipApplicationService golfClubMembershipApplicationService)
         {
             this.GolfClubRepository = golfClubRepository;
@@ -133,6 +133,9 @@
                                                                    },
                                                           Password = "123456",
                                                           PhoneNumber = command.CreateMatchSecretaryRequest.TelephoneNumber,
+                                                          MiddleName = command.CreateMatchSecretaryRequest.MiddleName,
+                                                          FamilyName = command.CreateMatchSecretaryRequest.FamilyName,
+                                                          GivenName = command.CreateMatchSecretaryRequest.GivenName,
                                                           Roles = new List<String>
                                                                   {
                                                                       RoleNames.MatchSecretary

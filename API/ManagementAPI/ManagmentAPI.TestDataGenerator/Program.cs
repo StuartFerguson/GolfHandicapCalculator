@@ -298,15 +298,15 @@
                                                                       DateOfBirth = DateTime.Now.AddYears(-30),
                                                                       EmailAddress = $"player{i}.{clubCounter}@testplayer.co.uk",
                                                                       ExactHandicap = i,
-                                                                      FirstName = $"Club {clubCounter}",
+                                                                      GivenName = $"Club {clubCounter}",
                                                                       Gender = "M",
-                                                                      LastName = $"Test Player {i}",
+                                                                      FamilyName = $"Test Player {i}",
                                                                       MiddleName = string.Empty
                                                                   };
 
                     RegisterPlayerResponse registerPlayerResponse = await testDataGenerator.RegisterPlayer(registerPlayerRequest, cancellationToken);
 
-                    Console.WriteLine($"Created Player {registerPlayerRequest.FirstName} {registerPlayerRequest.LastName}");
+                    Console.WriteLine($"Created Player {registerPlayerRequest.GivenName} {registerPlayerRequest.FamilyName}");
 
                     String token = await testDataGenerator.GetToken(TokenType.Password,
                                                                     "developerClient",
@@ -322,7 +322,7 @@
 
                     await testDataGenerator.RequestClubMembership(token, golfClubDetails.GolfClubId, cancellationToken);
 
-                    Console.WriteLine($"Player {registerPlayerRequest.FirstName} {registerPlayerRequest.LastName} membership requested");
+                    Console.WriteLine($"Player {registerPlayerRequest.GivenName} {registerPlayerRequest.FamilyName} membership requested");
 
                     Program.Players.Add(new PlayerDetails
                                         {

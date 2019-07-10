@@ -148,7 +148,7 @@
             catch(Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error creating the new player {request.FirstName} {request.LastName}.", ex);
+                Exception exception = new Exception($"Error creating the new player {request.GivenName} {request.FamilyName}.", ex);
 
                 throw exception;
             }

@@ -69,7 +69,7 @@ namespace ManagementAPI.IntegrationTests.Common
             this.MessagingServiceContainerName = $"messaging{testGuid:N}";
 
             this.EventStoreConnectionString = $"EventStoreSettings:ConnectionString=ConnectTo=tcp://admin:changeit@{this.EventStoreContainerName}:1113;VerboseLogging=true;";
-            this.SecurityServiceAddress = $"AppSettings:OAuth2SecurityService=http://{this.SecurityServiceContainerName}:5001";
+            this.SecurityServiceAddress = $"AppSettings:SecurityService=http://{this.SecurityServiceContainerName}:5001";
             this.AuthorityAddress = $"SecurityConfiguration:Authority=http://{this.SecurityServiceContainerName}:5001";
             this.SubscriptionServiceConnectionString = $"\"ConnectionStrings:SubscriptionServiceConfigurationContext={Setup.GetConnectionString("SubscriptionServiceConfiguration")}\"";
             this.ManagementAPISeedingType = "SeedingType=IntegrationTest";
@@ -343,7 +343,7 @@ namespace ManagementAPI.IntegrationTests.Common
                     $"ServiceOptions:IssuerUrl=http://{this.SecurityServiceContainerName}:5001",
                     this.MessagingServiceAddress)
                 .WithCredential("https://www.docker.com", "stuartferguson", "Sc0tland")
-                .UseImage("stuartferguson/oauth2securityserviceservice")
+                .UseImage("stuartferguson/securityserviceservice")
                 .ExposePort(5001)
                 .UseNetwork(this.TestNetwork)
                 .Mount($"D:\\temp\\docker\\{testFolder}", "/home", MountType.ReadWrite)                

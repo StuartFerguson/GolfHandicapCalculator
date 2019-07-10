@@ -25,7 +25,7 @@ namespace ManagementAPI.Service.Tests.Player
             Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
             playerRepository.Setup(c => c.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate());
-            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> oAuth2SecurityService = new Mock<ISecurityService>();
             oAuth2SecurityService
                 .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(PlayerTestData.GetRegisterUserResponse());

@@ -29,7 +29,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <summary>
         /// The o auth2 security service
         /// </summary>
-        private readonly IOAuth2SecurityService OAuth2SecurityService;
+        private readonly ISecurityService OAuth2SecurityService;
 
         /// <summary>
         /// The golf club repository
@@ -46,7 +46,7 @@ namespace ManagementAPI.Service.CommandHandlers
         /// <param name="playerRepository">The player repository.</param>
         /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
         /// <param name="golfClubRepository">The golf club repository.</param>
-        public PlayerCommandHandler(IAggregateRepository<PlayerAggregate> playerRepository, IOAuth2SecurityService oAuth2SecurityService, IAggregateRepository<GolfClubAggregate> golfClubRepository)
+        public PlayerCommandHandler(IAggregateRepository<PlayerAggregate> playerRepository, ISecurityService oAuth2SecurityService, IAggregateRepository<GolfClubAggregate> golfClubRepository)
         {
             this.PlayerRepository = playerRepository;
             this.OAuth2SecurityService = oAuth2SecurityService;
@@ -90,9 +90,9 @@ namespace ManagementAPI.Service.CommandHandlers
             PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(playerAggregateId, cancellationToken);
 
             // Call the aggregate method
-            player.Register(command.RegisterPlayerRequest.FirstName, 
+            player.Register(command.RegisterPlayerRequest.GivenName, 
                 command.RegisterPlayerRequest.MiddleName,
-                command.RegisterPlayerRequest.LastName,
+                command.RegisterPlayerRequest.FamilyName,
                 command.RegisterPlayerRequest.Gender,
                 command.RegisterPlayerRequest.DateOfBirth,
                 command.RegisterPlayerRequest.ExactHandicap,
@@ -108,6 +108,9 @@ namespace ManagementAPI.Service.CommandHandlers
                 },
                 Password = "123456",
                 PhoneNumber = "123456789",
+                MiddleName = command.RegisterPlayerRequest.MiddleName,
+                FamilyName = command.RegisterPlayerRequest.FamilyName,
+                GivenName = command.RegisterPlayerRequest.GivenName,
                 Roles = new List<String>
                 {
                     "Player"

@@ -21,7 +21,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
         {
             Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetEmptyGolfClubAggregate());
-            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> oAuth2SecurityService = new Mock<ISecurityService>();
             oAuth2SecurityService
                 .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(GolfClubTestData.GetRegisterUserResponse());
@@ -40,7 +40,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
         {
             Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate);
-            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> oAuth2SecurityService = new Mock<ISecurityService>();
             oAuth2SecurityService
                 .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(GolfClubTestData.GetRegisterUserResponse());
@@ -59,7 +59,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
         {
             Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate);
-            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> oAuth2SecurityService = new Mock<ISecurityService>();
             oAuth2SecurityService
                 .Setup(o => o.RegisterUser(It.IsAny<RegisterUserRequest>(), CancellationToken.None))
                 .ReturnsAsync(GolfClubTestData.GetRegisterUserResponse());
@@ -77,7 +77,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
         public void GolfClubCommandHandler_HandleCommand_RequestClubMembershipCommand_CommandHandled()
         {
             Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();            
-            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> oAuth2SecurityService = new Mock<ISecurityService>();
             Mock<IGolfClubMembershipApplicationService> golfClubMembershipApplicationService = new Mock<IGolfClubMembershipApplicationService>();
             golfClubMembershipApplicationService.Setup(x =>
                     x.RequestClubMembership(It.IsAny<Guid>(), It.IsAny<Guid>(), CancellationToken.None))
@@ -95,7 +95,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
         {
             Mock<IAggregateRepository<GolfClubAggregate>> repository = new Mock<IAggregateRepository<GolfClubAggregate>>();
             repository.Setup(r => r.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetCreatedGolfClubAggregate);
-            Mock<IOAuth2SecurityService> oAuth2SecurityService = new Mock<IOAuth2SecurityService>();
+            Mock<ISecurityService> oAuth2SecurityService = new Mock<ISecurityService>();
             Mock<IGolfClubMembershipApplicationService> golfClubMembershipApplicationService = new Mock<IGolfClubMembershipApplicationService>();
             GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object,
                                                                         golfClubMembershipApplicationService.Object);
