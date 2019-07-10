@@ -62,5 +62,18 @@ namespace ManagementAPI.Service.Tests.Player
             handicapAdjustedEvent.MeasuredCourseId.ShouldBe(PlayerTestData.MeasuredCourseId);
             handicapAdjustedEvent.ScoreDate.ShouldBe(PlayerTestData.ScoreDate);
         }
+
+        [Fact]
+        public void OpeningExactHandicapAddedEvent_CanBeCreated_IsCreated()
+        {
+            OpeningExactHandicapAddedEvent openingExactHandicapAddedEvent = OpeningExactHandicapAddedEvent.Create(PlayerTestData.AggregateId,
+                                                                                                                 PlayerTestData.ExactHandicap);
+
+            openingExactHandicapAddedEvent.ShouldNotBeNull();
+            openingExactHandicapAddedEvent.AggregateId.ShouldBe(PlayerTestData.AggregateId);
+            openingExactHandicapAddedEvent.EventId.ShouldNotBe(Guid.Empty);
+            openingExactHandicapAddedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            openingExactHandicapAddedEvent.ExactHandicap.ShouldBe(PlayerTestData.ExactHandicap);
+        }
     }
 }
