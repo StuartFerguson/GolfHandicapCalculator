@@ -77,6 +77,33 @@
         }
 
         /// <summary>
+        /// Gets the user by identifier.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetUserResponse> GetUserById(Guid userId,
+                                      CancellationToken cancellationToken)
+        {
+            GetUserResponse response = null;
+
+            using (HttpClient client = new HttpClient())
+            {
+                String uri = $"{ConfigurationReader.GetBaseServerUri("SecurityService")}api/user?userId={userId}";
+
+                HttpResponseMessage httpResponse = await client.GetAsync(uri, CancellationToken.None).ConfigureAwait(false);
+
+                Logger.LogInformation($"Status Code: {httpResponse.StatusCode}");
+
+                String responseContent = await this.HandleResponse(httpResponse, cancellationToken);
+
+                response = JsonConvert.DeserializeObject<GetUserResponse>(responseContent);
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Registers the  user.
         /// </summary>
         /// <param name="request">The request.</param>

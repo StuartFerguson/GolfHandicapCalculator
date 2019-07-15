@@ -76,6 +76,30 @@
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
+        private async Task HandleSpecificDomainEvent(GolfClubAdministratorSecurityUserCreatedEvent domainEvent,
+                                                     CancellationToken cancellationToken)
+        {
+            await this.Manager.InsertUserRecordToReadModel(domainEvent, cancellationToken);
+        }
+
+        /// <summary>
+        /// Handles the specific domain event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleSpecificDomainEvent(MatchSecretarySecurityUserCreatedEvent domainEvent,
+                                                     CancellationToken cancellationToken)
+        {
+            await this.Manager.InsertUserRecordToReadModel(domainEvent, cancellationToken);
+        }
+
+        /// <summary>
+        /// Handles the specific domain event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         /// <exception cref="System.Exception">No event handler for {domainEvent.GetType()}</exception>
         private Task HandleSpecificDomainEvent(DomainEvent domainEvent,
                                                CancellationToken cancellationToken)

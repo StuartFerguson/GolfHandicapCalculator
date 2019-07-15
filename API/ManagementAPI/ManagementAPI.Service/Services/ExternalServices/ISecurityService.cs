@@ -33,5 +33,14 @@ namespace ManagementAPI.Service.Services
         /// <returns></returns>
         Task<GetRoleResponse> GetRoleByName(String roleName,
                                             CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the user by identifier.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetUserResponse> GetUserById(Guid userId,
+                                            CancellationToken cancellationToken);
     }
 }

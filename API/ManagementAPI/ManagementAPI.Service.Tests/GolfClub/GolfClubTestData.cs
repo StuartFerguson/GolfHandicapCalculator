@@ -6,6 +6,7 @@
     using Commands;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
+    using IdentityModel;
     using ManagementAPI.GolfClub;
     using ManagementAPI.GolfClub.DomainEvents;
     using Services.ExternalServices.DataTransferObjects;
@@ -215,8 +216,11 @@
                                                                                     EmailAddress = "testmatchsecretary@test.co.uk",
                                                                                     Password = "123456",
                                                                                     ConfirmPassword = "123456",
-                                                                                    TelephoneNumber = "123456789"
-                                                                                };
+                                                                                    TelephoneNumber = "123456789",
+                                                                                    GivenName = "Test",
+                                                                                    MiddleName = null,
+                                                                                    FamilyName = "Match Secretary"
+        };
 
         public static DateTime MembershipRequestedDateAndTime = new DateTime(2019, 1, 1);
 
@@ -289,7 +293,10 @@
                                                                                               EmailAddress = "testclubadministrator@test.co.uk",
                                                                                               Password = "123456",
                                                                                               ConfirmPassword = "123456",
-                                                                                              TelephoneNumber = "123456789"
+                                                                                              TelephoneNumber = "123456789",
+                                                                                              GivenName = "Test",
+                                                                                              MiddleName = null,
+                                                                                              FamilyName = "Club Administrator"
                                                                                           };
 
         #endregion
@@ -417,6 +424,22 @@
                                                                            GolfClubTestData.TelephoneNumber,
                                                                            GolfClubTestData.Website,
                                                                            GolfClubTestData.EmailAddress);
+
+            return domainEvent;
+        }
+
+        public static GolfClubAdministratorSecurityUserCreatedEvent GetGolfClubAdministratorSecurityUserCreatedEvent()
+        {
+            GolfClubAdministratorSecurityUserCreatedEvent domainEvent =
+                GolfClubAdministratorSecurityUserCreatedEvent.Create(GolfClubTestData.AggregateId, GolfClubTestData.GolfClubAdministratorSecurityUserId);
+
+            return domainEvent;
+        }
+
+        public static MatchSecretarySecurityUserCreatedEvent GetMatchSecretarySecurityUserCreatedEvent()
+        {
+            MatchSecretarySecurityUserCreatedEvent domainEvent =
+                MatchSecretarySecurityUserCreatedEvent.Create(GolfClubTestData.AggregateId, GolfClubTestData.MatchSecretarySecurityUserId);
 
             return domainEvent;
         }
@@ -996,6 +1019,48 @@
                        Division = 4,
                        StartHandicap = 22,
                        EndHandicap = 28
+                   };
+        }
+
+        public static GetUserResponse GetClubAdministratorUserResponse()
+        {
+            return new GetUserResponse
+                   {
+                       Claims = new Dictionary<String, String>
+                                {
+                                    {JwtClaimTypes.GivenName, GolfClubTestData.RegisterClubAdministratorRequest.GivenName},
+                                    {JwtClaimTypes.MiddleName, GolfClubTestData.RegisterClubAdministratorRequest.MiddleName},
+                                    {JwtClaimTypes.FamilyName, GolfClubTestData.RegisterClubAdministratorRequest.FamilyName}
+                                },
+                       UserName = GolfClubTestData.RegisterClubAdministratorRequest.EmailAddress,
+                       Email = GolfClubTestData.RegisterClubAdministratorRequest.EmailAddress,
+                       PhoneNumber = GolfClubTestData.RegisterClubAdministratorRequest.TelephoneNumber,
+                       UserId = Guid.NewGuid(),
+                       Roles = new List<String>
+                               {
+                                   "Club Administrator"
+                               }
+                   };
+        }
+
+        public static GetUserResponse GetMatchSecretaryUserResponse()
+        {
+            return new GetUserResponse
+                   {
+                       Claims = new Dictionary<String, String>
+                                {
+                                    {JwtClaimTypes.GivenName, GolfClubTestData.CreateMatchSecretaryRequest.GivenName},
+                                    {JwtClaimTypes.MiddleName, GolfClubTestData.CreateMatchSecretaryRequest.MiddleName},
+                                    {JwtClaimTypes.FamilyName, GolfClubTestData.CreateMatchSecretaryRequest.FamilyName}
+                                },
+                       UserName = GolfClubTestData.CreateMatchSecretaryRequest.EmailAddress,
+                       Email = GolfClubTestData.CreateMatchSecretaryRequest.EmailAddress,
+                       PhoneNumber = GolfClubTestData.CreateMatchSecretaryRequest.TelephoneNumber,
+                       UserId = Guid.NewGuid(),
+                       Roles = new List<String>
+                               {
+                                   "Match Secretary"
+                               }
                    };
         }
 

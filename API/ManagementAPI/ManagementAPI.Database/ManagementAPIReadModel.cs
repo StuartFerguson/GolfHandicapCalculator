@@ -76,6 +76,8 @@
         /// </value>
         public DbSet<TournamentResultForPlayerScore> TournamentResultForPlayerScore { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         #endregion
 
         #region Methods
@@ -122,6 +124,12 @@
                                                                     {
                                                                         p.PlayerId,
                                                                         p.GolfClubId
+                                                                    });
+
+            modelBuilder.Entity<User>().HasKey(p => new
+                                                                    {
+                                                                        p.GolfClubId,
+                                                                        p.UserId
                                                                     });
         }
 
