@@ -13,6 +13,7 @@
     using GolfClub.DomainEvents;
     using GolfClubMembership;
     using GolfClubMembership.DomainEvents;
+    using IdentityModel;
     using Microsoft.EntityFrameworkCore;
     using Player;
     using Services;
@@ -41,11 +42,6 @@
         private readonly IAggregateRepository<GolfClubAggregate> GolfClubRepository;
 
         /// <summary>
-        /// The o auth2 security service
-        /// </summary>
-        private readonly ISecurityService OAuth2SecurityService;
-
-        /// <summary>
         /// The player repository
         /// </summary>
         private readonly IAggregateRepository<PlayerAggregate> PlayerRepository;
@@ -54,6 +50,11 @@
         /// The read model resolver
         /// </summary>
         private readonly Func<ManagementAPIReadModel> ReadModelResolver;
+
+        /// <summary>
+        /// The security service
+        /// </summary>
+        private readonly ISecurityService SecurityService;
 
         #endregion
 
@@ -65,18 +66,18 @@
         /// <param name="golfClubRepository">The golf club repository.</param>
         /// <param name="readModelResolver">The read model resolver.</param>
         /// <param name="playerRepository">The player repository.</param>
-        /// <param name="oAuth2SecurityService">The o auth2 security service.</param>
+        /// <param name="securityService">The security service.</param>
         /// <param name="golfClubMembershipRepository">The golf club membership repository.</param>
         public ManagementAPIManager(IAggregateRepository<GolfClubAggregate> golfClubRepository,
                                     Func<ManagementAPIReadModel> readModelResolver,
                                     IAggregateRepository<PlayerAggregate> playerRepository,
-                                    ISecurityService oAuth2SecurityService,
+                                    ISecurityService securityService,
                                     IAggregateRepository<GolfClubMembershipAggregate> golfClubMembershipRepository)
         {
             this.GolfClubRepository = golfClubRepository;
             this.ReadModelResolver = readModelResolver;
             this.PlayerRepository = playerRepository;
-            this.OAuth2SecurityService = oAuth2SecurityService;
+            this.SecurityService = securityService;
             this.GolfClubMembershipRepository = golfClubMembershipRepository;
         }
 
@@ -562,6 +563,34 @@
         }
 
         /// <summary>
+        /// Inserts the user record to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task InsertUserRecordToReadModel(GolfClubAdministratorSecurityUserCreatedEvent domainEvent,
+                                                      CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            await this.InsertUserRecordToReadModel(domainEvent.AggregateId, domainEvent.GolfClubAdministratorSecurityUserId, cancellationToken);
+        }
+
+        /// <summary>
+        /// Inserts the user record to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task InsertUserRecordToReadModel(MatchSecretarySecurityUserCreatedEvent domainEvent,
+                                                      CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            await this.InsertUserRecordToReadModel(domainEvent.AggregateId, domainEvent.MatchSecretarySecurityUserId, cancellationToken);
+        }
+
+        /// <summary>
         /// Registers the club administrator.
         /// </summary>
         /// <param name="request">The request.</param>
@@ -593,7 +622,7 @@
                                                       };
 
             // Create the user
-            await this.OAuth2SecurityService.RegisterUser(registerUserRequest, cancellationToken);
+            await this.SecurityService.RegisterUser(registerUserRequest, cancellationToken);
         }
 
         /// <summary>
@@ -621,6 +650,51 @@
                 tournament.HasResultBeenProduced = true;
 
                 await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Inserts the user record to read model.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task InsertUserRecordToReadModel(Guid golfClubId,
+                                                       Guid userId,
+                                                       CancellationToken cancellationToken)
+        {
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the club has not already been added to the read model
+                Boolean isDuplicate = await context.Users.Where(c => c.GolfClubId == golfClubId && c.UserId == userId).AnyAsync(cancellationToken);
+
+                if (!isDuplicate)
+                {
+                    // Get the user details from the security service
+                    GetUserResponse securityUser = await this.SecurityService.GetUserById(userId, cancellationToken);
+
+                    String givenNameClaim = securityUser.Claims.Where(c => c.Key == JwtClaimTypes.GivenName).Select(c => c.Value).SingleOrDefault();
+                    String middleNameClaim = securityUser.Claims.Where(c => c.Key == JwtClaimTypes.MiddleName).Select(c => c.Value).SingleOrDefault();
+                    String familyNameClaim = securityUser.Claims.Where(c => c.Key == JwtClaimTypes.FamilyName).Select(c => c.Value).SingleOrDefault();
+
+                    User user = new User
+                                {
+                                    GivenName = string.IsNullOrEmpty(givenNameClaim) == false ? givenNameClaim : string.Empty,
+                                    MiddleName = string.IsNullOrEmpty(middleNameClaim) == false ? givenNameClaim : string.Empty,
+                                    FamilyName = string.IsNullOrEmpty(familyNameClaim) == false ? givenNameClaim : string.Empty,
+                                    UserName = securityUser.UserName,
+                                    UserId = securityUser.UserId,
+                                    PhoneNumber = securityUser.PhoneNumber,
+                                    Email = securityUser.Email,
+                                    GolfClubId = golfClubId,
+                                    UserType = securityUser.Roles.First()
+                                };
+
+                    await context.Users.AddAsync(user, cancellationToken);
+
+                    await context.SaveChangesAsync(cancellationToken);
+                }
             }
         }
 

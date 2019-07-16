@@ -338,7 +338,7 @@
             ManagementAPIReadModel verifyContext = this.GetContext(databaseName);
             verifyContext.GolfClub.Count().ShouldBe(1);
         }
-
+        
         [Fact]
         public void ManagmentAPIManager_GetGolfClub_GolfClubNotCreated_ErrorThrown()
         {
@@ -627,6 +627,188 @@
                                                                     golfClubMembershipRepository.Object);
 
             Should.Throw<NotFoundException>(async () => { await manager.GetMeasuredCourseList(GolfClubTestData.AggregateId, CancellationToken.None); });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertUserRecordToReadModel_GolfClubAdministrator_RecordInsertedSuccessfully()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            securityService.Setup(s => s.GetUserById(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetClubAdministratorUserResponse);
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            GolfClubAdministratorSecurityUserCreatedEvent domainEvent = GolfClubTestData.GetGolfClubAdministratorSecurityUserCreatedEvent();
+
+            await manager.InsertUserRecordToReadModel(domainEvent, CancellationToken.None);
+
+            ManagementAPIReadModel verifyContext = this.GetContext(databaseName);
+            verifyContext.Users.Count().ShouldBe(1);
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertUserRecordToReadModel_GolfClubAdministrator_DuplicateRecord_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.Users.Add(new User
+                                 {
+                                     GolfClubId = GolfClubTestData.AggregateId,
+                                     UserId = GolfClubTestData.GolfClubAdministratorSecurityUserId,
+                                     FamilyName = GolfClubTestData.RegisterClubAdministratorRequest.FamilyName,
+                                     MiddleName = GolfClubTestData.RegisterClubAdministratorRequest.MiddleName,
+                                     GivenName = GolfClubTestData.RegisterClubAdministratorRequest.GivenName,
+                                     UserName = GolfClubTestData.RegisterClubAdministratorRequest.EmailAddress,
+                                     PhoneNumber = GolfClubTestData.RegisterClubAdministratorRequest.TelephoneNumber,
+                                     Email = GolfClubTestData.RegisterClubAdministratorRequest.EmailAddress,
+                                     UserType = "Club Administrator"
+            });
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            securityService.Setup(s => s.GetUserById(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetClubAdministratorUserResponse);
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            GolfClubAdministratorSecurityUserCreatedEvent domainEvent = GolfClubTestData.GetGolfClubAdministratorSecurityUserCreatedEvent();
+            
+            Should.NotThrow(async () => { await manager.InsertUserRecordToReadModel(domainEvent, CancellationToken.None); });
+        }
+
+        [Fact]
+        public void ManagementAPIManager_InsertUserRecordToReadModel_GolfClubAdministrator_NullDomainEvent_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            GolfClubAdministratorSecurityUserCreatedEvent domainEvent = null;
+
+            Should.Throw<ArgumentNullException>(async () => { await manager.InsertUserRecordToReadModel(domainEvent, CancellationToken.None); });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertUserRecordToReadModel_MatchSecretary_RecordInsertedSuccessfully()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            securityService.Setup(s => s.GetUserById(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetMatchSecretaryUserResponse);
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            MatchSecretarySecurityUserCreatedEvent domainEvent = GolfClubTestData.GetMatchSecretarySecurityUserCreatedEvent();
+
+            await manager.InsertUserRecordToReadModel(domainEvent, CancellationToken.None);
+
+            ManagementAPIReadModel verifyContext = this.GetContext(databaseName);
+            verifyContext.Users.Count().ShouldBe(1);
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertUserRecordToReadModel_MatchSecretary_DuplicateRecord_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.Users.Add(new User
+            {
+                GolfClubId = GolfClubTestData.AggregateId,
+                UserId = GolfClubTestData.MatchSecretarySecurityUserId,
+                FamilyName = GolfClubTestData.CreateMatchSecretaryRequest.FamilyName,
+                MiddleName = GolfClubTestData.CreateMatchSecretaryRequest.MiddleName,
+                GivenName = GolfClubTestData.CreateMatchSecretaryRequest.GivenName,
+                UserName = GolfClubTestData.CreateMatchSecretaryRequest.EmailAddress,
+                PhoneNumber = GolfClubTestData.CreateMatchSecretaryRequest.TelephoneNumber,
+                Email = GolfClubTestData.CreateMatchSecretaryRequest.EmailAddress,
+                UserType = "Match Secretary"
+            });
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            securityService.Setup(s => s.GetUserById(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(GolfClubTestData.GetClubAdministratorUserResponse);
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            MatchSecretarySecurityUserCreatedEvent domainEvent = GolfClubTestData.GetMatchSecretarySecurityUserCreatedEvent();
+
+            Should.NotThrow(async () => { await manager.InsertUserRecordToReadModel(domainEvent, CancellationToken.None); });
+        }
+
+        [Fact]
+        public void ManagementAPIManager_InsertUserRecordToReadModel_MatchSecretary_NullDomainEvent_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            MatchSecretarySecurityUserCreatedEvent domainEvent = null;
+
+            Should.Throw<ArgumentNullException>(async () => { await manager.InsertUserRecordToReadModel(domainEvent, CancellationToken.None); });
         }
 
         #endregion

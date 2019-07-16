@@ -1,6 +1,7 @@
 ﻿namespace ManagementAPI.Service.Services.ExternalServices
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
@@ -56,6 +57,29 @@
                        Id = Guid.NewGuid(),
                        Name = roleName,
                        NormalizedName = roleName.ToUpper()
+                   };
+        }
+
+        /// <summary>
+        /// Gets the user by identifier.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetUserResponse> GetUserById(Guid userId,
+                                      CancellationToken cancellationToken)
+        {
+            return new GetUserResponse
+                   {
+                       UserId = Guid.NewGuid(),
+                       Email = "test1@testing.co.uk",
+                       PhoneNumber = "123456",
+                       UserName = "test1@testing.co.uk",
+                       Claims = new Dictionary<String, String>(),
+                       Roles = new List<String>
+                               {
+                                   "Golf Club Administrator"
+                               }
                    };
         }
     }
