@@ -48,6 +48,11 @@
         public const String DeveloperControllerPolicy = "DeveloperControllerPolicy";
 
         /// <summary>
+        /// The get club users list policy
+        /// </summary>
+        public const String GetClubUsersListPolicy = "GetClubUsersListPolicy";
+
+        /// <summary>
         /// The get golf club list policy
         /// </summary>
         public const String GetGolfClubListPolicy = "GetGolfClubListPolicy";

@@ -147,6 +147,14 @@
         Task UpdateTournamentStatusInReadModel(TournamentResultProducedEvent domainEvent,
                                                CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Gets the golf club users.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetGolfClubUserListResponse> GetGolfClubUsers(Guid golfClubId, CancellationToken cancellationToken);
+
         #endregion
     }
 }

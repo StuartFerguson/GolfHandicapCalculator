@@ -26,6 +26,14 @@
     <ProjectReference Include="..\ManagementAPI.Service.DataTransferObjects\ManagementAPI.Service.DataTransferObjects.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="GolfClub\GetGolfClubUserList.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GetGolfClubUserList.feature</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
   <ItemGroup>                   
     <None Update="GolfClub\AddTournamentDivisionToGolfClub.feature">
       <Generator></Generator>
@@ -82,6 +90,10 @@
     <SpecFlowFeatureFiles Update="GolfClub\GetGolfClubList.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
+    </SpecFlowFeatureFiles>
+    <SpecFlowFeatureFiles Update="GolfClub\GetGolfClubUserList.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>GetGolfClubUserList.feature.cs</LastGenOutput>
     </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="GolfClub\GetMeasuredCourseList.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>

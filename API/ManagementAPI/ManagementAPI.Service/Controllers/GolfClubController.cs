@@ -148,6 +148,21 @@
             return this.NoContent();
         }
 
+        [HttpGet]
+        [Route("Users")]
+        [SwaggerResponse(200, type: typeof(GetGolfClubUserListResponse))]
+        [SwaggerResponseExample(200, typeof(GetGolfClubUserListResponseExample), jsonConverter: typeof(SwaggerJsonConverter))]
+        [Authorize(Policy = PolicyNames.GetClubUsersListPolicy)]
+        public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
+            GetGolfClubUserListResponse users = await this.Manager.GetGolfClubUsers(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
+
+            return this.Ok(users);
+        }
+
         /// <summary>
         /// Gets the golf club.
         /// </summary>
