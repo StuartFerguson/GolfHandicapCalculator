@@ -417,6 +417,43 @@
             }
         }
 
+        /// <summary>
+        /// Gets the golf club user list.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetGolfClubUserListResponse> GetGolfClubUserList(String passwordToken,
+                                              CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/Users";
+            GetGolfClubUserListResponse response = null;
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+                
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<GetGolfClubUserListResponse>(content);
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception("Error requesting Golf Club User List.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
         #endregion
     }
 }

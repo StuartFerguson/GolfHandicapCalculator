@@ -654,6 +654,46 @@
         }
 
         /// <summary>
+        /// Gets the golf club users.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetGolfClubUserListResponse> GetGolfClubUsers(Guid golfClubId,
+                                           CancellationToken cancellationToken)
+        {
+            GetGolfClubUserListResponse response = new GetGolfClubUserListResponse
+                                                   {
+                                                       Users = new List<GolfClubUserResponse>()
+                                                   };
+
+            Guard.ThrowIfInvalidGuid(golfClubId, typeof(ArgumentNullException), "Golf Club Id cannot be empty GUID");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                List<User> userList = await context.Users.Where(u => u.GolfClubId == golfClubId).ToListAsync();
+
+                foreach (User user in userList)
+                {
+                    response.Users.Add(new GolfClubUserResponse
+                                       {
+                                           FamilyName = user.FamilyName,
+                                           MiddleName = user.MiddleName,
+                                           GivenName = user.GivenName,
+                                           UserName = user.UserName,
+                                           UserId = user.UserId,
+                                           PhoneNumber = user.PhoneNumber,
+                                           Email = user.Email,
+                                           UserType = user.UserType,
+                                           GolfClubId = user.GolfClubId
+                                       });
+                }
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Inserts the user record to read model.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>

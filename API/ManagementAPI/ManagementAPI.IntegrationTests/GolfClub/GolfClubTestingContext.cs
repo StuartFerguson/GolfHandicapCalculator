@@ -38,6 +38,8 @@
         public HttpResponseMessage LastHttpResponseMessage;
 
         public GetMeasuredCourseListResponse GetMeasuredCourseListResponse;
+
+        public GetGolfClubUserListResponse GetGolfClubUserListResponse;
     }
 
     public class RegisteredPlayer

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Threading;
@@ -400,7 +401,59 @@
         {
             this.GolfClubTestingContext.GetMeasuredCourseListResponse.MeasuredCourses.Count.ShouldBe(measuredCourseCount);
         }
-        
+
+        [When(@"I request a list of users for the club")]
+        public async Task WhenIRequestAListOfUsersForTheClub()
+        {
+            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+
+            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
+
+            this.GolfClubTestingContext.GetGolfClubUserListResponse = await client.GetGolfClubUserList(bearerToken, CancellationToken.None).ConfigureAwait(false);
+
+            // Get the last response
+            GolfClubClient g = client as GolfClubClient;
+            this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
+        }
+
+        [Then(@"(.*) users details are returned")]
+        public async Task ThenUsersDetailsAreReturned(Int32 numberOfUsers)
+        {
+            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+
+            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
+
+            await Retry.For(async () =>
+                            {
+                                this.GolfClubTestingContext.GetGolfClubUserListResponse =
+                                    await client.GetGolfClubUserList(bearerToken, CancellationToken.None).ConfigureAwait(false);
+
+                                if (this.GolfClubTestingContext.GetGolfClubUserListResponse.Users.Count == 0)
+                                {
+                                    throw new Exception("Empty Used List");
+                                }
+                            });
+        }
+
+        [Then(@"the golf club administrators details are returned")]
+        public void ThenTheGolfClubAdministratorsDetailsAreReturned()
+        {
+            GolfClubUserResponse user = this.GolfClubTestingContext.GetGolfClubUserListResponse.Users
+                .SingleOrDefault(u => u.Email == IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress);
+
+            user.ShouldNotBeNull();
+        }
+
+        [Then(@"the metch secretarys details are returned")]
+        public void ThenTheMetchSecretarysDetailsAreReturned()
+        {
+            GolfClubUserResponse user = this.GolfClubTestingContext.GetGolfClubUserListResponse.Users
+                           .SingleOrDefault(u => u.Email == IntegrationTestsTestData.CreateMatchSecretaryRequest.EmailAddress);
+
+            user.ShouldNotBeNull();
+        }
+
+
         #endregion
     }
 }

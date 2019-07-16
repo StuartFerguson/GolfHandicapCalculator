@@ -443,6 +443,15 @@ namespace ManagementAPI.Service
                                    policy.RequireClaim(CustomClaims.GolfClubId);
                                });
 
+            policies.AddPolicy(PolicyNames.GetClubUsersListPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
+                                   policy.RequireClaim(CustomClaims.GolfClubId);
+                               });
+
             #endregion
 
             #region Player Policies

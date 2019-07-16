@@ -111,6 +111,15 @@
                                    Guid golfClubId,
                                    CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Gets the golf club user list.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetGolfClubUserListResponse> GetGolfClubUserList(String passwordToken,
+                                                        CancellationToken cancellationToken);
+
         #endregion
     }
 }
