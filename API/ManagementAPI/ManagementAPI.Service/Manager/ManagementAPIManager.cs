@@ -721,8 +721,8 @@
                     User user = new User
                                 {
                                     GivenName = string.IsNullOrEmpty(givenNameClaim) == false ? givenNameClaim : string.Empty,
-                                    MiddleName = string.IsNullOrEmpty(middleNameClaim) == false ? givenNameClaim : string.Empty,
-                                    FamilyName = string.IsNullOrEmpty(familyNameClaim) == false ? givenNameClaim : string.Empty,
+                                    MiddleName = string.IsNullOrEmpty(middleNameClaim) == false ? middleNameClaim : string.Empty,
+                                    FamilyName = string.IsNullOrEmpty(familyNameClaim) == false ? familyNameClaim : string.Empty,
                                     UserName = securityUser.UserName,
                                     UserId = securityUser.UserId,
                                     PhoneNumber = securityUser.PhoneNumber,

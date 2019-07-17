@@ -202,7 +202,10 @@
                                                                                         EmailAddress = $"clubadministrator@testgolfclub{i}.co.uk",
                                                                                         ConfirmPassword = "123456",
                                                                                         Password = "123456",
-                                                                                        TelephoneNumber = "1234567890"
+                                                                                        TelephoneNumber = "1234567890",
+                                                                                        FamilyName = $"Admin {i}",
+                                                                                        GivenName = "Club"
+
                                                                                     };
 
                 await testDataGenerator.RegisterGolfClubAdministrator(registerClubAdministratorRequest, cancellationToken);
@@ -301,7 +304,7 @@
                                                                       GivenName = $"Club {clubCounter}",
                                                                       Gender = "M",
                                                                       FamilyName = $"Test Player {i}",
-                                                                      MiddleName = string.Empty
+                                                                      MiddleName = null
                                                                   };
 
                     RegisterPlayerResponse registerPlayerResponse = await testDataGenerator.RegisterPlayer(registerPlayerRequest, cancellationToken);
@@ -554,7 +557,7 @@
         private static async Task Main(String[] args)
         {
             const Int32 lastClub = 0;
-            const Int32 clubCount = 1;
+            const Int32 clubCount = 5;
             const Int32 playersPerClub = 37;
 
             // Create the data generator class
@@ -604,12 +607,12 @@
         /// <summary>
         /// The base address
         /// </summary>
-        private const String BaseAddress = "http://127.0.0.1:5000";
+        private const String BaseAddress = "http://192.168.1.132:5000";
 
         /// <summary>
         /// The security service address
         /// </summary>
-        private const String SecurityServiceAddress = "http://127.0.0.1:5001";
+        private const String SecurityServiceAddress = "http://192.168.1.132:5001";
 
         #endregion
     }
