@@ -539,6 +539,17 @@ namespace ManagementAPI.Service
                                                       RoleNames.MatchSecretary.ToUpper());
                                });
 
+            policies.AddPolicy(PolicyNames.GetTournamentListPolicy,
+                               policy =>
+                               {
+                                   policy.AddAuthenticationSchemes("Bearer");
+                                   policy.RequireAuthenticatedUser();
+                                   policy.RequireRole(RoleNames.ClubAdministrator,
+                                                      RoleNames.ClubAdministrator.ToUpper(),
+                                                      RoleNames.MatchSecretary,
+                                                      RoleNames.MatchSecretary.ToUpper());
+                               });
+
             #endregion
 
             #region Developer Controller Policies

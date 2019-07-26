@@ -10,6 +10,7 @@
     using DataTransferObjects;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
+    using Manager;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Shared.CommandHandling;
@@ -29,6 +30,8 @@
         /// </summary>
         private readonly ICommandRouter CommandRouter;
 
+        private readonly IManagmentAPIManager Manager;
+
         #endregion
 
         #region Constructors
@@ -37,9 +40,10 @@
         /// Initializes a new instance of the <see cref="TournamentController"/> class.
         /// </summary>
         /// <param name="commandRouter">The command router.</param>
-        public TournamentController(ICommandRouter commandRouter)
+        public TournamentController(ICommandRouter commandRouter, IManagmentAPIManager manager)
         {
             this.CommandRouter = commandRouter;
+            this.Manager = manager;
         }
 
         #endregion
@@ -189,6 +193,22 @@
 
             // return the result
             return this.NoContent();
+        }
+
+        [HttpGet]
+        [SwaggerResponse(200, type:typeof(GetTournamentListResponse))]
+        [SwaggerResponseExample(200, typeof(GetTournamentListResponseExample), jsonConverter: typeof(SwaggerJsonConverter))]
+        [Route("List")]
+        [Authorize(Policy = PolicyNames.GetTournamentListPolicy)]
+        public async Task<IActionResult> GetTournamentList(CancellationToken cancellationToken)
+        {
+            // Get the Golf Club Id claim from the user            
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+
+            // Get the data 
+            GetTournamentListResponse tournamentList = await this.Manager.GetTournamentList(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
+
+            return this.Ok(tournamentList);
         }
         #endregion
     }

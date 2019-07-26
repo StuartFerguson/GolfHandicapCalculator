@@ -128,6 +128,60 @@ namespace ManagementAPI.Service.Tests.ClientTests
         }
 
         [Fact]
+        public async Task GolfClubClient_GetGolfClubUserList_SuccessfulResponse()
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(JsonConvert.SerializeObject(GolfClubTestData.GetGolfClubUserListResponse))
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
+
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
+
+            GetGolfClubUserListResponse response = await client.GetGolfClubUserList(passwordToken, CancellationToken.None);
+
+            response.ShouldNotBeNull();
+            response.Users.ShouldNotBeNull();
+            response.Users.ShouldNotBeEmpty();
+            response.Users.Count.ShouldBe(GolfClubTestData.GetGolfClubUserListResponse.Users.Count);
+        }
+
+        [Theory]
+        [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
+        [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
+        [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
+        [InlineData(HttpStatusCode.BadGateway, typeof(Exception), typeof(Exception))]
+        public async Task GolfClubClient_GetGolfClubUserList_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode, Type exceptionType, Type innerExceptionType)
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = statusCode,
+                Content = new StringContent(String.Empty)
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = (api) => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
+
+            GolfClubClient client = new GolfClubClient(resolver, httpClient);
+
+            Exception exception = Should.Throw(async () =>
+            {
+                await client.GetGolfClubUserList(passwordToken, CancellationToken.None);
+            }, exceptionType);
+
+            exception.InnerException.ShouldBeOfType(innerExceptionType);
+        }
+
+        [Fact]
         public async Task GolfClubClient_GetGolfClubMembersList_SuccessfulResponse()
         {
             Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };

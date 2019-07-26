@@ -340,6 +340,42 @@ namespace ManagementAPI.IntegrationTests.Tournament
             // Nothing to check here at the moment
         }
 
+        [When(@"I get the tournament list")]
+        public async Task WhenIGetTheTournamentList()
+        {
+            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+
+            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
+            
+            await Retry.For(async () =>
+                            {
+                                this.TournamentTestingContext.GetTournamentListResponse = await client.GetTournamentList(bearerToken, CancellationToken.None).ConfigureAwait(false);
+
+                                if (this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Count == 0)
+                                {
+                                    throw new Exception("Empty Tournament List");
+                                }
+                            });
+        }
+
+        [Then(@"(.*) tournament record will be returned")]
+        public void ThenTournamentRecordWillBeReturned(Int32 numberOfTournaments)
+        {
+            this.TournamentTestingContext.GetTournamentListResponse.Tournaments.ShouldNotBeNull();
+            this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Count.ShouldBe(numberOfTournaments);
+        }
+
+        [Then(@"the created tournament details will be returned")]
+        public void ThenTheCreatedTournamentDetailsWillBeReturned()
+        {
+            var tournament = this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Single();
+            tournament.TournamentFormat.ShouldBe((TournamentFormat)this.TournamentTestingContext.CreateTournamentRequest.Format);
+            //tournament.TournamentDate.ShouldBe(this.TournamentTestingContext.CreateTournamentRequest.TournamentDate);
+            tournament.MeasuredCourseId.ShouldBe(this.TournamentTestingContext.CreateTournamentRequest.MeasuredCourseId);
+            tournament.TournamentName.ShouldBe(this.TournamentTestingContext.CreateTournamentRequest.Name);
+            tournament.PlayerCategory.ShouldBe((PlayerCategory)this.TournamentTestingContext.CreateTournamentRequest.MemberCategory);
+        }
+
 
     }
 }

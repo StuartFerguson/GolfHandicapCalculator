@@ -79,6 +79,8 @@
         public CreateTournamentResponse CreateTournamentResponse;
 
         public RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest;
+
+        public GetTournamentListResponse GetTournamentListResponse;
     }
 
     public class HandicapCalculationTestingContext

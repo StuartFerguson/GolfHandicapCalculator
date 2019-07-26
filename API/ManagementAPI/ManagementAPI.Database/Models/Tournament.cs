@@ -107,6 +107,22 @@
         [Key]
         public Guid TournamentId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the players signed up count.
+        /// </summary>
+        /// <value>
+        /// The players signed up count.
+        /// </value>
+        public Int32 PlayersSignedUpCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the players scores recorded count.
+        /// </summary>
+        /// <value>
+        /// The players scores recorded count.
+        /// </value>
+        public Int32 PlayersScoresRecordedCount { get; set; }
+
         #endregion
     }
 }
