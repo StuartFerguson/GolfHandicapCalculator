@@ -15,6 +15,8 @@
     using Shared.Exceptions;
     using Tournament;
     using Tournament.DataTransferObjects;
+    using PlayerCategory = Tournament.PlayerCategory;
+    using TournamentFormat = Tournament.TournamentFormat;
 
     public class TournamentCommandHandler : ICommandHandler
     {

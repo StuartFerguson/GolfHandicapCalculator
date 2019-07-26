@@ -68,7 +68,7 @@ namespace ManagementAPI.Service.Tests.GolfClub
             GolfClubCommandHandler handler = new GolfClubCommandHandler(repository.Object, oAuth2SecurityService.Object,
                                                                         golfClubMembershipApplicationService.Object);
 
-            AddMeasuredCourseToClubCommand command = GolfClubTestData.GetAddMeasuredCourseToClubCommand();
+            AddTournamentDivisionToGolfClubCommand command = GolfClubTestData.GetAddTournamentDivisionToGolfClubCommand();
 
             Should.NotThrow(async () => { await handler.Handle(command, CancellationToken.None); });
         }

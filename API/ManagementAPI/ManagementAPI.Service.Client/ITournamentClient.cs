@@ -3,7 +3,6 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using DataTransferObjects;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
 
@@ -45,6 +44,15 @@
         Task<CreateTournamentResponse> CreateTournament(String passwordToken,
                                                         CreateTournamentRequest request,
                                                         CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the tournament list.
+        /// </summary>
+        /// <param name="passwordToken">The password token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetTournamentListResponse> GetTournamentList(String passwordToken,
+                                                          CancellationToken cancellationToken);
 
         /// <summary>
         /// Produces the tournament result.

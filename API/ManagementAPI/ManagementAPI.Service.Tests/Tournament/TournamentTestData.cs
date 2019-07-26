@@ -9,19 +9,21 @@ namespace ManagementAPI.Service.Tests.Tournament
 {
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
+    using ManagementAPI.GolfClubMembership.DomainEvents;
+    using ManagementAPI.Tournament.DomainEvents;
 
     public class TournamentTestData
     {
         public static Guid AggregateId = Guid.Parse("15650BE2-4F7F-40D9-B5F8-A099A713E959");
         public static DateTime TournamentDate = new DateTime(2018,4,1);
-        public static Guid GolfClubId = Guid.Parse("6AF76DC0-3913-4A6D-BF60-2E0A1DE06333");
+        public static Guid GolfClubId = Guid.Parse("CD64A469-9593-49D6-988D-3842C532D23E");
         public static Guid MeasuredCourseId= Guid.Parse("B2F334C2-03D3-48DB-9C6F-45FB1133F071");
         public static Int32 MeasuredCourseSSS = 70;
         public static String Name = "Test Tournament";
         public static Int32 MemberCategory = 2;
-        public static PlayerCategory PlayerCategoryEnum = ManagementAPI.Tournament.PlayerCategory.Gents;
+        public static ManagementAPI.Tournament.PlayerCategory PlayerCategoryEnum = ManagementAPI.Tournament.PlayerCategory.Gents;
         public static Int32 TournamentFormat = 1;
-        public static TournamentFormat TournamentFormatEnum = ManagementAPI.Tournament.TournamentFormat.Strokeplay;
+        public static ManagementAPI.Tournament.TournamentFormat TournamentFormatEnum = ManagementAPI.Tournament.TournamentFormat.Strokeplay;
         public static Guid PlayerId = Guid.Parse("9F14D8A4-D8F7-4E32-9600-C3F038E662F6");
         public static Int32 PlayingHandicap = 6;
         public static Int32 HandicapCategory = 2;
@@ -175,7 +177,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         }
 
         public static TournamentAggregate GetCompletedTournamentAggregateWithCSSCalculatedAggregate(Int32 category1Scores = 1, Int32 category2Scores = 2, Int32 category3Scores = 7,
-            Int32 category4Scores = 20, Int32 category5Scores = 5, Int32 bufferorbetter=5, TournamentFormat tournamentFormat = ManagementAPI.Tournament.TournamentFormat.Strokeplay)
+            Int32 category4Scores = 20, Int32 category5Scores = 5, Int32 bufferorbetter=5, ManagementAPI.Tournament.TournamentFormat tournamentFormat = ManagementAPI.Tournament.TournamentFormat.Strokeplay)
         {
             TournamentAggregate aggregate = TournamentAggregate.Create(TournamentTestData.AggregateId);
 
@@ -248,6 +250,21 @@ namespace ManagementAPI.Service.Tests.Tournament
         public static Decimal Last3HolesScore = 15.4m;
 
         public static DateTime ResultDate = new DateTime(2018,5,1);
+
+        public static Int32 PlayerCategory = 1;
+
+        public static String GolfClubName = "Test Golf Club";
+
+        public static GetTournamentListResponse GetTournamentListResponse = new GetTournamentListResponse
+                                                                            {
+                                                                                Tournaments = new List<GetTournamentResponse>
+                                                                                              {
+                                                                                                  new GetTournamentResponse
+                                                                                                  {
+
+                                                                                                  }
+                                                                                              }
+                                                                            };
 
         public static CancelTournamentCommand GetCancelTournamentCommand()
         {
@@ -687,6 +704,45 @@ namespace ManagementAPI.Service.Tests.Tournament
                 indicies.Add(index);
             }
             return scores;
+        }
+
+        public static TournamentCreatedEvent GetTournamentCreatedEvent()
+        {
+            return TournamentCreatedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.TournamentDate, TournamentTestData.GolfClubId, TournamentTestData.MeasuredCourseId,
+                                                 TournamentTestData.MeasuredCourseSSS, TournamentTestData.Name, TournamentTestData.PlayerCategory,
+                                                 TournamentTestData.TournamentFormat);
+        }
+
+        public static TournamentResultForPlayerScoreProducedEvent GetTournamentResultForPlayerScoreProducedEvent()
+        {
+            return TournamentResultForPlayerScoreProducedEvent.Create(TournamentTestData.AggregateId,
+                                                                      TournamentTestData.PlayerId,
+                                                                      TournamentTestData.Division,
+                                                                      TournamentTestData.DivisionPosition,
+                                                                      TournamentTestData.GrossScore,
+                                                                      TournamentTestData.PlayingHandicap,
+                                                                      TournamentTestData.NetScore,
+                                                                      TournamentTestData.Last9HolesScore,
+                                                                      TournamentTestData.Last6HolesScore,
+                                                                      TournamentTestData.Last3HolesScore);
+        }
+
+        public static PlayerSignedUpEvent GetPlayerSignedUpEvent()
+        {
+            return PlayerSignedUpEvent.Create(TournamentTestData.AggregateId, TournamentTestData.PlayerId);
+        }
+
+        public static PlayerScoreRecordedEvent GetPlayerScoreRecordedEvent()
+        {
+            return PlayerScoreRecordedEvent.Create(TournamentTestData.AggregateId,
+                                                   TournamentTestData.PlayerId,
+                                                   TournamentTestData.PlayingHandicap,
+                                                   TournamentTestData.HoleScores);
+        }
+
+        public static TournamentResultProducedEvent GetTournamentResultProducedEvent()
+        {
+            return TournamentResultProducedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.ResultDate);
         }
     }
 

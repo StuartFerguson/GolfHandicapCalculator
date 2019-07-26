@@ -209,6 +209,46 @@
         }
 
         /// <summary>
+        /// Gets the golf club users.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetGolfClubUserListResponse> GetGolfClubUsers(Guid golfClubId,
+                                                                        CancellationToken cancellationToken)
+        {
+            GetGolfClubUserListResponse response = new GetGolfClubUserListResponse
+                                                   {
+                                                       Users = new List<GolfClubUserResponse>()
+                                                   };
+
+            Guard.ThrowIfInvalidGuid(golfClubId, typeof(ArgumentNullException), "Golf Club Id cannot be empty GUID");
+
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                List<User> userList = await context.Users.Where(u => u.GolfClubId == golfClubId).ToListAsync();
+
+                foreach (User user in userList)
+                {
+                    response.Users.Add(new GolfClubUserResponse
+                                       {
+                                           FamilyName = user.FamilyName,
+                                           MiddleName = user.MiddleName,
+                                           GivenName = user.GivenName,
+                                           UserName = user.UserName,
+                                           UserId = user.UserId,
+                                           PhoneNumber = user.PhoneNumber,
+                                           Email = user.Email,
+                                           UserType = user.UserType,
+                                           GolfClubId = user.GolfClubId
+                                       });
+                }
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Gets the measured course list.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>
@@ -337,6 +377,44 @@
         }
 
         /// <summary>
+        /// Gets the tournament list.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetTournamentListResponse> GetTournamentList(Guid golfClubId,
+                                            CancellationToken cancellationToken)
+        {
+            GetTournamentListResponse result = new GetTournamentListResponse();
+            result.Tournaments = new List<GetTournamentResponse>();
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                List<Tournament> tournamentList = await context.Tournament.Where(t => t.GolfClubId == golfClubId).ToListAsync(cancellationToken);
+
+                foreach (Tournament tournament in tournamentList)
+                {
+                    result.Tournaments.Add(new GetTournamentResponse
+                                           {
+                                               HasResultBeenProduced = tournament.HasResultBeenProduced,
+                                               MeasuredCourseId = tournament.MeasuredCourseId,
+                                               MeasuredCourseSSS = tournament.MeasuredCourseSSS,
+                                               TournamentFormat = (TournamentFormat)tournament.Format,
+                                               PlayerCategory = (PlayerCategory)tournament.PlayerCategory,
+                                               MeasuredCourseName = tournament.MeasuredCourseName,
+                                               MeasuredCourseTeeColour = tournament.MeasuredCourseTeeColour,
+                                               TournamentDate = tournament.TournamentDate,
+                                               TournamentId = tournament.TournamentId,
+                                               TournamentName = tournament.Name,
+                                               PlayersSignedUpCount = tournament.PlayersSignedUpCount,
+                                               PlayersScoresRecordedCount = tournament.PlayersScoresRecordedCount
+                                           });
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Inserts the club information to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -386,6 +464,8 @@
                                                             CancellationToken cancellationToken)
         {
             Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+            
+            var gimp = this.ReadModelResolver();
 
             using(ManagementAPIReadModel context = this.ReadModelResolver())
             {
@@ -626,6 +706,62 @@
         }
 
         /// <summary>
+        /// Updates the tournament in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">Tournament with Id {domainEvent.AggregateId} not found in read model</exception>
+        public async Task UpdateTournamentInReadModel(PlayerSignedUpEvent domainEvent,
+                                                      CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the tournament has not already been added to the read model
+                Tournament tournament = await context.Tournament.Where(t => t.TournamentId == domainEvent.AggregateId).SingleOrDefaultAsync(cancellationToken);
+
+                if (tournament == null)
+                {
+                    throw new NotFoundException($"Tournament with Id {domainEvent.AggregateId} not found in read model");
+                }
+
+                tournament.PlayersSignedUpCount++;
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Updates the tournament in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">Tournament with Id {domainEvent.AggregateId} not found in read model</exception>
+        public async Task UpdateTournamentInReadModel(PlayerScoreRecordedEvent domainEvent,
+                                                      CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the tournament has not already been added to the read model
+                Tournament tournament = await context.Tournament.Where(t => t.TournamentId == domainEvent.AggregateId).SingleOrDefaultAsync(cancellationToken);
+
+                if (tournament == null)
+                {
+                    throw new NotFoundException($"Tournament with Id {domainEvent.AggregateId} not found in read model");
+                }
+
+                tournament.PlayersScoresRecordedCount++;
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
         /// Updates the tournament status in read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -651,46 +787,6 @@
 
                 await context.SaveChangesAsync(cancellationToken);
             }
-        }
-
-        /// <summary>
-        /// Gets the golf club users.
-        /// </summary>
-        /// <param name="golfClubId">The golf club identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        public async Task<GetGolfClubUserListResponse> GetGolfClubUsers(Guid golfClubId,
-                                           CancellationToken cancellationToken)
-        {
-            GetGolfClubUserListResponse response = new GetGolfClubUserListResponse
-                                                   {
-                                                       Users = new List<GolfClubUserResponse>()
-                                                   };
-
-            Guard.ThrowIfInvalidGuid(golfClubId, typeof(ArgumentNullException), "Golf Club Id cannot be empty GUID");
-
-            using (ManagementAPIReadModel context = this.ReadModelResolver())
-            {
-                List<User> userList = await context.Users.Where(u => u.GolfClubId == golfClubId).ToListAsync();
-
-                foreach (User user in userList)
-                {
-                    response.Users.Add(new GolfClubUserResponse
-                                       {
-                                           FamilyName = user.FamilyName,
-                                           MiddleName = user.MiddleName,
-                                           GivenName = user.GivenName,
-                                           UserName = user.UserName,
-                                           UserId = user.UserId,
-                                           PhoneNumber = user.PhoneNumber,
-                                           Email = user.Email,
-                                           UserType = user.UserType,
-                                           GolfClubId = user.GolfClubId
-                                       });
-                }
-            }
-
-            return response;
         }
 
         /// <summary>

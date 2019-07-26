@@ -4,4 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ManagementAPI.Service.Developer.DTO\ManagementAPI.Service.Developer.DTO.csproj" />
+  </ItemGroup>
+
 </Project>

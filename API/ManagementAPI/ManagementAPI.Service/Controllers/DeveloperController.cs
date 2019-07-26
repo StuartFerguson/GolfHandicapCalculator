@@ -297,7 +297,7 @@
                 return this.NotFound($"Tournament not found with Id {tournamentId}");
             }
 
-            GetTournamentResponse response = new GetTournamentResponse
+            Developer.DataTransferObjects.GetTournamentResponse response = new Developer.DataTransferObjects.GetTournamentResponse
                                              {
                                                  HasBeenCreated = tournament.HasBeenCreated,
                                                  Name = tournament.Name,

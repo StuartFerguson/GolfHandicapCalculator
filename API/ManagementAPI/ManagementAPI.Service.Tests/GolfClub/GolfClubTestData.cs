@@ -9,7 +9,9 @@
     using IdentityModel;
     using ManagementAPI.GolfClub;
     using ManagementAPI.GolfClub.DomainEvents;
+    using ManagementAPI.GolfClubMembership.DomainEvents;
     using Services.ExternalServices.DataTransferObjects;
+    using Tournament;
 
     public class GolfClubTestData
     {
@@ -220,7 +222,7 @@
                                                                                     GivenName = "Test",
                                                                                     MiddleName = null,
                                                                                     FamilyName = "Match Secretary"
-        };
+                                                                                };
 
         public static DateTime MembershipRequestedDateAndTime = new DateTime(2019, 1, 1);
 
@@ -1022,15 +1024,15 @@
                    };
         }
 
-        public static GetUserResponse GetClubAdministratorUserResponse()
+        public static GetUserResponse GetClubAdministratorUserResponse(String givenName, String middleName, String familyName)
         {
             return new GetUserResponse
                    {
                        Claims = new Dictionary<String, String>
                                 {
-                                    {JwtClaimTypes.GivenName, GolfClubTestData.RegisterClubAdministratorRequest.GivenName},
-                                    {JwtClaimTypes.MiddleName, GolfClubTestData.RegisterClubAdministratorRequest.MiddleName},
-                                    {JwtClaimTypes.FamilyName, GolfClubTestData.RegisterClubAdministratorRequest.FamilyName}
+                                    {JwtClaimTypes.GivenName, givenName},
+                                    {JwtClaimTypes.MiddleName, middleName},
+                                    {JwtClaimTypes.FamilyName, familyName}
                                 },
                        UserName = GolfClubTestData.RegisterClubAdministratorRequest.EmailAddress,
                        Email = GolfClubTestData.RegisterClubAdministratorRequest.EmailAddress,
@@ -1043,15 +1045,15 @@
                    };
         }
 
-        public static GetUserResponse GetMatchSecretaryUserResponse()
+        public static GetUserResponse GetMatchSecretaryUserResponse(String givenName, String middleName, String familyName)
         {
             return new GetUserResponse
                    {
                        Claims = new Dictionary<String, String>
                                 {
-                                    {JwtClaimTypes.GivenName, GolfClubTestData.CreateMatchSecretaryRequest.GivenName},
-                                    {JwtClaimTypes.MiddleName, GolfClubTestData.CreateMatchSecretaryRequest.MiddleName},
-                                    {JwtClaimTypes.FamilyName, GolfClubTestData.CreateMatchSecretaryRequest.FamilyName}
+                                    {JwtClaimTypes.GivenName, givenName},
+                                    {JwtClaimTypes.MiddleName, middleName},
+                                    {JwtClaimTypes.FamilyName, familyName}
                                 },
                        UserName = GolfClubTestData.CreateMatchSecretaryRequest.EmailAddress,
                        Email = GolfClubTestData.CreateMatchSecretaryRequest.EmailAddress,
@@ -1062,6 +1064,75 @@
                                    "Match Secretary"
                                }
                    };
+        }
+
+        public static Guid MembershipId = Guid.Parse("7C244753-1184-48A7-865C-D424A9E0B6F8");
+
+        public static String PlayerFullName = "Test Player";
+
+        public static DateTime PlayerDateOfBirth = new DateTime(1980, 12, 13);
+
+        public static String PlayerGender = "M";
+
+        public static DateTime MembershipAcceptedDateTime = new DateTime(2019, 7, 23);
+
+        public static String MembershipNumber = "000001";
+
+        public static String MembershipRejectionReason = "Test Reason";
+
+        public static DateTime MembershipRejectionDateTime = new DateTime(2019, 7, 23);
+
+        public static Int32 StatusAccepted= 0;
+
+        public static Int32 StatusRejected = 1;
+
+        public static GetGolfClubUserListResponse GetGolfClubUserListResponse = new GetGolfClubUserListResponse
+                                                                                {
+                                                                                    Users = new List<GolfClubUserResponse>
+                                                                                            {
+                                                                                                new GolfClubUserResponse
+                                                                                                {
+                                                                                                    GivenName = GolfClubTestData
+                                                                                                                .RegisterClubAdministratorRequest.GivenName,
+                                                                                                    FamilyName = GolfClubTestData
+                                                                                                                 .RegisterClubAdministratorRequest.FamilyName,
+                                                                                                    MiddleName = GolfClubTestData
+                                                                                                                 .RegisterClubAdministratorRequest.MiddleName,
+                                                                                                    UserName = GolfClubTestData
+                                                                                                               .RegisterClubAdministratorRequest.EmailAddress,
+                                                                                                    Email =
+                                                                                                        GolfClubTestData.RegisterClubAdministratorRequest.EmailAddress,
+                                                                                                    UserId = GolfClubTestData.GolfClubAdministratorSecurityUserId,
+                                                                                                    GolfClubId = GolfClubTestData.AggregateId,
+                                                                                                    PhoneNumber = GolfClubTestData
+                                                                                                                  .RegisterClubAdministratorRequest.TelephoneNumber,
+                                                                                                    UserType = "Club Administrator"
+                                                                                                }
+                                                                                            }
+                                                                                };
+
+        public static ClubMembershipRequestAcceptedEvent GetClubMembershipRequestAcceptedEvent()
+        {
+            return ClubMembershipRequestAcceptedEvent.Create(GolfClubTestData.AggregateId,
+                                                             GolfClubTestData.MembershipId,
+                                                             GolfClubTestData.PlayerId,
+                                                             GolfClubTestData.PlayerFullName,
+                                                             GolfClubTestData.PlayerDateOfBirth,
+                                                             GolfClubTestData.PlayerGender,
+                                                             GolfClubTestData.MembershipAcceptedDateTime,
+                                                             GolfClubTestData.MembershipNumber);
+        }
+
+        public static ClubMembershipRequestRejectedEvent GetClubMembershipRequestRejectedEvent()
+        {
+            return ClubMembershipRequestRejectedEvent.Create(GolfClubTestData.AggregateId,
+                                                             GolfClubTestData.MembershipId,
+                                                             GolfClubTestData.PlayerId,
+                                                             GolfClubTestData.PlayerFullName,
+                                                             GolfClubTestData.PlayerDateOfBirth,
+                                                             GolfClubTestData.PlayerGender,
+                                                             GolfClubTestData.MembershipRejectionReason,
+                                                             GolfClubTestData.MembershipRejectionDateTime);
         }
 
         #endregion

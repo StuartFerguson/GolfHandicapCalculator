@@ -88,6 +88,11 @@
         public const String GetSingleGolfClubPolicy = "GetSingleGolfClubPolicy";
 
         /// <summary>
+        /// The get tournament list policy
+        /// </summary>
+        public const String GetTournamentListPolicy = "GetTournamentListPolicy";
+
+        /// <summary>
         /// The player tournament sign up policy
         /// </summary>
         public const String PlayerTournamentSignUpPolicy = "PlayerTournamentSignUpPolicy";

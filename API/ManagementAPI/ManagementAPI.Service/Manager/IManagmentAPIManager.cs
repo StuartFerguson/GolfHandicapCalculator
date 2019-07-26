@@ -40,6 +40,15 @@
                                                                                 CancellationToken cancellationToken);
 
         /// <summary>
+        /// Gets the golf club users.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetGolfClubUserListResponse> GetGolfClubUsers(Guid golfClubId,
+                                                           CancellationToken cancellationToken);
+
+        /// <summary>
         /// Gets the measured course list.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>
@@ -67,6 +76,15 @@
                                                                      CancellationToken cancellationToken);
 
         /// <summary>
+        /// Gets the tournament list.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetTournamentListResponse> GetTournamentList(Guid golfClubId,
+                                                          CancellationToken cancellationToken);
+
+        /// <summary>
         /// Inserts the golf club to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -74,24 +92,6 @@
         /// <returns></returns>
         Task InsertGolfClubToReadModel(GolfClubCreatedEvent domainEvent,
                                        CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Inserts the user record to read model.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task InsertUserRecordToReadModel(GolfClubAdministratorSecurityUserCreatedEvent domainEvent,
-                                         CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Inserts the user record to read model.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task InsertUserRecordToReadModel(MatchSecretarySecurityUserCreatedEvent domainEvent,
-                                         CancellationToken cancellationToken);
 
         /// <summary>
         /// Inserts the player membership to read model.
@@ -130,6 +130,24 @@
                                          CancellationToken cancellationToken);
 
         /// <summary>
+        /// Inserts the user record to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertUserRecordToReadModel(GolfClubAdministratorSecurityUserCreatedEvent domainEvent,
+                                         CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the user record to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertUserRecordToReadModel(MatchSecretarySecurityUserCreatedEvent domainEvent,
+                                         CancellationToken cancellationToken);
+
+        /// <summary>
         /// Registers the club administrator.
         /// </summary>
         /// <param name="request">The request.</param>
@@ -139,6 +157,24 @@
                                        CancellationToken cancellationToken);
 
         /// <summary>
+        /// Updates the tournament in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task UpdateTournamentInReadModel(PlayerSignedUpEvent domainEvent,
+                                         CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Updates the tournament in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task UpdateTournamentInReadModel(PlayerScoreRecordedEvent domainEvent,
+                                         CancellationToken cancellationToken);
+
+        /// <summary>
         /// Updates the tournament status in read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -146,14 +182,6 @@
         /// <returns></returns>
         Task UpdateTournamentStatusInReadModel(TournamentResultProducedEvent domainEvent,
                                                CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Gets the golf club users.
-        /// </summary>
-        /// <param name="golfClubId">The golf club identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task<GetGolfClubUserListResponse> GetGolfClubUsers(Guid golfClubId, CancellationToken cancellationToken);
 
         #endregion
     }
