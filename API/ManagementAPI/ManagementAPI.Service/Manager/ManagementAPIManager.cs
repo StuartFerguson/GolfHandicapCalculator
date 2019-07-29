@@ -406,7 +406,9 @@
                                                TournamentId = tournament.TournamentId,
                                                TournamentName = tournament.Name,
                                                PlayersSignedUpCount = tournament.PlayersSignedUpCount,
-                                               PlayersScoresRecordedCount = tournament.PlayersScoresRecordedCount
+                                               PlayersScoresRecordedCount = tournament.PlayersScoresRecordedCount,
+                                               HasBeenCompleted = tournament.HasBeenCompleted,
+                                               HasBeenCancelled = tournament.HasBeenCancelled
                                            });
                 }
             }
@@ -784,6 +786,62 @@
                 }
 
                 tournament.HasResultBeenProduced = true;
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Updates the tournament status in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">Tournament with Id {domainEvent.AggregateId} not found in read model</exception>
+        public async Task UpdateTournamentStatusInReadModel(TournamentCompletedEvent domainEvent,
+                                                            CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the tournament has not already been added to the read model
+                Tournament tournament = await context.Tournament.Where(t => t.TournamentId == domainEvent.AggregateId).SingleOrDefaultAsync(cancellationToken);
+
+                if (tournament == null)
+                {
+                    throw new NotFoundException($"Tournament with Id {domainEvent.AggregateId} not found in read model");
+                }
+
+                tournament.HasBeenCompleted = true;
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Updates the tournament status in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotFoundException">Tournament with Id {domainEvent.AggregateId} not found in read model</exception>
+        public async Task UpdateTournamentStatusInReadModel(TournamentCancelledEvent domainEvent,
+                                                            CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the tournament has not already been added to the read model
+                Tournament tournament = await context.Tournament.Where(t => t.TournamentId == domainEvent.AggregateId).SingleOrDefaultAsync(cancellationToken);
+
+                if (tournament == null)
+                {
+                    throw new NotFoundException($"Tournament with Id {domainEvent.AggregateId} not found in read model");
+                }
+
+                tournament.HasBeenCancelled = true;
 
                 await context.SaveChangesAsync(cancellationToken);
             }

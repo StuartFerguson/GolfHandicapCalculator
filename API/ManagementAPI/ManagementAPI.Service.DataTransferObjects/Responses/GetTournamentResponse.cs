@@ -1,72 +1,126 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ManagementAPI.Service.DataTransferObjects.Responses
+﻿namespace ManagementAPI.Service.DataTransferObjects.Responses
 {
+    using System;
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class GetTournamentResponse
     {
-        public Guid TournamentId { get; set; }
+        #region Properties
 
-        public TournamentFormat TournamentFormat { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance has been cancelled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has been cancelled; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean HasBeenCancelled { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance has been completed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has been completed; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean HasBeenCompleted { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance has result been produced.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has result been produced; otherwise, <c>false</c>.
+        /// </value>
         public Boolean HasResultBeenProduced { get; set; }
 
+        /// <summary>
+        /// Gets or sets the measured course identifier.
+        /// </summary>
+        /// <value>
+        /// The measured course identifier.
+        /// </value>
         public Guid MeasuredCourseId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the name of the measured course.
+        /// </summary>
+        /// <value>
+        /// The name of the measured course.
+        /// </value>
         public String MeasuredCourseName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the measured course SSS.
+        /// </summary>
+        /// <value>
+        /// The measured course SSS.
+        /// </value>
         public Int32 MeasuredCourseSSS { get; set; }
 
+        /// <summary>
+        /// Gets or sets the measured course tee colour.
+        /// </summary>
+        /// <value>
+        /// The measured course tee colour.
+        /// </value>
         public String MeasuredCourseTeeColour { get; set; }
 
-        public String TournamentName { get; set; }
-
+        /// <summary>
+        /// Gets or sets the player category.
+        /// </summary>
+        /// <value>
+        /// The player category.
+        /// </value>
         public PlayerCategory PlayerCategory { get; set; }
 
-        public DateTime TournamentDate { get; set; }
+        /// <summary>
+        /// Gets or sets the players scores recorded count.
+        /// </summary>
+        /// <value>
+        /// The players scores recorded count.
+        /// </value>
+        public Int32 PlayersScoresRecordedCount { get; set; }
 
+        /// <summary>
+        /// Gets or sets the players signed up count.
+        /// </summary>
+        /// <value>
+        /// The players signed up count.
+        /// </value>
         public Int32 PlayersSignedUpCount { get; set; }
 
-        public Int32 PlayersScoresRecordedCount { get; set; }
-    }
-
-    public enum PlayerCategory
-    {
         /// <summary>
-        /// The gents
+        /// Gets or sets the tournament date.
         /// </summary>
-        Gents = 1,
+        /// <value>
+        /// The tournament date.
+        /// </value>
+        public DateTime TournamentDate { get; set; }
 
         /// <summary>
-        /// The gents senior
+        /// Gets or sets the tournament format.
         /// </summary>
-        GentsSenior,
+        /// <value>
+        /// The tournament format.
+        /// </value>
+        public TournamentFormat TournamentFormat { get; set; }
 
         /// <summary>
-        /// The female
+        /// Gets or sets the tournament identifier.
         /// </summary>
-        Female,
+        /// <value>
+        /// The tournament identifier.
+        /// </value>
+        public Guid TournamentId { get; set; }
 
         /// <summary>
-        /// The female senior
+        /// Gets or sets the name of the tournament.
         /// </summary>
-        FemaleSenior,
+        /// <value>
+        /// The name of the tournament.
+        /// </value>
+        public String TournamentName { get; set; }
 
-        /// <summary>
-        /// The junior
-        /// </summary>
-        Junior
-    }
-
-    public enum TournamentFormat
-    {
-        StrokePlay = 1,
-        Stableford = 2
-    }
-
-    public class GetTournamentListResponse
-    {
-        public List<GetTournamentResponse> Tournaments { get; set; }
+        #endregion
     }
 }

@@ -744,6 +744,16 @@ namespace ManagementAPI.Service.Tests.Tournament
         {
             return TournamentResultProducedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.ResultDate);
         }
+
+        public static TournamentCancelledEvent GetTournamentCancelledEvent()
+        {
+            return TournamentCancelledEvent.Create(TournamentTestData.AggregateId, TournamentTestData.CancelledDateTime, TournamentTestData.CancellationReason);
+        }
+
+        public static TournamentCompletedEvent GetTournamentCompletedEvent()
+        {
+            return TournamentCompletedEvent.Create(TournamentTestData.AggregateId, TournamentTestData.CompletedDateTime);
+        }
     }
 
     public class GeneratedPlayerScore

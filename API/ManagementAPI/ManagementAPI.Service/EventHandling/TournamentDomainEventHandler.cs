@@ -100,6 +100,30 @@
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
+        private async Task HandleSpecificDomainEvent(TournamentCancelledEvent domainEvent,
+                                                     CancellationToken cancellationToken)
+        {
+            await this.Manager.UpdateTournamentStatusInReadModel(domainEvent, cancellationToken);
+        }
+
+        /// <summary>
+        /// Handles the specific domain event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task HandleSpecificDomainEvent(TournamentCompletedEvent domainEvent,
+                                                     CancellationToken cancellationToken)
+        {
+            await this.Manager.UpdateTournamentStatusInReadModel(domainEvent, cancellationToken);
+        }
+
+        /// <summary>
+        /// Handles the specific domain event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         private async Task HandleSpecificDomainEvent(PlayerSignedUpEvent domainEvent,
                                                      CancellationToken cancellationToken)
         {
