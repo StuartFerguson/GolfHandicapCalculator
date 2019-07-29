@@ -43,6 +43,22 @@
         public Boolean HasResultBeenProduced { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance has been completed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has been completed; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean HasBeenCompleted { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance has been cancelled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has been cancelled; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean HasBeenCancelled { get; set; }
+
+        /// <summary>
         /// Gets or sets the measured course identifier.
         /// </summary>
         /// <value>

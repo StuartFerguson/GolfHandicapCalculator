@@ -183,6 +183,24 @@
         Task UpdateTournamentStatusInReadModel(TournamentResultProducedEvent domainEvent,
                                                CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Updates the tournament status in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task UpdateTournamentStatusInReadModel(TournamentCancelledEvent domainEvent,
+                                               CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Updates the tournament status in read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task UpdateTournamentStatusInReadModel(TournamentCompletedEvent domainEvent,
+                                               CancellationToken cancellationToken);
+
         #endregion
     }
 }
