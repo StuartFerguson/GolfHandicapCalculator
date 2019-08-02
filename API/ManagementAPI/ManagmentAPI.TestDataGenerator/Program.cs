@@ -20,6 +20,8 @@
     {
         #region Fields
 
+        private static String accessToken = String.Empty;
+
         /// <summary>
         /// The add measured course to club request
         /// </summary>
@@ -210,7 +212,7 @@
 
                 await testDataGenerator.RegisterGolfClubAdministrator(registerClubAdministratorRequest, cancellationToken);
 
-                String token = await testDataGenerator.GetToken(TokenType.Password,
+                String clubAdministratorToken = await testDataGenerator.GetToken(TokenType.Password,
                                                                 "developerClient",
                                                                 "developerClient",
                                                                 registerClubAdministratorRequest.EmailAddress,
@@ -235,9 +237,9 @@
                                                                   Website = string.Empty
                                                               };
 
-                CreateGolfClubResponse createGolfClubResponse = await testDataGenerator.CreateGolfClub(token, createGolfClubRequest, cancellationToken);
+                CreateGolfClubResponse createGolfClubResponse = await testDataGenerator.CreateGolfClub(clubAdministratorToken, createGolfClubRequest, cancellationToken);
 
-                await testDataGenerator.AddMeasuredCourseToGolfClub(token, Program.AddMeasuredCourseToClubRequest, cancellationToken);
+                await testDataGenerator.AddMeasuredCourseToGolfClub(Program.accessToken, createGolfClubResponse.GolfClubId, Program.AddMeasuredCourseToClubRequest, cancellationToken);
                 
                 AddTournamentDivisionToGolfClubRequest division1 = new AddTournamentDivisionToGolfClubRequest
                                                                    {
@@ -245,28 +247,28 @@
                                                                        StartHandicap = -10,
                                                                        EndHandicap = 7
                                                                    };
-                await testDataGenerator.AddTournamentDivision(token, division1, cancellationToken);
+                await testDataGenerator.AddTournamentDivision(Program.accessToken, createGolfClubResponse.GolfClubId, division1, cancellationToken);
                 AddTournamentDivisionToGolfClubRequest division2 = new AddTournamentDivisionToGolfClubRequest
                                                                    {
                                                                        Division = 2,
                                                                        StartHandicap = 6,
                                                                        EndHandicap = 12
                                                                    };
-                await testDataGenerator.AddTournamentDivision(token, division2, cancellationToken);
+                await testDataGenerator.AddTournamentDivision(Program.accessToken, createGolfClubResponse.GolfClubId, division2, cancellationToken);
                 AddTournamentDivisionToGolfClubRequest division3 = new AddTournamentDivisionToGolfClubRequest
                                                                    {
                                                                        Division = 3,
                                                                        StartHandicap = 13,
                                                                        EndHandicap = 21
                                                                    };
-                await testDataGenerator.AddTournamentDivision(token, division3, cancellationToken);
+                await testDataGenerator.AddTournamentDivision(Program.accessToken, createGolfClubResponse.GolfClubId, division3, cancellationToken);
                 AddTournamentDivisionToGolfClubRequest division4 = new AddTournamentDivisionToGolfClubRequest
                                                                    {
                                                                        Division = 4,
                                                                        StartHandicap = 22,
                                                                        EndHandicap = 28
                                                                    };
-                await testDataGenerator.AddTournamentDivision(token, division4, cancellationToken);
+                await testDataGenerator.AddTournamentDivision(Program.accessToken, createGolfClubResponse.GolfClubId, division4, cancellationToken);
 
                 Program.GolfClubs.Add(new GolfClubDetails
                                       {
@@ -311,19 +313,19 @@
 
                     Console.WriteLine($"Created Player {registerPlayerRequest.GivenName} {registerPlayerRequest.FamilyName}");
 
-                    String token = await testDataGenerator.GetToken(TokenType.Password,
-                                                                    "developerClient",
-                                                                    "developerClient",
-                                                                    registerPlayerRequest.EmailAddress,
-                                                                    "123456",
-                                                                    new List<String>
-                                                                    {
-                                                                        "openid",
-                                                                        "profile",
-                                                                        "managementapi"
-                                                                    });
+                    //String token = await testDataGenerator.GetToken(TokenType.Password,
+                    //                                                "developerClient",
+                    //                                                "developerClient",
+                    //                                                registerPlayerRequest.EmailAddress,
+                    //                                                "123456",
+                    //                                                new List<String>
+                    //                                                {
+                    //                                                    "openid",
+                    //                                                    "profile",
+                    //                                                    "managementapi"
+                    //                                                });
 
-                    await testDataGenerator.RequestClubMembership(token, golfClubDetails.GolfClubId, cancellationToken);
+                    await testDataGenerator.RequestClubMembership(Program.accessToken, registerPlayerResponse.PlayerId, golfClubDetails.GolfClubId, cancellationToken);
 
                     Console.WriteLine($"Player {registerPlayerRequest.GivenName} {registerPlayerRequest.FamilyName} membership requested");
 
@@ -353,12 +355,12 @@
             {
                 List<CreateTournamentRequest> requests = Program.GetCreateTournamentRequests(golfClubDetails.MeasuredCourseId);
 
-                String passwordToken = testDataGenerator.GetToken(golfClubDetails.AdminEmailAddress);
+                //String passwordToken = testDataGenerator.GetToken(golfClubDetails.AdminEmailAddress);
 
                 foreach (CreateTournamentRequest createTournamentRequest in requests)
                 {
                     CreateTournamentResponse createTournamentResponse =
-                        await testDataGenerator.CreateTournament(passwordToken, createTournamentRequest, cancellationToken);
+                        await testDataGenerator.CreateTournament(Program.accessToken, golfClubDetails.GolfClubId, createTournamentRequest, cancellationToken);
 
                     Console.WriteLine($"Tournament {createTournamentRequest.Name} created for Club {golfClubDetails.GolfClubName}");
 
@@ -393,11 +395,12 @@
                                                                                                         Program.GetHoleScores(player.PlayingHandicap, scoreResult)
                                                                                                 };
 
-                        String playerPasswordToken = testDataGenerator.GetToken(player.EmailAddress);
+                        //String playerPasswordToken = testDataGenerator.GetToken(player.EmailAddress);
 
-                        await testDataGenerator.SignUpPlayerForTournament(playerPasswordToken, createTournamentResponse.TournamentId, cancellationToken);
+                        await testDataGenerator.SignUpPlayerForTournament(Program.accessToken, player.PlayerId, createTournamentResponse.TournamentId, cancellationToken);
 
-                        await testDataGenerator.RecordPlayerScore(playerPasswordToken,
+                        await testDataGenerator.RecordPlayerScore(Program.accessToken,
+                                                                  player.PlayerId,
                                                                   createTournamentResponse.TournamentId,
                                                                   recordPlayerTournamentScoreRequest,
                                                                   cancellationToken);
@@ -556,9 +559,9 @@
         /// <returns></returns>
         private static async Task Main(String[] args)
         {
-            const Int32 lastClub = 0;
-            const Int32 clubCount = 5;
-            const Int32 playersPerClub = 37;
+            const Int32 lastClub = 1;
+            const Int32 clubCount = 1;
+            const Int32 playersPerClub = 1;
 
             // Create the data generator class
             String BaseAddressResolver(String service)
@@ -579,6 +582,13 @@
 
             CancellationToken cancellationToken = new CancellationToken();
             Stopwatch sw = Stopwatch.StartNew();
+
+            // Get the client token
+            Program.accessToken = await testDataGenerator.GetToken(TokenType.Client, "golfhandicap.testdatagenerator", "golfhandicap.testdatagenerator",
+                                                                   scopes: new List<String>
+                                                            {
+                                                                "managementapi"
+                                                            });
 
             Console.WriteLine($"About to create {clubCount} Golf Clubs");
             await Program.CreateGolfClubDatav2(testDataGenerator, clubCount, lastClub, cancellationToken);
@@ -607,12 +617,12 @@
         /// <summary>
         /// The base address
         /// </summary>
-        private const String BaseAddress = "http://192.168.1.132:5000";
+        private const String BaseAddress = "http://localhost:5000";
 
         /// <summary>
         /// The security service address
         /// </summary>
-        private const String SecurityServiceAddress = "http://192.168.1.132:5001";
+        private const String SecurityServiceAddress = "http://localhost:5001";
 
         #endregion
     }

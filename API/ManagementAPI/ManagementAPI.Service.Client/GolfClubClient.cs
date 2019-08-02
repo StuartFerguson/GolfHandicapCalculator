@@ -12,6 +12,11 @@
     using DataTransferObjects.Responses;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="ClientProxyBase.ClientProxyBase" />
+    /// <seealso cref="ManagementAPI.Service.Client.IGolfClubClient" />
     public class GolfClubClient : ClientProxyBase, IGolfClubClient
     {
         #region Fields
@@ -48,15 +53,17 @@
         /// <summary>
         /// Adds the measured course to golf club.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task AddMeasuredCourseToGolfClub(String passwordToken,
+        public async Task AddMeasuredCourseToGolfClub(String accessToken,
+                                                      Guid golfClubId,
                                                       AddMeasuredCourseToClubRequest request,
                                                       CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/AddMeasuredCourse";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/AddMeasuredCourse";
 
             try
             {
@@ -65,7 +72,7 @@
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
@@ -84,11 +91,20 @@
             }
         }
 
-        public async Task AddTournamentDivision(String passwordToken,
+        /// <summary>
+        /// Adds the tournament division.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task AddTournamentDivision(String accessToken,
+                                                Guid golfClubId,
                                                 AddTournamentDivisionToGolfClubRequest request,
                                                 CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/AddTournamentDivision";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/AddTournamentDivision";
 
             try
             {
@@ -97,7 +113,7 @@
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
@@ -119,16 +135,17 @@
         /// <summary>
         /// Creates the golf club.
         /// </summary>
+        /// <param name="accessToken">The access token.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<CreateGolfClubResponse> CreateGolfClub(String passwordToken,
+        public async Task<CreateGolfClubResponse> CreateGolfClub(String accessToken,
                                                                  CreateGolfClubRequest request,
                                                                  CancellationToken cancellationToken)
         {
             CreateGolfClubResponse response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/Create";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub";
 
             try
             {
@@ -137,7 +154,7 @@
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
@@ -162,15 +179,17 @@
         /// <summary>
         /// Creates the match secretary.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task CreateMatchSecretary(String passwordToken,
+        public async Task CreateMatchSecretary(String accessToken,
+                                               Guid golfClubId,
                                                CreateMatchSecretaryRequest request,
                                                CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/CreateMatchSecretary";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/CreateMatchSecretary";
 
             try
             {
@@ -179,7 +198,7 @@
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
@@ -199,54 +218,24 @@
         }
 
         /// <summary>
-        /// Gets the golf club list.
+        /// Gets the golf club membership list.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<List<GetGolfClubResponse>> GetGolfClubList(String passwordToken,
-                                                                     CancellationToken cancellationToken)
-        {
-            List<GetGolfClubResponse> response = null;
-
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/List";
-
-            try
-            {
-                // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
-
-                // Make the Http Call here
-                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
-
-                // Process the response
-                String content = await this.HandleResponse(httpResponse, cancellationToken);
-
-                // call was successful so now deserialise the body to the response object
-                response = JsonConvert.DeserializeObject<List<GetGolfClubResponse>>(content);
-            }
-            catch(Exception ex)
-            {
-                // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception("Error getting a list of Golf Clubs.", ex);
-
-                throw exception;
-            }
-
-            return response;
-        }
-
-        public async Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembershipList(String passwordToken,
+        public async Task<List<GetGolfClubMembershipDetailsResponse>> GetGolfClubMembershipList(String accessToken,
+                                                                                                Guid golfClubId,
                                                                                                 CancellationToken cancellationToken)
         {
             List<GetGolfClubMembershipDetailsResponse> response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/MembersList";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/MembersList";
 
             try
             {
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
@@ -269,21 +258,62 @@
         }
 
         /// <summary>
-        /// Gets the measured courses.
+        /// Requests the club membership.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<GetMeasuredCourseListResponse> GetMeasuredCourses(String passwordToken,
-                                                                            CancellationToken cancellationToken)
+        public async Task<GetGolfClubUserListResponse> GetGolfClubUserList(String accessToken,
+                                                                           Guid golfClubId,
+                                                                           CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/MeasuredCourses";
-            GetMeasuredCourseListResponse response = new GetMeasuredCourseListResponse();
-            
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/Users";
+            GetGolfClubUserListResponse response = null;
+
             try
             {
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<GetGolfClubUserListResponse>(content);
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception("Error requesting Golf Club User List.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Gets the measured courses.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetMeasuredCourseListResponse> GetMeasuredCourses(String accessToken,
+                                                                            Guid golfClubId,
+                                                                            CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/MeasuredCourses";
+            GetMeasuredCourseListResponse response = new GetMeasuredCourseListResponse();
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 StringContent httpContent = new StringContent(string.Empty, Encoding.UTF8, "application/json");
@@ -296,7 +326,7 @@
                 // call was successful so now deserialise the body to the response object
                 response = JsonConvert.DeserializeObject<GetMeasuredCourseListResponse>(content);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception("Error requesting Golf Club measured courses.", ex);
@@ -310,21 +340,23 @@
         /// <summary>
         /// Gets the single golf club.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<GetGolfClubResponse> GetSingleGolfClub(String passwordToken,
+        public async Task<GetGolfClubResponse> GetSingleGolfClub(String accessToken,
+                                                                 Guid golfClubId,
                                                                  CancellationToken cancellationToken)
         {
             GetGolfClubResponse response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/GolfClub";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}";
 
             try
             {
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
@@ -378,80 +410,6 @@
 
                 throw exception;
             }
-        }
-
-        /// <summary>
-        /// Requests the club membership.
-        /// </summary>
-        /// <param name="passwordToken">The password token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        public async Task RequestClubMembership(String passwordToken,
-                                                Guid golfClubId,
-                                                CancellationToken cancellationToken)
-        {
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/RequestClubMembership";
-
-            try
-            {
-                // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
-
-                // Make the Http Call here
-                StringContent httpContent = new StringContent(string.Empty, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
-
-                // Process the response
-                String content = await this.HandleResponse(httpResponse, cancellationToken);
-
-                // call was successful, no response data to deserialise
-            }
-            catch(Exception ex)
-            {
-                // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception("Error requesting Golf Club membership.", ex);
-
-                throw exception;
-            }
-        }
-
-        /// <summary>
-        /// Gets the golf club user list.
-        /// </summary>
-        /// <param name="passwordToken">The password token.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        public async Task<GetGolfClubUserListResponse> GetGolfClubUserList(String passwordToken,
-                                              CancellationToken cancellationToken)
-        {
-            String requestUri = $"{this.BaseAddress}/api/GolfClub/Users";
-            GetGolfClubUserListResponse response = null;
-
-            try
-            {
-                // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
-
-                // Make the Http Call here
-                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
-
-                // Process the response
-                String content = await this.HandleResponse(httpResponse, cancellationToken);
-                
-                // call was successful so now deserialise the body to the response object
-                response = JsonConvert.DeserializeObject<GetGolfClubUserListResponse>(content);
-            }
-            catch (Exception ex)
-            {
-                // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception("Error requesting Golf Club User List.", ex);
-
-                throw exception;
-            }
-
-            return response;
         }
 
         #endregion

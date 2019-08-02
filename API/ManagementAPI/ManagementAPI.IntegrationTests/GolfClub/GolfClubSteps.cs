@@ -57,7 +57,10 @@
 
             IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
-            Should.NotThrow(async () => { await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false); });
+            Should.NotThrow(async () =>
+                            {
+                                this.GolfClubTestingContext.RegisterPlayerResponse = await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
+                            });
         }
 
         [Given(@"I am logged in as a golf club administrator")]
@@ -183,9 +186,9 @@
                                                                           registeredPlayer.Request.EmailAddress,
                                                                           "123456").ConfigureAwait(false);
 
-                IGolfClubClient golfClubClient = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+                IPlayerClient playerClient = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
-                await golfClubClient.RequestClubMembership(this.GolfClubTestingContext.PlayerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None)
+                await playerClient.RequestClubMembership(this.GolfClubTestingContext.PlayerToken, registeredPlayer.Response.PlayerId, this.GolfClubTestingContext.GolfClubId, CancellationToken.None)
                                     .ConfigureAwait(false);
             }
         }
@@ -256,7 +259,7 @@
 
             String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
 
-            Should.NotThrow(async () => { await client.AddMeasuredCourseToGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false); });
+            Should.NotThrow(async () => { await client.AddMeasuredCourseToGolfClub(bearerToken, this.GolfClubTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false); });
         }
 
         [When(@"I add a measured course to the club")]
@@ -289,18 +292,18 @@
             IGolfClubClient golfClubClient = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
 
             this.GolfClubTestingContext.GolfClubMembersList =
-                await golfClubClient.GetGolfClubMembershipList(this.GolfClubTestingContext.ClubAdministratorToken, CancellationToken.None);
+                await golfClubClient.GetGolfClubMembershipList(this.GolfClubTestingContext.ClubAdministratorToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None);
         }
 
         [When(@"I request club membership my request is accepted")]
         public void WhenIRequestClubMembershipMyRequestIsAccepted()
         {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             String bearerToken = this.GolfClubTestingContext.PlayerToken;
             Guid golfClubId = this.GolfClubTestingContext.GolfClubId;
 
-            Should.NotThrow(async () => { await client.RequestClubMembership(bearerToken, golfClubId, CancellationToken.None).ConfigureAwait(false); });
+            Should.NotThrow(async () => { await client.RequestClubMembership(bearerToken, this.GolfClubTestingContext.RegisterPlayerResponse.PlayerId, golfClubId, CancellationToken.None).ConfigureAwait(false); });
         }
 
         [When(@"I request the details of the golf club")]
@@ -310,20 +313,24 @@
 
             String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
 
-            this.GolfClubTestingContext.GetGolfClubResponse = await client.GetSingleGolfClub(bearerToken, CancellationToken.None).ConfigureAwait(false);
+            await Retry.For(async () =>
+                      {
+                          this.GolfClubTestingContext.GetGolfClubResponse =
+                              await client.GetSingleGolfClub(bearerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
+                      });
         }
 
         [When(@"I request the list of golf clubs")]
         public async Task WhenIRequestTheListOfGolfClubs()
         {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             String bearerToken = this.GolfClubTestingContext.PlayerToken;
 
             await Retry.For(async () =>
                             {
                                 this.GolfClubTestingContext.GetGolfClubListResponse =
-                                    await client.GetGolfClubList(bearerToken, CancellationToken.None).ConfigureAwait(false);
+                                    await client.GetGolfClubList(bearerToken, this.GolfClubTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
 
                                 if (this.GolfClubTestingContext.GetGolfClubListResponse.Count == 0)
                                 {
@@ -346,7 +353,7 @@
                                                                  EndHandicap = endHandicap
                                                              };
 
-            await client.AddTournamentDivision(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+            await client.AddTournamentDivision(bearerToken, this.GolfClubTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
 
             // Get the last response
             GolfClubClient g = client as GolfClubClient;
@@ -375,7 +382,7 @@
 
             CreateMatchSecretaryRequest request = this.GolfClubTestingContext.CreateMatchSecretaryRequest;
 
-            await client.CreateMatchSecretary(bearerToken, request, CancellationToken.None);
+            await client.CreateMatchSecretary(bearerToken, this.GolfClubTestingContext.GolfClubId, request, CancellationToken.None);
 
             // Get the last response
             GolfClubClient g = client as GolfClubClient;
@@ -389,7 +396,7 @@
 
             String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
 
-            this.GolfClubTestingContext.GetMeasuredCourseListResponse = await client.GetMeasuredCourses(bearerToken, CancellationToken.None);
+            this.GolfClubTestingContext.GetMeasuredCourseListResponse = await client.GetMeasuredCourses(bearerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None);
 
             // Get the last response
             GolfClubClient g = client as GolfClubClient;
@@ -409,7 +416,7 @@
 
             String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
 
-            this.GolfClubTestingContext.GetGolfClubUserListResponse = await client.GetGolfClubUserList(bearerToken, CancellationToken.None).ConfigureAwait(false);
+            this.GolfClubTestingContext.GetGolfClubUserListResponse = await client.GetGolfClubUserList(bearerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
 
             // Get the last response
             GolfClubClient g = client as GolfClubClient;
@@ -426,7 +433,7 @@
             await Retry.For(async () =>
                             {
                                 this.GolfClubTestingContext.GetGolfClubUserListResponse =
-                                    await client.GetGolfClubUserList(bearerToken, CancellationToken.None).ConfigureAwait(false);
+                                    await client.GetGolfClubUserList(bearerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
 
                                 if (this.GolfClubTestingContext.GetGolfClubUserListResponse.Users.Count == 0)
                                 {

@@ -36,10 +36,11 @@ namespace ManagementAPI.Service.Tests.Tournament
         [Fact]
         public void CompleteTournamentCommand_CanBeCreated_IsCreated()
         {
-            CompleteTournamentCommand command = CompleteTournamentCommand.Create(TournamentTestData.AggregateId);
+            CompleteTournamentCommand command = CompleteTournamentCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.AggregateId);
 
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
+            command.GolfClubId.ShouldBe(TournamentTestData.GolfClubId);
             command.TournamentId.ShouldBe(TournamentTestData.AggregateId);
         }
 
@@ -47,10 +48,11 @@ namespace ManagementAPI.Service.Tests.Tournament
         public void CancelTournamentCommand_CanBeCreated_IsCreated()
         {
             CancelTournamentCommand command =
-                CancelTournamentCommand.Create(TournamentTestData.AggregateId, TournamentTestData.CancelTournamentRequest);
+                CancelTournamentCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.AggregateId, TournamentTestData.CancelTournamentRequest);
 
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
+            command.GolfClubId.ShouldBe(TournamentTestData.GolfClubId);
             command.TournamentId.ShouldBe(TournamentTestData.AggregateId);
             command.CancelTournamentRequest.ShouldNotBeNull();
             command.CancelTournamentRequest.ShouldBe(TournamentTestData.CancelTournamentRequest); 
@@ -60,10 +62,11 @@ namespace ManagementAPI.Service.Tests.Tournament
         public void ProduceTournamentResultCommand_CanBeCreated_IsCreated()
         {
             ProduceTournamentResultCommand command =
-                ProduceTournamentResultCommand.Create(TournamentTestData.AggregateId);
+                ProduceTournamentResultCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.AggregateId);
 
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
+            command.GolfClubId.ShouldBe(TournamentTestData.GolfClubId);
             command.TournamentId.ShouldBe(TournamentTestData.AggregateId);
         }
 
