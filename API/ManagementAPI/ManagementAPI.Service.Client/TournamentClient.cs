@@ -14,6 +14,7 @@
     /// <summary>
     /// 
     /// </summary>
+    /// <seealso cref="ClientProxyBase.ClientProxyBase" />
     /// <seealso cref="ClientProxyBase" />
     /// <seealso cref="ManagementAPI.Service.Client.ITournamentClient" />
     public class TournamentClient : ClientProxyBase, ITournamentClient
@@ -33,6 +34,7 @@
         /// Initializes a new instance of the <see cref="TournamentClient" /> class.
         /// </summary>
         /// <param name="baseAddressResolver">The base address resolver.</param>
+        /// <param name="httpClient">The HTTP client.</param>
         public TournamentClient(Func<String, String> baseAddressResolver,
                                 HttpClient httpClient) : base(httpClient)
         {
@@ -46,16 +48,19 @@
         /// <summary>
         /// Cancels the tournament.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task CancelTournament(String passwordToken,
+        public async Task CancelTournament(String accessToken,
+                                           Guid golfClubId,
                                            Guid tournamentId,
                                            CancelTournamentRequest request,
                                            CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/Cancel";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/Tournament/{tournamentId}/Cancel";
 
             try
             {
@@ -64,7 +69,7 @@
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
@@ -86,22 +91,24 @@
         /// <summary>
         /// Completes the tournament.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task CompleteTournament(String passwordToken,
+        public async Task CompleteTournament(String accessToken,
+                                             Guid golfClubId,
                                              Guid tournamentId,
                                              CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/Complete";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/Tournament/{tournamentId}/Complete";
 
             try
             {
                 StringContent httpContent = new StringContent(string.Empty, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
@@ -123,17 +130,19 @@
         /// <summary>
         /// Creates the tournament.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<CreateTournamentResponse> CreateTournament(String passwordToken,
+        public async Task<CreateTournamentResponse> CreateTournament(String accessToken,
+                                                                     Guid golfClubId,
                                                                      CreateTournamentRequest request,
                                                                      CancellationToken cancellationToken)
         {
             CreateTournamentResponse response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/Tournament";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/Tournament";
 
             try
             {
@@ -142,7 +151,7 @@
                 StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
@@ -167,20 +176,22 @@
         /// <summary>
         /// Gets the tournament list.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<GetTournamentListResponse> GetTournamentList(String passwordToken,
+        public async Task<GetTournamentListResponse> GetTournamentList(String accessToken,
+                                                                       Guid golfClubId,
                                                                        CancellationToken cancellationToken)
         {
             GetTournamentListResponse response = null;
 
-            String requestUri = $"{this.BaseAddress}/api/Tournament/List";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/Tournament/List";
 
             try
             {
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
@@ -205,22 +216,24 @@
         /// <summary>
         /// Produces the tournament result.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task ProduceTournamentResult(String passwordToken,
+        public async Task ProduceTournamentResult(String accessToken,
+                                                  Guid golfClubId,
                                                   Guid tournamentId,
                                                   CancellationToken cancellationToken)
         {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/ProduceResult";
+            String requestUri = $"{this.BaseAddress}/api/GolfClub/{golfClubId}/Tournament/{tournamentId}/ProduceResult";
 
             try
             {
                 StringContent httpContent = new StringContent(string.Empty, Encoding.UTF8, "application/json");
 
                 // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 // Make the Http Call here
                 HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
@@ -234,84 +247,6 @@
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error producing result for tournament {tournamentId}.", ex);
-
-                throw exception;
-            }
-        }
-
-        /// <summary>
-        /// Records the player score.
-        /// </summary>
-        /// <param name="passwordToken">The password token.</param>
-        /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="request">The request.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        public async Task RecordPlayerScore(String passwordToken,
-                                            Guid tournamentId,
-                                            RecordPlayerTournamentScoreRequest request,
-                                            CancellationToken cancellationToken)
-        {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/RecordPlayerScore";
-
-            try
-            {
-                String requestSerialised = JsonConvert.SerializeObject(request);
-
-                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
-
-                // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
-
-                // Make the Http Call here
-                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
-
-                // Process the response
-                String content = await this.HandleResponse(httpResponse, cancellationToken);
-
-                // call was successful, no response data to deserialise
-            }
-            catch(Exception ex)
-            {
-                // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error recording tournament {tournamentId} score for player.", ex);
-
-                throw exception;
-            }
-        }
-
-        /// <summary>
-        /// Signs up player for tournament.
-        /// </summary>
-        /// <param name="passwordToken">The password token.</param>
-        /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        public async Task SignUpPlayerForTournament(String passwordToken,
-                                                    Guid tournamentId,
-                                                    CancellationToken cancellationToken)
-        {
-            String requestUri = $"{this.BaseAddress}/api/Tournament/{tournamentId}/SignUp";
-
-            try
-            {
-                StringContent httpContent = new StringContent(string.Empty, Encoding.UTF8, "application/json");
-
-                // Add the access token to the client headers
-                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", passwordToken);
-
-                // Make the Http Call here
-                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
-
-                // Process the response
-                String content = await this.HandleResponse(httpResponse, cancellationToken);
-
-                // call was successful, no response data to deserialise
-            }
-            catch(Exception ex)
-            {
-                // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error signing player up for tournament {tournamentId}.", ex);
 
                 throw exception;
             }

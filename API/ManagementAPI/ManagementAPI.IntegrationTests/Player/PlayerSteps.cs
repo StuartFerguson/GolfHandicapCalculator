@@ -1,6 +1,7 @@
 ﻿namespace ManagementAPI.IntegrationTests.Player
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -109,19 +110,20 @@
             String bearerToken = this.PlayerTestingContext.ClubAdministratorToken;
 
             IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient playerClient = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             CreateGolfClubResponse response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
 
-            Retry.For(async () =>
+            await Retry.For(async () =>
                       {
-                          var passwordToken = this.PlayerTestingContext.PlayerToken;
-                          var golfClubList = await client.GetGolfClubList(passwordToken, CancellationToken.None);
+                          String passwordToken = this.PlayerTestingContext.PlayerToken;
+                          List<GetGolfClubResponse> golfClubList = await playerClient.GetGolfClubList(passwordToken, this.PlayerTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None);
 
                           if (golfClubList.All(g => g.Id != response.GolfClubId))
                           {
                               throw new Exception("Golf Club not found in read model");
                           }
-                      });
+                      }).ConfigureAwait(false);
 
             this.PlayerTestingContext.GolfClubId = response.GolfClubId;
         }
@@ -178,18 +180,18 @@
 
             String bearerToken = this.PlayerTestingContext.PlayerToken;
 
-            await Retry.For(async () => { this.PlayerTestingContext.ClubMembershipResponses = await client.GetPlayerMemberships(bearerToken, CancellationToken.None); });
+            await Retry.For(async () => { this.PlayerTestingContext.ClubMembershipResponses = await client.GetPlayerMemberships(bearerToken, this.PlayerTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None); }).ConfigureAwait(false);
         }
 
         [When(@"I request club membership my request is accepted")]
         public void WhenIRequestClubMembershipMyRequestIsAccepted()
         {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             String bearerToken = this.PlayerTestingContext.PlayerToken;
             Guid golfClubId = this.PlayerTestingContext.GolfClubId;
 
-            Should.NotThrow(async () => { await client.RequestClubMembership(bearerToken, golfClubId, CancellationToken.None).ConfigureAwait(false); });
+            Should.NotThrow(async () => { await client.RequestClubMembership(bearerToken, this.PlayerTestingContext.RegisterPlayerResponse.PlayerId, golfClubId, CancellationToken.None).ConfigureAwait(false); });
         }
 
         [When(@"I request my player details")]
@@ -199,7 +201,11 @@
 
             String bearerToken = this.PlayerTestingContext.PlayerToken;
 
-            await Retry.For(async () => { this.PlayerTestingContext.GetPlayerDetailsResponse = await client.GetPlayer(bearerToken, CancellationToken.None); });
+            await Retry.For(async () =>
+                            {
+                                this.PlayerTestingContext.GetPlayerDetailsResponse =
+                                    await client.GetPlayer(bearerToken, this.PlayerTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None);
+                            }).ConfigureAwait(false);
         }
 
         #endregion

@@ -83,57 +83,63 @@
         /// <summary>
         /// Adds the tournament division.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task AddTournamentDivision(String passwordToken,
+        public async Task AddTournamentDivision(String accessToken,
+                                                Guid golfClubId,
                                                 AddTournamentDivisionToGolfClubRequest request,
                                                 CancellationToken cancellationToken)
         {
-            await this.GolfClubClient.AddTournamentDivision(passwordToken, request, cancellationToken);
+            await this.GolfClubClient.AddTournamentDivision(accessToken, golfClubId, request, cancellationToken);
         }
 
         /// <summary>
         /// Adds the measured course to golf club.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="addMeasuredCourseToClubRequest">The add measured course to club request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task AddMeasuredCourseToGolfClub(String passwordToken,
+        public async Task AddMeasuredCourseToGolfClub(String accessToken,
+                                                      Guid golfClubId,
                                                       AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest,
                                                       CancellationToken cancellationToken)
         {
-            await this.GolfClubClient.AddMeasuredCourseToGolfClub(passwordToken, addMeasuredCourseToClubRequest, cancellationToken);
+            await this.GolfClubClient.AddMeasuredCourseToGolfClub(accessToken, golfClubId, addMeasuredCourseToClubRequest, cancellationToken);
         }
 
         /// <summary>
         /// Creates the golf club.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The password token.</param>
         /// <param name="createGolfClubRequest">The create golf club request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<CreateGolfClubResponse> CreateGolfClub(String passwordToken,
+        public async Task<CreateGolfClubResponse> CreateGolfClub(String accessToken,
                                                                  CreateGolfClubRequest createGolfClubRequest,
                                                                  CancellationToken cancellationToken)
         {
-            return await this.GolfClubClient.CreateGolfClub(passwordToken, createGolfClubRequest, cancellationToken);
+            return await this.GolfClubClient.CreateGolfClub(accessToken, createGolfClubRequest, cancellationToken);
         }
 
         /// <summary>
         /// Creates the tournament.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The password token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="createTournamentRequest">The create tournament request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task<CreateTournamentResponse> CreateTournament(String passwordToken,
+        public async Task<CreateTournamentResponse> CreateTournament(String accessToken,
+                                                                     Guid golfClubId,
                                                                      CreateTournamentRequest createTournamentRequest,
                                                                      CancellationToken cancellationToken)
         {
-            return await this.TournamentClient.CreateTournament(passwordToken, createTournamentRequest, cancellationToken);
+            return await this.TournamentClient.CreateTournament(accessToken, golfClubId, createTournamentRequest, cancellationToken);
         }
 
         /// <summary>
@@ -205,17 +211,19 @@
         /// <summary>
         /// Records the player score.
         /// </summary>
-        /// <param name="passwordToken">The password token.</param>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="playerId">The player identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="recordMemberTournamentScoreRequest">The record member tournament score request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task RecordPlayerScore(String passwordToken,
+        public async Task RecordPlayerScore(String accessToken,
+                                            Guid playerId,
                                             Guid tournamentId,
                                             RecordPlayerTournamentScoreRequest recordMemberTournamentScoreRequest,
                                             CancellationToken cancellationToken)
         {
-            await this.TournamentClient.RecordPlayerScore(passwordToken, tournamentId, recordMemberTournamentScoreRequest, cancellationToken);
+            await this.PlayerClient.RecordPlayerScore(accessToken, playerId, tournamentId, recordMemberTournamentScoreRequest, cancellationToken);
         }
 
         /// <summary>
@@ -246,14 +254,16 @@
         /// Requests the club membership.
         /// </summary>
         /// <param name="passwordToken">The password token.</param>
+        /// <param name="playerId">The player identifier.</param>
         /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task RequestClubMembership(String passwordToken,
+        public async Task RequestClubMembership(String accessToken,
+                                                Guid playerId,
                                                 Guid golfClubId,
                                                 CancellationToken cancellationToken)
         {
-            await this.GolfClubClient.RequestClubMembership(passwordToken, golfClubId, cancellationToken);
+            await this.PlayerClient.RequestClubMembership(accessToken, playerId, golfClubId, cancellationToken);
         }
 
         /// <summary>
@@ -263,11 +273,12 @@
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task SignUpPlayerForTournament(String passwordToken,
+        public async Task SignUpPlayerForTournament(String accessToken,
+                                                    Guid playerId,
                                                     Guid tournamentId,
                                                     CancellationToken cancellationToken)
         {
-            await this.TournamentClient.SignUpPlayerForTournament(passwordToken, tournamentId, cancellationToken);
+            await this.PlayerClient.SignUpPlayerForTournament(accessToken, playerId, tournamentId, cancellationToken);
         }
 
         /// <summary>

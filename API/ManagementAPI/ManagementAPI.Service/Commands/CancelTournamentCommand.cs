@@ -1,22 +1,33 @@
-﻿using System;
-using ManagementAPI.Service.DataTransferObjects;
-using Shared.CommandHandling;
-
-namespace ManagementAPI.Service.Commands
+﻿namespace ManagementAPI.Service.Commands
 {
+    using System;
     using DataTransferObjects.Requests;
+    using Shared.CommandHandling;
 
     public class CancelTournamentCommand : Command<String>
     {
-        #region Properties
+        #region Constructors
 
         /// <summary>
-        /// Gets the tournament identifier.
+        /// Initializes a new instance of the <see cref="CancelTournamentCommand" /> class.
         /// </summary>
-        /// <value>
-        /// The tournament identifier.
-        /// </value>
-        public Guid TournamentId { get; private set; }
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="cancelTournamentRequest">The cancel tournament request.</param>
+        /// <param name="commandId">The command identifier.</param>
+        private CancelTournamentCommand(Guid golfClubId,
+                                        Guid tournamentId,
+                                        CancelTournamentRequest cancelTournamentRequest,
+                                        Guid commandId) : base(commandId)
+        {
+            this.GolfClubId = golfClubId;
+            this.CancelTournamentRequest = cancelTournamentRequest;
+            this.TournamentId = tournamentId;
+        }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets the cancel tournament request.
@@ -24,35 +35,42 @@ namespace ManagementAPI.Service.Commands
         /// <value>
         /// The cancel tournament request.
         /// </value>
-        public CancelTournamentRequest CancelTournamentRequest { get; private set; }
+        public CancelTournamentRequest CancelTournamentRequest { get; }
 
-        #endregion
-
-        #region Constructor        
         /// <summary>
-        /// Initializes a new instance of the <see cref="CancelTournamentCommand" /> class.
+        /// Gets the golf club identifier.
         /// </summary>
-        /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="cancelTournamentRequest">The cancel tournament request.</param>
-        /// <param name="commandId">The command identifier.</param>
-        private CancelTournamentCommand(Guid tournamentId, CancelTournamentRequest cancelTournamentRequest, Guid commandId) : base(commandId)
-        {
-            this.CancelTournamentRequest = cancelTournamentRequest;
-            this.TournamentId = tournamentId;
-        }
+        /// <value>
+        /// The golf club identifier.
+        /// </value>
+        public Guid GolfClubId { get; }
+
+        /// <summary>
+        /// Gets the tournament identifier.
+        /// </summary>
+        /// <value>
+        /// The tournament identifier.
+        /// </value>
+        public Guid TournamentId { get; }
+
         #endregion
 
-        #region public static CancelTournamentCommand Create()                        
+        #region Methods
+
         /// <summary>
         /// Creates this instance.
         /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="cancelTournamentRequest">The cancel tournament request.</param>
         /// <returns></returns>
-        public static CancelTournamentCommand Create(Guid tournamentId, CancelTournamentRequest cancelTournamentRequest)
+        public static CancelTournamentCommand Create(Guid golfClubId,
+                                                     Guid tournamentId,
+                                                     CancelTournamentRequest cancelTournamentRequest)
         {
-            return new CancelTournamentCommand(tournamentId, cancelTournamentRequest, Guid.NewGuid());
+            return new CancelTournamentCommand(golfClubId, tournamentId, cancelTournamentRequest, Guid.NewGuid());
         }
+
         #endregion
     }
 }

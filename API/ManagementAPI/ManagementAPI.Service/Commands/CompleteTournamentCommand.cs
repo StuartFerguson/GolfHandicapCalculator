@@ -1,12 +1,37 @@
-﻿using System;
-using ManagementAPI.Service.DataTransferObjects;
-using Shared.CommandHandling;
-
-namespace ManagementAPI.Service.Commands
+﻿namespace ManagementAPI.Service.Commands
 {
+    using System;
+    using Shared.CommandHandling;
+
     public class CompleteTournamentCommand : Command<String>
     {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompleteTournamentCommand" /> class.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="commandId">The command identifier.</param>
+        private CompleteTournamentCommand(Guid golfClubId,
+                                          Guid tournamentId,
+                                          Guid commandId) : base(commandId)
+        {
+            this.GolfClubId = golfClubId;
+            this.TournamentId = tournamentId;
+        }
+
+        #endregion
+
         #region Properties
+
+        /// <summary>
+        /// Gets the golf club identifier.
+        /// </summary>
+        /// <value>
+        /// The golf club identifier.
+        /// </value>
+        public Guid GolfClubId { get; }
 
         /// <summary>
         /// Gets the tournament identifier.
@@ -14,32 +39,24 @@ namespace ManagementAPI.Service.Commands
         /// <value>
         /// The tournament identifier.
         /// </value>
-        public Guid TournamentId { get; private set; }
+        public Guid TournamentId { get; }
 
         #endregion
 
-        #region Constructor        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CompleteTournamentCommand" /> class.
-        /// </summary>
-        /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="commandId">The command identifier.</param>
-        private CompleteTournamentCommand(Guid tournamentId, Guid commandId) : base(commandId)
-        {
-            this.TournamentId = tournamentId;
-        }
-        #endregion
+        #region Methods
 
-        #region public static CompleteTournamentCommand Create(Guid tournamentId)                        
         /// <summary>
         /// Creates this instance.
         /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <returns></returns>
-        public static CompleteTournamentCommand Create(Guid tournamentId)
+        public static CompleteTournamentCommand Create(Guid golfClubId,
+                                                       Guid tournamentId)
         {
-            return new CompleteTournamentCommand(tournamentId, Guid.NewGuid());
+            return new CompleteTournamentCommand(golfClubId, tournamentId, Guid.NewGuid());
         }
+
         #endregion
     }
 }

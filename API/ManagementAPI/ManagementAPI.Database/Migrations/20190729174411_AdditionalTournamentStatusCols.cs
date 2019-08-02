@@ -6,11 +6,6 @@ namespace ManagementAPI.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "PlayersScoredRecordedCount",
-                table: "Tournament",
-                newName: "PlayersScoresRecordedCount");
-
             migrationBuilder.AddColumn<bool>(
                 name: "HasBeenCancelled",
                 table: "Tournament",
@@ -33,11 +28,6 @@ namespace ManagementAPI.Database.Migrations
             migrationBuilder.DropColumn(
                 name: "HasBeenCompleted",
                 table: "Tournament");
-
-            migrationBuilder.RenameColumn(
-                name: "PlayersScoresRecordedCount",
-                table: "Tournament",
-                newName: "PlayersScoredRecordedCount");
         }
     }
 }

@@ -48,7 +48,7 @@
         #region Methods
 
         [HttpPost]
-        [Authorize(Policy = PolicyNames.ProcessHandicapCalculationsPolicy)]
+        //[Authorize(Policy = PolicyNames.ProcessHandicapCalculationsPolicy)]
         public async Task<IActionResult> ProcessHandicapCalculations([FromQuery] Guid tournamentId,
                                                                      CancellationToken cancellationToken)
         {
@@ -60,7 +60,7 @@
         }
 
         [HttpGet]
-        [Authorize(Policy = PolicyNames.GetHandicapCalculationProcessStatusPolicy)]
+        //[Authorize(Policy = PolicyNames.GetHandicapCalculationProcessStatusPolicy)]
         public async Task<IActionResult> GetHandicapCalculationProcessStatus([FromQuery] Guid tournamentId,
                                                                              CancellationToken cancellationToken)
         {

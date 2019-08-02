@@ -32,11 +32,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>GetGolfClubUserList.feature</DependentUpon>
     </Compile>
-    <Compile Update="Tournament\GetTournamentList.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>GetTournamentList.feature</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>                   
@@ -116,45 +111,26 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
     </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Player\GetPlayer.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Player\GetPlayerMemberships.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Player\RegisterPlayer.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Tournament\CancelTournament.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
     </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Tournament\CompleteTournament.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
     </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Tournament\CreateTournament.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
     </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Tournament\GetTournamentList.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>GetTournamentList.feature.cs</LastGenOutput>
     </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Tournament\ProduceTournamentResult.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
     </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Tournament\RecordMemberScore.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
     </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="Tournament\SignUpForTournament.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
     </SpecFlowFeatureFiles>
   </ItemGroup>
 

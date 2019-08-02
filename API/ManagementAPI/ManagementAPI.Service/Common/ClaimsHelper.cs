@@ -17,26 +17,70 @@ namespace ManagementAPI.Service.Common
         /// <param name="customClaimType">Type of the custom claim.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">No claim [{customClaimType}] found for user id [{userIdClaim.Value}</exception>
-        public static Claim GetUserClaim(ClaimsPrincipal user, String customClaimType)
+        public static Claim GetUserClaim(ClaimsPrincipal user, String customClaimType, Guid defaultValue = new Guid())
         {
-            // Get the user id (subject claim). Note: This will ALWAYS be present
-            Claim userIdClaim = user.Claims.Single(c => c.Type == JwtClaimTypes.Subject);
-
-            // Get the claim from the token
             Claim userClaim = null;
 
-            try
+            if (ClaimsHelper.IsPasswordToken(user))
             {
-                userClaim = user.Claims.Single(c => c.Type == customClaimType);
+                // Get the user id (subject claim). Note: This will ALWAYS be present
+                Claim userIdClaim = user.Claims.Single(c => c.Type == JwtClaimTypes.Subject);
+
+                // Get the claim from the token
+                try
+                {
+                    userClaim = user.Claims.Single(c => c.Type == customClaimType);
+                }
+                catch(InvalidOperationException e)
+                {
+                    throw new InvalidOperationException($"No claim [{customClaimType}] found for user id [{userIdClaim.Value}");
+                }
             }
-            catch (InvalidOperationException e)
+            else
             {
-                throw new InvalidOperationException($"No claim [{customClaimType}] found for user id [{userIdClaim.Value}");
+                userClaim=new Claim(customClaimType, defaultValue.ToString());
             }
 
             return userClaim;
         }
         #endregion
 
+        /// <summary>
+        /// Determines whether [is client token] [the specified user].
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>
+        ///   <c>true</c> if [is client token] [the specified user]; otherwise, <c>false</c>.
+        /// </returns>
+        public static Boolean IsPasswordToken(ClaimsPrincipal user)
+        {
+            Boolean result = false;
+
+            Claim userIdClaim = user.Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Subject);
+
+            if (userIdClaim != null)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Validates the route parameter.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="routeParameter">The route parameter.</param>
+        /// <param name="userClaim">The user claim.</param>
+        public static Boolean ValidateRouteParameter<T>(T routeParameter,
+                                                  Claim userClaim)
+        {
+            if (routeParameter.ToString() != userClaim.Value)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

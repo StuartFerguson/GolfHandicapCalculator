@@ -33,7 +33,8 @@
     [Route("api/[controller]")]
     [ApiController]
     [ExcludeFromCodeCoverage]
-    [Authorize(Policy = PolicyNames.DeveloperControllerPolicy)]
+    [Authorize]
+    //[Authorize(Policy = PolicyNames.DeveloperControllerPolicy)]
     public class DeveloperController : ControllerBase
     {
         #region Fields
