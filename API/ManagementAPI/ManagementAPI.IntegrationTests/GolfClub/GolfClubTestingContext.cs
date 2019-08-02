@@ -81,6 +81,8 @@
         public RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest;
 
         public GetTournamentListResponse GetTournamentListResponse;
+
+        public RegisterPlayerResponse RegisterPlayerResponse;
     }
 
     public class HandicapCalculationTestingContext
@@ -96,5 +98,7 @@
         public CreateTournamentResponse CreateTournamentResponse;
 
         public RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest;
+
+        public RegisterPlayerResponse RegisterPlayerResponse;
     }
 }

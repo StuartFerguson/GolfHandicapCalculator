@@ -6,8 +6,8 @@ Background:
 	And I have registered as a golf club administrator
 	And I am logged in as a golf club administrator
 	And I am registered as a player
-	And The club I want to register for is already created
 	And I am logged in as a player
+	And The club I want to register for is already created
 	When I request club membership my request is accepted
 
 @EndToEnd

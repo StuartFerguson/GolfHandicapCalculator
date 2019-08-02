@@ -233,7 +233,7 @@ namespace ManagementAPI.Service.Tests.Tournament
         
         public static CompleteTournamentCommand GetCompleteTournamentCommand()
         {
-            return CompleteTournamentCommand.Create(TournamentTestData.AggregateId);
+            return CompleteTournamentCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.AggregateId);
         }
 
         public static CancelTournamentRequest CancelTournamentRequest = new CancelTournamentRequest
@@ -268,12 +268,12 @@ namespace ManagementAPI.Service.Tests.Tournament
 
         public static CancelTournamentCommand GetCancelTournamentCommand()
         {
-            return CancelTournamentCommand.Create(TournamentTestData.AggregateId, TournamentTestData.CancelTournamentRequest);
+            return CancelTournamentCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.AggregateId, TournamentTestData.CancelTournamentRequest);
         }
 
         public static ProduceTournamentResultCommand GetProduceTournamentResultCommand()
         {
-            return ProduceTournamentResultCommand.Create(TournamentTestData.AggregateId);
+            return ProduceTournamentResultCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.AggregateId);
         }
 
         //public static List<MemberScoreForTest> GetScoreForCSSTests()

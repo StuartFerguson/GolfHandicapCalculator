@@ -324,7 +324,7 @@ namespace ManagementAPI.Service
                         .AddTransient<ManagementAPIReadModel>();
             }
 
-            services.AddAuthorization(Startup.ConfigurePolicies);
+            //services.AddAuthorization(Startup.ConfigurePolicies);
 
             services.AddAuthentication("Bearer").AddIdentityServerAuthentication(options =>
                                                                                  {
@@ -354,245 +354,245 @@ namespace ManagementAPI.Service
         /// Configures the policies.
         /// </summary>
         /// <param name="policies">The policies.</param>
-        private static void ConfigurePolicies(AuthorizationOptions policies)
-        {
-            #region Golf Club Policies
+        //private static void ConfigurePolicies(AuthorizationOptions policies)
+        //{
+        //    #region Golf Club Policies
 
-            policies.AddPolicy(PolicyNames.CreateGolfClubPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.CreateGolfClubPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.GetGolfClubListPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.GetGolfClubListPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+        //                       });
 
-            policies.AddPolicy(PolicyNames.GetSingleGolfClubPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.GetSingleGolfClubPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.GetGolfClubMembersListPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.GetGolfClubMembersListPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.AddMeasuredCourseToGolfClubPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.AddMeasuredCourseToGolfClubPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.GetMeasuredCoursesPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.GetMeasuredCoursesPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.AddTournamentDivisionToGolfClubPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.AddTournamentDivisionToGolfClubPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.RequestClubMembershipPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.RequestClubMembershipPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+        //                       });
 
-            policies.AddPolicy(PolicyNames.CreateMatchSecretaryPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.CreateMatchSecretaryPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.GetClubUsersListPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.GetClubUsersListPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator, RoleNames.ClubAdministrator.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            #endregion
+        //    #endregion
 
-            #region Player Policies
+        //    #region Player Policies
 
-            policies.AddPolicy(PolicyNames.GetPlayerPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.GetPlayerPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+        //                       });
 
-            policies.AddPolicy(PolicyNames.GetPlayerMembershipsPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.GetPlayerMembershipsPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+        //                       });
 
-            #endregion
+        //    #endregion
 
-            #region Tournament Policies
+        //    #region Tournament Policies
 
-            policies.AddPolicy(PolicyNames.CreateTournamentPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                                   policy.RequireClaim(CustomClaims.GolfClubId);
-                               });
+        //    policies.AddPolicy(PolicyNames.CreateTournamentPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.GolfClubId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.RecordPlayerScoreForTournamentPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
-                                   policy.RequireClaim(CustomClaims.PlayerId);
-                               });
+        //    policies.AddPolicy(PolicyNames.RecordPlayerScoreForTournamentPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.PlayerId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.PlayerTournamentSignUpPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
-                                   policy.RequireClaim(CustomClaims.PlayerId);
-                               });
+        //    policies.AddPolicy(PolicyNames.PlayerTournamentSignUpPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.Player, RoleNames.Player.ToUpper());
+        //                           policy.RequireClaim(CustomClaims.PlayerId);
+        //                       });
 
-            policies.AddPolicy(PolicyNames.CompleteTournamentPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.CompleteTournamentPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                       });
 
-            policies.AddPolicy(PolicyNames.CancelTournamentPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.CancelTournamentPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                       });
 
-            policies.AddPolicy(PolicyNames.ProduceTournamentResultPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.ProduceTournamentResultPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                       });
 
-            policies.AddPolicy(PolicyNames.GetTournamentListPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.GetTournamentListPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                       });
 
-            #endregion
+        //    #endregion
 
-            #region Developer Controller Policies
+        //    #region Developer Controller Policies
 
-            policies.AddPolicy(PolicyNames.DeveloperControllerPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.Developer,
-                                                      RoleNames.Developer.ToUpper(),
-                                                      RoleNames.TestDataGenerator,
-                                                      RoleNames.TestDataGenerator.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.DeveloperControllerPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.Developer,
+        //                                              RoleNames.Developer.ToUpper(),
+        //                                              RoleNames.TestDataGenerator,
+        //                                              RoleNames.TestDataGenerator.ToUpper());
+        //                       });
 
-            #endregion
+        //    #endregion
 
-            #region Handicap Calculation Process Policies
+        //    #region Handicap Calculation Process Policies
 
-            policies.AddPolicy(PolicyNames.ProcessHandicapCalculationsPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.ProcessHandicapCalculationsPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                       });
 
-            policies.AddPolicy(PolicyNames.GetHandicapCalculationProcessStatusPolicy,
-                               policy =>
-                               {
-                                   policy.AddAuthenticationSchemes("Bearer");
-                                   policy.RequireAuthenticatedUser();
-                                   policy.RequireRole(RoleNames.ClubAdministrator,
-                                                      RoleNames.ClubAdministrator.ToUpper(),
-                                                      RoleNames.MatchSecretary,
-                                                      RoleNames.MatchSecretary.ToUpper());
-                               });
+        //    policies.AddPolicy(PolicyNames.GetHandicapCalculationProcessStatusPolicy,
+        //                       policy =>
+        //                       {
+        //                           policy.AddAuthenticationSchemes("Bearer");
+        //                           policy.RequireAuthenticatedUser();
+        //                           policy.RequireRole(RoleNames.ClubAdministrator,
+        //                                              RoleNames.ClubAdministrator.ToUpper(),
+        //                                              RoleNames.MatchSecretary,
+        //                                              RoleNames.MatchSecretary.ToUpper());
+        //                       });
 
-            #endregion
-        }
+        //    #endregion
+        //}
 
         /// <summary>
         /// Initialises the database.

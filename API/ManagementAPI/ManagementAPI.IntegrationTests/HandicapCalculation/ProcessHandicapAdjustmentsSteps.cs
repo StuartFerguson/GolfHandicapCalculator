@@ -95,7 +95,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
 
             Should.NotThrow(async () =>
                             {
-                                await client.AddMeasuredCourseToGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+                                await client.AddMeasuredCourseToGolfClub(bearerToken, this.HandicapCalculationTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
                             });
         }
 
@@ -109,7 +109,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
 
             Should.NotThrow(async () =>
                             {
-                                await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
+                                this.HandicapCalculationTestingContext.RegisterPlayerResponse = await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
                             });
         }
         
@@ -124,7 +124,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
 
             Should.NotThrow(async () =>
                             {
-                                this.HandicapCalculationTestingContext.CreateTournamentResponse = await client.CreateTournament(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+                                this.HandicapCalculationTestingContext.CreateTournamentResponse = await client.CreateTournament(bearerToken, this.HandicapCalculationTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
                             });
         }
         
@@ -141,9 +141,9 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
         {
             String bearerToken = this.HandicapCalculationTestingContext.PlayerToken;
 
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
-            await client.RequestClubMembership(bearerToken, this.HandicapCalculationTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
+            await client.RequestClubMembership(bearerToken, this.HandicapCalculationTestingContext.RegisterPlayerResponse.PlayerId, this.HandicapCalculationTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
         }
         
         [Given(@"my membership has been accepted")]
@@ -155,7 +155,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
 
             await Retry.For(async () =>
                             {
-                                List<ClubMembershipResponse> response = await client.GetPlayerMemberships(bearerToken, CancellationToken.None).ConfigureAwait(false);
+                                List<ClubMembershipResponse> response = await client.GetPlayerMemberships(bearerToken, this.HandicapCalculationTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
 
                                 if (response.All(r => r.GolfClubId != this.HandicapCalculationTestingContext.GolfClubId))
                                 {
@@ -167,13 +167,13 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
         [Given(@"I have signed in to play the tournament")]
         public async Task GivenIHaveSignedInToPlayTheTournament()
         {
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             CreateTournamentResponse createTournamentResponse = this.HandicapCalculationTestingContext.CreateTournamentResponse;
 
             String bearerToken = this.HandicapCalculationTestingContext.PlayerToken;
 
-            await client.SignUpPlayerForTournament(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
+            await client.SignUpPlayerForTournament(bearerToken, this.HandicapCalculationTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
         }
         
         [Given(@"my score of (.*) shots below the CSS has been recorded")]
@@ -183,18 +183,18 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
 
             String bearerToken = this.HandicapCalculationTestingContext.PlayerToken;
 
-            GetPlayerDetailsResponse player = await playerClient.GetPlayer(bearerToken, CancellationToken.None);
+            GetPlayerDetailsResponse player = await playerClient.GetPlayer(bearerToken, this.HandicapCalculationTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None);
 
             RecordPlayerTournamentScoreRequest request =
                 IntegrationTestsTestData.GetScoreToRecord(player.PlayingHandicap, strokesBelowCSS);
 
             CreateTournamentResponse createTournamentResponse = this.HandicapCalculationTestingContext.CreateTournamentResponse;
 
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             Should.NotThrow(async () =>
                             {
-                                await client.RecordPlayerScore(bearerToken, createTournamentResponse.TournamentId, request, CancellationToken.None).ConfigureAwait(false);
+                                await client.RecordPlayerScore(bearerToken, this.HandicapCalculationTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, request, CancellationToken.None).ConfigureAwait(false);
                             });
         }
         
@@ -210,7 +210,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
             Should.NotThrow(async () =>
                             {
                                 await client
-                                      .CompleteTournament(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None)
+                                      .CompleteTournament(bearerToken, this.HandicapCalculationTestingContext.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
                                       .ConfigureAwait(false);
                             });
         }
@@ -250,7 +250,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
 
             String bearerToken = this.HandicapCalculationTestingContext.PlayerToken;
 
-            GetPlayerDetailsResponse player = await playerClient.GetPlayer(bearerToken, CancellationToken.None).ConfigureAwait(false);
+            GetPlayerDetailsResponse player = await playerClient.GetPlayer(bearerToken, this.HandicapCalculationTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
 
             player.PlayingHandicap.ShouldBe(playingHandicap);
         }
@@ -262,7 +262,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
 
             String bearerToken = this.HandicapCalculationTestingContext.PlayerToken;
 
-            GetPlayerDetailsResponse player = await playerClient.GetPlayer(bearerToken, CancellationToken.None).ConfigureAwait(false);
+            GetPlayerDetailsResponse player = await playerClient.GetPlayer(bearerToken, this.HandicapCalculationTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
 
             player.ExactHandicap.ShouldBe(exactHandicap);
         }

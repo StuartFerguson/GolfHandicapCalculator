@@ -68,7 +68,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"I am logged in as a golf club administrator")]
         public async Task GivenIAmLoggedInAsAGolfClubAdministrator()
         {
-            this.TournamentTestingContext.ClubAdministratorToken = await GetToken(TokenType.Password, "golfhandicap.mobile", "golfhandicap.mobile",
+            this.TournamentTestingContext.ClubAdministratorToken = await this.GetToken(TokenType.Password, "golfhandicap.mobile", "golfhandicap.mobile",
                 IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress,
                 IntegrationTestsTestData.RegisterClubAdministratorRequest.Password).ConfigureAwait(false);
         }
@@ -98,7 +98,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             Should.NotThrow(async () =>
             {
-                await client.AddMeasuredCourseToGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+                await client.AddMeasuredCourseToGolfClub(bearerToken, this.TournamentTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
             });  
         }
         
@@ -119,7 +119,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             Should.NotThrow(async () =>
             {
-                this.TournamentTestingContext.CreateTournamentResponse = await client.CreateTournament(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+                this.TournamentTestingContext.CreateTournamentResponse = await client.CreateTournament(bearerToken, this.TournamentTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
             });  
         }
         
@@ -143,7 +143,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             Should.NotThrow(async () =>
             {
-                this.TournamentTestingContext.CreateTournamentResponse = await client.CreateTournament(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+                this.TournamentTestingContext.CreateTournamentResponse = await client.CreateTournament(bearerToken, this.TournamentTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
             });  
         }
         
@@ -156,7 +156,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             Should.NotThrow( async () =>
             {
-                await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
+                this.TournamentTestingContext.RegisterPlayerResponse =await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
             });
         }
         
@@ -181,26 +181,26 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
 
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             String bearerToken = this.TournamentTestingContext.PlayerToken;
 
             Should.NotThrow(async () =>
             {
-                await client.RecordPlayerScore(bearerToken, createTournamentResponse.TournamentId, request, CancellationToken.None).ConfigureAwait(false);
+                await client.RecordPlayerScore(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, request, CancellationToken.None).ConfigureAwait(false);
             }); 
         }
         
         [Given(@"I have signed in to play the tournament")]
         public async Task GivenIHaveSignedInToPlayTheTournament()
         {
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
 
             String bearerToken = this.TournamentTestingContext.PlayerToken;
 
-            await client.SignUpPlayerForTournament(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
+            await client.SignUpPlayerForTournament(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Given(@"I am requested membership of the golf club")]
@@ -208,9 +208,9 @@ namespace ManagementAPI.IntegrationTests.Tournament
         {
             String bearerToken = this.TournamentTestingContext.PlayerToken;
 
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
-            await client.RequestClubMembership(bearerToken, this.TournamentTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
+            await client.RequestClubMembership(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, this.TournamentTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
         }
         
         [Given(@"my membership has been accepted")]
@@ -223,7 +223,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
             await Retry.For(async () =>
                             {
 
-                                List<ClubMembershipResponse> response = await client.GetPlayerMemberships(bearerToken, CancellationToken.None).ConfigureAwait(false);
+                                List<ClubMembershipResponse> response = await client.GetPlayerMemberships(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
 
                                 if (response.All(r => r.GolfClubId != this.TournamentTestingContext.GolfClubId))
                                 {
@@ -239,13 +239,13 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
 
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             String bearerToken = this.TournamentTestingContext.PlayerToken;
 
             Should.NotThrow(async () =>
             {
-                await client.RecordPlayerScore(bearerToken, createTournamentResponse.TournamentId, request, CancellationToken.None).ConfigureAwait(false);
+                await client.RecordPlayerScore(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, request, CancellationToken.None).ConfigureAwait(false);
             }); 
         }
         
@@ -261,7 +261,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
             Should.NotThrow(async () =>
             {
                 await client
-                    .CompleteTournament(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None)
+                    .CompleteTournament(bearerToken, this.TournamentTestingContext.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
                     .ConfigureAwait(false);
             });
         }
@@ -280,7 +280,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
             Should.NotThrow(async () =>
             {
                 await client
-                    .CancelTournament(bearerToken, createTournamentResponse.TournamentId, cancelTournamentRequest, CancellationToken.None)
+                    .CancelTournament(bearerToken, this.TournamentTestingContext.GolfClubId, createTournamentResponse.TournamentId, cancelTournamentRequest, CancellationToken.None)
                     .ConfigureAwait(false);
             });
         }
@@ -297,7 +297,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
             Should.NotThrow(async () =>
             {
                 await client
-                    .CompleteTournament(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None)
+                    .CompleteTournament(bearerToken, this.TournamentTestingContext.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
                     .ConfigureAwait(false);
             });
         }
@@ -314,7 +314,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
             Should.NotThrow(async () =>
             {
                 await client
-                    .ProduceTournamentResult(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None)
+                    .ProduceTournamentResult(bearerToken, this.TournamentTestingContext.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
                     .ConfigureAwait(false);
             });
         }
@@ -322,7 +322,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Given(@"I sign up to play the tournament")]
         public void GivenISignUpToPlayTheTournament()
         {
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
+            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
 
             CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
 
@@ -330,7 +330,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             Should.NotThrow(async () =>
                             {
-                                await client.SignUpPlayerForTournament(bearerToken, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
+                                await client.SignUpPlayerForTournament(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
                             });
         }
         
@@ -349,7 +349,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
             
             await Retry.For(async () =>
                             {
-                                this.TournamentTestingContext.GetTournamentListResponse = await client.GetTournamentList(bearerToken, CancellationToken.None).ConfigureAwait(false);
+                                this.TournamentTestingContext.GetTournamentListResponse = await client.GetTournamentList(bearerToken, this.TournamentTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
 
                                 if (this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Count == 0)
                                 {
@@ -368,7 +368,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
         [Then(@"the created tournament details will be returned")]
         public void ThenTheCreatedTournamentDetailsWillBeReturned()
         {
-            var tournament = this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Single();
+            GetTournamentResponse tournament = this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Single();
             tournament.TournamentFormat.ShouldBe((TournamentFormat)this.TournamentTestingContext.CreateTournamentRequest.Format);
             //tournament.TournamentDate.ShouldBe(this.TournamentTestingContext.CreateTournamentRequest.TournamentDate);
             tournament.MeasuredCourseId.ShouldBe(this.TournamentTestingContext.CreateTournamentRequest.MeasuredCourseId);
