@@ -7,7 +7,8 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IDomainEventHandler
+    /// <seealso cref="DomainEventRouterAPI.Service.EventHandling.IDomainEventHandler" />
+    public class TournamentDomainEventHandler : IDomainEventHandler
     {
         #region Methods
 
@@ -16,9 +17,10 @@
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task Handle(DomainEvent domainEvent,
-                    CancellationToken cancellationToken);
+        public async Task Handle(DomainEvent domainEvent,
+                                 CancellationToken cancellationToken)
+        {
+        }
 
         #endregion
     }

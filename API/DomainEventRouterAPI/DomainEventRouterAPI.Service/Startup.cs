@@ -23,6 +23,7 @@ namespace DomainEventRouterAPI.Service
     using Swashbuckle.AspNetCore.Swagger;
     using System.IO;
     using Common;
+    using DomainEventRouterAPI.Service.Bootstrapper;
 
     [ExcludeFromCodeCoverage]
     public class Startup
@@ -167,7 +168,7 @@ namespace DomainEventRouterAPI.Service
 
             container.Configure(config =>
                                 {
-                                    //config.AddRegistry<CommonRegistry>();
+                                    config.AddRegistry<CommonRegistry>();
 
                                     //if (HostingEnvironment.IsDevelopment())
                                     //{
@@ -196,20 +197,7 @@ namespace DomainEventRouterAPI.Service
                                                  options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                                                  options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                                              }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            //if (Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
-            //{
-            //    services.AddDbContext<ManagementAPIReadModel>(builder => builder.UseInMemoryDatabase("ManagementAPIReadModel")).AddTransient<ManagementAPIReadModel>();
-            //}
-            //else
-            //{
-            //    String migrationsAssembly = typeof(ManagementAPIReadModel).GetTypeInfo().Assembly.GetName().Name;
-
-            //    services.AddDbContext<ManagementAPIReadModel>(builder => builder.UseMySql(Startup.ManagementAPIReadModelConnectionString,
-            //                                                                              sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly)))
-            //            .AddTransient<ManagementAPIReadModel>();
-            //}
-
+            
             services.AddAuthorization();
 
             services.AddAuthentication("Bearer").AddIdentityServerAuthentication(options =>

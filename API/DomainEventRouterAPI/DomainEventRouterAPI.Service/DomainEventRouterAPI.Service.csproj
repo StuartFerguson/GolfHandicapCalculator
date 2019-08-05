@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ManagementAPI.GolfClubMembership.DomainEvents" Version="1.0.32.1" />
+    <PackageReference Include="ManagementAPI.GolfClubMembership.DomainEvents" Version="1.0.32.2" />
+    <PackageReference Include="ManagementAPI.Service.Client" Version="1.0.32.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
