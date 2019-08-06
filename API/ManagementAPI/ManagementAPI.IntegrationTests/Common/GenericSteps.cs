@@ -16,6 +16,7 @@ using TechTalk.SpecFlow;
 namespace ManagementAPI.IntegrationTests.Common
 {
     using System.Net;
+    using Database;
     using MySql.Data.MySqlClient;
 
     [Binding]
@@ -46,6 +47,7 @@ namespace ManagementAPI.IntegrationTests.Common
         private String SecurityServiceAddress;
         private String AuthorityAddress;
         private String SubscriptionServiceConnectionString;
+        private String ManagementAPIReadModelConnectionString;
         private String ManagementAPISeedingType;
         private String MessagingServiceAddress;
 
@@ -72,6 +74,7 @@ namespace ManagementAPI.IntegrationTests.Common
             this.SecurityServiceAddress = $"AppSettings:SecurityService=http://{this.SecurityServiceContainerName}:5001";
             this.AuthorityAddress = $"SecurityConfiguration:Authority=http://{this.SecurityServiceContainerName}:5001";
             this.SubscriptionServiceConnectionString = $"\"ConnectionStrings:SubscriptionServiceConfigurationContext={Setup.GetConnectionString("SubscriptionServiceConfiguration")}\"";
+            this.ManagementAPIReadModelConnectionString = $"\"ConnectionStrings:ManagementAPIReadModel={Setup.GetConnectionString("ManagementAPIReadModel")}\"";
             this.ManagementAPISeedingType = "SeedingType=IntegrationTest";
             this.MessagingServiceAddress = $"ServiceAddresses:MessagingService=http://{this.MessagingServiceContainerName}:5002";
 
@@ -95,6 +98,9 @@ namespace ManagementAPI.IntegrationTests.Common
         {
             try
             {
+                //ManagementAPI.Database.ManagementAPIReadModel context = new ManagementAPIReadModel("");
+                //context.Database.EnsureDeleted();
+
                 if (this.ManagementAPIContainer != null)
                 {
                     this.ManagementAPIContainer.StopOnDispose = true;
@@ -109,12 +115,12 @@ namespace ManagementAPI.IntegrationTests.Common
                     this.MessagingServiceContainer.Dispose();
                 }
 
-                if (this.EventStoreContainer != null)
-                {
-                    this.EventStoreContainer.StopOnDispose = true;
-                    this.EventStoreContainer.RemoveOnDispose = true;
-                    this.EventStoreContainer.Dispose();
-                }
+                //if (this.EventStoreContainer != null)
+                //{
+                //    this.EventStoreContainer.StopOnDispose = true;
+                //    this.EventStoreContainer.RemoveOnDispose = true;
+                //    this.EventStoreContainer.Dispose();
+                //}
 
                 if (this.SecurityServiceContainer != null)
                 {
@@ -179,6 +185,10 @@ namespace ManagementAPI.IntegrationTests.Common
             String handicapCalculatorEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/HandicapCalculator";
             SubscriptionServiceHelper.CreateEndpoint(connection, handicapCalculatorEndpointId, "Handicap Calculator", handicapCalculatorEndpointUrl);
 
+            Guid reportingEndpointId = Guid.NewGuid();
+            String reportingEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting";
+            SubscriptionServiceHelper.CreateEndpoint(connection, reportingEndpointId, "Reporting Read Model", reportingEndpointUrl);
+
             // Create the Streams
             Guid categoryGolfClubAggregateStream = Guid.NewGuid();
             SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryGolfClubAggregateStream, "$ce-GolfClubAggregate");
@@ -199,6 +209,9 @@ namespace ManagementAPI.IntegrationTests.Common
             Guid subscriptionGroupGolfClubMembershipAggregateId = Guid.NewGuid();
             SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubMembershipAggregateId, golfClubMembershipEndpointId, "GolfClubMembershipAggregate", categoryGolfClubMembershipAggregateStream);
 
+            Guid subscriptionGroupGolfClubMembershipAggregateReportingId = Guid.NewGuid();
+            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubMembershipAggregateReportingId, reportingEndpointId, "GolfClubMembershipAggregateReporting", categoryGolfClubMembershipAggregateStream);
+
             Guid subscriptionGroupTournamentAggregateId = Guid.NewGuid();
             SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupTournamentAggregateId, tournamentEndpointId, "TournamentAggregate", categoryTournamentAggregateStream);
 
@@ -210,6 +223,7 @@ namespace ManagementAPI.IntegrationTests.Common
             SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubMembershipAggregateId, this.SubscriberServiceId);
             SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupTournamentAggregateId, this.SubscriberServiceId);
             SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionHandicapCalculationProcessAggregateId, this.SubscriberServiceId);
+            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubMembershipAggregateReportingId, this.SubscriberServiceId);
 
             connection.Close();
         }
@@ -360,6 +374,7 @@ namespace ManagementAPI.IntegrationTests.Common
                 .WithName(this.ManagementAPIContainerName)
                 .WithEnvironment("ASPNETCORE_ENVIRONMENT=IntegrationTest",
                     this.EventStoreConnectionString, 
+                    this.ManagementAPIReadModelConnectionString,
                     this.SecurityServiceAddress, 
                     this.ManagementAPISeedingType,
                     this.AuthorityAddress,

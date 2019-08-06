@@ -93,6 +93,31 @@
         }
 
         /// <summary>
+        /// Posts the event reporting.
+        /// </summary>
+        /// <param name="event">The event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Reporting")]
+        public async Task<IActionResult> PostEventReporting([FromBody] DomainEvent @event,
+                                                                     CancellationToken cancellationToken)
+        {
+            try
+            {
+                IDomainEventHandler domainEventHandler = this.DomainEventHandlerResolver("Reporting");
+                await domainEventHandler.Handle(@event, cancellationToken);
+            }
+            catch (WrongExpectedVersionException)
+            {
+                return this.BadRequest();
+            }
+
+            //TODO: Handle NAK scenarios
+            return this.Ok();
+        }
+
+        /// <summary>
         /// Posts the event golf club membership.
         /// </summary>
         /// <param name="event">The event.</param>

@@ -467,8 +467,6 @@
         {
             Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
             
-            var gimp = this.ReadModelResolver();
-
             using(ManagementAPIReadModel context = this.ReadModelResolver())
             {
                 // Check the club has not already been added to the read model
@@ -499,6 +497,64 @@
                                                                 };
 
                     context.PlayerClubMembership.Add(playerClubMembership);
+
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Inserts the player membership to reporting.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="NotFoundException">
+        /// Golf Club with Id {domainEvent.AggregateId} not found in read model
+        /// or
+        /// Player with Id {domainEvent.PlayerId} not found
+        /// </exception>
+        public async Task InsertPlayerMembershipToReporting(ClubMembershipRequestAcceptedEvent domainEvent,
+                                                            CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the club has not already been added to the read model
+                Boolean isDuplicate = await context.GolfClubMembershipReporting.Where(p => p.PlayerId == domainEvent.PlayerId &&
+                                                                                    p.GolfClubId == domainEvent.AggregateId)
+                                                   .AnyAsync(cancellationToken);
+                Logger.LogInformation($"Is duplicate is {isDuplicate}");
+                if (!isDuplicate)
+                {
+                    GolfClub golfClub = await context.GolfClub.SingleOrDefaultAsync(g => g.GolfClubId == domainEvent.AggregateId, cancellationToken);
+
+                    if (golfClub == null)
+                    {
+                        throw new NotFoundException($"Golf Club with Id {domainEvent.AggregateId} not found in read model");
+                    }
+
+                    // Get the player
+                    PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(domainEvent.PlayerId, cancellationToken);
+
+                    if (!player.HasBeenRegistered)
+                    {
+                        throw new NotFoundException($"Player with Id {domainEvent.PlayerId} not found");
+                    }
+
+                    GolfClubMembershipReporting golfClubMembershipReporting = new GolfClubMembershipReporting
+                    {
+                        GolfClubId = domainEvent.AggregateId,
+                        GolfClubName = golfClub.Name,
+                        PlayerId = domainEvent.PlayerId,
+                        PlayerName = domainEvent.PlayerFullName,
+                        DateJoined = domainEvent.AcceptedDateAndTime,
+                        DateOfBirth = domainEvent.PlayerDateOfBirth,
+                        HandicapCategory = player.HandicapCategory,
+                        PlayerGender = domainEvent.PlayerGender
+                    };
+
+                    context.GolfClubMembershipReporting.Add(golfClubMembershipReporting);
 
                     await context.SaveChangesAsync(cancellationToken);
                 }

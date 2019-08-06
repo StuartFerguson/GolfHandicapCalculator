@@ -76,6 +76,14 @@
         /// </value>
         public DbSet<TournamentResultForPlayerScore> TournamentResultForPlayerScore { get; set; }
 
+        /// <summary>
+        /// Gets or sets the golf club membership reporting.
+        /// </summary>
+        /// <value>
+        /// The golf club membership reporting.
+        /// </value>
+        public DbSet<GolfClubMembershipReporting> GolfClubMembershipReporting { get; set; }
+
         public DbSet<User> Users { get; set; }
 
         #endregion
@@ -131,6 +139,12 @@
                                                                         p.GolfClubId,
                                                                         p.UserId
                                                                     });
+
+            modelBuilder.Entity<GolfClubMembershipReporting>().HasKey(p => new
+                                                    {
+                                                        p.GolfClubId,
+                                                        p.PlayerId
+                                                    });
         }
 
         #endregion

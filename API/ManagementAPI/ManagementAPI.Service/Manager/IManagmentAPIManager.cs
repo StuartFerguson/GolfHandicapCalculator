@@ -103,6 +103,15 @@
                                                CancellationToken cancellationToken);
 
         /// <summary>
+        /// Inserts the player membership to reporting.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerMembershipToReporting(ClubMembershipRequestAcceptedEvent domainEvent,
+                                               CancellationToken cancellationToken);
+
+        /// <summary>
         /// Inserts the player membership to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
