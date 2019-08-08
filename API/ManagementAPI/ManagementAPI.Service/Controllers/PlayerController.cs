@@ -1,10 +1,8 @@
 ﻿namespace ManagementAPI.Service.Controllers
 {
-    using Commands;
     using Common;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
-    using Manager;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Shared.CommandHandling;
@@ -16,6 +14,8 @@
     using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
+    using BusinessLogic.Commands;
+    using BusinessLogic.Manager;
 
     [Route("api/[controller]")]
     [ApiController]

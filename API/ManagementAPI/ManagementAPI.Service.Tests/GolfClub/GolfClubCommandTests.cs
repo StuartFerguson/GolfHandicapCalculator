@@ -1,7 +1,7 @@
 ﻿namespace ManagementAPI.Service.Tests.GolfClub
 {
     using System;
-    using Commands;
+    using BusinessLogic.Commands;
     using Shouldly;
     using Xunit;
 

@@ -2,12 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
-    using Commands;
+    using BusinessLogic.Services.ExternalServices.DataTransferObjects;
     using DataTransferObjects;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
+    using ManagementAPI.BusinessLogic.Commands;
     using ManagementAPI.Player;
-    using Services.ExternalServices.DataTransferObjects;
     using MembershipStatus = DataTransferObjects.Responses.MembershipStatus;
 
     public class PlayerTestData

@@ -4,9 +4,9 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
-    using Commands;
     using Common;
     using HandicapCalculationProcess;
+    using ManagementAPI.BusinessLogic.Commands;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Shared.CommandHandling;

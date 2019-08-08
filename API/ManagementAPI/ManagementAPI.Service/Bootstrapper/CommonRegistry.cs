@@ -7,9 +7,6 @@ using EventStore.ClientAPI;
 using ManagementAPI.GolfClub;
 using ManagementAPI.GolfClubMembership;
 using ManagementAPI.Player;
-using ManagementAPI.Service.CommandHandlers;
-using ManagementAPI.Service.Manager;
-using ManagementAPI.Service.Services;
 using ManagementAPI.Tournament;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -22,9 +19,13 @@ using ESLogger = EventStore.ClientAPI;
 
 namespace ManagementAPI.Service.Bootstrapper
 {
-    using EventHandling;
+    using BusinessLogic.CommandHandlers;
+    using BusinessLogic.Manager;
+    using BusinessLogic.Services;
+    using BusinessLogic.Services.ApplicationServices;
+    using BusinessLogic.Services.ExternalServices;
     using HandicapCalculationProcess;
-    using Services.DomainServices;
+    using ManagementAPI.BusinessLogic.EventHandling;
 
     [ExcludeFromCodeCoverage]
     public class CommonRegistry : Registry

@@ -5,8 +5,8 @@ using System.Text;
 namespace ManagementAPI.Service.Tests.HandicapCalculationProcess
 {
     using System.Threading;
-    using CommandHandlers;
-    using Commands;
+    using BusinessLogic.CommandHandlers;
+    using BusinessLogic.Commands;
     using ManagementAPI.HandicapCalculationProcess;
     using ManagementAPI.Tournament;
     using Moq;

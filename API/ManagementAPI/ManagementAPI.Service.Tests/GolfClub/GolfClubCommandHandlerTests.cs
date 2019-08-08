@@ -2,9 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ManagementAPI.GolfClub;
-using ManagementAPI.Service.CommandHandlers;
-using ManagementAPI.Service.Commands;
-using ManagementAPI.Service.Services;
 using Moq;
 using Shared.EventStore;
 using Shouldly;
@@ -12,7 +9,11 @@ using Xunit;
 
 namespace ManagementAPI.Service.Tests.GolfClub
 {
-    using Services.ExternalServices.DataTransferObjects;
+    using BusinessLogic.CommandHandlers;
+    using BusinessLogic.Commands;
+    using BusinessLogic.Services.ApplicationServices;
+    using BusinessLogic.Services.ExternalServices;
+    using BusinessLogic.Services.ExternalServices.DataTransferObjects;
 
     public class GolfClubCommandHandlerTests
     {

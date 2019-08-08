@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ManagementAPI.Service.Commands;
 using Shouldly;
 using Xunit;
 
 namespace ManagementAPI.Service.Tests.Player
 {
+    using BusinessLogic.Commands;
+
     public class PlayerCommandTests
     {
         [Fact]

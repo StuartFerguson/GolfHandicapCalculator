@@ -4,8 +4,8 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
-    using EventHandling;
     using EventStore.ClientAPI.Exceptions;
+    using ManagementAPI.BusinessLogic.EventHandling;
     using Microsoft.AspNetCore.Mvc;
     using Shared.EventSourcing;
 

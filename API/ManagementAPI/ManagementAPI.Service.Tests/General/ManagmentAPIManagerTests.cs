@@ -6,6 +6,9 @@
     using System.Security.Principal;
     using System.Threading;
     using System.Threading.Tasks;
+    using BusinessLogic.Manager;
+    using BusinessLogic.Services.ExternalServices;
+    using BusinessLogic.Services.ExternalServices.DataTransferObjects;
     using Database;
     using Database.Models;
     using DataTransferObjects;
@@ -19,14 +22,11 @@
     using ManagementAPI.GolfClubMembership.DomainEvents;
     using ManagementAPI.Player;
     using ManagementAPI.Tournament.DomainEvents;
-    using Manager;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Logging.Abstractions;
     using Moq;
     using Player;
-    using Services;
-    using Services.ExternalServices.DataTransferObjects;
     using Shared.EventStore;
     using Shared.Exceptions;
     using Shared.General;

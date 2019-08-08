@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\DomainServices\" />
     <Folder Include="Shared\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
@@ -27,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ManagementAPI.BusinessLogic\ManagementAPI.BusinessLogic.csproj" />
     <ProjectReference Include="..\ManagementAPI.Database\ManagementAPI.Database.csproj" />
     <ProjectReference Include="..\ManagementAPI.GolfClubAggregate\ManagementAPI.GolfClubAggregate.csproj" />
     <ProjectReference Include="..\ManagementAPI.GolfClubMembershipAggregate\ManagementAPI.GolfClubMembershipAggregate.csproj" />

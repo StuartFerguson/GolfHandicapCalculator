@@ -5,12 +5,12 @@
     using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
-    using Commands;
+    using BusinessLogic.Commands;
+    using BusinessLogic.Manager;
     using Common;
     using DataTransferObjects;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
-    using Manager;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Shared.CommandHandling;
@@ -30,6 +30,9 @@
         /// </summary>
         private readonly ICommandRouter CommandRouter;
 
+        /// <summary>
+        /// The manager
+        /// </summary>
         private readonly IManagmentAPIManager Manager;
 
         #endregion
