@@ -1,213 +1,109 @@
-﻿namespace ManagementAPI.IntegrationTests.Player
+﻿using System;
+using TechTalk.SpecFlow;
+
+namespace ManagementAPI.IntegrationTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using Common;
     using DataTransferObjects;
-    using Ductus.FluentDocker.Services.Extensions;
     using GolfClub;
-    using MySql.Data.MySqlClient;
     using Service.Client;
-    using Service.DataTransferObjects;
     using Service.DataTransferObjects.Requests;
     using Service.DataTransferObjects.Responses;
     using Shouldly;
-    using TechTalk.SpecFlow;
 
     [Binding]
     [Scope(Tag = "player")]
-    public class PlayerSteps : GenericSteps
+    public class PlayerSteps
     {
-        #region Fields
-
-        private Func<String, String> BaseAddressResolver;
-
-        private HttpClient HttpClient;
-
-        private readonly PlayerTestingContext PlayerTestingContext;
-
-        #endregion
-
-        #region Constructors
-
-        public PlayerSteps(ScenarioContext scenarioContext,
-                           PlayerTestingContext playerTestingContext) : base(scenarioContext)
+        private readonly TestingContext TestingContext;
+        
+        public PlayerSteps(ScenarioContext scenarioContext, TestingContext testingContext)
         {
-            this.PlayerTestingContext = playerTestingContext;
+            this.TestingContext = testingContext;
         }
 
-        #endregion
-
-        #region Methods
-
-        [AfterScenario]
-        public void AfterScenario()
+        [Given(@"I register the following details for a player")]
+        public void GivenIRegisterTheFollowingDetailsForAPlayer(Table table)
         {
-            this.StopSystem();
+            TableRow tableRow = table.Rows.Single();
+
+            RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest
+                                                          {
+                                                              DateOfBirth = DateTime.ParseExact(tableRow["DateOfBirth"], "yyyy-MM-dd", null),
+                                                              FamilyName = tableRow["FamilyName"],
+                                                              GivenName = tableRow["GivenName"],
+                                                              MiddleName = tableRow["MiddleName"],
+                                                              EmailAddress = tableRow["EmailAddress"],
+                                                              ExactHandicap = Decimal.Parse(tableRow["ExactHandicap"]),
+                                                              Gender = tableRow["Gender"]
+                                                          };
+
+            this.TestingContext.RegisterPlayerRequest = registerPlayerRequest;
+            this.TestingContext.RegisterPlayerRequests.Add(tableRow["PlayerNumber"], registerPlayerRequest);
         }
 
-        [Given(@"I am logged in as a golf club administrator")]
-        public async Task GivenIAmLoggedInAsAGolfClubAdministrator()
+        [Then(@"the player registration for player number (.*) should be successful")]
+        public void ThenThePlayerRegistrationForPlayerNumberShouldBeSuccessful(String playerNumber)
         {
-            this.PlayerTestingContext.ClubAdministratorToken = await this.GetToken(TokenType.Password,
-                                                                                   "golfhandicap.mobile",
-                                                                                   "golfhandicap.mobile",
-                                                                                   IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress,
-                                                                                   IntegrationTestsTestData.RegisterClubAdministratorRequest.Password)
-                                                                         .ConfigureAwait(false);
-        }
-
-        [Given(@"I am logged in as a player")]
-        public async Task GivenIAmLoggedInAsAPlayer()
-        {
-            this.PlayerTestingContext.PlayerToken = await this.GetToken(TokenType.Password,
-                                                                        "golfhandicap.mobile",
-                                                                        "golfhandicap.mobile",
-                                                                        IntegrationTestsTestData.RegisterPlayerRequest.EmailAddress,
-                                                                        "123456").ConfigureAwait(false);
-        }
-
-        [Given(@"I am registered as a player")]
-        public void GivenIAmRegisteredAsAPlayer()
-        {
-            RegisterPlayerRequest request = IntegrationTestsTestData.RegisterPlayerRequest;
-
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
             Should.NotThrow(async () =>
                             {
-                                this.PlayerTestingContext.RegisterPlayerResponse = await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
+                                RegisterPlayerResponse registerPlayerResponse = await this.TestingContext.DockerHelper.PlayerClient.RegisterPlayer(this.TestingContext.RegisterPlayerRequest,
+                                                                                        CancellationToken.None).ConfigureAwait(false);
+
+                                this.TestingContext.RegisterPlayerResponse = registerPlayerResponse;
+                                this.TestingContext.RegisterPlayerResponses.Add(playerNumber, registerPlayerResponse);
                             });
         }
-
-        [Given(@"I have my details to register")]
-        public void GivenIHaveMyDetailsToRegister()
+        
+        [When(@"I request the player details for player number (.*)")]
+        public async Task WhenIRequestThePlayerDetailsForPlayerNumber(String playerNumber)
         {
-            // Construct the request 
-            this.PlayerTestingContext.RegisterPlayerRequest = IntegrationTestsTestData.RegisterPlayerRequest;
+            RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
+
+            this.TestingContext.GetPlayerDetailsResponse = await this.TestingContext.DockerHelper.PlayerClient.GetPlayer(this.TestingContext.PlayerToken, registerPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Given(@"I have registered as a golf club administrator")]
-        public void GivenIHaveRegisteredAsAGolfClubAdministrator()
+        [Then(@"the player details will be returned")]
+        public void ThenThePlayerDetailsWillBeReturned()
         {
-            RegisterClubAdministratorRequest request = IntegrationTestsTestData.RegisterClubAdministratorRequest;
-
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            Should.NotThrow(async () => { await client.RegisterGolfClubAdministrator(request, CancellationToken.None).ConfigureAwait(false); });
+            this.TestingContext.GetPlayerDetailsResponse.ShouldNotBeNull();
         }
 
-        [Given(@"The club I want to register for is already created")]
-        public async Task GivenTheClubIWantToRegisterForIsAlreadyCreated()
+        [When(@"I request a list of my memberships as player (.*)")]
+        public async Task WhenIRequestAListOfMyMembershipsAsPlayer(String playerNumber)
         {
-            CreateGolfClubRequest request = IntegrationTestsTestData.CreateGolfClubRequest;
-
-            String bearerToken = this.PlayerTestingContext.ClubAdministratorToken;
-
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-            IPlayerClient playerClient = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateGolfClubResponse response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
-
-            await Retry.For(async () =>
-                      {
-                          String passwordToken = this.PlayerTestingContext.PlayerToken;
-                          List<GetGolfClubResponse> golfClubList = await playerClient.GetGolfClubList(passwordToken, this.PlayerTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None);
-
-                          if (golfClubList.All(g => g.Id != response.GolfClubId))
-                          {
-                              throw new Exception("Golf Club not found in read model");
-                          }
-                      }).ConfigureAwait(false);
-
-            this.PlayerTestingContext.GolfClubId = response.GolfClubId;
-        }
-
-        [Given(@"The Golf Handicapping System Is Running")]
-        public async Task GivenTheGolfHandicappingSystemIsRunning()
-        {
-            await this.RunSystem(this.ScenarioContext.ScenarioInfo.Title).ConfigureAwait(false);
-
-            // Setup the base address resolver
-            this.BaseAddressResolver = api => $"http://127.0.0.1:{this.ManagementApiPort}";
-
-            this.HttpClient = new HttpClient();
-        }
-
-        [Then(@"a list of my memberships will be retunred")]
-        public void ThenAListOfMyMembershipsWillBeRetunred()
-        {
-            this.PlayerTestingContext.ClubMembershipResponses.ShouldNotBeEmpty();
-        }
-
-        [Then(@"a my details will be returned")]
-        public void ThenAMyDetailsWillBeReturned()
-        {
-            this.PlayerTestingContext.GetPlayerDetailsResponse.ShouldNotBeNull();
-        }
-
-        [Then(@"my details are registered successfully")]
-        public void ThenMyDetailsAreRegisteredSuccessfully()
-        {
-            RegisterPlayerResponse response = this.PlayerTestingContext.RegisterPlayerResponse;
-
-            response.ShouldNotBeNull();
-            response.PlayerId.ShouldNotBe(Guid.Empty);
-        }
-
-        [When(@"I register my details on the system")]
-        public void WhenIRegisterMyDetailsOnTheSystem()
-        {
-            RegisterPlayerRequest request = this.PlayerTestingContext.RegisterPlayerRequest;
-
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            Should.NotThrow(async () =>
-                            {
-                                this.PlayerTestingContext.RegisterPlayerResponse = await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
-                            });
-        }
-
-        [When(@"I request a list of my memberships")]
-        public async Task WhenIRequestAListOfMyMemberships()
-        {
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.PlayerTestingContext.PlayerToken;
-
-            await Retry.For(async () => { this.PlayerTestingContext.ClubMembershipResponses = await client.GetPlayerMemberships(bearerToken, this.PlayerTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None); }).ConfigureAwait(false);
-        }
-
-        [When(@"I request club membership my request is accepted")]
-        public void WhenIRequestClubMembershipMyRequestIsAccepted()
-        {
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.PlayerTestingContext.PlayerToken;
-            Guid golfClubId = this.PlayerTestingContext.GolfClubId;
-
-            Should.NotThrow(async () => { await client.RequestClubMembership(bearerToken, this.PlayerTestingContext.RegisterPlayerResponse.PlayerId, golfClubId, CancellationToken.None).ConfigureAwait(false); });
-        }
-
-        [When(@"I request my player details")]
-        public async Task WhenIRequestMyPlayerDetails()
-        {
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.PlayerTestingContext.PlayerToken;
-
+            RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
             await Retry.For(async () =>
                             {
-                                this.PlayerTestingContext.GetPlayerDetailsResponse =
-                                    await client.GetPlayer(bearerToken, this.PlayerTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None);
+                                List<ClubMembershipResponse> getClubMembershipResponses = await this
+                                                                                              .TestingContext.DockerHelper.PlayerClient
+                                                                                              .GetPlayerMemberships(this.TestingContext.PlayerToken,
+                                                                                                                    registerPlayerResponse.PlayerId,
+                                                                                                                    CancellationToken.None).ConfigureAwait(false);
+                                if (getClubMembershipResponses.Count == 0)
+                                {
+                                    throw new Exception();
+                                }
+
+                                this.TestingContext.GetGolfClubMembershipResponseList = getClubMembershipResponses;
+
                             }).ConfigureAwait(false);
         }
 
-        #endregion
+
+        [Then(@"a list of my memberships will be returned")]
+        public void ThenAListOfMyMembershipsWillBeReturned()
+        {
+            this.TestingContext.GetGolfClubMembershipResponseList.ShouldNotBeNull();
+            this.TestingContext.GetGolfClubMembershipResponseList.ShouldNotBeEmpty();
+            this.TestingContext.GetGolfClubMembershipResponseList.Count.ShouldBe(1);
+        }
+
+
     }
 }

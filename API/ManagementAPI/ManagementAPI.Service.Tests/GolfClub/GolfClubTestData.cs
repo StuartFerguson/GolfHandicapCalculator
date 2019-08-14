@@ -3,14 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Commands;
+    using BusinessLogic.Commands;
+    using BusinessLogic.Services.ExternalServices.DataTransferObjects;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
     using IdentityModel;
     using ManagementAPI.GolfClub;
     using ManagementAPI.GolfClub.DomainEvents;
     using ManagementAPI.GolfClubMembership.DomainEvents;
-    using Services.ExternalServices.DataTransferObjects;
     using Tournament;
 
     public class GolfClubTestData
@@ -299,6 +299,12 @@
                                                                                               GivenName = "Test",
                                                                                               MiddleName = null,
                                                                                               FamilyName = "Club Administrator"
+                                                                                          };
+
+        public static GetNumberOfMembersReportResponse GetNumberOfMembersReportResponse = new GetNumberOfMembersReportResponse
+                                                                                          {
+                                                                                              GolfClubId = GolfClubTestData.AggregateId,
+                                                                                              NumberOfMembers = 5
                                                                                           };
 
         #endregion

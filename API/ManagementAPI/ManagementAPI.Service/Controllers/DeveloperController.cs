@@ -5,13 +5,13 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
+    using BusinessLogic.Manager;
     using Common;
     using DataTransferObjects;
     using DataTransferObjects.Responses;
     using Developer.DataTransferObjects;
     using GolfClub;
     using GolfClubMembership;
-    using Manager;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Player;

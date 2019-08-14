@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using ManagementAPI.GolfClub;
 using ManagementAPI.GolfClubMembership;
 using ManagementAPI.Player;
-using ManagementAPI.Service.Services;
 using ManagementAPI.Service.Tests.GolfClub;
 using ManagementAPI.Service.Tests.Player;
 using Moq;
@@ -17,6 +16,8 @@ using Xunit;
 
 namespace ManagementAPI.Service.Tests.GolfClubMembership
 {
+    using BusinessLogic.Services.ApplicationServices;
+
     public class GolfClubMembershipApplicationServiceTests
     {
         [Fact]

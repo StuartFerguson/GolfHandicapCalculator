@@ -17,6 +17,8 @@ namespace ManagementAPI.IntegrationTests.Player
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [Xunit.TraitAttribute("Category", "base")]
+    [Xunit.TraitAttribute("Category", "golfclub")]
     [Xunit.TraitAttribute("Category", "player")]
     public partial class GetPlayerFeature : Xunit.IClassFixture<GetPlayerFeature.FixtureData>, System.IDisposable
     {
@@ -38,6 +40,8 @@ namespace ManagementAPI.IntegrationTests.Player
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Get Player", null, ProgrammingLanguage.CSharp, new string[] {
+                        "base",
+                        "golfclub",
                         "player"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -76,20 +80,29 @@ namespace ManagementAPI.IntegrationTests.Player
         public virtual void FeatureBackground()
         {
 #line 4
+#line hidden
+            TechTalk.SpecFlow.Table table43 = new TechTalk.SpecFlow.Table(new string[] {
+                        "PlayerNumber",
+                        "EmailAddress",
+                        "GivenName",
+                        "MiddleName",
+                        "FamilyName",
+                        "DateOfBirth",
+                        "Gender",
+                        "ExactHandicap"});
+            table43.AddRow(new string[] {
+                        "1",
+                        "testplayer1@players.co.uk",
+                        "Test",
+                        "",
+                        "Player1",
+                        "1990-01-01",
+                        "M",
+                        "2"});
 #line 5
- testRunner.Given("The Golf Handicapping System Is Running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 6
- testRunner.And("I have registered as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 7
- testRunner.And("I am logged in as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("I register the following details for a player", ((string)(null)), table43, "Given ");
 #line 8
- testRunner.And("I am registered as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 9
- testRunner.And("I am logged in as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 10
- testRunner.And("The club I want to register for is already created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 11
- testRunner.When("I request club membership my request is accepted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Then("the player registration for player number 1 should be successful", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
         }
         
@@ -104,15 +117,17 @@ namespace ManagementAPI.IntegrationTests.Player
         public virtual void GetPlayer()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Player", null, ((string[])(null)));
-#line 13
+#line 10
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 14
- testRunner.When("I request my player details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 15
- testRunner.Then("a my details will be returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 11
+ testRunner.Given("I am logged in as player number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 12
+ testRunner.When("I request the player details for player number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 13
+ testRunner.Then("the player details will be returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

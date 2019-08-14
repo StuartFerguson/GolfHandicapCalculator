@@ -3,14 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Threading;
-    using CommandHandlers;
-    using Commands;
+    using BusinessLogic.CommandHandlers;
+    using BusinessLogic.Commands;
+    using BusinessLogic.Services.ApplicationServices;
     using GolfClub;
     using ManagementAPI.GolfClub;
     using ManagementAPI.Tournament;
     using Moq;
-    using Services;
-    using Services.DomainServices;
     using Shared.EventStore;
     using Shared.Exceptions;
     using Shouldly;

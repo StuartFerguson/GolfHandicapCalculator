@@ -45,6 +45,29 @@ namespace ManagementAPI.Database.Migrations
                     b.ToTable("GolfClub");
                 });
 
+            modelBuilder.Entity("ManagementAPI.Database.Models.GolfClubMembershipReporting", b =>
+                {
+                    b.Property<Guid>("GolfClubId");
+
+                    b.Property<Guid>("PlayerId");
+
+                    b.Property<DateTime>("DateJoined");
+
+                    b.Property<DateTime>("DateOfBirth");
+
+                    b.Property<string>("GolfClubName");
+
+                    b.Property<int>("HandicapCategory");
+
+                    b.Property<string>("PlayerGender");
+
+                    b.Property<string>("PlayerName");
+
+                    b.HasKey("GolfClubId", "PlayerId");
+
+                    b.ToTable("GolfClubMembershipReporting");
+                });
+
             modelBuilder.Entity("ManagementAPI.Database.Models.PlayerClubMembership", b =>
                 {
                     b.Property<Guid>("PlayerId");

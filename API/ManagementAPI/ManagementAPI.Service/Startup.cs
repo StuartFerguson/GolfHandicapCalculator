@@ -21,11 +21,14 @@ namespace ManagementAPI.Service
     using System.Threading;
     using System.Threading.Tasks;
     using Bootstrapper;
+    using BusinessLogic.Common;
     using Common;
     using Controllers;
     using Database;
     using Database.SeedData;
-    using EventHandling;
+    using ManagementAPI.BusinessLogic.EventHandling;
+    using ManagementAPI.BusinessLogic.Services.ExternalServices;
+    using ManagementAPI.BusinessLogic.Services.ExternalServices.DataTransferObjects;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -38,8 +41,6 @@ namespace ManagementAPI.Service
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
     using NLog.Extensions.Logging;
-    using Services;
-    using Services.ExternalServices.DataTransferObjects;
     using Shared.Exceptions;
     using Shared.Extensions;
     using Shared.General;
@@ -143,8 +144,8 @@ namespace ManagementAPI.Service
             }
 
             // Setup the database
-            if (!Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
-            {
+            //if (!Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
+            //{
                 Task.WaitAll(Task.Run(async () =>
                                       {
                                           // Setup the database
@@ -153,7 +154,7 @@ namespace ManagementAPI.Service
                                           // Setup the security service
                                           await this.InitialiseSecurityRoles(app);
                                       }));
-            }
+            //}
 
             app.AddExceptionHandler();
             app.AddRequestLogging();
@@ -203,7 +204,6 @@ namespace ManagementAPI.Service
 
                 foreach (String roleName in rolesList)
                 {
-
                     Boolean createRole = false;
                     try
                     {
@@ -311,18 +311,18 @@ namespace ManagementAPI.Service
                                                  options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                                              }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            if (Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
-            {
-                services.AddDbContext<ManagementAPIReadModel>(builder => builder.UseInMemoryDatabase("ManagementAPIReadModel")).AddTransient<ManagementAPIReadModel>();
-            }
-            else
-            {
+            //if (Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
+            //{
+            //    services.AddDbContext<ManagementAPIReadModel>(builder => builder.UseInMemoryDatabase("ManagementAPIReadModel")).AddTransient<ManagementAPIReadModel>();
+            //}
+            //else
+            //{
                 String migrationsAssembly = typeof(ManagementAPIReadModel).GetTypeInfo().Assembly.GetName().Name;
 
                 services.AddDbContext<ManagementAPIReadModel>(builder => builder.UseMySql(Startup.ManagementAPIReadModelConnectionString,
                                                                                           sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly)))
                         .AddTransient<ManagementAPIReadModel>();
-            }
+            //}
 
             //services.AddAuthorization(Startup.ConfigurePolicies);
 

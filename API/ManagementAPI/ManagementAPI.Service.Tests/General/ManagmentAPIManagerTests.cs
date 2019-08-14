@@ -6,6 +6,9 @@
     using System.Security.Principal;
     using System.Threading;
     using System.Threading.Tasks;
+    using BusinessLogic.Manager;
+    using BusinessLogic.Services.ExternalServices;
+    using BusinessLogic.Services.ExternalServices.DataTransferObjects;
     using Database;
     using Database.Models;
     using DataTransferObjects;
@@ -19,14 +22,11 @@
     using ManagementAPI.GolfClubMembership.DomainEvents;
     using ManagementAPI.Player;
     using ManagementAPI.Tournament.DomainEvents;
-    using Manager;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Logging.Abstractions;
     using Moq;
     using Player;
-    using Services;
-    using Services.ExternalServices.DataTransferObjects;
     using Shared.EventStore;
     using Shared.Exceptions;
     using Shared.General;
@@ -1215,6 +1215,165 @@
                 await manager.InsertPlayerMembershipToReadModel(domainEvent, CancellationToken.None);
             });
         }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertPlayerMembershipToReporting_RecordInsertedSuccessfully()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.GolfClub.Add(new GolfClub
+            {
+                EmailAddress = GolfClubTestData.EmailAddress,
+                Name = GolfClubTestData.Name,
+                AddressLine1 = GolfClubTestData.AddressLine1,
+                Town = GolfClubTestData.Town,
+                Region = GolfClubTestData.Region,
+                TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                PostalCode = GolfClubTestData.PostalCode,
+                AddressLine2 = GolfClubTestData.AddressLine2,
+                GolfClubId = GolfClubTestData.AggregateId,
+                WebSite = GolfClubTestData.Website
+            });
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            ClubMembershipRequestAcceptedEvent domainEvent = GolfClubTestData.GetClubMembershipRequestAcceptedEvent();
+
+            Should.NotThrow(async () =>
+            {
+                await manager.InsertPlayerMembershipToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertPlayerMembershipToReporting_NullEvent_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.GolfClub.Add(new GolfClub
+            {
+                EmailAddress = GolfClubTestData.EmailAddress,
+                Name = GolfClubTestData.Name,
+                AddressLine1 = GolfClubTestData.AddressLine1,
+                Town = GolfClubTestData.Town,
+                Region = GolfClubTestData.Region,
+                TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                PostalCode = GolfClubTestData.PostalCode,
+                AddressLine2 = GolfClubTestData.AddressLine2,
+                GolfClubId = GolfClubTestData.AggregateId,
+                WebSite = GolfClubTestData.Website
+            });
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            ClubMembershipRequestAcceptedEvent domainEvent = null;
+
+            Should.Throw<ArgumentNullException>(async () =>
+            {
+                await manager.InsertPlayerMembershipToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertPlayerMembershipToReporting_GolfClubNotFound_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            ClubMembershipRequestAcceptedEvent domainEvent = GolfClubTestData.GetClubMembershipRequestAcceptedEvent();
+
+            Should.Throw<NotFoundException>(async () =>
+            {
+                await manager.InsertPlayerMembershipToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertPlayerMembershipToReporting_PlayerNotFound_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.GolfClub.Add(new GolfClub
+            {
+                EmailAddress = GolfClubTestData.EmailAddress,
+                Name = GolfClubTestData.Name,
+                AddressLine1 = GolfClubTestData.AddressLine1,
+                Town = GolfClubTestData.Town,
+                Region = GolfClubTestData.Region,
+                TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                PostalCode = GolfClubTestData.PostalCode,
+                AddressLine2 = GolfClubTestData.AddressLine2,
+                GolfClubId = GolfClubTestData.AggregateId,
+                WebSite = GolfClubTestData.Website
+            });
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate);
+
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            ClubMembershipRequestAcceptedEvent domainEvent = GolfClubTestData.GetClubMembershipRequestAcceptedEvent();
+
+            Should.Throw<NotFoundException>(async () =>
+            {
+                await manager.InsertPlayerMembershipToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
 
         [Fact]
         public async Task ManagementAPIManager_InsertTournamentToReadModel_RecordInsertedSuccessfully()

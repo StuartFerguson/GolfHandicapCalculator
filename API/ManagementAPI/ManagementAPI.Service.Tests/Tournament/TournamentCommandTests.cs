@@ -1,10 +1,11 @@
 ﻿using System;
-using ManagementAPI.Service.Commands;
 using Shouldly;
 using Xunit;
 
 namespace ManagementAPI.Service.Tests.Tournament
 {
+    using BusinessLogic.Commands;
+
     public class TournamentCommandTests
     {
         [Fact]

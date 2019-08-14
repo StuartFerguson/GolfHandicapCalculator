@@ -17,6 +17,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
     public partial class CreateMatchSecretaryFeature : Xunit.IClassFixture<CreateMatchSecretaryFeature.FixtureData>, System.IDisposable
     {
@@ -39,6 +40,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Create Match Secretary", "\tIn order to manage tournaments\r\n\tAs a club administrator\r\n\tI must be able to cre" +
                     "ate a match secretary user", ProgrammingLanguage.CSharp, new string[] {
+                        "base",
                         "golfclub"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -77,14 +79,56 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         public virtual void FeatureBackground()
         {
 #line 7
+#line hidden
+            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "EmailAddress",
+                        "GivenName",
+                        "MiddleName",
+                        "FamilyName",
+                        "Password",
+                        "ConfirmPassword",
+                        "TelephoneNumber"});
+            table9.AddRow(new string[] {
+                        "1",
+                        "admin@testgolfclub1.co.uk",
+                        "Admin",
+                        "",
+                        "User1",
+                        "123456",
+                        "123456",
+                        "01234567890"});
 #line 8
- testRunner.Given("The Golf Handicapping System Is Running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 9
- testRunner.And("I have registered as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 10
- testRunner.And("I am logged in as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("the following golf club administrator has been registered", ((string)(null)), table9, "Given ");
 #line 11
- testRunner.And("my golf club has been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I am logged in as the administrator for golf club 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "GolfClubName",
+                        "AddressLine1",
+                        "AddressLine2",
+                        "Town",
+                        "Region",
+                        "PostalCode",
+                        "TelephoneNumber",
+                        "EmailAddress",
+                        "WebSite"});
+            table10.AddRow(new string[] {
+                        "1",
+                        "Test Golf Club 1",
+                        "Test Golf Club Address Line 1",
+                        "Test Golf Club Address Line",
+                        "TestTown1",
+                        "TestRegion",
+                        "TE57 1NG",
+                        "01234567890",
+                        "testclub1@testclub1.co.uk",
+                        "www.testclub1.co.uk"});
+#line 12
+ testRunner.When("I create a golf club with the following details", ((string)(null)), table10, "When ");
+#line 15
+ testRunner.Then("the golf club is created successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
         }
         
@@ -99,17 +143,34 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         public virtual void CreateMatchSecretary()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create Match Secretary", null, ((string[])(null)));
-#line 13
+#line 17
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
-#line 14
- testRunner.Given("I have the details of the match secretary", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 15
- testRunner.When("I create the Match Secretary", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 16
- testRunner.Then("the divsion is addded successfully with an Http Status Code 204", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "EmailAddress",
+                        "GivenName",
+                        "MiddleName",
+                        "FamilyName",
+                        "Password",
+                        "ConfirmPassword",
+                        "TelephoneNumber"});
+            table11.AddRow(new string[] {
+                        "1",
+                        "matchsecretary@testgolfclub1.co.uk",
+                        "Match",
+                        "",
+                        "Secretary1",
+                        "123456",
+                        "123456",
+                        "01234567890"});
+#line 18
+ testRunner.When("I register the following details for a match secretary", ((string)(null)), table11, "When ");
+#line 21
+ testRunner.Then("the match secretary registration should be successful", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

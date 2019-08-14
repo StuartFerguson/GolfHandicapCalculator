@@ -17,6 +17,8 @@ namespace ManagementAPI.IntegrationTests.Player
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [Xunit.TraitAttribute("Category", "base")]
+    [Xunit.TraitAttribute("Category", "golfclub")]
     [Xunit.TraitAttribute("Category", "player")]
     public partial class GetPlayerMembershipsFeature : Xunit.IClassFixture<GetPlayerMembershipsFeature.FixtureData>, System.IDisposable
     {
@@ -38,6 +40,8 @@ namespace ManagementAPI.IntegrationTests.Player
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Get Player Memberships", null, ProgrammingLanguage.CSharp, new string[] {
+                        "base",
+                        "golfclub",
                         "player"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -76,20 +80,78 @@ namespace ManagementAPI.IntegrationTests.Player
         public virtual void FeatureBackground()
         {
 #line 4
+#line hidden
+            TechTalk.SpecFlow.Table table44 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "EmailAddress",
+                        "GivenName",
+                        "MiddleName",
+                        "FamilyName",
+                        "Password",
+                        "ConfirmPassword",
+                        "TelephoneNumber"});
+            table44.AddRow(new string[] {
+                        "1",
+                        "admin@testgolfclub1.co.uk",
+                        "Admin",
+                        "",
+                        "User1",
+                        "123456",
+                        "123456",
+                        "01234567890"});
 #line 5
- testRunner.Given("The Golf Handicapping System Is Running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 6
- testRunner.And("I have registered as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 7
- testRunner.And("I am logged in as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("the following golf club administrators have been registered", ((string)(null)), table44, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table45 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "GolfClubName",
+                        "AddressLine1",
+                        "AddressLine2",
+                        "Town",
+                        "Region",
+                        "PostalCode",
+                        "TelephoneNumber",
+                        "EmailAddress",
+                        "WebSite"});
+            table45.AddRow(new string[] {
+                        "1",
+                        "Test Golf Club 1",
+                        "Test Golf Club Address Line 1",
+                        "Test Golf Club Address Line",
+                        "TestTown1",
+                        "TestRegion",
+                        "TE57 1NG",
+                        "01234567890",
+                        "testclub1@testclub1.co.uk",
+                        "www.testclub1.co.uk"});
 #line 8
- testRunner.And("I am registered as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 9
- testRunner.And("I am logged in as a player", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 10
- testRunner.And("The club I want to register for is already created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the following golf clubs exist", ((string)(null)), table45, "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table46 = new TechTalk.SpecFlow.Table(new string[] {
+                        "PlayerNumber",
+                        "EmailAddress",
+                        "GivenName",
+                        "MiddleName",
+                        "FamilyName",
+                        "DateOfBirth",
+                        "Gender",
+                        "ExactHandicap"});
+            table46.AddRow(new string[] {
+                        "1",
+                        "testplayer1@players.co.uk",
+                        "Test",
+                        "",
+                        "Player1",
+                        "1990-01-01",
+                        "M",
+                        "2"});
 #line 11
- testRunner.When("I request club membership my request is accepted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("the following players have registered", ((string)(null)), table46, "And ");
+#line 14
+ testRunner.Given("I am logged in as player number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 15
+ testRunner.When("I request membership of club number 1 for player number 1 the request is successf" +
+                    "ul", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
         }
         
@@ -106,15 +168,17 @@ namespace ManagementAPI.IntegrationTests.Player
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Player Memberships", null, new string[] {
                         "EndToEnd"});
-#line 14
+#line 18
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 15
- testRunner.When("I request a list of my memberships", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 16
- testRunner.Then("a list of my memberships will be retunred", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 19
+ testRunner.Given("I am logged in as player number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 20
+ testRunner.When("I request a list of my memberships as player 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 21
+ testRunner.Then("a list of my memberships will be returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

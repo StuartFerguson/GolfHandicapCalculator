@@ -17,6 +17,8 @@ namespace ManagementAPI.IntegrationTests.Tournament
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [Xunit.TraitAttribute("Category", "base")]
+    [Xunit.TraitAttribute("Category", "golfclub")]
     [Xunit.TraitAttribute("Category", "tournament")]
     public partial class CancelTournamentFeature : Xunit.IClassFixture<CancelTournamentFeature.FixtureData>, System.IDisposable
     {
@@ -39,6 +41,8 @@ namespace ManagementAPI.IntegrationTests.Tournament
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Cancel Tournament", "\tIn order to run a golf club handicapping system\r\n\tAs a club administrator\r\n\tI ne" +
                     "ed to be able to cancel tournaments", ProgrammingLanguage.CSharp, new string[] {
+                        "base",
+                        "golfclub",
                         "tournament"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -77,16 +81,231 @@ namespace ManagementAPI.IntegrationTests.Tournament
         public virtual void FeatureBackground()
         {
 #line 7
+#line hidden
+            TechTalk.SpecFlow.Table table48 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "EmailAddress",
+                        "GivenName",
+                        "MiddleName",
+                        "FamilyName",
+                        "Password",
+                        "ConfirmPassword",
+                        "TelephoneNumber"});
+            table48.AddRow(new string[] {
+                        "1",
+                        "admin@testgolfclub1.co.uk",
+                        "Admin",
+                        "",
+                        "User1",
+                        "123456",
+                        "123456",
+                        "01234567890"});
 #line 8
- testRunner.Given("The Golf Handicapping System Is Running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 9
- testRunner.And("I have registered as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 10
- testRunner.And("I am logged in as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("the following golf club administrator has been registered", ((string)(null)), table48, "Given ");
 #line 11
- testRunner.And("my golf club has been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I am logged in as the administrator for golf club 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table49 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "GolfClubName",
+                        "AddressLine1",
+                        "AddressLine2",
+                        "Town",
+                        "Region",
+                        "PostalCode",
+                        "TelephoneNumber",
+                        "EmailAddress",
+                        "WebSite"});
+            table49.AddRow(new string[] {
+                        "1",
+                        "Test Golf Club 1",
+                        "Test Golf Club Address Line 1",
+                        "Test Golf Club Address Line",
+                        "TestTown1",
+                        "TestRegion",
+                        "TE57 1NG",
+                        "01234567890",
+                        "testclub1@testclub1.co.uk",
+                        "www.testclub1.co.uk"});
 #line 12
- testRunner.And("a measured course is added to the club", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I create a golf club with the following details", ((string)(null)), table49, "When ");
+#line 15
+ testRunner.Then("the golf club is created successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            TechTalk.SpecFlow.Table table50 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "MeasuredCourseNumber",
+                        "Name",
+                        "StandardScratchScore",
+                        "TeeColour"});
+            table50.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "Test Course",
+                        "70",
+                        "White"});
+#line 16
+ testRunner.When("I add a measured course to the club with the following details", ((string)(null)), table50, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table51 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "MeasuredCourseNumber",
+                        "HoleNumber",
+                        "LengthInYards",
+                        "Par",
+                        "StrokeIndex"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "1",
+                        "348",
+                        "4",
+                        "10"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "2",
+                        "402",
+                        "4",
+                        "4"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "3",
+                        "207",
+                        "3",
+                        "14"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "4",
+                        "405",
+                        "4",
+                        "8"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "5",
+                        "428",
+                        "4",
+                        "2"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "6",
+                        "477",
+                        "5",
+                        "12"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "7",
+                        "186",
+                        "3",
+                        "16"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "8",
+                        "397",
+                        "4",
+                        "6"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "9",
+                        "130",
+                        "3",
+                        "18"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "10",
+                        "399",
+                        "4",
+                        "3"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "11",
+                        "401",
+                        "4",
+                        "13"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "12",
+                        "421",
+                        "4",
+                        "1"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "13",
+                        "530",
+                        "5",
+                        "11"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "14",
+                        "196",
+                        "3",
+                        "5"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "15",
+                        "355",
+                        "4",
+                        "7"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "16",
+                        "243",
+                        "4",
+                        "15"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "17",
+                        "286",
+                        "4",
+                        "17"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "1",
+                        "18",
+                        "399",
+                        "4",
+                        "9"});
+#line 19
+ testRunner.And("with the following holes", ((string)(null)), table51, "And ");
+#line 39
+ testRunner.Then("the measured course is added to the club successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            TechTalk.SpecFlow.Table table52 = new TechTalk.SpecFlow.Table(new string[] {
+                        "TournamentNumber",
+                        "TournamentName",
+                        "TournamentDate",
+                        "TournamentFormat",
+                        "PlayerCategory",
+                        "MeasuredCourseName",
+                        "GolfClubNumber"});
+            table52.AddRow(new string[] {
+                        "1",
+                        "Test Tournament 1",
+                        "Today",
+                        "Strokeplay",
+                        "Gents",
+                        "Test Course",
+                        "1"});
+#line 40
+ testRunner.Given("When I create a tournament with the following details", ((string)(null)), table52, "Given ");
+#line 43
+ testRunner.Then("tournament number 1 for golf club 1 measured course \'Test Course\' will be created" +
+                    "", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
         }
         
@@ -101,15 +320,14 @@ namespace ManagementAPI.IntegrationTests.Tournament
         public virtual void CancelTournament()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Cancel Tournament", null, ((string[])(null)));
-#line 14
+#line 45
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
-#line 15
- testRunner.Given("I have created a tournament", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 16
- testRunner.When("I request to cancel the tournament the tournament is cancelled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 46
+ testRunner.When("I request to cancel the tournament number 1 for golf club 1 measured course \'Test" +
+                    " Course\' the tournament is cancelled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             this.ScenarioCleanup();
         }

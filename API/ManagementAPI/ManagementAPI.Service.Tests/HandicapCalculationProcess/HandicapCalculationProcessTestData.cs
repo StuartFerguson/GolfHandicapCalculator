@@ -1,7 +1,7 @@
 ﻿namespace ManagementAPI.Service.Tests.HandicapCalculationProcess
 {
     using System;
-    using Commands;
+    using ManagementAPI.BusinessLogic.Commands;
     using ManagementAPI.HandicapCalculationProcess;
     using Tournament;
 

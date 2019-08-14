@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using ManagementAPI.Service.Services;
 using Shouldly;
 using Xunit;
 
 namespace ManagementAPI.Service.Tests.General
 {
+    using BusinessLogic.Services;
     using Microsoft.Extensions.Logging.Abstractions;
     using Shared.General;
 

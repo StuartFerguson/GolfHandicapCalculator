@@ -1,15 +1,17 @@
-﻿@golfclub
+﻿@base @golfclub
 Feature: Create Golf Club
 	In order to run a golf club handicapping system
 	As a club administrator
 	I want to be able to create my golf club
 
 Background: 
-	Given The Golf Handicapping System Is Running
-	And I have registered as a golf club administrator
+	Given the following golf club administrator has been registered
+	| GolfClubNumber | EmailAddress              | GivenName | MiddleName | FamilyName | Password | ConfirmPassword | TelephoneNumber |
+	| 1              | admin@testgolfclub1.co.uk | Admin     |            | User1      | 123456   | 123456          | 01234567890     |
+	And I am logged in as the administrator for golf club 1
 
 Scenario: Create Golf Club
-	Given I have the details of the new club
-	And I am logged in as a golf club administrator
-	When I call Create Golf Club
-	Then the golf club configuration will be created successfully
+	When I create a golf club with the following details
+	| GolfClubNumber | GolfClubName     | AddressLine1                  | AddressLine2                | Town      | Region     | PostalCode | TelephoneNumber | EmailAddress              | WebSite             | 
+	| 1              | Test Golf Club 1 | Test Golf Club Address Line 1 | Test Golf Club Address Line | TestTown1 | TestRegion | TE57 1NG   | 01234567890     | testclub1@testclub1.co.uk | www.testclub1.co.uk |
+	Then the golf club is created successfully

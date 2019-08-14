@@ -1,381 +1,266 @@
 ﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using ManagementAPI.IntegrationTests.Common;
-using ManagementAPI.IntegrationTests.DataTransferObjects;
-using ManagementAPI.Service.Client;
-using ManagementAPI.Service.DataTransferObjects;
-using Shouldly;
 using TechTalk.SpecFlow;
 
 namespace ManagementAPI.IntegrationTests.Tournament
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
-    using Ductus.FluentDocker.Services.Extensions;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Common;
     using GolfClub;
-    using Microsoft.VisualStudio.TestPlatform.Common;
-    using MySql.Data.MySqlClient;
     using Service.DataTransferObjects.Requests;
     using Service.DataTransferObjects.Responses;
+    using Shouldly;
 
     [Binding]
     [Scope(Tag = "tournament")]
-    public class TournamentSteps: GenericSteps
+    public class TournamentSteps
     {
-        private Func<String, String> BaseAddressResolver;
-        private HttpClient HttpClient = null;
+        private readonly TestingContext TestingContext;
 
-        private readonly TournamentTestingContext TournamentTestingContext;
-
-        public TournamentSteps(ScenarioContext scenarioContext, TournamentTestingContext tournamentTestingContext) : base(scenarioContext)
+        public TournamentSteps(TestingContext testingContext)
         {
-            this.TournamentTestingContext = tournamentTestingContext;
-        }
-        
-        [Given(@"The Golf Handicapping System Is Running")]
-        public async Task GivenTheGolfHandicappingSystemIsRunning()
-        {
-            await this.RunSystem(this.ScenarioContext.ScenarioInfo.Title).ConfigureAwait(false);
-
-            // Setup the base address resolver
-            this.BaseAddressResolver = (api) => $"http://127.0.0.1:{this.ManagementApiPort}";
-
-            this.HttpClient = new HttpClient();
+            this.TestingContext = testingContext;
         }
 
-        [AfterScenario()]
-        public void AfterScenario()
+        [Given(@"When I create a tournament with the following details")]
+        public async Task GivenWhenICreateATournamentWithTheFollowingDetails(Table table)
         {
-            this.StopSystem();
-        }
-        
-        [Given(@"I have registered as a golf club administrator")]
-        public void GivenIHaveRegisteredAsAGolfClubAdministrator()
-        {
-            RegisterClubAdministratorRequest request =  IntegrationTestsTestData.RegisterClubAdministratorRequest;
-
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            Should.NotThrow( async () =>
+            foreach (TableRow tableRow in table.Rows)
             {
-                await client.RegisterGolfClubAdministrator(request, CancellationToken.None).ConfigureAwait(false);
-            });
-        }
-        
-        [Given(@"I am logged in as a golf club administrator")]
-        public async Task GivenIAmLoggedInAsAGolfClubAdministrator()
-        {
-            this.TournamentTestingContext.ClubAdministratorToken = await this.GetToken(TokenType.Password, "golfhandicap.mobile", "golfhandicap.mobile",
-                IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress,
-                IntegrationTestsTestData.RegisterClubAdministratorRequest.Password).ConfigureAwait(false);
-        }
-        
-        [Given(@"my golf club has been created")]
-        public async Task GivenMyGolfClubHasBeenCreated()
-        {
-            CreateGolfClubRequest request = IntegrationTestsTestData.CreateGolfClubRequest;
+                CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(tableRow["GolfClubNumber"]);
 
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
+                GetMeasuredCourseListResponse measuredCourseList = await this.TestingContext.DockerHelper.GolfClubClient.GetMeasuredCourses(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                            createGolfClubResponse.GolfClubId,
+                                                                                                            CancellationToken.None).ConfigureAwait(false);
 
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+                MeasuredCourseListResponse measuredCourse = measuredCourseList.MeasuredCourses.Single(m => m.Name == tableRow["MeasuredCourseName"]);
 
-            CreateGolfClubResponse response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+                TournamentFormat tournamentFormat = Enum.Parse<TournamentFormat>(tableRow["TournamentFormat"], true);
+                PlayerCategory playerCategory = Enum.Parse<PlayerCategory>(tableRow["PlayerCategory"], true);
 
-            this.TournamentTestingContext.GolfClubId = response.GolfClubId;
-        }
-        
-        [Given(@"a measured course is added to the club")]
-        public void GivenAMeasuredCourseIsAddedToTheClub()
-        {
-            AddMeasuredCourseToClubRequest request = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
+                CreateTournamentRequest createTournamentRequest = new CreateTournamentRequest
+                                                                  {
+                                                                      Format = (Int32)tournamentFormat,
+                                                                      Name = tableRow["TournamentName"],
+                                                                      MeasuredCourseId = measuredCourse.MeasuredCourseId,
+                                                                      MemberCategory = (Int32)playerCategory,
+                                                                      TournamentDate = DateTime.Today
+                                                                  };
 
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
-
-            Should.NotThrow(async () =>
-            {
-                await client.AddMeasuredCourseToGolfClub(bearerToken, this.TournamentTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
-            });  
-        }
-        
-        [Given(@"I have the details of the new tournament")]
-        public void GivenIHaveTheDetailsOfTheNewTournament()
-        {
-            this.TournamentTestingContext.CreateTournamentRequest = IntegrationTestsTestData.CreateTournamentRequest;
-        }
-        
-        [When(@"I call Create Tournament")]
-        public void WhenICallCreateTournament()
-        {
-            CreateTournamentRequest request = this.TournamentTestingContext.CreateTournamentRequest;
-
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
-
-            Should.NotThrow(async () =>
-            {
-                this.TournamentTestingContext.CreateTournamentResponse = await client.CreateTournament(bearerToken, this.TournamentTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
-            });  
-        }
-        
-        [Then(@"the tournament will be created")]
-        public void ThenTheTournamentWillBeCreated()
-        {
-            CreateTournamentResponse response = this.TournamentTestingContext.CreateTournamentResponse;
-
-            response.ShouldNotBeNull();
-            response.TournamentId.ShouldNotBe(Guid.Empty);
-        }
-
-        [Given(@"I have created a tournament")]
-        public void GivenIHaveCreatedATournament()
-        {
-            CreateTournamentRequest request = IntegrationTestsTestData.CreateTournamentRequest;
-
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
-
-            Should.NotThrow(async () =>
-            {
-                this.TournamentTestingContext.CreateTournamentResponse = await client.CreateTournament(bearerToken, this.TournamentTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
-            });  
-        }
-        
-        [Given(@"a player has been registered")]
-        public void GivenAPlayerHasBeenRegistered()
-        {
-            RegisterPlayerRequest request = IntegrationTestsTestData.RegisterPlayerRequest;
-
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            Should.NotThrow( async () =>
-            {
-                this.TournamentTestingContext.RegisterPlayerResponse =await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
-            });
-        }
-        
-        [Given(@"I am logged in as a player")]
-        public async Task GivenIAmLoggedInAsAPlayer()
-        {
-            this.TournamentTestingContext.PlayerToken = await GetToken(TokenType.Password, "golfhandicap.mobile", "golfhandicap.mobile",
-                IntegrationTestsTestData.RegisterPlayerRequest.EmailAddress,
-                "123456").ConfigureAwait(false);
-        }
-        
-        [When(@"a player records their score")]
-        public void WhenAPlayerRecordsTheirScore()
-        {
-            this.TournamentTestingContext.RecordPlayerTournamentScoreRequest = IntegrationTestsTestData.RecordPlayerTournamentScoreRequest;            
-        }
-        
-        [Then(@"the score is recorded against the tournament")]
-        public void ThenTheScoreIsRecordedAgainstTheTournament()
-        {
-            RecordPlayerTournamentScoreRequest request = this.TournamentTestingContext.RecordPlayerTournamentScoreRequest;
-
-            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
-
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.TournamentTestingContext.PlayerToken;
-
-            Should.NotThrow(async () =>
-            {
-                await client.RecordPlayerScore(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, request, CancellationToken.None).ConfigureAwait(false);
-            }); 
-        }
-        
-        [Given(@"I have signed in to play the tournament")]
-        public async Task GivenIHaveSignedInToPlayTheTournament()
-        {
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
-
-            String bearerToken = this.TournamentTestingContext.PlayerToken;
-
-            await client.SignUpPlayerForTournament(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Given(@"I am requested membership of the golf club")]
-        public async Task  GivenIAmRequestedMembershipOfTheGolfClub()
-        {
-            String bearerToken = this.TournamentTestingContext.PlayerToken;
-
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            await client.RequestClubMembership(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, this.TournamentTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
-        }
-        
-        [Given(@"my membership has been accepted")]
-        public async Task GivenMyMembershipHasBeenAccepted()
-        {
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.TournamentTestingContext.PlayerToken;
+                this.TestingContext.CreateTournamentRequests.Add(new Tuple<String, String, String>(tableRow["GolfClubNumber"], tableRow["MeasuredCourseName"],
+                                                                                                   tableRow["TournamentNumber"]), createTournamentRequest);
+            }
             
+        }
+
+        [Then(@"tournament number (.*) for golf club (.*) measured course '(.*)' will be created")]
+        public async Task ThenTournamentNumberForGolfClubMeasuredCourseWillBeCreated(String tournamentNumber, String golfClubNumber, String measuredCourseName)
+        {
+            CreateTournamentRequest createTournamentRequest = this.TestingContext.GetCreateTournamentRequest(golfClubNumber, measuredCourseName, tournamentNumber);
+
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            CreateTournamentResponse createTournamentResponse = await this.TestingContext.DockerHelper.TournamentClient
+                .CreateTournament(this.TestingContext.GolfClubAdministratorToken, createGolfClubResponse.GolfClubId, createTournamentRequest, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            createTournamentResponse.TournamentId.ShouldNotBe(Guid.Empty);
+
+            this.TestingContext.CreateTournamentResponses.Add(new Tuple<String, String, String>(golfClubNumber, measuredCourseName,
+                                                                                               tournamentNumber), createTournamentResponse);
+        }
+
+        [When(@"I get the tournament list for golf club (.*)")]
+        public async Task WhenIGetTheTournamentListForGolfClub(String golfClubNumber)
+        {
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            GetTournamentListResponse tournamentList = await this.TestingContext.DockerHelper.TournamentClient
+                .GetTournamentList(this.TestingContext.GolfClubAdministratorToken, createGolfClubResponse.GolfClubId, CancellationToken.None).ConfigureAwait(false);
+
+            this.TestingContext.GetTournamentListResponses.Add(golfClubNumber, tournamentList);
+        }
+        
+        [Then(@"(.*) tournament record will be returned for golf club (.*)")]
+        public async Task ThenTournamentRecordWillBeReturnedForGolfClub(Int32 numberOfTournaments, String golfClubNumber)
+        {
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            GetTournamentListResponse getTournamentListResponse = this.TestingContext.GetTournamentListResponse(golfClubNumber);
+
             await Retry.For(async () =>
                             {
+                                GetTournamentListResponse tournamentList = await this.TestingContext.DockerHelper.TournamentClient
+                                                                                     .GetTournamentList(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                        createGolfClubResponse.GolfClubId,
+                                                                                                        CancellationToken.None).ConfigureAwait(false);
 
-                                List<ClubMembershipResponse> response = await client.GetPlayerMemberships(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
+                                tournamentList.Tournaments.Count.ShouldBe(numberOfTournaments);
 
-                                if (response.All(r => r.GolfClubId != this.TournamentTestingContext.GolfClubId))
-                                {
-                                    throw new Exception("Not a member of Golf Club");
-                                }
-                            });    
-        }
-        
-        [Given(@"some scores have been recorded")]
-        public void GivenSomeScoresHaveBeenRecorded()
-        {
-            RecordPlayerTournamentScoreRequest request = IntegrationTestsTestData.RecordPlayerTournamentScoreRequest;
-
-            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
-
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.TournamentTestingContext.PlayerToken;
-
-            Should.NotThrow(async () =>
-            {
-                await client.RecordPlayerScore(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, request, CancellationToken.None).ConfigureAwait(false);
-            }); 
-        }
-        
-        [When(@"I request to complete the tournament the tournament is completed")]
-        public void WhenIRequestToCompleteTheTournamentTheTournamentIsCompleted()
-        {
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
-
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
-
-            Should.NotThrow(async () =>
-            {
-                await client
-                    .CompleteTournament(bearerToken, this.TournamentTestingContext.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
-                    .ConfigureAwait(false);
-            });
-        }
-
-        [When(@"I request to cancel the tournament the tournament is cancelled")]
-        public void WhenIRequestToCancelTheTournamentTheTournamentIsCancelled()
-        {
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
-
-            CancelTournamentRequest cancelTournamentRequest = IntegrationTestsTestData.CancelTournamentRequest;
-
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
-
-            Should.NotThrow(async () =>
-            {
-                await client
-                    .CancelTournament(bearerToken, this.TournamentTestingContext.GolfClubId, createTournamentResponse.TournamentId, cancelTournamentRequest, CancellationToken.None)
-                    .ConfigureAwait(false);
-            });
-        }
-
-        [Given(@"I have completed the tournament")]
-        public void GivenIHaveCompletedTheTournament()
-        {
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
-
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
-
-            Should.NotThrow(async () =>
-            {
-                await client
-                    .CompleteTournament(bearerToken, this.TournamentTestingContext.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
-                    .ConfigureAwait(false);
-            });
-        }
-        
-        [When(@"I request to produce a tournament result the results are produced")]
-        public void WhenIRequestToProduceATournamentResultTheResultsAreProduced()
-        {
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
-
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
-
-            Should.NotThrow(async () =>
-            {
-                await client
-                    .ProduceTournamentResult(bearerToken, this.TournamentTestingContext.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
-                    .ConfigureAwait(false);
-            });
-        }
-        
-        [Given(@"I sign up to play the tournament")]
-        public void GivenISignUpToPlayTheTournament()
-        {
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateTournamentResponse createTournamentResponse = this.TournamentTestingContext.CreateTournamentResponse;
-
-            String bearerToken = this.TournamentTestingContext.PlayerToken;
-
-            Should.NotThrow(async () =>
-                            {
-                                await client.SignUpPlayerForTournament(bearerToken, this.TournamentTestingContext.RegisterPlayerResponse.PlayerId, createTournamentResponse.TournamentId, CancellationToken.None).ConfigureAwait(false);
-                            });
-        }
-        
-        [Then(@"I am recorded as signed up")]
-        public void ThenIAmRecordedAsSignedUp()
-        {
-            // Nothing to check here at the moment
-        }
-
-        [When(@"I get the tournament list")]
-        public async Task WhenIGetTheTournamentList()
-        {
-            ITournamentClient client = new TournamentClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.TournamentTestingContext.ClubAdministratorToken;
-            
-            await Retry.For(async () =>
-                            {
-                                this.TournamentTestingContext.GetTournamentListResponse = await client.GetTournamentList(bearerToken, this.TournamentTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
-
-                                if (this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Count == 0)
-                                {
-                                    throw new Exception("Empty Tournament List");
-                                }
+                                this.TestingContext.GetTournamentListResponses.Remove(golfClubNumber);
+                                this.TestingContext.GetTournamentListResponses.Add(golfClubNumber, tournamentList);
                             });
         }
 
-        [Then(@"(.*) tournament record will be returned")]
-        public void ThenTournamentRecordWillBeReturned(Int32 numberOfTournaments)
+        [When(@"I request to cancel the tournament number (.*) for golf club (.*) measured course '(.*)' the tournament is cancelled")]
+        public void WhenIRequestToCancelTheTournamentNumberForGolfClubMeasuredCourseTheTournamentIsCancelled(String tournamentNumber, String golfClubNumber, String measuredCourseName)
         {
-            this.TournamentTestingContext.GetTournamentListResponse.Tournaments.ShouldNotBeNull();
-            this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Count.ShouldBe(numberOfTournaments);
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            CreateTournamentResponse createTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+            CancelTournamentRequest cancelTournamentRequest = new CancelTournamentRequest
+                                                              {
+                                                                  CancellationReason = "Test Cancel"
+                                                              };
+
+            Should.NotThrow(async () =>
+                            {
+                                await this.TestingContext.DockerHelper.TournamentClient.CancelTournament(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                          createGolfClubResponse.GolfClubId,
+                                                                                                          createTournamentResponse.TournamentId,
+                                                                                                          cancelTournamentRequest,
+                                                                                                          CancellationToken.None).ConfigureAwait(false);
+                            });
+        }
+        
+        [When(@"player number (.*) signs up to play in tournament number (.*) for golf club (.*) measured course '(.*)'")]
+        public async Task WhenPlayerNumberSignsUpToPlayInTournamentNumberForGolfClubMeasuredCourse(String playerNumber, String tournamentNumber, String golfClubNumber, String measuredCourseName)
+        {
+            RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
+
+            CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+            await this.TestingContext.DockerHelper.PlayerClient
+                .SignUpPlayerForTournament(this.TestingContext.PlayerToken,
+                                           getRegisterPlayerResponse.PlayerId,
+                                           getCreateTournamentResponse.TournamentId,
+                                           CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Then(@"the created tournament details will be returned")]
-        public void ThenTheCreatedTournamentDetailsWillBeReturned()
+        [Then(@"player number (.*) is recorded as signed up for tournament number (.*) for golf club (.*) measured course '(.*)'")]
+        public void ThenPlayerNumberIsRecordedAsSignedUpForTournamentNumberForGolfClubMeasuredCourse(String playerNumber, String tournamentNumber, String golfClubNumber, String measuredCourseName)
         {
-            GetTournamentResponse tournament = this.TournamentTestingContext.GetTournamentListResponse.Tournaments.Single();
-            tournament.TournamentFormat.ShouldBe((TournamentFormat)this.TournamentTestingContext.CreateTournamentRequest.Format);
-            //tournament.TournamentDate.ShouldBe(this.TournamentTestingContext.CreateTournamentRequest.TournamentDate);
-            tournament.MeasuredCourseId.ShouldBe(this.TournamentTestingContext.CreateTournamentRequest.MeasuredCourseId);
-            tournament.TournamentName.ShouldBe(this.TournamentTestingContext.CreateTournamentRequest.Name);
-            tournament.PlayerCategory.ShouldBe((PlayerCategory)this.TournamentTestingContext.CreateTournamentRequest.MemberCategory);
+            // Nothing to check at the moment
         }
 
+        //[When(@"player number (.*) records the following score for tournament number (.*) for golf club (.*) measured course '(.*)'")]
+        //public async Task WhenPlayerNumberRecordsTheFollowingScoreForTournamentNumberForGolfClubMeasuredCourse(String tournamentNumber, String golfClubNumber, String measuredCourseName, Table table)
+        //{
+        //    RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
+
+        //    CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+        //    RecordPlayerTournamentScoreRequest recordPlayerTournamentScoreRequest = new RecordPlayerTournamentScoreRequest
+        //                                                                            {
+        //                                                                                HoleScores = new Dictionary<Int32, Int32>()
+        //                                                                            };
+
+        //    TableRow tableRow = table.Rows.Single();
+
+        //    for (Int32 i = 1; i <= 18; i++)
+        //    {
+        //        recordPlayerTournamentScoreRequest.HoleScores.Add(i, Int32.Parse(tableRow[$"Hole{i}"]));
+        //    }
+
+
+        //}
+
+        //[Then(@"the score recorded by player number (.*) is recorded against tournament number (.*) for golf club (.*) measured course '(.*)'")]
+        //public async Task ThenTheScoreRecordedByPlayerNumberIsRecordedAgainstTournamentNumberForGolfClubMeasuredCourse(int p0, int p1, int p2, string p3)
+        //{
+        //    //RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
+
+        //    //CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+        //    //await this.TestingContext.DockerHelper.PlayerClient.RecordPlayerScore(this.TestingContext.PlayerToken,
+        //    //                                                                      getRegisterPlayerResponse.PlayerId,
+        //    //                                                                      getCreateTournamentResponse.TournamentId,
+        //    //                                                                      recordPlayerTournamentScoreRequest,
+        //    //                                                                      CancellationToken.None).ConfigureAwait(false);
+        //}
+
+        [When(@"a player records the following score for tournament number (.*) for golf club (.*) measured course '(.*)'")]
+        public void WhenAPlayerRecordsTheFollowingScoreForTournamentNumberForGolfClubMeasuredCourse(String tournamentNumber, String golfClubNumber, String measuredCourseName, Table table)
+        {
+            CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+            foreach (TableRow tableRow in table.Rows)
+            {
+                RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(tableRow["PlayerNumber"]);
+
+                RecordPlayerTournamentScoreRequest recordPlayerTournamentScoreRequest = new RecordPlayerTournamentScoreRequest
+                {
+                    HoleScores = new Dictionary<Int32, Int32>()
+                };
+
+                for (Int32 i = 1; i <= 18; i++)
+                {
+                    recordPlayerTournamentScoreRequest.HoleScores.Add(i, Int32.Parse(tableRow[$"Hole{i}"]));
+                }
+
+                this.TestingContext.RecordPlayerTournamentScoreRequests.Add(new Tuple<String, String, String,String>(golfClubNumber, measuredCourseName,
+                                                                                                              tournamentNumber, tableRow["PlayerNumber"]), recordPlayerTournamentScoreRequest);
+            }
+        }
+
+        [Then(@"the scores recorded by the players are recorded against tournament number (.*) for golf club (.*) measured course '(.*)'")]
+        public void ThenTheScoresRecordedByThePlayersAreRecordedAgainstTournamentNumberForGolfClubMeasuredCourse(String tournamentNumber, String golfClubNumber, String measuredCourseName)
+        {
+            CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+            List<KeyValuePair<Tuple<String, String, String, String>, RecordPlayerTournamentScoreRequest>> filtered = this.TestingContext.RecordPlayerTournamentScoreRequests
+                .Where(x => x.Key.Item1 == golfClubNumber && x.Key.Item2 == measuredCourseName && x.Key.Item3 == tournamentNumber).ToList();
+
+            foreach (KeyValuePair<Tuple<String, String, String, String>, RecordPlayerTournamentScoreRequest> keyValuePair in filtered)
+            {
+                RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(keyValuePair.Key.Item4);
+
+                Should.NotThrow(async () =>
+                                {
+                                    await this.TestingContext.DockerHelper.PlayerClient
+                                        .RecordPlayerScore(this.TestingContext.PlayerToken,
+                                                           getRegisterPlayerResponse.PlayerId,
+                                                           getCreateTournamentResponse.TournamentId,
+                                                           keyValuePair.Value,
+                                                           CancellationToken.None).ConfigureAwait(false);
+                                });
+            }
+            
+        }
+
+        [When(@"I request to complete the tournament number (.*) for golf club (.*) measured course '(.*)' the tournament is completed")]
+        public void WhenIRequestToCompleteTheTournamentNumberForGolfClubMeasuredCourseTheTournamentIsCompleted(String tournamentNumber, String golfClubNumber, String measuredCourseName)
+        {
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            CreateTournamentResponse createTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+            Should.NotThrow(async () =>
+                            {
+                                await this.TestingContext.DockerHelper.TournamentClient.CompleteTournament(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                         createGolfClubResponse.GolfClubId,
+                                                                                                         createTournamentResponse.TournamentId,
+                                                                                                         CancellationToken.None).ConfigureAwait(false);
+                            });
+        }
+
+        [When(@"I request to produce a tournament result for tournament number (.*) for golf club (.*) measured course '(.*)' the results are produced")]
+        public void WhenIRequestToProduceATournamentResultForTournamentNumberForGolfClubMeasuredCourseTheResultsAreProduced(String tournamentNumber, String golfClubNumber, String measuredCourseName)
+        {
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            CreateTournamentResponse createTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+            Should.NotThrow(async () =>
+                            {
+                                await this.TestingContext.DockerHelper.TournamentClient
+                                      .ProduceTournamentResult(this.TestingContext.GolfClubAdministratorToken, createGolfClubResponse.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
+                                      .ConfigureAwait(false);
+                            });
+        }
 
     }
 }

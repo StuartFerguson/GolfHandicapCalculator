@@ -25,7 +25,7 @@
         /// The measured courses.
         /// </value>
         public List<MeasuredCourseListResponse> MeasuredCourses { get; set; }
-
+        
         #endregion
     }
 }

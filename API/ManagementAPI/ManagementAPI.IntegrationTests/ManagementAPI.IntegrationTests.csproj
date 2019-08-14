@@ -7,9 +7,48 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="HandicapCalculation\**" />
+    <Compile Remove="Player\**" />
+    <Compile Remove="Tournament\**" />
+    <EmbeddedResource Remove="HandicapCalculation\**" />
+    <EmbeddedResource Remove="Player\**" />
+    <EmbeddedResource Remove="Tournament\**" />
+    <None Remove="HandicapCalculation\**" />
+    <None Remove="Player\**" />
+    <None Remove="Tournament\**" />
+    <SpecFlowFeatureFiles Remove="HandicapCalculation\**" />
+    <SpecFlowFeatureFiles Remove="Player\**" />
+    <SpecFlowFeatureFiles Remove="Tournament\**" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="HandicapCalculation\**" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Player\**" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Tournament\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="GolfClub\GolfClubSteps.orig.cs" />
+    <Compile Remove="GolfClub\GolfClubTestingContext.oreig.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="HandicapCalculation\ProcessHandicapAdjustments.feature.cs" />
+    <Compile Include="HandicapCalculation\ProcessHandicapAdjustmentsSteps.cs" />
+    <Compile Include="Player\GetPlayer.feature.cs" />
+    <Compile Include="Player\GetPlayerMemberships.feature.cs" />
+    <Compile Include="Player\PlayerSteps.cs" />
+    <Compile Include="Player\RegisterPlayer.feature.cs" />
+    <Compile Include="Tournament\CancelTournament.feature.cs" />
+    <Compile Include="Tournament\CompleteTournament.feature.cs" />
+    <Compile Include="Tournament\CreateTournament.feature.cs" />
+    <Compile Include="Tournament\GetTournamentList.feature.cs" />
+    <Compile Include="Tournament\ProduceTournamentResult.feature.cs" />
+    <Compile Include="Tournament\RecordMemberScore.feature.cs" />
+    <Compile Include="Tournament\SignUpForTournament.feature.cs" />
+    <Compile Include="Tournament\TournamentSteps.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Ductus.FluentDocker" Version="2.6.8" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="MySql.Data" Version="8.0.17" />
     <PackageReference Include="Shouldly" Version="3.0.2" />
     <PackageReference Include="SpecFlow" Version="3.0.225" />
     <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.225" />
@@ -22,16 +61,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ManagementAPI.Database\ManagementAPI.Database.csproj" />
     <ProjectReference Include="..\ManagementAPI.Service.Client\ManagementAPI.Service.Client.csproj" />
     <ProjectReference Include="..\ManagementAPI.Service.DataTransferObjects\ManagementAPI.Service.DataTransferObjects.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="GolfClub\GetGolfClubUserList.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>GetGolfClubUserList.feature</DependentUpon>
-    </Compile>
+    <SpecFlowFeatureFiles Include="HandicapCalculation\ProcessHandicapAdjustments.feature" />
+    <SpecFlowFeatureFiles Include="Player\GetPlayer.feature" />
+    <SpecFlowFeatureFiles Include="Player\GetPlayerMemberships.feature" />
+    <SpecFlowFeatureFiles Include="Player\RegisterPlayer.feature" />
+    <SpecFlowFeatureFiles Include="Tournament\CancelTournament.feature" />
+    <SpecFlowFeatureFiles Include="Tournament\CompleteTournament.feature" />
+    <SpecFlowFeatureFiles Include="Tournament\CreateTournament.feature" />
+    <SpecFlowFeatureFiles Include="Tournament\GetTournamentList.feature" />
+    <SpecFlowFeatureFiles Include="Tournament\ProduceTournamentResult.feature" />
+    <SpecFlowFeatureFiles Include="Tournament\RecordMemberScore.feature" />
+    <SpecFlowFeatureFiles Include="Tournament\SignUpForTournament.feature" />
   </ItemGroup>
 
   <ItemGroup>                   
@@ -45,92 +91,15 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>GetMeasuredCourseList.feature.cs</LastGenOutput>
     </None>                   
-    <None Update="HandicapCalculation\ProcessHandicapAdjustments.feature">
-      <Generator></Generator>
-    </None>                   
-    <None Update="Player\GetPlayer.feature">
-      <Generator></Generator>
-    </None>                   
-    <None Update="Player\GetPlayerMemberships.feature">
-      <Generator></Generator>
-    </None>                   
-    <None Update="Tournament\SignUpForTournament.feature">
-      <Generator></Generator>
-    </None>                   
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <SpecFlowFeatureFiles Update="GolfClub\AddMeasuredCoursetoExistingGolfClub.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\AddTournamentDivisionToGolfClub.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\CreateGolfClub.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\CreateMatchSecretary.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\GetClubMembersList.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\GetGolfClub.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\GetGolfClubList.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\GetGolfClubUserList.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>GetGolfClubUserList.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\GetMeasuredCourseList.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
     <SpecFlowFeatureFiles Update="GolfClub\RegisterGolfClubAdministrator.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="GolfClub\RequestClubMembership.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="HandicapCalculation\ProcessHandicapAdjustments.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Tournament\CancelTournament.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Tournament\CompleteTournament.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Tournament\CreateTournament.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Tournament\GetTournamentList.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Tournament\ProduceTournamentResult.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Tournament\RecordMemberScore.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Tournament\SignUpForTournament.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
     </SpecFlowFeatureFiles>
   </ItemGroup>
 

@@ -17,6 +17,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
     public partial class GetClubMembersListFeature : Xunit.IClassFixture<GetClubMembersListFeature.FixtureData>, System.IDisposable
     {
@@ -38,6 +39,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "GetClubMembersList", null, ProgrammingLanguage.CSharp, new string[] {
+                        "base",
                         "golfclub"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -76,60 +78,154 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         public virtual void FeatureBackground()
         {
 #line 4
-#line 5
- testRunner.Given("The Golf Handicapping System Is Running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 6
- testRunner.And("I have registered as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 7
- testRunner.And("I am logged in as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 8
- testRunner.And("my golf club has been created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                        "PlayerId",
+            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
                         "EmailAddress",
                         "GivenName",
+                        "MiddleName",
+                        "FamilyName",
+                        "Password",
+                        "ConfirmPassword",
+                        "TelephoneNumber"});
+            table12.AddRow(new string[] {
+                        "1",
+                        "admin@testgolfclub1.co.uk",
+                        "Admin",
+                        "",
+                        "User1",
+                        "123456",
+                        "123456",
+                        "01234567890"});
+#line 5
+ testRunner.Given("the following golf club administrators have been registered", ((string)(null)), table12, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "GolfClubName",
+                        "AddressLine1",
+                        "AddressLine2",
+                        "Town",
+                        "Region",
+                        "PostalCode",
+                        "TelephoneNumber",
+                        "EmailAddress",
+                        "WebSite"});
+            table13.AddRow(new string[] {
+                        "1",
+                        "Test Golf Club 1",
+                        "Test Golf Club Address Line 1",
+                        "Test Golf Club Address Line",
+                        "TestTown1",
+                        "TestRegion",
+                        "TE57 1NG",
+                        "01234567890",
+                        "testclub1@testclub1.co.uk",
+                        "www.testclub1.co.uk"});
+#line 8
+ testRunner.And("the following golf clubs exist", ((string)(null)), table13, "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+                        "PlayerNumber",
+                        "EmailAddress",
+                        "GivenName",
+                        "MiddleName",
                         "FamilyName",
                         "DateOfBirth",
                         "Gender",
                         "ExactHandicap"});
-            table1.AddRow(new string[] {
+            table14.AddRow(new string[] {
                         "1",
-                        "testplayer1@testplayers.com",
+                        "testplayer1@players.co.uk",
                         "Test",
-                        "Player 1",
-                        "13/12/1980",
+                        "",
+                        "Player1",
+                        "1990-01-01",
                         "M",
-                        "6.0"});
-            table1.AddRow(new string[] {
+                        "2.0"});
+            table14.AddRow(new string[] {
                         "2",
-                        "testplayer2@testplayers.com",
+                        "testplayer2@players.co.uk",
                         "Test",
-                        "Player 2",
-                        "14/12/1980",
+                        "",
+                        "Player2",
+                        "1991-01-01",
                         "M",
-                        "12.0"});
-            table1.AddRow(new string[] {
+                        "4.6"});
+            table14.AddRow(new string[] {
                         "3",
-                        "testplayer3@testplayers.com",
+                        "testplayer3@players.co.uk",
                         "Test",
-                        "Player 3",
-                        "15/12/1980",
+                        "",
+                        "Player3",
+                        "1992-01-01",
                         "M",
-                        "18.0"});
-#line 9
- testRunner.And("the following players have registered", ((string)(null)), table1, "And ");
+                        "10.4"});
+            table14.AddRow(new string[] {
+                        "4",
+                        "testplayer4@players.co.uk",
+                        "Test",
+                        "",
+                        "Player4",
+                        "1993-01-01",
+                        "M",
+                        "12.8"});
+            table14.AddRow(new string[] {
+                        "5",
+                        "testplayer5@players.co.uk",
+                        "Test",
+                        "",
+                        "Player5",
+                        "1994-01-01",
+                        "M",
+                        "1.5"});
+            table14.AddRow(new string[] {
+                        "6",
+                        "testplayer6@players.co.uk",
+                        "Test",
+                        "",
+                        "Player6",
+                        "1995-01-01",
+                        "M",
+                        "20.1"});
+            table14.AddRow(new string[] {
+                        "7",
+                        "testplayer7@players.co.uk",
+                        "Test",
+                        "",
+                        "Player7",
+                        "1996-01-01",
+                        "M",
+                        "24.9"});
+#line 11
+ testRunner.And("the following players have registered", ((string)(null)), table14, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
-                        "PlayerId"});
-            table2.AddRow(new string[] {
+            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+                        "GolfClubNumber",
+                        "PlayerNumber"});
+            table15.AddRow(new string[] {
+                        "1",
                         "1"});
-            table2.AddRow(new string[] {
+            table15.AddRow(new string[] {
+                        "1",
                         "2"});
-            table2.AddRow(new string[] {
+            table15.AddRow(new string[] {
+                        "1",
                         "3"});
-#line 14
- testRunner.And("The following players have requested membership", ((string)(null)), table2, "And ");
+            table15.AddRow(new string[] {
+                        "1",
+                        "4"});
+            table15.AddRow(new string[] {
+                        "1",
+                        "5"});
+            table15.AddRow(new string[] {
+                        "1",
+                        "6"});
+            table15.AddRow(new string[] {
+                        "1",
+                        "7"});
+#line 20
+ testRunner.And("the following players are club members of the following golf clubs", ((string)(null)), table15, "And ");
 #line hidden
         }
         
@@ -144,17 +240,15 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         public virtual void GetListOfGolfClubMembers()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get List of Golf Club Members", null, ((string[])(null)));
-#line 20
+#line 30
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 21
- testRunner.Given("I am logged in as a golf club administrator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 22
- testRunner.When("I request a list of members", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 23
- testRunner.Then("a list of \'3\' members should be returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 31
+ testRunner.When("I request a list of members for golf club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 32
+ testRunner.And("the a list of 7 members is returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

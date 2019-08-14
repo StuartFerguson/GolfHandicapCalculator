@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ManagementAPI.Service.Commands;
 using ManagementAPI.Service.DataTransferObjects;
 using ManagementAPI.Tournament;
 
 namespace ManagementAPI.Service.Tests.Tournament
 {
+    using BusinessLogic.Commands;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
     using ManagementAPI.GolfClubMembership.DomainEvents;

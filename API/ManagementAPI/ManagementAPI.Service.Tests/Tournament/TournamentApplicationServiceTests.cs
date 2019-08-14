@@ -6,13 +6,13 @@ namespace ManagementAPI.Service.Tests.Tournament
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using BusinessLogic.Services.ApplicationServices;
     using GolfClubMembership;
     using ManagementAPI.GolfClubMembership;
     using ManagementAPI.Player;
     using ManagementAPI.Tournament;
     using Moq;
     using Player;
-    using Services.DomainServices;
     using Shared.EventStore;
     using Shouldly;
     using Xunit;

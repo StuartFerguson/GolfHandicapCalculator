@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\DomainServices\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClientProxyBase" Version="1.0.15.22" />
+    <PackageReference Include="Shared" Version="1.0.15.22" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ManagementAPI.Database\ManagementAPI.Database.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClub.DomainEvents\ManagementAPI.GolfClub.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClubAggregate\ManagementAPI.GolfClubAggregate.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClubMembership.DomainEvents\ManagementAPI.GolfClubMembership.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.GolfClubMembershipAggregate\ManagementAPI.GolfClubMembershipAggregate.csproj" />
+    <ProjectReference Include="..\ManagementAPI.HandicapCalcProcess.DomainEvents\ManagementAPI.HandicapCalcProcess.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.HandicapCalcProcessAggregate\ManagementAPI.HandicapCalcProcessAggregate.csproj" />
+    <ProjectReference Include="..\ManagementAPI.Player.DomainEvents\ManagementAPI.Player.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.PlayerAggregate\ManagementAPI.PlayerAggregate.csproj" />
+    <ProjectReference Include="..\ManagementAPI.Service.DataTransferObjects\ManagementAPI.Service.DataTransferObjects.csproj" />
+    <ProjectReference Include="..\ManagementAPI.Tournament.DomainEvents\ManagementAPI.Tournament.DomainEvents.csproj" />
+    <ProjectReference Include="..\ManagementAPI.TournamentAggregate\ManagementAPI.TournamentAggregate.csproj" />
+  </ItemGroup>
+
+</Project>
