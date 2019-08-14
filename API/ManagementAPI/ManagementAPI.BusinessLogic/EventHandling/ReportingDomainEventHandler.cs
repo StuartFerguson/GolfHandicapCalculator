@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using GolfClubMembership.DomainEvents;
     using Manager;
+    using Player.DomainEvents;
     using Shared.EventSourcing;
 
     public class ReportingDomainEventHandler :IDomainEventHandler
@@ -41,6 +42,12 @@
                                                      CancellationToken cancellationToken)
         {
             await this.Manager.InsertPlayerMembershipToReporting(domainEvent, cancellationToken);
+        }
+
+        private async Task HandleSpecificDomainEvent(HandicapAdjustedEvent domainEvent,
+                                                     CancellationToken cancellationToken)
+        {
+            await this.Manager.UpdatePlayerMembershipToReporting(domainEvent, cancellationToken);
         }
     }
 }

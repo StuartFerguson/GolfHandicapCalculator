@@ -4,6 +4,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using BusinessLogic.Manager;
+    using DataTransferObjects.Responses;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,7 @@
     /// 
     /// </summary>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportingController : ControllerBase
@@ -51,7 +52,23 @@
         public async Task<IActionResult> GetNumberOfMembersReport(Guid golfClubId,
                                                                   CancellationToken cancellationToken)
         {
-            var reportData = await this.ReportingManager.GetNumberOfMembersReport(golfClubId, cancellationToken);
+            GetNumberOfMembersReportResponse reportData = await this.ReportingManager.GetNumberOfMembersReport(golfClubId, cancellationToken);
+
+            return this.Ok(reportData);
+        }
+
+        /// <summary>
+        /// Gets the number of members report.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GolfClub/{golfClubId}/numberofmembersbyhandicapcategory")]
+        public async Task<IActionResult> GetNumberOfMembersByHandicapCategoryReport(Guid golfClubId,
+                                                                  CancellationToken cancellationToken)
+        {
+            GetNumberOfMembersByHandicapCategoryReportResponse reportData = await this.ReportingManager.GetNumberOfMembersByHandicapCategoryReport(golfClubId, cancellationToken);
 
             return this.Ok(reportData);
         }

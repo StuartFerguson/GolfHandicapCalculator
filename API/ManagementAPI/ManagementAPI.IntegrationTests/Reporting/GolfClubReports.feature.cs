@@ -189,7 +189,7 @@ namespace ManagementAPI.IntegrationTests.Reporting
                         "Player6",
                         "1995-01-01",
                         "M",
-                        "20"});
+                        "28"});
             table34.AddRow(new string[] {
                         "7",
                         "testplayer7@players.co.uk",
@@ -199,6 +199,24 @@ namespace ManagementAPI.IntegrationTests.Reporting
                         "1996-01-01",
                         "M",
                         "24"});
+            table34.AddRow(new string[] {
+                        "8",
+                        "testplayer8@players.co.uk",
+                        "Test",
+                        "",
+                        "Player8",
+                        "1997-01-01",
+                        "M",
+                        "18"});
+            table34.AddRow(new string[] {
+                        "9",
+                        "testplayer9@players.co.uk",
+                        "Test",
+                        "",
+                        "Player9",
+                        "1998-01-01",
+                        "M",
+                        "18"});
 #line 11
  testRunner.And("the following players have registered", ((string)(null)), table34, "And ");
 #line hidden
@@ -226,7 +244,13 @@ namespace ManagementAPI.IntegrationTests.Reporting
             table35.AddRow(new string[] {
                         "1",
                         "7"});
-#line 20
+            table35.AddRow(new string[] {
+                        "1",
+                        "8"});
+            table35.AddRow(new string[] {
+                        "1",
+                        "9"});
+#line 22
  testRunner.And("the following players are club members of the following golf clubs", ((string)(null)), table35, "And ");
 #line hidden
         }
@@ -242,17 +266,49 @@ namespace ManagementAPI.IntegrationTests.Reporting
         public virtual void GetNumberOfMembersReport()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Number of Members Report", null, ((string[])(null)));
-#line 30
+#line 34
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 31
+#line 35
  testRunner.When("I request a number of members report for club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 32
- testRunner.Then("I am returned the report data successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 33
- testRunner.And("the number of members count for club number 1 is 7", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 36
+ testRunner.Then("I am returned the number of members report data successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 37
+ testRunner.And("the number of members count for club number 1 is 9", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Get Number of Members By Handicap Category Report")]
+        [Xunit.TraitAttribute("FeatureTitle", "GolfClubReports")]
+        [Xunit.TraitAttribute("Description", "Get Number of Members By Handicap Category Report")]
+        public virtual void GetNumberOfMembersByHandicapCategoryReport()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Number of Members By Handicap Category Report", null, ((string[])(null)));
+#line 39
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 4
+this.FeatureBackground();
+#line 40
+ testRunner.When("I request a number of members by handicap category report for club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 41
+ testRunner.Then("I am returned the number of members by handicap category report data successfully" +
+                    "", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 42
+ testRunner.And("the number of members by handicap category count for club number 1 handicap categ" +
+                    "ory 1 is 3", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 43
+ testRunner.And("the number of members by handicap category count for club number 1 handicap categ" +
+                    "ory 2 is 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 44
+ testRunner.And("the number of members by handicap category count for club number 1 handicap categ" +
+                    "ory 3 is 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 45
+ testRunner.And("the number of members by handicap category count for club number 1 handicap categ" +
+                    "ory 4 is 2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

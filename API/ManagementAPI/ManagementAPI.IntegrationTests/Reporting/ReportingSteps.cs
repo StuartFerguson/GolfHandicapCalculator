@@ -3,6 +3,7 @@ using TechTalk.SpecFlow;
 
 namespace ManagementAPI.IntegrationTests.Reporting
 {
+    using System.Linq;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
@@ -144,11 +145,12 @@ namespace ManagementAPI.IntegrationTests.Reporting
                                                                 CancellationToken.None).ConfigureAwait(false);
         }
         
-        [Then(@"I am returned the report data successfully")]
-        public void ThenIAmReturnedTheReportDataSuccessfully()
+        [Then(@"I am returned the number of members report data successfully")]
+        public void ThenIAmReturnedTheNumberOfMembersReportDataSuccessfully()
         {
             this.TestingContext.GetNumberOfMembersReportResponse.ShouldNotBeNull();
         }
+
 
         [Then(@"the number of members count for club number (.*) is (.*)")]
         public async Task ThenTheNumberOfMembersCountForClubNumberIs(String golfClubNumber, Int32 membersCount)
@@ -157,14 +159,51 @@ namespace ManagementAPI.IntegrationTests.Reporting
 
             await Retry.For(async () =>
                             {
-                                this.TestingContext.GetNumberOfMembersReportResponse.NumberOfMembers.ShouldBe(membersCount);
-
                                 this.TestingContext.GetNumberOfMembersReportResponse = await this
                                                                                              .TestingContext.DockerHelper.ReportingClient
                                                                                              .GetNumberOfMembersReport(this.TestingContext.GolfClubAdministratorToken,
                                                                                                                        golfClubResponse.GolfClubId,
                                                                                                                        CancellationToken.None).ConfigureAwait(false);
+
+                                this.TestingContext.GetNumberOfMembersReportResponse.NumberOfMembers.ShouldBe(membersCount);
                             });
         }
+
+        [When(@"I request a number of members by handicap category report for club number (.*)")]
+        public async Task WhenIRequestANumberOfMembersByHandicapCategoryReportForClubNumber(String golfClubNumber)
+        {
+            CreateGolfClubResponse golfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            this.TestingContext.GetNumberOfMembersByHandicapCategoryReportResponse = await this.TestingContext.DockerHelper.ReportingClient.GetNumberOfMembersByHandicapCategoryReport(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                                                   golfClubResponse.GolfClubId,
+                                                                                                                                                   CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Then(@"I am returned the number of members by handicap category report data successfully")]
+        public void ThenIAmReturnedTheNumberOfMembersByHandicapCategoryReportDataSuccessfully()
+        {
+            this.TestingContext.GetNumberOfMembersByHandicapCategoryReportResponse.ShouldNotBeNull();
+        }
+
+        [Then(@"the number of members by handicap category count for club number (.*) handicap category (.*) is (.*)")]
+        public async Task ThenTheNumberOfMembersByHandicapCategoryCountForClubNumberHandicapCategoryIs(String golfClubNumber, Int32 handicapCategory, Int32 membersCount)
+        {
+            CreateGolfClubResponse golfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            await Retry.For(async () =>
+                            {
+                                this.TestingContext.GetNumberOfMembersByHandicapCategoryReportResponse = await this.TestingContext.DockerHelper.ReportingClient.GetNumberOfMembersByHandicapCategoryReport(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                                                                                                           golfClubResponse.GolfClubId,
+                                                                                                                                                                                                           CancellationToken.None).ConfigureAwait(false);
+
+                                MembersByHandicapCategoryResponse membersByHandicapCategoryResponse =
+                                    this.TestingContext.GetNumberOfMembersByHandicapCategoryReportResponse.MembersByHandicapCategoryResponse.SingleOrDefault(h => h.HandicapCategory ==
+                                                                                                                                                         handicapCategory);
+
+                                membersByHandicapCategoryResponse.ShouldNotBeNull();
+                                membersByHandicapCategoryResponse.NumberOfMembers.ShouldBe(membersCount);
+                            });
+        }
+
     }
 }
