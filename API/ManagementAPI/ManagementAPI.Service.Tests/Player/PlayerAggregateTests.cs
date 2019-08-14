@@ -114,7 +114,102 @@
         }
 
         [Theory]
-        [InlineData(1)]
+        [InlineData(1,0.0)]
+        [InlineData(2,5.5)]
+        [InlineData(3, 12.5)]
+        [InlineData(4, 21.5)]
+        [InlineData(5,28.5)]
+        public void PlayerAggregate_Register_PlayerRegistered_HandicapEdgeCase_LowEnd(Int32 category,Decimal lowendValue)
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Decimal exactHandicap = 0;
+            Int32 handicapCategory = 0;
+
+            switch (category)
+            {
+                case 1:
+                    exactHandicap = lowendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat1;
+                    break;
+                case 2:
+                    exactHandicap = lowendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat2;
+                    break;
+                case 3:
+                    exactHandicap = lowendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat3;
+                    break;
+                case 4:
+                    exactHandicap = lowendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat4;
+                    break;
+                case 5:
+                    exactHandicap = lowendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat5;
+                    break;
+            }
+
+            playerAggregate.Register(PlayerTestData.FirstName,
+                                     PlayerTestData.MiddleName,
+                                     PlayerTestData.LastName,
+                                     PlayerTestData.Gender,
+                                     PlayerTestData.DateOfBirth,
+                                     exactHandicap,
+                                     PlayerTestData.EmailAddress);
+
+            playerAggregate.HandicapCategory.ShouldBe(handicapCategory);
+        }
+
+        [Theory]
+        [InlineData(1, 5.4)]
+        [InlineData(2, 12.4)]
+        [InlineData(3, 21.4)]
+        [InlineData(4, 28.4)]
+        [InlineData(5, 35.9)]
+        public void PlayerAggregate_Register_PlayerRegistered_HandicapEdgeCase_HighEnd(Int32 category, Decimal highendValue)
+        {
+            PlayerAggregate playerAggregate = PlayerTestData.GetEmptyPlayerAggregate();
+
+            Decimal exactHandicap = 0;
+            Int32 handicapCategory = 0;
+
+            switch (category)
+            {
+                case 1:
+                    exactHandicap = highendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat1;
+                    break;
+                case 2:
+                    exactHandicap = highendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat2;
+                    break;
+                case 3:
+                    exactHandicap = highendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat3;
+                    break;
+                case 4:
+                    exactHandicap = highendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat4;
+                    break;
+                case 5:
+                    exactHandicap = highendValue;
+                    handicapCategory = PlayerTestData.HandicapCategoryCat5;
+                    break;
+            }
+
+            playerAggregate.Register(PlayerTestData.FirstName,
+                                     PlayerTestData.MiddleName,
+                                     PlayerTestData.LastName,
+                                     PlayerTestData.Gender,
+                                     PlayerTestData.DateOfBirth,
+                                     exactHandicap,
+                                     PlayerTestData.EmailAddress);
+
+            playerAggregate.HandicapCategory.ShouldBe(handicapCategory);
+        }
+
+        [Theory]
         [InlineData(1)]
         [InlineData(2)]
         [InlineData(3)]
