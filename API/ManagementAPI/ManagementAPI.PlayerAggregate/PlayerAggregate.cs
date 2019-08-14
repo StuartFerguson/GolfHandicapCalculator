@@ -304,7 +304,7 @@
 
             switch(playingHandicap)
             {
-                case var h when (h < 5):
+                case var h when (h <= 5):
                     category = 1;
                     break;
                 case var h when (h >= 6 && h <= 12):
