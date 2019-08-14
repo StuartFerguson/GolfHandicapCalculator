@@ -307,6 +307,40 @@
                                                                                               NumberOfMembers = 5
                                                                                           };
 
+        public static GetNumberOfMembersByHandicapCategoryReportResponse GetNumberOfMembersByHandicapCategoryReportResponse =
+            new GetNumberOfMembersByHandicapCategoryReportResponse
+            {
+                GolfClubId = GolfClubTestData.AggregateId,
+                MembersByHandicapCategoryResponse = new List<MembersByHandicapCategoryResponse>
+                                                    {
+                                                        new MembersByHandicapCategoryResponse
+                                                        {
+                                                            HandicapCategory = 1,
+                                                            NumberOfMembers = 5
+                                                        },
+                                                        new MembersByHandicapCategoryResponse
+                                                        {
+                                                            HandicapCategory = 2,
+                                                            NumberOfMembers = 7
+                                                        },
+                                                        new MembersByHandicapCategoryResponse
+                                                        {
+                                                            HandicapCategory = 3,
+                                                            NumberOfMembers = 10
+                                                        },
+                                                        new MembersByHandicapCategoryResponse
+                                                        {
+                                                            HandicapCategory = 4,
+                                                            NumberOfMembers = 9
+                                                        },
+                                                        new MembersByHandicapCategoryResponse
+                                                        {
+                                                            HandicapCategory = 5,
+                                                            NumberOfMembers = 1
+                                                        }
+                                                    }
+            };
+
         #endregion
 
         #region Methods

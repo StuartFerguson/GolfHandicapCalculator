@@ -9,6 +9,8 @@
 
     public class TestingContext
     {
+        public GetNumberOfMembersByHandicapCategoryReportResponse GetNumberOfMembersByHandicapCategoryReportResponse;
+
         public TestingContext()
         {
             this.GolfClubAdministratorRequests = new Dictionary<String, RegisterClubAdministratorRequest>();

@@ -78,7 +78,46 @@
             catch(Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception("Error getting number of members for Golf Club.", ex);
+                Exception exception = new Exception($"Error getting number of members report for Golf Club {golfClubId}.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Gets the number of members by handicap category report.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetNumberOfMembersByHandicapCategoryReportResponse> GetNumberOfMembersByHandicapCategoryReport(String accessToken,
+                                                                     Guid golfClubId,
+                                                                     CancellationToken cancellationToken)
+        {
+            GetNumberOfMembersByHandicapCategoryReportResponse response = null;
+            String requestUri = $"{this.BaseAddress}/api/Reporting/GolfClub/{golfClubId}/numberofmembersbyhandicapcategory";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<GetNumberOfMembersByHandicapCategoryReportResponse>(content);
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting number of members by handicap category report for Golf Club {golfClubId}.", ex);
 
                 throw exception;
             }

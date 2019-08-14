@@ -4,8 +4,9 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using GolfClub.DomainEvents;
     using GolfClubMembership.DomainEvents;
-    using ManagementAPI.GolfClub.DomainEvents;
+    using Player.DomainEvents;
     using Service.DataTransferObjects.Requests;
     using Service.DataTransferObjects.Responses;
     using Tournament.DomainEvents;
@@ -103,21 +104,21 @@
                                                CancellationToken cancellationToken);
 
         /// <summary>
-        /// Inserts the player membership to reporting.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task InsertPlayerMembershipToReporting(ClubMembershipRequestAcceptedEvent domainEvent,
-                                               CancellationToken cancellationToken);
-
-        /// <summary>
         /// Inserts the player membership to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task InsertPlayerMembershipToReadModel(ClubMembershipRequestRejectedEvent domainEvent,
+                                               CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the player membership to reporting.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerMembershipToReporting(ClubMembershipRequestAcceptedEvent domainEvent,
                                                CancellationToken cancellationToken);
 
         /// <summary>
@@ -164,6 +165,15 @@
         /// <returns></returns>
         Task RegisterClubAdministrator(RegisterClubAdministratorRequest request,
                                        CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Updates the player membership to reporting.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task UpdatePlayerMembershipToReporting(HandicapAdjustedEvent domainEvent,
+                                               CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates the tournament in read model.

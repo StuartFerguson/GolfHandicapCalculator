@@ -8,6 +8,7 @@
     using DataTransferObjects.Responses;
     using ManagementAPI.BusinessLogic.Commands;
     using ManagementAPI.Player;
+    using ManagementAPI.Player.DomainEvents;
     using MembershipStatus = DataTransferObjects.Responses.MembershipStatus;
 
     public class PlayerTestData
@@ -243,5 +244,22 @@
         public static Guid TournamentId = Guid.Parse("5E02B82A-12A3-4283-B13B-A319F3C0596A");
         public static Guid MeasuredCourseId = Guid.Parse("6B7AA648-FC96-4735-96F0-1E6F0F296D6C");
         public static DateTime ScoreDate = new DateTime(2019,4,1);
+
+        public static String GolfClubName = "Test Golf Name";
+
+        public static Guid GolfClubId2 = Guid.Parse("3933D978-20EC-47A2-B910-CD1BF2EEB0CD");
+        public static String GolfClubName2 = "Test Golf Name 2";
+
+        public static HandicapAdjustedEvent GetHandicapAdjustedEvent()
+        {
+            return HandicapAdjustedEvent.Create(PlayerTestData.AggregateId,
+                                                PlayerTestData.NumberOfStrokesBelowCss,
+                                                PlayerTestData.AdjustmentValuePerStroke,
+                                                PlayerTestData.TotalAdjustment,
+                                                PlayerTestData.TournamentId,
+                                                PlayerTestData.GolfClubId,
+                                                PlayerTestData.MeasuredCourseId,
+                                                PlayerTestData.ScoreDate);
+        }
     }
 }
