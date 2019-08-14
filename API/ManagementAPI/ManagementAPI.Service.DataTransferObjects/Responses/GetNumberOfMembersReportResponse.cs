@@ -1,12 +1,11 @@
 ﻿namespace ManagementAPI.Service.DataTransferObjects.Responses
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     /// 
     /// </summary>
-    public class GetMeasuredCourseListResponse
+    public class GetNumberOfMembersReportResponse
     {
         #region Properties
 
@@ -19,13 +18,13 @@
         public Guid GolfClubId { get; set; }
 
         /// <summary>
-        /// Gets or sets the measured courses.
+        /// Gets or sets the number of members.
         /// </summary>
         /// <value>
-        /// The measured courses.
+        /// The number of members.
         /// </value>
-        public List<MeasuredCourseListResponse> MeasuredCourses { get; set; }
-        
+        public Int32 NumberOfMembers { get; set; }
+
         #endregion
     }
 }

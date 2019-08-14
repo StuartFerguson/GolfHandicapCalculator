@@ -37,12 +37,6 @@ namespace ManagementAPI.IntegrationTests.Common
             return $"{DbConnectionStringWithNoDatabase} database={databaseName};";
         }
 
-        [AfterTestRun]
-        protected static void GlobalTearDown()
-        {
-            
-        }
-
         private static String StartMySqlContainerWithOpenConnection()
         {
             String containerName = $"shareddatabasemysql";

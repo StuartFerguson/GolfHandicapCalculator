@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace ManagementAPI.IntegrationTests.GolfClub
+namespace ManagementAPI.IntegrationTests.Reporting
 {
     using TechTalk.SpecFlow;
     
@@ -19,17 +19,18 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
-    public partial class GetClubMembersListFeature : Xunit.IClassFixture<GetClubMembersListFeature.FixtureData>, System.IDisposable
+    [Xunit.TraitAttribute("Category", "reporting")]
+    public partial class GolfClubReportsFeature : Xunit.IClassFixture<GolfClubReportsFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
-#line 1 "GetClubMembersList.feature"
+#line 1 "GolfClubReports.feature"
 #line hidden
         
-        public GetClubMembersListFeature(GetClubMembersListFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public GolfClubReportsFeature(GolfClubReportsFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -38,9 +39,10 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "GetClubMembersList", null, ProgrammingLanguage.CSharp, new string[] {
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "GolfClubReports", null, ProgrammingLanguage.CSharp, new string[] {
                         "base",
-                        "golfclub"});
+                        "golfclub",
+                        "reporting"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -79,7 +81,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         {
 #line 4
 #line hidden
-            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table32 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "EmailAddress",
                         "GivenName",
@@ -88,7 +90,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Password",
                         "ConfirmPassword",
                         "TelephoneNumber"});
-            table12.AddRow(new string[] {
+            table32.AddRow(new string[] {
                         "1",
                         "admin@testgolfclub1.co.uk",
                         "Admin",
@@ -98,9 +100,9 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "123456",
                         "01234567890"});
 #line 5
- testRunner.Given("the following golf club administrators have been registered", ((string)(null)), table12, "Given ");
+ testRunner.Given("the following golf club administrators have been registered", ((string)(null)), table32, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "GolfClubName",
                         "AddressLine1",
@@ -111,7 +113,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "TelephoneNumber",
                         "EmailAddress",
                         "WebSite"});
-            table13.AddRow(new string[] {
+            table33.AddRow(new string[] {
                         "1",
                         "Test Golf Club 1",
                         "Test Golf Club Address Line 1",
@@ -123,9 +125,9 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "testclub1@testclub1.co.uk",
                         "www.testclub1.co.uk"});
 #line 8
- testRunner.And("the following golf clubs exist", ((string)(null)), table13, "And ");
+ testRunner.And("the following golf clubs exist", ((string)(null)), table33, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table34 = new TechTalk.SpecFlow.Table(new string[] {
                         "PlayerNumber",
                         "EmailAddress",
                         "GivenName",
@@ -134,7 +136,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "DateOfBirth",
                         "Gender",
                         "ExactHandicap"});
-            table14.AddRow(new string[] {
+            table34.AddRow(new string[] {
                         "1",
                         "testplayer1@players.co.uk",
                         "Test",
@@ -142,8 +144,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Player1",
                         "1990-01-01",
                         "M",
-                        "2.0"});
-            table14.AddRow(new string[] {
+                        "2"});
+            table34.AddRow(new string[] {
                         "2",
                         "testplayer2@players.co.uk",
                         "Test",
@@ -151,8 +153,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Player2",
                         "1991-01-01",
                         "M",
-                        "4.6"});
-            table14.AddRow(new string[] {
+                        "4"});
+            table34.AddRow(new string[] {
                         "3",
                         "testplayer3@players.co.uk",
                         "Test",
@@ -160,8 +162,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Player3",
                         "1992-01-01",
                         "M",
-                        "10.4"});
-            table14.AddRow(new string[] {
+                        "10"});
+            table34.AddRow(new string[] {
                         "4",
                         "testplayer4@players.co.uk",
                         "Test",
@@ -169,8 +171,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Player4",
                         "1993-01-01",
                         "M",
-                        "12.8"});
-            table14.AddRow(new string[] {
+                        "12"});
+            table34.AddRow(new string[] {
                         "5",
                         "testplayer5@players.co.uk",
                         "Test",
@@ -178,8 +180,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Player5",
                         "1994-01-01",
                         "M",
-                        "1.5"});
-            table14.AddRow(new string[] {
+                        "1"});
+            table34.AddRow(new string[] {
                         "6",
                         "testplayer6@players.co.uk",
                         "Test",
@@ -187,8 +189,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Player6",
                         "1995-01-01",
                         "M",
-                        "20.1"});
-            table14.AddRow(new string[] {
+                        "20"});
+            table34.AddRow(new string[] {
                         "7",
                         "testplayer7@players.co.uk",
                         "Test",
@@ -196,36 +198,36 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Player7",
                         "1996-01-01",
                         "M",
-                        "24.9"});
+                        "24"});
 #line 11
- testRunner.And("the following players have registered", ((string)(null)), table14, "And ");
+ testRunner.And("the following players have registered", ((string)(null)), table34, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "PlayerNumber"});
-            table15.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "1",
                         "1"});
-            table15.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "1",
                         "2"});
-            table15.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "1",
                         "3"});
-            table15.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "1",
                         "4"});
-            table15.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "1",
                         "5"});
-            table15.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "1",
                         "6"});
-            table15.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "1",
                         "7"});
 #line 20
- testRunner.And("the following players are club members of the following golf clubs", ((string)(null)), table15, "And ");
+ testRunner.And("the following players are club members of the following golf clubs", ((string)(null)), table35, "And ");
 #line hidden
         }
         
@@ -234,21 +236,23 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Get List of Golf Club Members")]
-        [Xunit.TraitAttribute("FeatureTitle", "GetClubMembersList")]
-        [Xunit.TraitAttribute("Description", "Get List of Golf Club Members")]
-        public virtual void GetListOfGolfClubMembers()
+        [Xunit.FactAttribute(DisplayName="Get Number of Members Report")]
+        [Xunit.TraitAttribute("FeatureTitle", "GolfClubReports")]
+        [Xunit.TraitAttribute("Description", "Get Number of Members Report")]
+        public virtual void GetNumberOfMembersReport()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get List of Golf Club Members", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Number of Members Report", null, ((string[])(null)));
 #line 30
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
 #line 31
- testRunner.When("I request a list of members for golf club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I request a number of members report for club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 32
- testRunner.And("the a list of 7 members is returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Then("I am returned the report data successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 33
+ testRunner.And("the number of members count for club number 1 is 7", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -260,12 +264,12 @@ this.FeatureBackground();
             
             public FixtureData()
             {
-                GetClubMembersListFeature.FeatureSetup();
+                GolfClubReportsFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                GetClubMembersListFeature.FeatureTearDown();
+                GolfClubReportsFeature.FeatureTearDown();
             }
         }
     }

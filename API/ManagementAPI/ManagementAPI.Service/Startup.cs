@@ -204,7 +204,6 @@ namespace ManagementAPI.Service
 
                 foreach (String roleName in rolesList)
                 {
-
                     Boolean createRole = false;
                     try
                     {

@@ -1,466 +1,555 @@
-﻿namespace ManagementAPI.IntegrationTests.GolfClub
+﻿using System;
+using TechTalk.SpecFlow;
+
+namespace ManagementAPI.IntegrationTests.GolfClub
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using Common;
     using DataTransferObjects;
-    using Ductus.FluentDocker.Services.Extensions;
-    using MySql.Data.MySqlClient;
+    using ManagementAPI.Service.DataTransferObjects.Requests;
+    using Reporting;
     using Service.Client;
-    using Service.DataTransferObjects;
-    using Service.DataTransferObjects.Requests;
     using Service.DataTransferObjects.Responses;
     using Shouldly;
-    using TechTalk.SpecFlow;
 
     [Binding]
     [Scope(Tag = "golfclub")]
-    public class GolfClubSteps : GenericSteps
+    public class GolfClubSteps
     {
-        #region Fields
-
-        private Func<String, String> BaseAddressResolver;
-
-        private readonly GolfClubTestingContext GolfClubTestingContext;
-
-        private HttpClient HttpClient;
-
-        #endregion
-
-        #region Constructors
-
-        public GolfClubSteps(ScenarioContext scenarioContext,
-                             GolfClubTestingContext golfClubTestingContext) : base(scenarioContext)
+        private readonly TestingContext TestingContext;
+        
+        [When(@"I register the following details for a golf club administrator")]
+        public void WhenIRegisterTheFollowingDetailsForAGolfClubAdministrator(Table table)
         {
-            this.GolfClubTestingContext = golfClubTestingContext;
+            TableRow tableRow = table.Rows.Single();
+
+            RegisterClubAdministratorRequest registerClubAdministratorRequest = new RegisterClubAdministratorRequest
+                                                                                {
+                                                                                    ConfirmPassword = tableRow["ConfirmPassword"],
+                                                                                    FamilyName = tableRow["FamilyName"],
+                                                                                    GivenName = tableRow["GivenName"],
+                                                                                    MiddleName = tableRow["MiddleName"],
+                                                                                    EmailAddress = tableRow["EmailAddress"],
+                                                                                    TelephoneNumber = tableRow["TelephoneNumber"],
+                                                                                    Password = tableRow["Password"]
+                                                                                };
+
+            this.TestingContext.RegisterClubAdministratorRequest = registerClubAdministratorRequest;
         }
 
-        #endregion
-
-        #region Methods
-
-        [AfterScenario]
-        public void AfterScenario()
+        [Then(@"the golf club administrator registration should be successful")]
+        public void ThenTheGolfClubAdministratorRegistrationShouldBeSuccessful()
         {
-            this.StopSystem();
+            Should.NotThrow(async () =>
+                            {
+                                await this.TestingContext.DockerHelper.GolfClubClient.RegisterGolfClubAdministrator(this.TestingContext.RegisterClubAdministratorRequest,
+                                                                                        CancellationToken.None).ConfigureAwait(false);
+                                ;
+                            });
+
         }
 
-        [Given(@"a player has been registered")]
-        public void GivenAPlayerHasBeenRegistered()
+        public GolfClubSteps(TestingContext testingContext)
         {
-            RegisterPlayerRequest request = IntegrationTestsTestData.RegisterPlayerRequest;
+            this.TestingContext = testingContext;
+        }
 
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
+        [Given(@"the following golf club administrator has been registered")]
+        public void GivenTheFollowingGolfClubAdministratorHasBeenRegistered(Table table)
+        {
+            TableRow tableRow = table.Rows.Single();
+
+            RegisterClubAdministratorRequest registerClubAdministratorRequest = new RegisterClubAdministratorRequest
+                                                                                {
+                                                                                    ConfirmPassword = tableRow["ConfirmPassword"],
+                                                                                    FamilyName = tableRow["FamilyName"],
+                                                                                    GivenName = tableRow["GivenName"],
+                                                                                    MiddleName = tableRow["MiddleName"],
+                                                                                    EmailAddress = tableRow["EmailAddress"],
+                                                                                    TelephoneNumber = tableRow["TelephoneNumber"],
+                                                                                    Password = tableRow["Password"]
+                                                                                };
+
+            this.TestingContext.RegisterClubAdministratorRequest = registerClubAdministratorRequest;
+            this.TestingContext.GolfClubAdministratorRequests.Add(tableRow["GolfClubNumber"], registerClubAdministratorRequest);
 
             Should.NotThrow(async () =>
                             {
-                                this.GolfClubTestingContext.RegisterPlayerResponse = await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
+                                await this.TestingContext.DockerHelper.GolfClubClient.RegisterGolfClubAdministrator(this.TestingContext.RegisterClubAdministratorRequest,
+                                                                                        CancellationToken.None).ConfigureAwait(false);
                             });
         }
 
-        [Given(@"I am logged in as a golf club administrator")]
-        public async Task GivenIAmLoggedInAsAGolfClubAdministrator()
+        [Given(@"I am logged in as the administrator for golf club (.*)")]
+        public async Task GivenIAmLoggedInAsTheAdministratorForGolfClub(Int32 golfClubNumber)
         {
-            this.GolfClubTestingContext.ClubAdministratorToken = await this
-                                                                       .GetToken(TokenType.Password,
-                                                                                 "golfhandicap.mobile",
-                                                                                 "golfhandicap.mobile",
-                                                                                 IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress,
-                                                                                 IntegrationTestsTestData.RegisterClubAdministratorRequest.Password)
-                                                                       .ConfigureAwait(false);
+            this.TestingContext.GolfClubAdministratorToken = await this.TestingContext.DockerHelper.GetToken(TokenType.Password,
+                                                                                         "golfhandicap.mobile",
+                                                                                         "golfhandicap.mobile",
+                                                                                         this.TestingContext.RegisterClubAdministratorRequest.EmailAddress,
+                                                                                         this.TestingContext.RegisterClubAdministratorRequest.Password)
+                                                                               .ConfigureAwait(false);
         }
 
-        [Given(@"I am logged in as a player")]
-        public async Task GivenIAmLoggedInAsAPlayer()
+        [When(@"I create a golf club with the following details")]
+        public async Task WhenICreateAGolfClubWithTheFollowingDetails(Table table)
         {
-            this.GolfClubTestingContext.PlayerToken = await this.GetToken(TokenType.Password,
-                                                                          "golfhandicap.mobile",
-                                                                          "golfhandicap.mobile",
-                                                                          IntegrationTestsTestData.RegisterPlayerRequest.EmailAddress,
-                                                                          "123456").ConfigureAwait(false);
+            TableRow tableRow = table.Rows.Single();
+
+            CreateGolfClubRequest createGolfClubRequest = new CreateGolfClubRequest
+                                                          {
+                                                              EmailAddress = tableRow["EmailAddress"],
+                                                              AddressLine1 = tableRow["AddressLine1"],
+                                                              AddressLine2 = tableRow["AddressLine2"],
+                                                              Name = tableRow["GolfClubName"],
+                                                              PostalCode = tableRow["PostalCode"],
+                                                              Region = tableRow["Region"],
+                                                              TelephoneNumber = tableRow["TelephoneNumber"],
+                                                              Town = tableRow["Town"],
+                                                              Website = tableRow["WebSite"],
+                                                          };
+            this.TestingContext.CreateGolfClubRequest = createGolfClubRequest;
+
+            this.TestingContext.CreateGolfClubResponse = await this.TestingContext.DockerHelper.GolfClubClient.CreateGolfClub(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                          createGolfClubRequest,
+                                                                                                          CancellationToken.None).ConfigureAwait(false);
+
+            this.TestingContext.CreateGolfClubResponses.Add(tableRow["GolfClubNumber"], this.TestingContext.CreateGolfClubResponse);
         }
 
-        [Given(@"I am registered as a player")]
-        public void GivenIAmRegisteredAsAPlayer()
+        [Then(@"the golf club is created successfully")]
+        public void ThenTheGolfClubIsCreatedSuccessfully()
         {
-            RegisterPlayerRequest request = IntegrationTestsTestData.RegisterPlayerRequest;
-
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            Should.NotThrow(async () =>
-                            {
-                                this.GolfClubTestingContext.RegisterPlayerResponse = await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
-                            });
+            this.TestingContext.CreateGolfClubResponse.ShouldNotBeNull();
+            this.TestingContext.CreateGolfClubResponse.GolfClubId.ShouldNotBe(Guid.Empty);
         }
 
-        [Given(@"I have registered as a golf club administrator")]
-        public void GivenIHaveRegisteredAsAGolfClubAdministrator()
+        [When(@"I request the details of the golf club (.*)")]
+        public async Task WhenIRequestTheDetailsOfTheGolfClub(Int32 golfClubNumber)
         {
-            RegisterClubAdministratorRequest request = IntegrationTestsTestData.RegisterClubAdministratorRequest;
-
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            Should.NotThrow(async () => { await client.RegisterGolfClubAdministrator(request, CancellationToken.None).ConfigureAwait(false); });
-        }
-
-        [Given(@"I have the details of the new club")]
-        public void GivenIHaveTheDetailsOfTheNewClub()
-        {
-            this.GolfClubTestingContext.CreateGolfClubRequest = IntegrationTestsTestData.CreateGolfClubRequest;
-        }
-
-        [Given(@"my golf club has been created")]
-        public async Task GivenMyGolfClubHasBeenCreated()
-        {
-            CreateGolfClubRequest request = IntegrationTestsTestData.CreateGolfClubRequest;
-
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
-
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateGolfClubResponse response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
-
-            this.GolfClubTestingContext.GolfClubId = response.GolfClubId;
-        }
-
-        [Given(@"The club I want to register for is already created")]
-        public async Task GivenTheClubIWantToRegisterForIsAlreadyCreated()
-        {
-            CreateGolfClubRequest request = IntegrationTestsTestData.CreateGolfClubRequest;
-
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
-
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            CreateGolfClubResponse response = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
-
-            this.GolfClubTestingContext.GolfClubId = response.GolfClubId;
-        }
-
-        [Given(@"the following players have registered")]
-        public async Task GivenTheFollowingPlayersHaveRegistered(Table table)
-        {
-            this.GolfClubTestingContext.RegisteredPlayers = new Dictionary<Int32, RegisteredPlayer>();
-
-            foreach (TableRow tableRow in table.Rows)
-            {
-                RegisterPlayerRequest request = new RegisterPlayerRequest
-                                                {
-                                                    DateOfBirth = DateTime.ParseExact(tableRow["DateOfBirth"], "dd/MM/yyyy", null),
-                                                    EmailAddress = tableRow["EmailAddress"],
-                                                    Gender = tableRow["Gender"],
-                                                    GivenName = tableRow["GivenName"],
-                                                    FamilyName = tableRow["FamilyName"],
-                                                    ExactHandicap = decimal.Parse(tableRow["ExactHandicap"])
-                                                };
-
-                IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-                RegisterPlayerResponse response = await client.RegisterPlayer(request, CancellationToken.None).ConfigureAwait(false);
-
-                this.GolfClubTestingContext.RegisteredPlayers.Add(int.Parse(tableRow["PlayerId"]),
-                                                                  new RegisteredPlayer
-                                                                  {
-                                                                      Request = request,
-                                                                      Response = response
-                                                                  });
-            }
-        }
-
-        [Given(@"The following players have requested membership")]
-        public async Task GivenTheFollowingPlayersHaveRequestedMembership(Table table)
-        {
-            foreach (TableRow tableRow in table.Rows)
-            {
-                RegisteredPlayer registeredPlayer = this.GolfClubTestingContext.RegisteredPlayers[int.Parse(tableRow["PlayerId"])];
-
-                this.GolfClubTestingContext.PlayerToken = await this
-                                                                .GetToken(TokenType.Password,
-                                                                          "golfhandicap.mobile",
-                                                                          "golfhandicap.mobile",
-                                                                          registeredPlayer.Request.EmailAddress,
-                                                                          "123456").ConfigureAwait(false);
-
-                IPlayerClient playerClient = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-                await playerClient.RequestClubMembership(this.GolfClubTestingContext.PlayerToken, registeredPlayer.Response.PlayerId, this.GolfClubTestingContext.GolfClubId, CancellationToken.None)
-                                    .ConfigureAwait(false);
-            }
-        }
-
-        [Given(@"The Golf Handicapping System Is Running")]
-        public async Task GivenTheGolfHandicappingSystemIsRunning()
-        {
-            await this.RunSystem(this.ScenarioContext.ScenarioInfo.Title).ConfigureAwait(false);
-
-            // Setup the base address resolver
-            this.BaseAddressResolver = api => $"http://127.0.0.1:{this.ManagementApiPort}";
-
-            this.HttpClient = new HttpClient();
-        }
-
-        /// <summary>
-        /// Thens a list of golf clubs will be returned.
-        /// </summary>
-        [Then(@"a list of golf clubs will be returned")]
-        public void ThenAListOfGolfClubsWillBeReturned()
-        {
-            List<GetGolfClubResponse> response = this.GolfClubTestingContext.GetGolfClubListResponse;
-
-            response.ShouldNotBeEmpty();
-            response.Count.ShouldBe(1);
-        }
-
-        [Then(@"a list of '(.*)' members should be returned")]
-        public void ThenAListOfMembersShouldBeReturned(Int32 memberCount)
-        {
-            this.GolfClubTestingContext.GolfClubMembersList.Count.ShouldBe(memberCount);
-        }
-
-        [Then(@"my registration should be successful")]
-        public void ThenMyRegistrationShouldBeSuccessful()
-        {
-            RegisterClubAdministratorRequest request = this.GolfClubTestingContext.RegisterClubAdministratorRequest;
-
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            Should.NotThrow(async () => { await client.RegisterGolfClubAdministrator(request, CancellationToken.None).ConfigureAwait(false); });
-        }
-
-        [Then(@"the golf club configuration will be created successfully")]
-        public void ThenTheGolfClubConfigurationWillBeCreatedSuccessfully()
-        {
-            CreateGolfClubResponse response = this.GolfClubTestingContext.CreateGolfClubResponse;
-
-            response.ShouldNotBe(null);
-            response.GolfClubId.ShouldNotBe(Guid.Empty);
+            this.TestingContext.GetGolfClubResponse = await this.TestingContext.DockerHelper.GolfClubClient.GetSingleGolfClub(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                          this.TestingContext.CreateGolfClubResponse.GolfClubId,
+                                                                                                          CancellationToken.None).ConfigureAwait(false);
         }
 
         [Then(@"the golf club data will be returned")]
         public void ThenTheGolfClubDataWillBeReturned()
         {
-            GetGolfClubResponse response = this.GolfClubTestingContext.GetGolfClubResponse;
+            GetGolfClubResponse response = this.TestingContext.GetGolfClubResponse;
 
-            response.ShouldNotBe(null);
-            response.Name.ShouldBe(IntegrationTestsTestData.CreateGolfClubRequest.Name);
+            response.ShouldNotBeNull();
+            response.Name.ShouldBe("Test Golf Club 1");
         }
 
-        [Then(@"the measured course is added to the club")]
-        public void ThenTheMeasuredCourseIsAddedToTheClub()
+        [Given(@"the following golf club administrators have been registered")]
+        public async Task GivenTheFollowingGolfClubAdministratorsHaveBeenRegistered(Table table)
         {
-            AddMeasuredCourseToClubRequest request = this.GolfClubTestingContext.AddMeasuredCourseToClubRequest;
+            foreach (TableRow tableRow in table.Rows)
+            {
+                RegisterClubAdministratorRequest registerClubAdministratorRequest = new RegisterClubAdministratorRequest
+                                                                                    {
+                                                                                        ConfirmPassword = tableRow["ConfirmPassword"],
+                                                                                        FamilyName = tableRow["FamilyName"],
+                                                                                        GivenName = tableRow["GivenName"],
+                                                                                        MiddleName = tableRow["MiddleName"],
+                                                                                        EmailAddress = tableRow["EmailAddress"],
+                                                                                        TelephoneNumber = tableRow["TelephoneNumber"],
+                                                                                        Password = tableRow["Password"]
+                                                                                    };
 
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+                await this.TestingContext.DockerHelper.GolfClubClient.RegisterGolfClubAdministrator(registerClubAdministratorRequest, CancellationToken.None).ConfigureAwait(false);
 
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
-
-            Should.NotThrow(async () => { await client.AddMeasuredCourseToGolfClub(bearerToken, this.GolfClubTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false); });
+                this.TestingContext.GolfClubAdministratorRequests.Add(tableRow["GolfClubNumber"], registerClubAdministratorRequest);
+            }
         }
 
-        [When(@"I add a measured course to the club")]
-        public void WhenIAddAMeasuredCourseToTheClub()
+        [Given(@"the following golf clubs exist")]
+        public async Task GivenTheFollowingGolfClubsExist(Table table)
         {
-            this.GolfClubTestingContext.AddMeasuredCourseToClubRequest = IntegrationTestsTestData.AddMeasuredCourseToClubRequest;
+            foreach (TableRow tableRow in table.Rows)
+            {
+                RegisterClubAdministratorRequest registerClubAdministratorRequest =
+                    this.TestingContext.GetRegisterClubAdministratorRequest(tableRow["GolfClubNumber"]);
+
+                this.TestingContext.GolfClubAdministratorToken = await this.TestingContext.DockerHelper.GetToken(TokenType.Password,
+                                                                                             "golfhandicap.mobile",
+                                                                                             "golfhandicap.mobile",
+                                                                                             registerClubAdministratorRequest.EmailAddress,
+                                                                                             registerClubAdministratorRequest.Password).ConfigureAwait(false);
+                ;
+
+                CreateGolfClubRequest createGolfClubRequest = new CreateGolfClubRequest
+                                                              {
+                                                                  AddressLine1 = tableRow["AddressLine1"],
+                                                                  EmailAddress = tableRow["EmailAddress"],
+                                                                  TelephoneNumber = tableRow["TelephoneNumber"],
+                                                                  Name = tableRow["GolfClubName"],
+                                                                  AddressLine2 = tableRow["AddressLine2"],
+                                                                  PostalCode = tableRow["PostalCode"],
+                                                                  Region = tableRow["Region"],
+                                                                  Town = tableRow["Town"],
+                                                                  Website = tableRow["WebSite"]
+                                                              };
+
+                this.TestingContext.CreateGolfClubRequests.Add(tableRow["GolfClubNumber"], createGolfClubRequest);
+
+                CreateGolfClubResponse createGolfClubResponse = await this.TestingContext.DockerHelper.GolfClubClient.CreateGolfClub(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                     createGolfClubRequest,
+                                                                                                     CancellationToken.None).ConfigureAwait(false);
+
+                this.TestingContext.CreateGolfClubResponses.Add(tableRow["GolfClubNumber"], createGolfClubResponse);
+            }
         }
 
-        [When(@"I call Create Golf Club")]
-        public async Task WhenICallCreateGolfClub()
+        [Given(@"the following players have registered")]
+        public async Task GivenTheFollowingPlayersHaveRegistered(Table table)
         {
-            CreateGolfClubRequest request = this.GolfClubTestingContext.CreateGolfClubRequest;
+            foreach (TableRow tableRow in table.Rows)
+            {
+                RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest
+                                                              {
+                                                                  DateOfBirth = DateTime.ParseExact(tableRow["DateOfBirth"], "yyyy-MM-dd", null),
+                                                                  FamilyName = tableRow["FamilyName"],
+                                                                  GivenName = tableRow["GivenName"],
+                                                                  MiddleName = tableRow["MiddleName"],
+                                                                  EmailAddress = tableRow["EmailAddress"],
+                                                                  ExactHandicap = Decimal.Parse(tableRow["ExactHandicap"]),
+                                                                  Gender = tableRow["Gender"],
+                                                              };
 
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
+                this.TestingContext.RegisterPlayerRequests.Add(tableRow["PlayerNumber"], registerPlayerRequest);
 
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+                RegisterPlayerResponse registerPlayerResponse =
+                    await this.TestingContext.DockerHelper.PlayerClient.RegisterPlayer(registerPlayerRequest, CancellationToken.None).ConfigureAwait(false);
 
-            this.GolfClubTestingContext.CreateGolfClubResponse = await client.CreateGolfClub(bearerToken, request, CancellationToken.None).ConfigureAwait(false);
+                this.TestingContext.RegisterPlayerResponses.Add(tableRow["PlayerNumber"], registerPlayerResponse);
+            }
         }
 
-        [When(@"I register my details as a golf club administrator")]
-        public void WhenIRegisterMyDetailsAsAGolfClubAdministrator()
+        [Given(@"I am logged in as player number (.*)")]
+        public async Task GivenIAmLoggedInAsPlayerNumber(String playerNumber)
         {
-            this.GolfClubTestingContext.RegisterClubAdministratorRequest = IntegrationTestsTestData.RegisterClubAdministratorRequest;
-        }
+            RegisterPlayerRequest registerPlayerRequest = this.TestingContext.GetRegisterPlayerRequest(playerNumber);
 
-        [When(@"I request a list of members")]
-        public async Task WhenIRequestAListOfMembers()
-        {
-            IGolfClubClient golfClubClient = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            this.GolfClubTestingContext.GolfClubMembersList =
-                await golfClubClient.GetGolfClubMembershipList(this.GolfClubTestingContext.ClubAdministratorToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None);
-        }
-
-        [When(@"I request club membership my request is accepted")]
-        public void WhenIRequestClubMembershipMyRequestIsAccepted()
-        {
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.GolfClubTestingContext.PlayerToken;
-            Guid golfClubId = this.GolfClubTestingContext.GolfClubId;
-
-            Should.NotThrow(async () => { await client.RequestClubMembership(bearerToken, this.GolfClubTestingContext.RegisterPlayerResponse.PlayerId, golfClubId, CancellationToken.None).ConfigureAwait(false); });
-        }
-
-        [When(@"I request the details of the golf club")]
-        public async Task WhenIRequestTheDetailsOfTheGolfClub()
-        {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
-
-            await Retry.For(async () =>
-                      {
-                          this.GolfClubTestingContext.GetGolfClubResponse =
-                              await client.GetSingleGolfClub(bearerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
-                      });
+            this.TestingContext.PlayerToken = await this.TestingContext.DockerHelper.GetToken(TokenType.Password,
+                                                                      "golfhandicap.mobile",
+                                                                      "golfhandicap.mobile",
+                                                                      registerPlayerRequest.EmailAddress,
+                                                                      "123456").ConfigureAwait(false);
         }
 
         [When(@"I request the list of golf clubs")]
         public async Task WhenIRequestTheListOfGolfClubs()
         {
-            IPlayerClient client = new PlayerClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.GolfClubTestingContext.PlayerToken;
-
             await Retry.For(async () =>
                             {
-                                this.GolfClubTestingContext.GetGolfClubListResponse =
-                                    await client.GetGolfClubList(bearerToken, this.GolfClubTestingContext.RegisterPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
+                                List<GetGolfClubResponse> getGolfClubResponses = await this
+                                                                                       .TestingContext.DockerHelper.PlayerClient
+                                                                                       .GetGolfClubList(this.TestingContext.PlayerToken,
+                                                                                                        this.TestingContext.PlayerId,
+                                                                                                        CancellationToken.None).ConfigureAwait(false);
 
-                                if (this.GolfClubTestingContext.GetGolfClubListResponse.Count == 0)
+                                if (getGolfClubResponses.Count == 0)
                                 {
-                                    throw new Exception("Empty Club List");
+                                    throw new Exception();
                                 }
-                            });
+
+                                this.TestingContext.GetGolfClubResponseList = getGolfClubResponses;
+                            }).ConfigureAwait(false);
+
         }
 
-        [When(@"I add tournament division (.*) with a start handicap of (.*) and and end handicap of (.*)")]
-        public async Task WhenIAddTournmentDivisionWithAStartHandicapOfAndAndEndHandicapOf(Int32 division, Int32 startHandicap, Int32 endHandicap)
+        [Then(@"a list of golf clubs will be returned")]
+        public void ThenAListOfGolfClubsWillBeReturned()
         {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
-
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
-
-            AddTournamentDivisionToGolfClubRequest request = new AddTournamentDivisionToGolfClubRequest
-                                                             {
-                                                                 Division = division,
-                                                                 StartHandicap = startHandicap,
-                                                                 EndHandicap = endHandicap
-                                                             };
-
-            await client.AddTournamentDivision(bearerToken, this.GolfClubTestingContext.GolfClubId, request, CancellationToken.None).ConfigureAwait(false);
-
-            // Get the last response
-            GolfClubClient g = client as GolfClubClient;
-            this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
-        }
-        
-        [Then(@"the divsion is addded successfully with an Http Status Code (.*)")]
-        public void ThenTheDivsionIsAdddedSuccessfullyWithAnHttpStatusCode(Int32 httpStatusCode)
-        {
-            Int32 actualStatusCode = (Int32)this.GolfClubTestingContext.LastHttpResponseMessage.StatusCode;
-            actualStatusCode.ShouldBe(httpStatusCode);                
+            this.TestingContext.GetGolfClubResponseList.ShouldNotBeNull();
+            this.TestingContext.GetGolfClubResponseList.ShouldNotBeEmpty();
         }
 
-        [Given(@"I have the details of the match secretary")]
-        public void GivenIHaveTheDetailsOfTheMatchSecretary()
+        [Then(@"the list will contain (.*) golf clubs")]
+        public void ThenTheListWillContainGolfClubs(Int32 golfClubCount)
         {
-            this.GolfClubTestingContext.CreateMatchSecretaryRequest = IntegrationTestsTestData.CreateMatchSecretaryRequest;
+            this.TestingContext.GetGolfClubResponseList.Count.ShouldBe(golfClubCount);
         }
 
-        [When(@"I create the Match Secretary")]
-        public async Task WhenICreateTheMatchSecretary()
+        [When(@"I add a measured course to the club with the following details")]
+        public void WhenIAddAMeasuredCourseToTheClubWithTheFollowingDetails(Table table)
         {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            foreach (TableRow tableRow in table.Rows)
+            {
+                AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest = new AddMeasuredCourseToClubRequest
+                                                                                {
+                                                                                    Name = tableRow["Name"],
+                                                                                    MeasuredCourseId = Guid.NewGuid(),
+                                                                                    StandardScratchScore = Int32.Parse(tableRow["StandardScratchScore"]),
+                                                                                    TeeColour = tableRow["TeeColour"],
+                                                                                    Holes = new List<HoleDataTransferObjectRequest>()
+                                                                                };
 
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
-
-            CreateMatchSecretaryRequest request = this.GolfClubTestingContext.CreateMatchSecretaryRequest;
-
-            await client.CreateMatchSecretary(bearerToken, this.GolfClubTestingContext.GolfClubId, request, CancellationToken.None);
-
-            // Get the last response
-            GolfClubClient g = client as GolfClubClient;
-            this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
+                this.TestingContext.AddMeasuredCourseToClubRequests.Add(new KeyValuePair<String, String>(tableRow["GolfClubNumber"],
+                                                                                                                 tableRow["MeasuredCourseNumber"]),
+                                                                                addMeasuredCourseToClubRequest);
+            }
         }
 
-        [When(@"I ask for a list of measured courses against the golf club")]
-        public async Task WhenIAskForAListOfMeasuredCoursesAgainstTheGolfClub()
+        [When(@"with the following holes")]
+        public void WhenWithTheFollowingHoles(Table table)
         {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            foreach (TableRow tableRow in table.Rows)
+            {
+                AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest =
+                    this.TestingContext.GetAddMeasuredCourseToClubRequest(tableRow["GolfClubNumber"], tableRow["MeasuredCourseNumber"]);
 
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
+                addMeasuredCourseToClubRequest.Holes.Add(new HoleDataTransferObjectRequest
+                                                         {
+                                                             HoleNumber = Int32.Parse(tableRow["HoleNumber"]),
+                                                             LengthInMeters = 0,
+                                                             LengthInYards = Int32.Parse(tableRow["LengthInYards"]),
+                                                             Par = Int32.Parse(tableRow["Par"]),
+                                                             StrokeIndex = Int32.Parse(tableRow["StrokeIndex"])
+                                                         });
+            }
+        }
 
-            this.GolfClubTestingContext.GetMeasuredCourseListResponse = await client.GetMeasuredCourses(bearerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None);
+        [Then(@"the measured course is added to the club successfully")]
+        public void ThenTheMeasuredCourseIsAddedToTheClubSuccessfully()
+        {
+            foreach (KeyValuePair<KeyValuePair<String, String>, AddMeasuredCourseToClubRequest> addMeasuredCourseToClubRequest in this
+                                                                                                                                  .TestingContext
+                                                                                                                                  .AddMeasuredCourseToClubRequests)
+            {
+                CreateGolfClubResponse createGolfClubResponse = this.TestingContext.CreateGolfClubResponses[addMeasuredCourseToClubRequest.Key.Key];
 
-            // Get the last response
-            GolfClubClient g = client as GolfClubClient;
-            this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
+                Should.NotThrow(async () =>
+                                {
+                                    await this.TestingContext.DockerHelper.GolfClubClient.AddMeasuredCourseToGolfClub(this.TestingContext.GolfClubAdministratorToken,
+                                                                                          createGolfClubResponse.GolfClubId,
+                                                                                          addMeasuredCourseToClubRequest.Value,
+                                                                                          CancellationToken.None).ConfigureAwait(false);
+                                });
+            }
+        }
+
+        [When(@"I ask for a list of measured courses against the golf club (.*)")]
+        public async Task WhenIAskForAListOfMeasuredCoursesAgainstTheGolfClub(String golfClubNumber)
+        {
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.CreateGolfClubResponses[golfClubNumber];
+
+            await Retry.For(async () =>
+                      {
+                          GetMeasuredCourseListResponse response = await this.TestingContext.DockerHelper.GolfClubClient.GetMeasuredCourses(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                createGolfClubResponse.GolfClubId,
+                                                                                                                CancellationToken.None).ConfigureAwait(false);
+                          
+                          this.TestingContext.MeasuredCourseList = response;
+
+                      }).ConfigureAwait(false);
         }
 
         [Then(@"the list of ""(.*)"" measured courses should be returned")]
-        public void ThenTheListOfMeasuredCoursesShouldBeReturned(Int32 measuredCourseCount)
+        public void ThenTheListOfMeasuredCoursesShouldBeReturned(Int32 numberOfMeasuredCourses)
         {
-            this.GolfClubTestingContext.GetMeasuredCourseListResponse.MeasuredCourses.Count.ShouldBe(measuredCourseCount);
+            this.TestingContext.MeasuredCourseList.ShouldNotBeNull();
+            this.TestingContext.MeasuredCourseList.MeasuredCourses.ShouldNotBeNull();
+            this.TestingContext.MeasuredCourseList.MeasuredCourses.ShouldNotBeEmpty();
+            this.TestingContext.MeasuredCourseList.MeasuredCourses.Count.ShouldBe(numberOfMeasuredCourses);
         }
 
-        [When(@"I request a list of users for the club")]
-        public async Task WhenIRequestAListOfUsersForTheClub()
+        [When(@"I add tournament division (.*) with a start handicap of (.*) and and end handicap of (.*)")]
+        public void WhenIAddTournamentDivisionWithAStartHandicapOfAndAndEndHandicapOf(Int32 division,
+                                                                                      Int32 startHandicap,
+                                                                                      Int32 endHandicap)
         {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            this.TestingContext.AddTournamentDivisionToGolfClubRequest = new AddTournamentDivisionToGolfClubRequest
+                                                                                 {
+                                                                                     Division = division,
+                                                                                     StartHandicap = startHandicap,
+                                                                                     EndHandicap = endHandicap
+                                                                                 };
 
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
-
-            this.GolfClubTestingContext.GetGolfClubUserListResponse = await client.GetGolfClubUserList(bearerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
-
-            // Get the last response
-            GolfClubClient g = client as GolfClubClient;
-            this.GolfClubTestingContext.LastHttpResponseMessage = g.LastHttpResponseMessage;
         }
 
-        [Then(@"(.*) users details are returned")]
-        public async Task ThenUsersDetailsAreReturned(Int32 numberOfUsers)
+        [Then(@"the divsion is addded successfully to golf club (.*)")]
+        public void ThenTheDivsionIsAdddedSuccessfullyToGolfClub(String golfClubNumber)
         {
-            IGolfClubClient client = new GolfClubClient(this.BaseAddressResolver, this.HttpClient);
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
 
-            String bearerToken = this.GolfClubTestingContext.ClubAdministratorToken;
-
-            await Retry.For(async () =>
+            Should.NotThrow(async () =>
                             {
-                                this.GolfClubTestingContext.GetGolfClubUserListResponse =
-                                    await client.GetGolfClubUserList(bearerToken, this.GolfClubTestingContext.GolfClubId, CancellationToken.None).ConfigureAwait(false);
-
-                                if (this.GolfClubTestingContext.GetGolfClubUserListResponse.Users.Count == 0)
-                                {
-                                    throw new Exception("Empty Used List");
-                                }
+                                await this.TestingContext.DockerHelper.GolfClubClient.AddTournamentDivision(this.TestingContext.GolfClubAdministratorToken,
+                                                                                createGolfClubResponse.GolfClubId,
+                                                                                this.TestingContext.AddTournamentDivisionToGolfClubRequest,
+                                                                                CancellationToken.None).ConfigureAwait(false);
                             });
         }
 
-        [Then(@"the golf club administrators details are returned")]
-        public void ThenTheGolfClubAdministratorsDetailsAreReturned()
+        [When(@"I register the following details for a match secretary")]
+        public void WhenIRegisterTheFollowingDetailsForAMatchSecretary(Table table)
         {
-            GolfClubUserResponse user = this.GolfClubTestingContext.GetGolfClubUserListResponse.Users
-                .SingleOrDefault(u => u.Email == IntegrationTestsTestData.RegisterClubAdministratorRequest.EmailAddress);
+            TableRow tableRow = table.Rows.Single();
+
+            this.TestingContext.CreateGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(tableRow["GolfClubNumber"]);
+
+            CreateMatchSecretaryRequest createMatchSecretaryRequest = new CreateMatchSecretaryRequest
+                                                                      {
+                                                                          ConfirmPassword = tableRow["ConfirmPassword"],
+                                                                          FamilyName = tableRow["FamilyName"],
+                                                                          GivenName = tableRow["GivenName"],
+                                                                          MiddleName = tableRow["MiddleName"],
+                                                                          EmailAddress = tableRow["EmailAddress"],
+                                                                          TelephoneNumber = tableRow["TelephoneNumber"],
+                                                                          Password = tableRow["Password"]
+                                                                      };
+
+            this.TestingContext.CreateMatchSecretaryRequest = createMatchSecretaryRequest;
+        }
+
+        [Then(@"the match secretary registration should be successful")]
+        public void ThenTheMatchSecretaryRegistrationShouldBeSuccessful()
+        {
+            Should.NotThrow(async () =>
+                            {
+                                await this.TestingContext.DockerHelper.GolfClubClient.CreateMatchSecretary(this.TestingContext.GolfClubAdministratorToken,
+                                                                               this.TestingContext.CreateGolfClubResponse.GolfClubId,
+                                                                               this.TestingContext.CreateMatchSecretaryRequest,
+                                                                               CancellationToken.None).ConfigureAwait(false);
+                            });
+        }
+
+        [When(@"I request membership of club number (.*) for player number (.*) the request is successful")]
+        public void WhenIRequestMembershipOfClubNumberForPlayerNumberTheRequestIsSuccessful(String clubNumber,
+                                                                                            String playerNumber)
+        {
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(clubNumber);
+            RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
+
+            Should.NotThrow(async () =>
+                            {
+                                await this.TestingContext.DockerHelper.PlayerClient.RequestClubMembership(this.TestingContext.PlayerToken,
+                                                                              registerPlayerResponse.PlayerId,
+                                                                              createGolfClubResponse.GolfClubId,
+                                                                              CancellationToken.None).ConfigureAwait(false);
+                            });
+        }
+
+        [Given(@"the following players are club members of the following golf clubs")]
+        public async Task GivenTheFollowingPlayersAreClubMembersOfTheFollowingGolfClubs(Table table)
+        {
+            foreach (TableRow tableRow in table.Rows)
+            {
+                RegisterPlayerRequest registerPlayerRequest = this.TestingContext.GetRegisterPlayerRequest(tableRow["PlayerNumber"]);
+
+                RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(tableRow["PlayerNumber"]);
+
+                CreateGolfClubResponse golfClubResponse = this.TestingContext.GetCreateGolfClubResponse(tableRow["GolfClubNumber"]);
+
+                this.TestingContext.PlayerToken = await this.TestingContext.DockerHelper.GetToken(TokenType.Password,
+                                                                          "golfhandicap.mobile",
+                                                                          "golfhandicap.mobile",
+                                                                          registerPlayerRequest.EmailAddress,
+                                                                          "123456").ConfigureAwait(false);
+
+                await this.TestingContext.DockerHelper.PlayerClient.RequestClubMembership(this.TestingContext.PlayerToken,
+                                                              registerPlayerResponse.PlayerId,
+                                                              golfClubResponse.GolfClubId,
+                                                              CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+
+        [When(@"I request a list of members for golf club number (.*)")]
+        public async Task WhenIRequestAListOfMembersForGolfClubNumber(String golfClubNumber)
+        {
+            CreateGolfClubResponse golfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            this.TestingContext.GolfClubMembersList =
+                await this.TestingContext.DockerHelper.GolfClubClient.GetGolfClubMembershipList(this.TestingContext.GolfClubAdministratorToken,
+                                                                    golfClubResponse.GolfClubId,
+                                                                    CancellationToken.None);
+        }
+
+        [When(@"the a list of (.*) members is returned")]
+        public void WhenTheAListOfMembersIsReturned(Int32 numberOfMembers)
+        {
+            this.TestingContext.GolfClubMembersList.ShouldNotBeNull();
+            this.TestingContext.GolfClubMembersList.ShouldNotBeEmpty();
+            this.TestingContext.GolfClubMembersList.Count.ShouldBe(numberOfMembers);
+        }
+
+        [Given(@"I am logged in as a golf club administrator for golf club (.*)")]
+        public async Task GivenIAmLoggedInAsAGolfClubAdministratorForGolfClub(String golfClubNumber)
+        {
+            RegisterClubAdministratorRequest registerClubAdministratorRequest = this.TestingContext.GetRegisterClubAdministratorRequest(golfClubNumber);
+
+            this.TestingContext.GolfClubAdministratorToken = await this.TestingContext.DockerHelper.GetToken(TokenType.Password,
+                                                                                     "golfhandicap.mobile",
+                                                                                     "golfhandicap.mobile",
+                                                                                     registerClubAdministratorRequest.EmailAddress,
+                                                                                     registerClubAdministratorRequest.Password).ConfigureAwait(false);
+        }
+
+        [When(@"I request a list of users for the for golf club (.*)")]
+        public async Task WhenIRequestAListOfUsersForTheForGolfClub(String golfClubNumber)
+        {
+            CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            this.TestingContext.GetGolfClubUserListResponse = await this.TestingContext.DockerHelper.GolfClubClient.GetGolfClubUserList(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                createGolfClubResponse.GolfClubId,
+                                                                                                                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Then(@"(.*) users details are returned for golf club (.*)")]
+        public async Task ThenUsersDetailsAreReturnedForGolfClub(Int32 numberOfUsers,String golfClubNumber)
+        {
+            if (this.TestingContext.GetGolfClubUserListResponse.Users.Count != numberOfUsers)
+            {
+                CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+                await Retry.For(async () =>
+                                {
+
+
+                                    this.TestingContext.GetGolfClubUserListResponse = await this.TestingContext.DockerHelper.GolfClubClient
+                                                                                                    .GetGolfClubUserList(this.TestingContext
+                                                                                                                             .GolfClubAdministratorToken,
+                                                                                                                         createGolfClubResponse.GolfClubId,
+                                                                                                                         CancellationToken.None).ConfigureAwait(false);
+
+                                    if (this.TestingContext.GetGolfClubUserListResponse.Users.Count != numberOfUsers)
+                                    {
+                                        throw new Exception();
+                                    }
+                                });
+            }
+
+            this.TestingContext.GetGolfClubUserListResponse.Users.ShouldNotBeNull();
+            this.TestingContext.GetGolfClubUserListResponse.Users.ShouldNotBeEmpty();
+            this.TestingContext.GetGolfClubUserListResponse.Users.Count.ShouldBe(numberOfUsers);
+        }
+
+        [Then(@"the golf club administrators details are returned for golf club (.*)")]
+        public void ThenTheGolfClubAdministratorsDetailsAreReturnedForGolfClub(String golfClubNumber)
+        {
+            RegisterClubAdministratorRequest registerClubAdministratorRequest = this.TestingContext.GetRegisterClubAdministratorRequest(golfClubNumber);
+
+            GolfClubUserResponse user = this.TestingContext.GetGolfClubUserListResponse.Users
+                                            .SingleOrDefault(u => u.Email == registerClubAdministratorRequest.EmailAddress);
 
             user.ShouldNotBeNull();
         }
 
-        [Then(@"the metch secretarys details are returned")]
-        public void ThenTheMetchSecretarysDetailsAreReturned()
+        [Then(@"the match secretarys details are returned for golf club (.*)")]
+        public void ThenTheMatchSecretarysDetailsAreReturnedForGolfClub(String golfClubNumber)
         {
-            GolfClubUserResponse user = this.GolfClubTestingContext.GetGolfClubUserListResponse.Users
-                           .SingleOrDefault(u => u.Email == IntegrationTestsTestData.CreateMatchSecretaryRequest.EmailAddress);
+            GolfClubUserResponse user = this.TestingContext.GetGolfClubUserListResponse.Users
+                                            .SingleOrDefault(u => u.Email == this.TestingContext.CreateMatchSecretaryRequest.EmailAddress);
 
             user.ShouldNotBeNull();
         }
 
 
-        #endregion
     }
 }

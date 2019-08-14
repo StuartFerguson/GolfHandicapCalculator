@@ -301,6 +301,12 @@
                                                                                               FamilyName = "Club Administrator"
                                                                                           };
 
+        public static GetNumberOfMembersReportResponse GetNumberOfMembersReportResponse = new GetNumberOfMembersReportResponse
+                                                                                          {
+                                                                                              GolfClubId = GolfClubTestData.AggregateId,
+                                                                                              NumberOfMembers = 5
+                                                                                          };
+
         #endregion
 
         #region Methods

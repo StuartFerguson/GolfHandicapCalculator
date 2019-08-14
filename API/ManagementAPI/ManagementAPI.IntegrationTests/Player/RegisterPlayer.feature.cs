@@ -17,6 +17,7 @@ namespace ManagementAPI.IntegrationTests.Player
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "player")]
     public partial class RegisterAPlayerFeature : Xunit.IClassFixture<RegisterAPlayerFeature.FixtureData>, System.IDisposable
     {
@@ -39,6 +40,7 @@ namespace ManagementAPI.IntegrationTests.Player
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Register a Player", "\tIn order to use the golf club handicapping system\r\n\tAs a player\r\n\tI want to be r" +
                     "egister my details on the system", ProgrammingLanguage.CSharp, new string[] {
+                        "base",
                         "player"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -74,14 +76,6 @@ namespace ManagementAPI.IntegrationTests.Player
             testRunner.CollectScenarioErrors();
         }
         
-        public virtual void FeatureBackground()
-        {
-#line 7
-#line 8
- testRunner.Given("The Golf Handicapping System Is Running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
-        }
-        
         void System.IDisposable.Dispose()
         {
             this.ScenarioTearDown();
@@ -93,17 +87,32 @@ namespace ManagementAPI.IntegrationTests.Player
         public virtual void RegisterPlayer()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Register Player", null, ((string[])(null)));
-#line 10
+#line 7
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 7
-this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table47 = new TechTalk.SpecFlow.Table(new string[] {
+                        "PlayerNumber",
+                        "EmailAddress",
+                        "GivenName",
+                        "MiddleName",
+                        "FamilyName",
+                        "DateOfBirth",
+                        "Gender",
+                        "ExactHandicap"});
+            table47.AddRow(new string[] {
+                        "1",
+                        "testplayer1@players.co.uk",
+                        "Test",
+                        "",
+                        "Player1",
+                        "1990-01-01",
+                        "M",
+                        "2"});
+#line 8
+ testRunner.Given("I register the following details for a player", ((string)(null)), table47, "Given ");
 #line 11
- testRunner.Given("I have my details to register", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 12
- testRunner.When("I register my details on the system", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 13
- testRunner.Then("my details are registered successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the player registration for player number 1 should be successful", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

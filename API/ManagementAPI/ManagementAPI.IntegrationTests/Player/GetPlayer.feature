@@ -1,15 +1,13 @@
-﻿@player
+﻿@base @golfclub @player
 Feature: Get Player
 
-Background: 
-	Given The Golf Handicapping System Is Running
-	And I have registered as a golf club administrator
-	And I am logged in as a golf club administrator
-	And I am registered as a player
-	And I am logged in as a player
-	And The club I want to register for is already created
-	When I request club membership my request is accepted
+Background:
+	Given I register the following details for a player
+	| PlayerNumber | EmailAddress              | GivenName | MiddleName | FamilyName | DateOfBirth | Gender | ExactHandicap |
+	| 1            | testplayer1@players.co.uk | Test      |            | Player1    | 1990-01-01  | M      | 2             |
+	Then the player registration for player number 1 should be successful
 
 Scenario: Get Player
-	When I request my player details
-	Then a my details will be returned
+	Given I am logged in as player number 1
+	When I request the player details for player number 1
+	Then the player details will be returned
