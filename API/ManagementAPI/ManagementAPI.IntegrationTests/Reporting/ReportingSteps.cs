@@ -205,5 +205,66 @@ namespace ManagementAPI.IntegrationTests.Reporting
                             });
         }
 
+        [When(@"I request a number of members by time period '(.*)' report for club number (.*)")]
+        public async Task WhenIRequestANumberOfMembersByTimePeriodReportForClubNumber(String timePeriod, String golfClubNumber)
+        {
+            CreateGolfClubResponse golfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            this.TestingContext.GetNumberOfMembersByTimePeriodReportResponse = await this
+                                                                                     .TestingContext.DockerHelper.ReportingClient
+                                                                                     .GetNumberOfMembersByTimePeriodReport(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                           golfClubResponse.GolfClubId,
+                                                                                                                           timePeriod,
+                                                                                                                           CancellationToken.None).ConfigureAwait(false);
+        }
+        
+        [Then(@"I am returned the number of members by time period report data successfully")]
+        public void ThenIAmReturnedTheNumberOfMembersByTimePeriodReportDataSuccessfully()
+        {
+            this.TestingContext.GetNumberOfMembersByTimePeriodReportResponse.ShouldNotBeNull();
+        }
+
+        [Then(@"the number of members for the period '(.*)' in the number of members by time period '(.*)' report for club number (.*) is (.*)")]
+        public async Task ThenTheNumberOfMembersForThePeriodInTheNumberOfMembersByTimePeriodReportForClubNumberIs(String periodString, String timePeriod, String golfClubNumber, Int32 membersCount)
+        {
+            CreateGolfClubResponse golfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            await Retry.For(async () =>
+                            {
+                                this.TestingContext.GetNumberOfMembersByTimePeriodReportResponse = await this
+                                                                                                         .TestingContext.DockerHelper.ReportingClient
+                                                                                                         .GetNumberOfMembersByTimePeriodReport(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                                               golfClubResponse.GolfClubId,
+                                                                                                                                               timePeriod,
+                                                                                                                                               CancellationToken.None).ConfigureAwait(false);
+                                String periodValue = this.GetPeriodFromPeriodString(periodString);
+                                MembersByTimePeriodResponse membersByTimePeriodResponse =
+                                    this.TestingContext.GetNumberOfMembersByTimePeriodReportResponse.MembersByTimePeriodResponse
+                                        .SingleOrDefault(h => h.Period == periodValue);
+
+                                membersByTimePeriodResponse.ShouldNotBeNull();
+                                membersByTimePeriodResponse.NumberOfMembers.ShouldBe(membersCount);
+                            });
+        }
+
+        private String GetPeriodFromPeriodString(String periodString)
+        {
+            if (periodString == "Today")
+            {
+                return DateTime.Now.ToString("yyyy-MM-dd");
+            }
+
+            if (periodString == "This Month")
+            {
+                return DateTime.Now.ToString("yyyy-MM");
+            }
+
+            if (periodString == "This Year")
+            {
+                return DateTime.Now.ToString("yyyy");
+            }
+
+            throw new Exception($"Period String {periodString} not supported");
+        }
     }
 }

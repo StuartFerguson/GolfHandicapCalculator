@@ -43,3 +43,19 @@ Scenario: Get Number of Members By Handicap Category Report
 	And the number of members by handicap category count for club number 1 handicap category 2 is 2
 	And the number of members by handicap category count for club number 1 handicap category 3 is 2
 	And the number of members by handicap category count for club number 1 handicap category 4 is 2
+
+Scenario: Get Number of Members By Time Period Report - By Day
+	When I request a number of members by time period 'day' report for club number 1
+	Then I am returned the number of members by time period report data successfully
+	And the number of members for the period 'Today' in the number of members by time period 'day' report for club number 1 is 9
+
+Scenario: Get Number of Members By Time Period Report - By Month
+	When I request a number of members by time period 'month' report for club number 1
+	Then I am returned the number of members by time period report data successfully
+	And the number of members for the period 'This Month' in the number of members by time period 'month' report for club number 1 is 9
+
+Scenario: Get Number of Members By Time Period Report - By Year
+	When I request a number of members by time period 'year' report for club number 1
+	Then I am returned the number of members by time period report data successfully
+	And the number of members for the period 'This Year' in the number of members by time period 'year' report for club number 1 is 9
+	

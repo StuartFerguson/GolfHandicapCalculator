@@ -16,6 +16,7 @@ namespace ManagementAPI.Service.Tests.General
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Shouldly;
     using Xunit;
+    using TimePeriod = DataTransferObjects.Responses.TimePeriod;
 
     public class ReportingManagerTests
     {
@@ -182,9 +183,6 @@ namespace ManagementAPI.Service.Tests.General
         {
             String databaseName = Guid.NewGuid().ToString("N");
             ManagementAPIReadModel context = this.GetContext(databaseName);
-
-            List<GolfClubMembershipReporting> reportingData = new List<GolfClubMembershipReporting>();
-
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };
 
             ReportingManager reportingManager = new ReportingManager(contextResolver);
@@ -196,6 +194,333 @@ namespace ManagementAPI.Service.Tests.General
         }
 
 
+        [Fact]
+        public async Task ReportingManager_GetNumberOfMembersByTimePeriodReport_ByDay_ReportDataReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            List<GolfClubMembershipReporting> reportingData = new List<GolfClubMembershipReporting>();
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019,08,16),
+                DateOfBirth = DateTime.Now.AddYears(-20),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 1,
+                PlayerGender = "M",
+                PlayerName = "Test Player 1"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 16),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 2,
+                PlayerGender = "M",
+                PlayerName = "Test Player 2"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 16),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 2,
+                PlayerGender = "M",
+                PlayerName = "Test Player 3"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 15),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 4"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 14),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 5"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 13),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 6"
+            });
+            context.GolfClubMembershipReporting.AddRange(reportingData);
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            ReportingManager reportingManager = new ReportingManager(contextResolver);
+
+            GetNumberOfMembersByTimePeriodReportResponse reportData = 
+                await reportingManager.GetNumberOfMembersByTimePeriodReport(GolfClubTestData.AggregateId, TimePeriod.Day.ToString(), 
+                                                                            CancellationToken.None);
+
+            reportData.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            reportData.TimePeriod.ShouldBe(TimePeriod.Day);
+            reportData.MembersByTimePeriodResponse.ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.ShouldNotBeEmpty();
+            reportData.MembersByTimePeriodResponse.Count.ShouldBe(4);
+            reportData.MembersByTimePeriodResponse.SingleOrDefault(x => x.Period == "2019-08-13").ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.Single(x => x.Period == "2019-08-13").NumberOfMembers.ShouldBe(1);
+            reportData.MembersByTimePeriodResponse.SingleOrDefault(x => x.Period == "2019-08-14").ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.Single(x => x.Period == "2019-08-14").NumberOfMembers.ShouldBe(2);
+            reportData.MembersByTimePeriodResponse.SingleOrDefault(x => x.Period == "2019-08-15").ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.Single(x => x.Period == "2019-08-15").NumberOfMembers.ShouldBe(3);
+            reportData.MembersByTimePeriodResponse.SingleOrDefault(x => x.Period == "2019-08-16").ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.Single(x => x.Period == "2019-08-16").NumberOfMembers.ShouldBe(6);
+        }
+
+        [Fact]
+        public async Task ReportingManager_GetNumberOfMembersByTimePeriodReport_ByMonth_ReportDataReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            List<GolfClubMembershipReporting> reportingData = new List<GolfClubMembershipReporting>();
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 16),
+                DateOfBirth = DateTime.Now.AddYears(-20),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 1,
+                PlayerGender = "M",
+                PlayerName = "Test Player 1"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 16),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 2,
+                PlayerGender = "M",
+                PlayerName = "Test Player 2"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 16),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 2,
+                PlayerGender = "M",
+                PlayerName = "Test Player 3"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 07, 15),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 4"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 07, 14),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 5"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 06, 13),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 6"
+            });
+            context.GolfClubMembershipReporting.AddRange(reportingData);
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            ReportingManager reportingManager = new ReportingManager(contextResolver);
+
+            GetNumberOfMembersByTimePeriodReportResponse reportData = await reportingManager.GetNumberOfMembersByTimePeriodReport(GolfClubTestData.AggregateId, TimePeriod.Month.ToString(), CancellationToken.None);
+
+            reportData.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            reportData.TimePeriod.ShouldBe(TimePeriod.Month);
+            reportData.MembersByTimePeriodResponse.ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.ShouldNotBeEmpty();
+            reportData.MembersByTimePeriodResponse.Count.ShouldBe(3);
+            reportData.MembersByTimePeriodResponse.SingleOrDefault(x => x.Period == "2019-06").ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.Single(x => x.Period == "2019-06").NumberOfMembers.ShouldBe(1);
+            reportData.MembersByTimePeriodResponse.SingleOrDefault(x => x.Period == "2019-07").ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.Single(x => x.Period == "2019-07").NumberOfMembers.ShouldBe(3);
+            reportData.MembersByTimePeriodResponse.SingleOrDefault(x => x.Period == "2019-08").ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.Single(x => x.Period == "2019-08").NumberOfMembers.ShouldBe(6);
+        }
+
+        [Fact]
+        public async Task ReportingManager_GetNumberOfMembersByTimePeriodReport_ByYear_ReportDataReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            List<GolfClubMembershipReporting> reportingData = new List<GolfClubMembershipReporting>();
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 16),
+                DateOfBirth = DateTime.Now.AddYears(-20),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 1,
+                PlayerGender = "M",
+                PlayerName = "Test Player 1"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2019, 08, 16),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 2,
+                PlayerGender = "M",
+                PlayerName = "Test Player 2"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2018, 08, 16),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 2,
+                PlayerGender = "M",
+                PlayerName = "Test Player 3"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2018, 07, 15),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 4"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2018, 07, 14),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 5"
+            });
+
+            reportingData.Add(new GolfClubMembershipReporting
+            {
+                DateJoined = new DateTime(2017, 06, 13),
+                DateOfBirth = DateTime.Now.AddYears(-25),
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                GolfClubName = GolfClubTestData.Name,
+                HandicapCategory = 3,
+                PlayerGender = "M",
+                PlayerName = "Test Player 6"
+            });
+            context.GolfClubMembershipReporting.AddRange(reportingData);
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            ReportingManager reportingManager = new ReportingManager(contextResolver);
+
+            GetNumberOfMembersByTimePeriodReportResponse reportData = await reportingManager.GetNumberOfMembersByTimePeriodReport(GolfClubTestData.AggregateId, TimePeriod.Year.ToString(), CancellationToken.None);
+
+            reportData.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            reportData.TimePeriod.ShouldBe(TimePeriod.Year);
+            reportData.MembersByTimePeriodResponse.ShouldNotBeNull();
+            reportData.MembersByTimePeriodResponse.ShouldNotBeEmpty();
+            reportData.MembersByTimePeriodResponse.Count.ShouldBe(3);
+            reportData.MembersByTimePeriodResponse[0].Period.ShouldBe("2017");
+            reportData.MembersByTimePeriodResponse[0].NumberOfMembers.ShouldBe(1);
+            reportData.MembersByTimePeriodResponse[1].Period.ShouldBe("2018");
+            reportData.MembersByTimePeriodResponse[1].NumberOfMembers.ShouldBe(4);
+            reportData.MembersByTimePeriodResponse[2].Period.ShouldBe("2019");
+            reportData.MembersByTimePeriodResponse[2].NumberOfMembers.ShouldBe(6);
+        }
+
+        [Theory]
+        [InlineData("day", TimePeriod.Day)]
+        //[InlineData("week", TimePeriod.Week)]
+        [InlineData("month", TimePeriod.Month)]
+        [InlineData("year", TimePeriod.Year)]
+        public async Task ReportingManager_GetNumberOfMembersByTimePeriodReport_NoMembers_ReportDataReturned(String timePeriod, TimePeriod expectedTimePeriod)
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            List<GolfClubMembershipReporting> reportingData = new List<GolfClubMembershipReporting>();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            ReportingManager reportingManager = new ReportingManager(contextResolver);
+
+            GetNumberOfMembersByTimePeriodReportResponse reportData = await reportingManager.GetNumberOfMembersByTimePeriodReport(GolfClubTestData.AggregateId, timePeriod, CancellationToken.None);
+
+            reportData.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            reportData.TimePeriod.ShouldBe(expectedTimePeriod);
+            reportData.MembersByTimePeriodResponse.ShouldBeEmpty();
+        }
+        
         private ManagementAPIReadModel GetContext(String databaseName)
         {
             DbContextOptionsBuilder<ManagementAPIReadModel> builder = new DbContextOptionsBuilder<ManagementAPIReadModel>()
