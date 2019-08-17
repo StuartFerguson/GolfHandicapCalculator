@@ -13,13 +13,13 @@
         #region Methods
 
         /// <summary>
-        /// Gets the number of members report.
+        /// Gets the number of members by age category report.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<GetNumberOfMembersReportResponse> GetNumberOfMembersReport(Guid golfClubId,
-                                                                        CancellationToken cancellationToken);
+        Task<GetNumberOfMembersByAgeCategoryReportResponse> GetNumberOfMembersByAgeCategoryReport(Guid golfClubId,
+                                                                                                  CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the number of members by handicap category report.
@@ -40,6 +40,15 @@
         Task<GetNumberOfMembersByTimePeriodReportResponse> GetNumberOfMembersByTimePeriodReport(Guid golfClubid,
                                                                                                 String timePeriod,
                                                                                                 CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the number of members report.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetNumberOfMembersReportResponse> GetNumberOfMembersReport(Guid golfClubId,
+                                                                        CancellationToken cancellationToken);
 
         #endregion
     }

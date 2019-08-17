@@ -131,7 +131,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "GivenName",
                         "MiddleName",
                         "FamilyName",
-                        "DateOfBirth",
+                        "Age",
                         "Gender",
                         "ExactHandicap"});
             table31.AddRow(new string[] {
@@ -140,7 +140,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Test",
                         "",
                         "Player1",
-                        "1990-01-01",
+                        "25",
                         "M",
                         "2"});
 #line 11

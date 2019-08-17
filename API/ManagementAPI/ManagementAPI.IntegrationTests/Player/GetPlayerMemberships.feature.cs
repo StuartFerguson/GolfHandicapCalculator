@@ -133,7 +133,7 @@ namespace ManagementAPI.IntegrationTests.Player
                         "GivenName",
                         "MiddleName",
                         "FamilyName",
-                        "DateOfBirth",
+                        "Age",
                         "Gender",
                         "ExactHandicap"});
             table46.AddRow(new string[] {
@@ -142,7 +142,7 @@ namespace ManagementAPI.IntegrationTests.Player
                         "Test",
                         "",
                         "Player1",
-                        "1990-01-01",
+                        "25",
                         "M",
                         "2"});
 #line 11

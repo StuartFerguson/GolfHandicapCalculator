@@ -1,17 +1,11 @@
 ﻿namespace ManagementAPI.Service.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using BusinessLogic.Manager;
     using DataTransferObjects.Responses;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     /// <summary>
     /// 
@@ -46,6 +40,47 @@
 
         #region Methods
 
+        //GetNumberOfMembersByAgeCategoryReportResponse
+
+        [HttpGet]
+        [Route("GolfClub/{golfClubId}/numberofmembersbyagecategory")]
+        public async Task<IActionResult> GetNumberOfMembersByAgeCategoryReport(Guid golfClubId,
+                                                                               CancellationToken cancellationToken)
+        {
+            GetNumberOfMembersByAgeCategoryReportResponse response = await this.ReportingManager.GetNumberOfMembersByAgeCategoryReport(golfClubId, cancellationToken);
+
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the number of members report.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GolfClub/{golfClubId}/numberofmembersbyhandicapcategory")]
+        public async Task<IActionResult> GetNumberOfMembersByHandicapCategoryReport(Guid golfClubId,
+                                                                                    CancellationToken cancellationToken)
+        {
+            GetNumberOfMembersByHandicapCategoryReportResponse reportData =
+                await this.ReportingManager.GetNumberOfMembersByHandicapCategoryReport(golfClubId, cancellationToken);
+
+            return this.Ok(reportData);
+        }
+
+        [HttpGet]
+        [Route("GolfClub/{golfClubId}/numberofmembersbytimeperiod/{timeperiod}")]
+        public async Task<IActionResult> GetNumberOfMembersByTimePeriodReport(Guid golfClubId,
+                                                                              String timePeriod,
+                                                                              CancellationToken cancellationToken)
+        {
+            GetNumberOfMembersByTimePeriodReportResponse response =
+                await this.ReportingManager.GetNumberOfMembersByTimePeriodReport(golfClubId, timePeriod, cancellationToken);
+
+            return this.Ok(response);
+        }
+
         /// <summary>
         /// Gets the number of members report.
         /// </summary>
@@ -60,34 +95,6 @@
             GetNumberOfMembersReportResponse reportData = await this.ReportingManager.GetNumberOfMembersReport(golfClubId, cancellationToken);
 
             return this.Ok(reportData);
-        }
-
-        /// <summary>
-        /// Gets the number of members report.
-        /// </summary>
-        /// <param name="golfClubId">The golf club identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("GolfClub/{golfClubId}/numberofmembersbyhandicapcategory")]
-        public async Task<IActionResult> GetNumberOfMembersByHandicapCategoryReport(Guid golfClubId,
-                                                                  CancellationToken cancellationToken)
-        {
-            GetNumberOfMembersByHandicapCategoryReportResponse reportData = await this.ReportingManager.GetNumberOfMembersByHandicapCategoryReport(golfClubId, cancellationToken);
-
-            return this.Ok(reportData);
-        }
-        
-        [HttpGet]
-        [Route("GolfClub/{golfClubId}/numberofmembersbytimeperiod/{timeperiod}")]
-        public async Task<IActionResult> GetNumberOfMembersByTimePeriodReport(Guid golfClubId,
-                                                                              String timePeriod,
-                                                                              CancellationToken cancellationToken)
-        {
-            GetNumberOfMembersByTimePeriodReportResponse response =
-                await this.ReportingManager.GetNumberOfMembersByTimePeriodReport(golfClubId, timePeriod, cancellationToken);
-
-            return this.Ok(response);
         }
 
         #endregion

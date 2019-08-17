@@ -289,5 +289,78 @@
 
         }
 
+        [Theory]
+        [InlineData(HttpStatusCode.BadRequest, typeof(Exception), typeof(InvalidOperationException))]
+        [InlineData(HttpStatusCode.Unauthorized, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.Forbidden, typeof(Exception), typeof(UnauthorizedAccessException))]
+        [InlineData(HttpStatusCode.NotFound, typeof(Exception), typeof(KeyNotFoundException))]
+        [InlineData(HttpStatusCode.InternalServerError, typeof(Exception), typeof(Exception))]
+        [InlineData(HttpStatusCode.BadGateway, typeof(Exception), typeof(Exception))]
+        public async Task ReportingClient_GetNumberOfMembersByAgeCategoryReport_FailedHttpCall_ErrorThrown(HttpStatusCode statusCode,
+                                                                                              Type exceptionType,
+                                                                                              Type innerExceptionType)
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler>
+            {
+                CallBase = true
+            };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = statusCode,
+                Content = new StringContent(string.Empty)
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = api => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
+
+            ReportingClient client = new ReportingClient(resolver, httpClient);
+
+            Exception exception = Should.Throw(async () => { await client.GetNumberOfMembersByAgeCategoryReport(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None); },
+                                               exceptionType);
+
+            exception.InnerException.ShouldBeOfType(innerExceptionType);
+        }
+
+        [Fact]
+        public async Task ReportingClient_GetNumberOfMembersByAgeCategoryReport_SuccessfulResponse()
+        {
+            Mock<FakeHttpMessageHandler> fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler>
+            {
+                CallBase = true
+            };
+            fakeHttpMessageHandler.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content =
+                                                                                                      new StringContent(JsonConvert.SerializeObject(GolfClubTestData
+                                                                                                                                                        .GetNumberOfMembersByAgeCategoryReportResponse))
+            });
+
+            HttpClient httpClient = new HttpClient(fakeHttpMessageHandler.Object);
+            Func<String, String> resolver = api => "http://baseaddress";
+            String passwordToken = "mypasswordtoken";
+
+            ReportingClient client = new ReportingClient(resolver, httpClient);
+
+            GetNumberOfMembersByAgeCategoryReportResponse response = await client.GetNumberOfMembersByAgeCategoryReport(passwordToken, GolfClubTestData.AggregateId, CancellationToken.None);
+
+            response.ShouldNotBeNull();
+            response.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            response.MembersByAgeCategoryResponse.Single(x => x.AgeCategory== "Junior").NumberOfMembers
+                    .ShouldBe(GolfClubTestData.GetNumberOfMembersByAgeCategoryReportResponse.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Junior").NumberOfMembers);
+            response.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Juvenile").NumberOfMembers
+                    .ShouldBe(GolfClubTestData.GetNumberOfMembersByAgeCategoryReportResponse.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Juvenile").NumberOfMembers);
+            response.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Youth").NumberOfMembers
+                    .ShouldBe(GolfClubTestData.GetNumberOfMembersByAgeCategoryReportResponse.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Youth").NumberOfMembers);
+            response.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Young Adult").NumberOfMembers
+                    .ShouldBe(GolfClubTestData.GetNumberOfMembersByAgeCategoryReportResponse.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Young Adult").NumberOfMembers);
+            response.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Adult").NumberOfMembers
+                    .ShouldBe(GolfClubTestData.GetNumberOfMembersByAgeCategoryReportResponse.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Adult").NumberOfMembers);
+            response.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Senior").NumberOfMembers
+                    .ShouldBe(GolfClubTestData.GetNumberOfMembersByAgeCategoryReportResponse.MembersByAgeCategoryResponse.Single(x => x.AgeCategory == "Senior").NumberOfMembers);
+
+        }
+
     }
-    }
+}
