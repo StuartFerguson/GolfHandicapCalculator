@@ -192,7 +192,7 @@ testRunner.Given("the following golf club administrators have been registered", 
                         "GivenName",
                         "MiddleName",
                         "FamilyName",
-                        "DateOfBirth",
+                        "Age",
                         "Gender",
                         "ExactHandicap"});
             table20.AddRow(new string[] {
@@ -201,7 +201,7 @@ testRunner.Given("the following golf club administrators have been registered", 
                         "Test",
                         "",
                         "Player1",
-                        "1990-01-01",
+                        "25",
                         "M",
                         "2"});
 #line 20

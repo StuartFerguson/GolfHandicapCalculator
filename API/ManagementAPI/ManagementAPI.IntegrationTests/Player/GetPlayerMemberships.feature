@@ -9,8 +9,8 @@ Background:
 	| GolfClubNumber | GolfClubName     | AddressLine1                  | AddressLine2                | Town      | Region     | PostalCode | TelephoneNumber | EmailAddress              | WebSite             | 
 	| 1              | Test Golf Club 1 | Test Golf Club Address Line 1 | Test Golf Club Address Line | TestTown1 | TestRegion | TE57 1NG   | 01234567890     | testclub1@testclub1.co.uk | www.testclub1.co.uk |
 	And the following players have registered
-	| PlayerNumber | EmailAddress              | GivenName | MiddleName | FamilyName | DateOfBirth | Gender | ExactHandicap |
-	| 1            | testplayer1@players.co.uk | Test      |            | Player1    | 1990-01-01  | M      | 2             |	
+	| PlayerNumber | EmailAddress              | GivenName | MiddleName | FamilyName | Age | Gender | ExactHandicap |
+	| 1            | testplayer1@players.co.uk | Test      |            | Player1    | 25  | M      | 2             |	
 	Given I am logged in as player number 1
 	When I request membership of club number 1 for player number 1 the request is successful
 

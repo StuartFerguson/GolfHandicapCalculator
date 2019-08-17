@@ -18,8 +18,8 @@ Given the following golf club administrators have been registered
 	| 3              | Test Golf Club 3 | Test Golf Club Address Line 1 | Test Golf Club Address Line | TestTown1 | TestRegion | TE57 1NG   | 01234567890     | testclub1@testclub3.co.uk | www.testclub3.co.uk |
 	| 4              | Test Golf Club 4 | Test Golf Club Address Line 1 | Test Golf Club Address Line | TestTown1 | TestRegion | TE57 1NG   | 01234567890     | testclub1@testclub4.co.uk | www.testclub4.co.uk |
 	And the following players have registered
-	| PlayerNumber | EmailAddress              | GivenName | MiddleName | FamilyName | DateOfBirth | Gender | ExactHandicap |
-	| 1            | testplayer1@players.co.uk | Test      |            | Player1    | 1990-01-01  | M      | 2             |
+	| PlayerNumber | EmailAddress              | GivenName | MiddleName | FamilyName | Age | Gender | ExactHandicap |
+	| 1            | testplayer1@players.co.uk | Test      |            | Player1    | 25  | M      | 2             |
 
 @EndToEnd
 Scenario: Get Golf Club List

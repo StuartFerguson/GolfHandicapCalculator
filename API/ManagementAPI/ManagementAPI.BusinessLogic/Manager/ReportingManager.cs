@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using System.Threading.Tasks;
@@ -58,6 +59,55 @@
                 Int32 membersCount = await context.GolfClubMembershipReporting.CountAsync(g => g.GolfClubId == golfClubId, cancellationToken);
                 response.NumberOfMembers = membersCount;
                 response.GolfClubId = golfClubId;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Gets the number of members by age category report.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetNumberOfMembersByAgeCategoryReportResponse> GetNumberOfMembersByAgeCategoryReport(Guid golfClubId,
+                                                                CancellationToken cancellationToken)
+        {
+            // TODO: get the configured age categories from the golf club record
+            Guard.ThrowIfInvalidGuid(golfClubId, nameof(golfClubId));
+
+            GetNumberOfMembersByAgeCategoryReportResponse response = new GetNumberOfMembersByAgeCategoryReportResponse();
+
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Get the members grouped by age
+                IQueryable<GolfClubMembershipReporting> members = context.GolfClubMembershipReporting.Where(g => g.GolfClubId == golfClubId).AsQueryable();
+                DateTime zeroTime = new DateTime(1, 1, 1);
+
+                // Group the members records by age
+                var membersByAge = members.GroupBy(g => (zeroTime + DateTime.Now.Date.Subtract(g.DateOfBirth)).Year).Select(x => new
+                                                                                                                                     {
+                                                                                                                                         Age = x.Key,
+                                                                                                                                         Count = x.Count()
+                                                                                                                                     });
+                // Now build the members by age category to go into the response
+                var membersByAgeCategory = membersByAge.Select(x => new
+                                                                    {
+                                                                        AgeCategory = (x.Age < 17 ? "Junior" :
+                                                                            x.Age >= 17 && x.Age < 19 ? "Juvenile" :
+                                                                            x.Age >= 19 && x.Age < 21 ? "Youth" :
+                                                                            x.Age >= 21 && x.Age < 25 ? "Young Adult" :
+                                                                            x.Age >= 25 && x.Age < 65 ? "Adult" :
+                                                                            x.Age >= 65 ? "Senior" : "Unknown"),
+                                                                        Count = x.Count
+                                                                    });
+
+                response.GolfClubId = golfClubId;
+                response.MembersByAgeCategoryResponse = membersByAgeCategory.GroupBy(g => g.AgeCategory).Select(x => new MembersByAgeCategoryResponse
+                                                                                                                     {
+                                                                                                                         AgeCategory = x.Key,
+                                                                                                                         NumberOfMembers = x.Sum(s => s.Count)
+                                                                                                                     }).ToList();
             }
 
             return response;

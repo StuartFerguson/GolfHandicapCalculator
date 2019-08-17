@@ -204,15 +204,17 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                 this.TestingContext.CreateGolfClubResponses.Add(tableRow["GolfClubNumber"], createGolfClubResponse);
             }
         }
-
+        
         [Given(@"the following players have registered")]
         public async Task GivenTheFollowingPlayersHaveRegistered(Table table)
         {
             foreach (TableRow tableRow in table.Rows)
             {
+                Int32 age = Int32.Parse(tableRow["Age"]);
+
                 RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest
                                                               {
-                                                                  DateOfBirth = DateTime.ParseExact(tableRow["DateOfBirth"], "yyyy-MM-dd", null),
+                                                                  DateOfBirth = DateTime.Now.AddYears(age * -1),
                                                                   FamilyName = tableRow["FamilyName"],
                                                                   GivenName = tableRow["GivenName"],
                                                                   MiddleName = tableRow["MiddleName"],

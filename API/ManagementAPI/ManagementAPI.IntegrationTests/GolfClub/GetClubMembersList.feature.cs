@@ -131,7 +131,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "GivenName",
                         "MiddleName",
                         "FamilyName",
-                        "DateOfBirth",
+                        "Age",
                         "Gender",
                         "ExactHandicap"});
             table14.AddRow(new string[] {
@@ -140,63 +140,108 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Test",
                         "",
                         "Player1",
-                        "1990-01-01",
+                        "16",
                         "M",
-                        "2.0"});
+                        "2"});
             table14.AddRow(new string[] {
                         "2",
                         "testplayer2@players.co.uk",
                         "Test",
                         "",
                         "Player2",
-                        "1991-01-01",
+                        "18",
                         "M",
-                        "4.6"});
+                        "4"});
             table14.AddRow(new string[] {
                         "3",
                         "testplayer3@players.co.uk",
                         "Test",
                         "",
                         "Player3",
-                        "1992-01-01",
+                        "18",
                         "M",
-                        "10.4"});
+                        "10"});
             table14.AddRow(new string[] {
                         "4",
                         "testplayer4@players.co.uk",
                         "Test",
                         "",
                         "Player4",
-                        "1993-01-01",
+                        "19",
                         "M",
-                        "12.8"});
+                        "12"});
             table14.AddRow(new string[] {
                         "5",
                         "testplayer5@players.co.uk",
                         "Test",
                         "",
                         "Player5",
-                        "1994-01-01",
+                        "20",
                         "M",
-                        "1.5"});
+                        "1"});
             table14.AddRow(new string[] {
                         "6",
                         "testplayer6@players.co.uk",
                         "Test",
                         "",
                         "Player6",
-                        "1995-01-01",
+                        "22",
                         "M",
-                        "20.1"});
+                        "28"});
             table14.AddRow(new string[] {
                         "7",
                         "testplayer7@players.co.uk",
                         "Test",
                         "",
                         "Player7",
-                        "1996-01-01",
+                        "24",
                         "M",
-                        "24.9"});
+                        "24"});
+            table14.AddRow(new string[] {
+                        "8",
+                        "testplayer8@players.co.uk",
+                        "Test",
+                        "",
+                        "Player8",
+                        "26",
+                        "M",
+                        "18"});
+            table14.AddRow(new string[] {
+                        "9",
+                        "testplayer9@players.co.uk",
+                        "Test",
+                        "",
+                        "Player9",
+                        "35",
+                        "M",
+                        "18"});
+            table14.AddRow(new string[] {
+                        "10",
+                        "testplayer10@players.co.uk",
+                        "Test",
+                        "",
+                        "Player10",
+                        "64",
+                        "M",
+                        "6"});
+            table14.AddRow(new string[] {
+                        "11",
+                        "testplayer11@players.co.uk",
+                        "Test",
+                        "",
+                        "Player11",
+                        "65",
+                        "M",
+                        "9"});
+            table14.AddRow(new string[] {
+                        "12",
+                        "testplayer12@players.co.uk",
+                        "Test",
+                        "",
+                        "Player12",
+                        "70",
+                        "M",
+                        "0"});
 #line 11
  testRunner.And("the following players have registered", ((string)(null)), table14, "And ");
 #line hidden
@@ -224,7 +269,22 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             table15.AddRow(new string[] {
                         "1",
                         "7"});
-#line 20
+            table15.AddRow(new string[] {
+                        "1",
+                        "8"});
+            table15.AddRow(new string[] {
+                        "1",
+                        "9"});
+            table15.AddRow(new string[] {
+                        "1",
+                        "10"});
+            table15.AddRow(new string[] {
+                        "1",
+                        "11"});
+            table15.AddRow(new string[] {
+                        "1",
+                        "12"});
+#line 25
  testRunner.And("the following players are club members of the following golf clubs", ((string)(null)), table15, "And ");
 #line hidden
         }
@@ -240,15 +300,15 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         public virtual void GetListOfGolfClubMembers()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get List of Golf Club Members", null, ((string[])(null)));
-#line 30
+#line 40
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 31
+#line 41
  testRunner.When("I request a list of members for golf club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 32
- testRunner.And("the a list of 7 members is returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 42
+ testRunner.And("the a list of 12 members is returned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

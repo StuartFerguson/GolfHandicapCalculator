@@ -13,6 +13,8 @@
 
         public GetNumberOfMembersByTimePeriodReportResponse GetNumberOfMembersByTimePeriodReportResponse;
 
+        public GetNumberOfMembersByAgeCategoryReportResponse GetNumberOfMembersByAgeCategoryReportResponse;
+
         public TestingContext()
         {
             this.GolfClubAdministratorRequests = new Dictionary<String, RegisterClubAdministratorRequest>();

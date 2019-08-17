@@ -1209,6 +1209,45 @@
                                                                                 };
 
         public static String TimePeriod = "day";
+
+        public static GetNumberOfMembersByAgeCategoryReportResponse GetNumberOfMembersByAgeCategoryReportResponse = new GetNumberOfMembersByAgeCategoryReportResponse
+                                                                                                                    {
+            GolfClubId = GolfClubTestData.AggregateId,
+            MembersByAgeCategoryResponse = new List<MembersByAgeCategoryResponse>
+            {
+                new MembersByAgeCategoryResponse
+                {
+                    AgeCategory = "Junior",
+                    NumberOfMembers = 1
+                },
+                new MembersByAgeCategoryResponse
+                {
+                    AgeCategory = "Juvenile",
+                    NumberOfMembers = 2
+                },
+                new MembersByAgeCategoryResponse
+                {
+                    AgeCategory = "Youth",
+                    NumberOfMembers = 2
+                },
+                new MembersByAgeCategoryResponse
+                {
+                    AgeCategory = "Young Adult",
+                    NumberOfMembers = 2
+                },
+                new MembersByAgeCategoryResponse
+                {
+                    AgeCategory = "Adult",
+                    NumberOfMembers = 3
+                },
+                new MembersByAgeCategoryResponse
+                {
+                    AgeCategory = "Senior",
+                    NumberOfMembers = 2
+                }
+            }
+                                                                                                                    };
+
         public const String TimePeriodDay = "day";
         public const String TimePeriodMonth = "month";
         public const String TimePeriodYear = "year";
