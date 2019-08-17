@@ -30,6 +30,17 @@
         Task<GetNumberOfMembersByHandicapCategoryReportResponse> GetNumberOfMembersByHandicapCategoryReport(Guid golfClubId,
                                                                                                             CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Gets the number of members by time period report.
+        /// </summary>
+        /// <param name="golfClubid">The golf clubid.</param>
+        /// <param name="timePeriod">The time period.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetNumberOfMembersByTimePeriodReportResponse> GetNumberOfMembersByTimePeriodReport(Guid golfClubid,
+                                                                                                String timePeriod,
+                                                                                                CancellationToken cancellationToken);
+
         #endregion
     }
 }

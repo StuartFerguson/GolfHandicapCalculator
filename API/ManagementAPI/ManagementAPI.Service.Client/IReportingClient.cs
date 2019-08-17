@@ -10,17 +10,6 @@
         #region Methods
 
         /// <summary>
-        /// Gets the number of members report.
-        /// </summary>
-        /// <param name="accessToken">The access token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task<GetNumberOfMembersReportResponse> GetNumberOfMembersReport(String accessToken,
-                                                                        Guid golfClubId,
-                                                                        CancellationToken cancellationToken);
-
-        /// <summary>
         /// Gets the number of members by handicap category report.
         /// </summary>
         /// <param name="accessToken">The access token.</param>
@@ -30,6 +19,30 @@
         Task<GetNumberOfMembersByHandicapCategoryReportResponse> GetNumberOfMembersByHandicapCategoryReport(String accessToken,
                                                                                                             Guid golfClubId,
                                                                                                             CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the number of members by time period report.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="timePeriod">The time period.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetNumberOfMembersByTimePeriodReportResponse> GetNumberOfMembersByTimePeriodReport(String accessToken,
+                                                                                                Guid golfClubId,
+                                                                                                String timePeriod,
+                                                                                                CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the number of members report.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetNumberOfMembersReportResponse> GetNumberOfMembersReport(String accessToken,
+                                                                        Guid golfClubId,
+                                                                        CancellationToken cancellationToken);
 
         #endregion
     }

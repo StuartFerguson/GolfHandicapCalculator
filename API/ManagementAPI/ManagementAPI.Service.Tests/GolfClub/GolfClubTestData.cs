@@ -341,6 +341,63 @@
                                                     }
             };
 
+        public static GetNumberOfMembersByTimePeriodReportResponse GetNumberOfMembersByTimePeriodReportResponseByDay = new GetNumberOfMembersByTimePeriodReportResponse
+                                                                                                                       {
+            GolfClubId = GolfClubTestData.AggregateId,
+            TimePeriod = DataTransferObjects.Responses.TimePeriod.Day,
+            MembersByTimePeriodResponse = new List<MembersByTimePeriodResponse>()
+                                          {
+                                              new MembersByTimePeriodResponse
+                                              {
+                                                  NumberOfMembers = 10,
+                                                  Period = "2019-08-16"
+                                              },
+                                              new MembersByTimePeriodResponse
+                                              {
+                                                  NumberOfMembers = 25,
+                                                  Period = "2019-08-17"
+                                              }
+                                          }
+        };
+
+        public static GetNumberOfMembersByTimePeriodReportResponse GetNumberOfMembersByTimePeriodReportResponseByMonth = new GetNumberOfMembersByTimePeriodReportResponse
+                                                                                                                       {
+                                                                                                                           GolfClubId = GolfClubTestData.AggregateId,
+                                                                                                                           TimePeriod = DataTransferObjects.Responses.TimePeriod.Month,
+                                                                                                                           MembersByTimePeriodResponse = new List<MembersByTimePeriodResponse>()
+                                                                                                                                                         {
+                                                                                                                                                             new MembersByTimePeriodResponse
+                                                                                                                                                             {
+                                                                                                                                                                 NumberOfMembers = 10,
+                                                                                                                                                                 Period = "2019-07"
+                                                                                                                                                             },
+                                                                                                                                                             new MembersByTimePeriodResponse
+                                                                                                                                                             {
+                                                                                                                                                                 NumberOfMembers = 25,
+                                                                                                                                                                 Period = "2019-08"
+                                                                                                                                                             }
+                                                                                                                                                         }
+                                                                                                                       };
+
+        public static GetNumberOfMembersByTimePeriodReportResponse GetNumberOfMembersByTimePeriodReportResponseByYear = new GetNumberOfMembersByTimePeriodReportResponse
+        {
+            GolfClubId = GolfClubTestData.AggregateId,
+            TimePeriod = DataTransferObjects.Responses.TimePeriod.Year,
+            MembersByTimePeriodResponse = new List<MembersByTimePeriodResponse>()
+                                                                                                                                                         {
+                                                                                                                                                             new MembersByTimePeriodResponse
+                                                                                                                                                             {
+                                                                                                                                                                 NumberOfMembers = 10,
+                                                                                                                                                                 Period = "2018"
+                                                                                                                                                             },
+                                                                                                                                                             new MembersByTimePeriodResponse
+                                                                                                                                                             {
+                                                                                                                                                                 NumberOfMembers = 25,
+                                                                                                                                                                 Period = "2019"
+                                                                                                                                                             }
+                                                                                                                                                         }
+        };
+
         #endregion
 
         #region Methods
@@ -1150,6 +1207,11 @@
                                                                                                 }
                                                                                             }
                                                                                 };
+
+        public static String TimePeriod = "day";
+        public const String TimePeriodDay = "day";
+        public const String TimePeriodMonth = "month";
+        public const String TimePeriodYear = "year";
 
         public static ClubMembershipRequestAcceptedEvent GetClubMembershipRequestAcceptedEvent()
         {

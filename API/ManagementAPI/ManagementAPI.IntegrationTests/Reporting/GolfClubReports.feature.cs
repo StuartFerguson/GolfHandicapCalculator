@@ -313,6 +313,72 @@ this.FeatureBackground();
             this.ScenarioCleanup();
         }
         
+        [Xunit.FactAttribute(DisplayName="Get Number of Members By Time Period Report - By Day")]
+        [Xunit.TraitAttribute("FeatureTitle", "GolfClubReports")]
+        [Xunit.TraitAttribute("Description", "Get Number of Members By Time Period Report - By Day")]
+        public virtual void GetNumberOfMembersByTimePeriodReport_ByDay()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Number of Members By Time Period Report - By Day", null, ((string[])(null)));
+#line 47
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 4
+this.FeatureBackground();
+#line 48
+ testRunner.When("I request a number of members by time period \'day\' report for club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 49
+ testRunner.Then("I am returned the number of members by time period report data successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 50
+ testRunner.And("the number of members for the period \'Today\' in the number of members by time per" +
+                    "iod \'day\' report for club number 1 is 9", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Get Number of Members By Time Period Report - By Month")]
+        [Xunit.TraitAttribute("FeatureTitle", "GolfClubReports")]
+        [Xunit.TraitAttribute("Description", "Get Number of Members By Time Period Report - By Month")]
+        public virtual void GetNumberOfMembersByTimePeriodReport_ByMonth()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Number of Members By Time Period Report - By Month", null, ((string[])(null)));
+#line 52
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 4
+this.FeatureBackground();
+#line 53
+ testRunner.When("I request a number of members by time period \'month\' report for club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 54
+ testRunner.Then("I am returned the number of members by time period report data successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 55
+ testRunner.And("the number of members for the period \'This Month\' in the number of members by tim" +
+                    "e period \'month\' report for club number 1 is 9", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.FactAttribute(DisplayName="Get Number of Members By Time Period Report - By Year")]
+        [Xunit.TraitAttribute("FeatureTitle", "GolfClubReports")]
+        [Xunit.TraitAttribute("Description", "Get Number of Members By Time Period Report - By Year")]
+        public virtual void GetNumberOfMembersByTimePeriodReport_ByYear()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get Number of Members By Time Period Report - By Year", null, ((string[])(null)));
+#line 57
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 4
+this.FeatureBackground();
+#line 58
+ testRunner.When("I request a number of members by time period \'year\' report for club number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 59
+ testRunner.Then("I am returned the number of members by time period report data successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 60
+ testRunner.And("the number of members for the period \'This Year\' in the number of members by time" +
+                    " period \'year\' report for club number 1 is 9", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable
