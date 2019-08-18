@@ -315,7 +315,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
                         "GivenName",
                         "MiddleName",
                         "FamilyName",
-                        "DateOfBirth",
+                        "Age",
                         "Gender",
                         "ExactHandicap"});
             table41.AddRow(new string[] {
@@ -324,7 +324,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
                         "Test",
                         "",
                         "Player1",
-                        "1990-01-01",
+                        "25",
                         "M",
                         "6.2"});
 #line 45
