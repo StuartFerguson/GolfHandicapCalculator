@@ -315,7 +315,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
                         "GivenName",
                         "MiddleName",
                         "FamilyName",
-                        "DateOfBirth",
+                        "Age",
                         "Gender",
                         "ExactHandicap"});
             table75.AddRow(new string[] {
@@ -324,7 +324,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
                         "Test",
                         "",
                         "Player1",
-                        "1990-01-01",
+                        "25",
                         "M",
                         "2"});
 #line 44
