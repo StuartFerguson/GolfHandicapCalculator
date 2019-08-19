@@ -65,6 +65,35 @@
         }
 
         /// <summary>
+        /// Gets the members handicap list report.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetMembersHandicapListReportResponse> GetMembersHandicapListReport(Guid golfClubId,
+                                                       CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfInvalidGuid(golfClubId, nameof(golfClubId));
+            GetMembersHandicapListReportResponse response = new GetMembersHandicapListReportResponse();
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                List<PlayerHandicapListReporting> reportData = context.PlayerHandicapListReporting.Where(p => p.GolfClubId == golfClubId).ToList();
+                response.GolfClubId = golfClubId;
+                reportData.ForEach(f => response.MembersHandicapListReportResponse.Add(new MembersHandicapListReportResponse
+                                                                                       {
+                                                                                           GolfClubId = f.GolfClubId,
+                                                                                           PlayerId = f.PlayerId,
+                                                                                           HandicapCategory = f.HandicapCategory,
+                                                                                           ExactHandicap = f.ExactHandicap,
+                                                                                           PlayingHandicap = f.PlayingHandicap,
+                                                                                           PlayerName = f.PlayerName
+                                                                                       }));
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Gets the number of members by age category report.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>

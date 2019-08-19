@@ -1,7 +1,9 @@
 ﻿namespace ManagementAPI.BusinessLogic.Manager
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public static class ISOWeek
     {
         // If the week number thus obtained equals 0, it means that the given date belongs to the preceding (week-based) year.

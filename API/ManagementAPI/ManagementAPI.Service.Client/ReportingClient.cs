@@ -47,6 +47,38 @@
 
         #region Methods
 
+        public async Task<GetMembersHandicapListReportResponse> GetMembersHandicapListReport(String accessToken,
+                                                       Guid golfClubId,
+                                                       CancellationToken cancellationToken)
+        {
+            GetMembersHandicapListReportResponse response = null;
+            String requestUri = $"{this.BaseAddress}/api/Reporting/GolfClub/{golfClubId}/membershandicaplist";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<GetMembersHandicapListReportResponse>(content);
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting members handicap list report for Golf Club {golfClubId}.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
         /// <summary>
         /// Gets the number of members by age category report.
         /// </summary>

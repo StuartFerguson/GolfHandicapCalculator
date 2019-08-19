@@ -95,6 +95,15 @@
                                        CancellationToken cancellationToken);
 
         /// <summary>
+        /// Inserts the player handicap record to reporting.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerHandicapRecordToReporting(ClubMembershipRequestAcceptedEvent domainEvent,
+                                                   CancellationToken cancellationToken);
+
+        /// <summary>
         /// Inserts the player membership to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -165,6 +174,15 @@
         /// <returns></returns>
         Task RegisterClubAdministrator(RegisterClubAdministratorRequest request,
                                        CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Updates the player handicap record to reporting.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task UpdatePlayerHandicapRecordToReporting(HandicapAdjustedEvent domainEvent,
+                                                   CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates the player membership to reporting.

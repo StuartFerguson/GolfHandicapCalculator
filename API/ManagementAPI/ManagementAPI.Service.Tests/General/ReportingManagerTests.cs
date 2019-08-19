@@ -83,6 +83,65 @@ namespace ManagementAPI.Service.Tests.General
         }
 
         [Fact]
+        public async Task ReportingManager_GetMembersHandicapListReport_ReportDataReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            List<PlayerHandicapListReporting> reportingData = new List<PlayerHandicapListReporting>();
+
+            reportingData.Add(new PlayerHandicapListReporting
+            {
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                HandicapCategory = 1,
+                PlayerName = "Test Player 1",
+                ExactHandicap = 5.4m,
+                PlayingHandicap = 5
+            });
+
+            reportingData.Add(new PlayerHandicapListReporting
+            {
+                PlayerId = Guid.NewGuid(),
+                GolfClubId = GolfClubTestData.AggregateId,
+                HandicapCategory = 2,
+                PlayerName = "Test Player 2",
+                ExactHandicap = 12.8m,
+                PlayingHandicap = 13
+            });
+            await context.PlayerHandicapListReporting.AddRangeAsync(reportingData, CancellationToken.None);
+            await context.SaveChangesAsync(CancellationToken.None);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            ReportingManager reportingManager = new ReportingManager(contextResolver);
+
+            GetMembersHandicapListReportResponse reportData = await reportingManager.GetMembersHandicapListReport(GolfClubTestData.AggregateId, CancellationToken.None);
+
+            reportData.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            reportData.MembersHandicapListReportResponse.ShouldNotBeEmpty();
+            reportData.MembersHandicapListReportResponse.Count.ShouldBe(reportingData.Count);
+        }
+
+        [Fact]
+        public async Task ReportingManager_GetMembersHandicapListReport_NoMembers_ReportDataReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            List<PlayerHandicapListReporting> reportingData = new List<PlayerHandicapListReporting>();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            ReportingManager reportingManager = new ReportingManager(contextResolver);
+
+            GetMembersHandicapListReportResponse reportData = await reportingManager.GetMembersHandicapListReport(GolfClubTestData.AggregateId, CancellationToken.None);
+
+            reportData.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            reportData.MembersHandicapListReportResponse.Count.ShouldBe(reportingData.Count);
+        }
+
+        [Fact]
         public async Task ReportingManager_GetNumberOfMembersByHandicapCategoryReport_ReportDataReturned()
         {
             String databaseName = Guid.NewGuid().ToString("N");

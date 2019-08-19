@@ -84,6 +84,20 @@
         /// </value>
         public DbSet<GolfClubMembershipReporting> GolfClubMembershipReporting { get; set; }
 
+        /// <summary>
+        /// Gets or sets the player handicap list reporting.
+        /// </summary>
+        /// <value>
+        /// The player handicap list reporting.
+        /// </value>
+        public DbSet<PlayerHandicapListReporting> PlayerHandicapListReporting { get; set; }
+
+        /// <summary>
+        /// Gets or sets the users.
+        /// </summary>
+        /// <value>
+        /// The users.
+        /// </value>
         public DbSet<User> Users { get; set; }
 
         #endregion
@@ -145,6 +159,12 @@
                                                         p.GolfClubId,
                                                         p.PlayerId
                                                     });
+
+            modelBuilder.Entity<PlayerHandicapListReporting>().HasKey(p => new
+                                                                           {
+                                                                               p.PlayerId,
+                                                                               p.GolfClubId
+                                                                           });
         }
 
         #endregion

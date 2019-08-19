@@ -15,6 +15,8 @@
 
         public GetNumberOfMembersByAgeCategoryReportResponse GetNumberOfMembersByAgeCategoryReportResponse;
 
+        public GetMembersHandicapListReportResponse GetMembersHandicapListReportResponse;
+
         public TestingContext()
         {
             this.GolfClubAdministratorRequests = new Dictionary<String, RegisterClubAdministratorRequest>();

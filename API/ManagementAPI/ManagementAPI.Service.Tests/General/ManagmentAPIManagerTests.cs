@@ -1374,7 +1374,165 @@
                 await manager.InsertPlayerMembershipToReporting(domainEvent, CancellationToken.None);
             });
         }
-        
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertPlayerHandicapRecordToReporting_RecordInsertedSuccessfully()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.GolfClub.Add(new GolfClub
+            {
+                EmailAddress = GolfClubTestData.EmailAddress,
+                Name = GolfClubTestData.Name,
+                AddressLine1 = GolfClubTestData.AddressLine1,
+                Town = GolfClubTestData.Town,
+                Region = GolfClubTestData.Region,
+                TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                PostalCode = GolfClubTestData.PostalCode,
+                AddressLine2 = GolfClubTestData.AddressLine2,
+                GolfClubId = GolfClubTestData.AggregateId,
+                WebSite = GolfClubTestData.Website
+            });
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            ClubMembershipRequestAcceptedEvent domainEvent = GolfClubTestData.GetClubMembershipRequestAcceptedEvent();
+
+            Should.NotThrow(async () =>
+            {
+                await manager.InsertPlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertPlayerHandicapRecordToReporting_NullEvent_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.GolfClub.Add(new GolfClub
+            {
+                EmailAddress = GolfClubTestData.EmailAddress,
+                Name = GolfClubTestData.Name,
+                AddressLine1 = GolfClubTestData.AddressLine1,
+                Town = GolfClubTestData.Town,
+                Region = GolfClubTestData.Region,
+                TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                PostalCode = GolfClubTestData.PostalCode,
+                AddressLine2 = GolfClubTestData.AddressLine2,
+                GolfClubId = GolfClubTestData.AggregateId,
+                WebSite = GolfClubTestData.Website
+            });
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            ClubMembershipRequestAcceptedEvent domainEvent = null;
+
+            Should.Throw<ArgumentNullException>(async () =>
+            {
+                await manager.InsertPlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertPlayerHandicapRecordToReporting_GolfClubNotFound_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            ClubMembershipRequestAcceptedEvent domainEvent = GolfClubTestData.GetClubMembershipRequestAcceptedEvent();
+
+            Should.Throw<NotFoundException>(async () =>
+                                            {
+                                                await manager.InsertPlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+                                            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_InsertPlayerHandicapRecordToReporting_PlayerNotFound_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.GolfClub.Add(new GolfClub
+            {
+                EmailAddress = GolfClubTestData.EmailAddress,
+                Name = GolfClubTestData.Name,
+                AddressLine1 = GolfClubTestData.AddressLine1,
+                Town = GolfClubTestData.Town,
+                Region = GolfClubTestData.Region,
+                TelephoneNumber = GolfClubTestData.TelephoneNumber,
+                PostalCode = GolfClubTestData.PostalCode,
+                AddressLine2 = GolfClubTestData.AddressLine2,
+                GolfClubId = GolfClubTestData.AggregateId,
+                WebSite = GolfClubTestData.Website
+            });
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate);
+
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            ClubMembershipRequestAcceptedEvent domainEvent = GolfClubTestData.GetClubMembershipRequestAcceptedEvent();
+
+            Should.Throw<NotFoundException>(async () =>
+            {
+                await manager.InsertPlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
         [Fact]
         public async Task ManagementAPIManager_InsertTournamentToReadModel_RecordInsertedSuccessfully()
         {
@@ -2557,6 +2715,194 @@
                                                 {
                                                     await manager.UpdatePlayerMembershipToReporting(domainEvent, CancellationToken.None);
                                                 });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_UpdatePlayerHandicapRecordToReporting_SingleRecord_RecordUpdatedSuccessfully()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.PlayerHandicapListReporting.Add(new PlayerHandicapListReporting
+            {
+                GolfClubId = PlayerTestData.GolfClubId,
+                PlayerId = PlayerTestData.AggregateId,
+                HandicapCategory = PlayerTestData.HandicapCategoryCat2,
+                PlayerName = PlayerTestData.FullName,
+                PlayingHandicap = 10,
+                ExactHandicap = 10.0m
+            });
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            HandicapAdjustedEvent domainEvent = PlayerTestData.GetHandicapAdjustedEvent();
+
+            Should.NotThrow(async () =>
+            {
+                await manager.UpdatePlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_UpdatePlayerHandicapRecordToReporting_MultipleRecords_RecordsUpdatedSuccessfully()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.PlayerHandicapListReporting.Add(new PlayerHandicapListReporting
+                                                    {
+                                                        GolfClubId = PlayerTestData.GolfClubId,
+                                                        PlayerId = PlayerTestData.AggregateId,
+                                                        HandicapCategory = PlayerTestData.HandicapCategoryCat2,
+                                                        PlayerName = PlayerTestData.FullName,
+                                                        PlayingHandicap = 10,
+                                                        ExactHandicap = 10.0m
+                                                    });
+
+            context.PlayerHandicapListReporting.Add(new PlayerHandicapListReporting
+                                                    {
+                                                        GolfClubId = PlayerTestData.GolfClubId2,
+                                                        PlayerId = PlayerTestData.AggregateId,
+                                                        HandicapCategory = PlayerTestData.HandicapCategoryCat2,
+                                                        PlayerName = PlayerTestData.FullName,
+                                                        PlayingHandicap = 10,
+                                                        ExactHandicap = 10.0m
+                                                    });
+
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            HandicapAdjustedEvent domainEvent = PlayerTestData.GetHandicapAdjustedEvent();
+
+            Should.NotThrow(async () =>
+            {
+                await manager.UpdatePlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_UpdatePlayerHandicapRecordToReporting_NullEvent_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetRegisteredPlayerAggregate);
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            HandicapAdjustedEvent domainEvent = null;
+
+            Should.Throw<ArgumentNullException>(async () =>
+            {
+                await manager.UpdatePlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_UpdatePlayerHandicapRecordToReporting_PlayerHandicapReportingRecordNotFound_ErrorNotThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate);
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            HandicapAdjustedEvent domainEvent = PlayerTestData.GetHandicapAdjustedEvent();
+
+            Should.NotThrow(async () =>
+            {
+                await manager.UpdatePlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+            });
+        }
+
+        [Fact]
+        public async Task ManagementAPIManager_UpdatePlayerHandicapRecordToReporting_PlayerAggregateNotFound_ErrorThrown()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            Mock<IAggregateRepository<GolfClubAggregate>> clubRepository = new Mock<IAggregateRepository<GolfClubAggregate>>();
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            context.PlayerHandicapListReporting.Add(new PlayerHandicapListReporting
+                                                    {
+                                                        GolfClubId = PlayerTestData.GolfClubId,
+                                                        PlayerId = PlayerTestData.AggregateId,
+                                                        HandicapCategory = PlayerTestData.HandicapCategoryCat2,
+                                                        PlayerName = PlayerTestData.FullName,
+                                                        PlayingHandicap = 10,
+                                                        ExactHandicap = 10.0m
+                                                    });
+
+            context.SaveChanges();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            Mock<IAggregateRepository<PlayerAggregate>> playerRepository = new Mock<IAggregateRepository<PlayerAggregate>>();
+            playerRepository.Setup(p => p.GetLatestVersion(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(PlayerTestData.GetEmptyPlayerAggregate);
+            Mock<ISecurityService> securityService = new Mock<ISecurityService>();
+            Mock<IAggregateRepository<GolfClubMembershipAggregate>> golfClubMembershipRepository = new Mock<IAggregateRepository<GolfClubMembershipAggregate>>();
+
+            ManagementAPIManager manager = new ManagementAPIManager(clubRepository.Object,
+                                                                    contextResolver,
+                                                                    playerRepository.Object,
+                                                                    securityService.Object,
+                                                                    golfClubMembershipRepository.Object);
+
+            HandicapAdjustedEvent domainEvent = PlayerTestData.GetHandicapAdjustedEvent();
+
+            Should.Throw<NotFoundException>(async () =>
+            {
+                await manager.UpdatePlayerHandicapRecordToReporting(domainEvent, CancellationToken.None);
+            });
         }
 
         #endregion
