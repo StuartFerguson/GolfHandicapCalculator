@@ -50,6 +50,15 @@
         Task<GetNumberOfMembersReportResponse> GetNumberOfMembersReport(Guid golfClubId,
                                                                         CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Gets the members handicap list report.
+        /// </summary>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetMembersHandicapListReportResponse> GetMembersHandicapListReport(Guid golfClubId,
+                                                                        CancellationToken cancellationToken);
+
         #endregion
     }
 }

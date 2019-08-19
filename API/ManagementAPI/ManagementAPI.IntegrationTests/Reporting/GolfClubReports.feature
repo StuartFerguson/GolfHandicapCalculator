@@ -74,3 +74,9 @@ Scenario: Get Number of Members By Age Category Report
 	And the number of members by age category count for club number 1 age category 'Young Adult' is 2
 	And the number of members by age category count for club number 1 age category 'Adult' is 3
 	And the number of members by age category count for club number 1 age category 'Senior' is 2
+
+Scenario: Get Members Handicap List Report
+	When I request a members handicap list report for club number 1
+	Then I am returned the members handicap list report data successfully
+	And the number of members on the members handicap list club number 1 is 12
+	And each member has the correct handicap on the report

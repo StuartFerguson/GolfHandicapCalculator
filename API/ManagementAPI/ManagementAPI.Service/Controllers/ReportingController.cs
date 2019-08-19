@@ -6,6 +6,7 @@
     using BusinessLogic.Manager;
     using DataTransferObjects.Responses;
     using Microsoft.AspNetCore.Mvc;
+    using StructureMap.Diagnostics;
 
     /// <summary>
     /// 
@@ -40,7 +41,15 @@
 
         #region Methods
 
-        //GetNumberOfMembersByAgeCategoryReportResponse
+        [HttpGet]
+        [Route("GolfClub/{golfClubId}/membershandicaplist")]
+        public async Task<IActionResult> GetMemberHandicapList(Guid golfClubId,
+                                                               CancellationToken cancellationToken)
+        {
+            GetMembersHandicapListReportResponse response = await this.ReportingManager.GetMembersHandicapListReport(golfClubId, cancellationToken);
+
+            return this.Ok(response);
+        }
 
         [HttpGet]
         [Route("GolfClub/{golfClubId}/numberofmembersbyagecategory")]

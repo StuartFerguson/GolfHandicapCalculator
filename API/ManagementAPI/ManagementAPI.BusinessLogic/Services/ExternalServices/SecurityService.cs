@@ -1,6 +1,7 @@
 ﻿namespace ManagementAPI.BusinessLogic.Services.ExternalServices
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Net.Http;
     using System.Text;
     using System.Threading;
@@ -15,6 +16,7 @@
     /// <seealso cref="ISecurityService" />
     /// <seealso cref="Shared.General.ClientProxyBase" />
     /// <seealso cref="ISecurityService" />
+    [ExcludeFromCodeCoverage]
     public class SecurityService : ClientProxyBase, ISecurityService
     {
         #region Methods

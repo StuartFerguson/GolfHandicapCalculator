@@ -6,16 +6,16 @@
     /// <summary>
     /// 
     /// </summary>
-    public class GetNumberOfMembersByAgeCategoryReportResponse
+    public class GetMembersHandicapListReportResponse
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetNumberOfMembersByAgeCategoryReportResponse"/> class.
+        /// Initializes a new instance of the <see cref="GetMembersHandicapListReportResponse"/> class.
         /// </summary>
-        public GetNumberOfMembersByAgeCategoryReportResponse()
+        public GetMembersHandicapListReportResponse()
         {
-            this.MembersByAgeCategoryResponse = new List<MembersByAgeCategoryResponse>();
+            this.MembersHandicapListReportResponse = new List<MembersHandicapListReportResponse>();
         }
 
         #endregion
@@ -31,12 +31,12 @@
         public Guid GolfClubId { get; set; }
 
         /// <summary>
-        /// Gets or sets the members by handicap category response.
+        /// Gets or sets the members handicap list report response.
         /// </summary>
         /// <value>
-        /// The members by handicap category response.
+        /// The members handicap list report response.
         /// </value>
-        public List<MembersByAgeCategoryResponse> MembersByAgeCategoryResponse { get; set; }
+        public List<MembersHandicapListReportResponse> MembersHandicapListReportResponse { get; set; }
 
         #endregion
     }

@@ -3,6 +3,7 @@ using TechTalk.SpecFlow;
 
 namespace ManagementAPI.IntegrationTests.Reporting
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
@@ -176,6 +177,56 @@ namespace ManagementAPI.IntegrationTests.Reporting
                                 membersByAgeCategoryResponse.NumberOfMembers.ShouldBe(membersCount);
                             });
         }
+
+        [When(@"I request a members handicap list report for club number (.*)")]
+        public async Task WhenIRequestAMembersHandicapListReportForClubNumber(String golfClubNumber)
+        {
+            CreateGolfClubResponse golfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            this.TestingContext.GetMembersHandicapListReportResponse = await this
+                                                                                      .TestingContext.DockerHelper.ReportingClient
+                                                                                      .GetMembersHandicapListReport(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                             golfClubResponse.GolfClubId,
+                                                                                                                             CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Then(@"I am returned the members handicap list report data successfully")]
+        public void ThenIAmReturnedTheMembersHandicapListReportDataSuccessfully()
+        {
+            this.TestingContext.GetMembersHandicapListReportResponse.ShouldNotBeNull();
+        }
+
+        [Then(@"the number of members on the members handicap list club number (.*) is (.*)")]
+        public async Task ThenTheNumberOfMembersOnTheMembersHandicapListClubNumberIs(String golfClubNumber, Int32 numberOfMembers)
+        {
+            CreateGolfClubResponse golfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
+
+            await Retry.For(async () =>
+                            {
+                                this.TestingContext.GetMembersHandicapListReportResponse = await this
+                                                                                                          .TestingContext.DockerHelper.ReportingClient
+                                                                                                          .GetMembersHandicapListReport(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                                                 golfClubResponse.GolfClubId,
+                                                                                                                                                 CancellationToken.None).ConfigureAwait(false);
+                                this.TestingContext.GetMembersHandicapListReportResponse.MembersHandicapListReportResponse.Count.ShouldBe(numberOfMembers);
+                            });
+        }
+
+        [Then(@"each member has the correct handicap on the report")]
+        public void ThenEachMemberHasTheCorrectHandicapOnTheReport()
+        {
+            foreach (KeyValuePair<String, RegisterPlayerRequest> registerPlayerRequest in this.TestingContext.RegisterPlayerRequests)
+            {
+                RegisterPlayerResponse registerPlayerResponse = this.TestingContext.RegisterPlayerResponses[registerPlayerRequest.Key];
+
+                MembersHandicapListReportResponse playerHandicapEntry =this.TestingContext.GetMembersHandicapListReportResponse.MembersHandicapListReportResponse.SingleOrDefault(x => x.PlayerId == registerPlayerResponse
+                                                                                                                                    .PlayerId);
+
+                playerHandicapEntry.ShouldNotBeNull();
+                playerHandicapEntry.ExactHandicap.ShouldBe(registerPlayerRequest.Value.ExactHandicap);
+            }
+        }
+
 
         private String GetPeriodFromPeriodString(String periodString)
         {

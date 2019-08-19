@@ -610,6 +610,61 @@
         }
 
         /// <summary>
+        /// Inserts the player handicap record to reporting.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="NotFoundException">
+        /// Golf Club with Id {domainEvent.AggregateId} not found in read model
+        /// or
+        /// Player with Id {domainEvent.PlayerId} not found
+        /// </exception>
+        public async Task InsertPlayerHandicapRecordToReporting(ClubMembershipRequestAcceptedEvent domainEvent,
+                                                                CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the club has not already been added to the read model
+                Boolean isDuplicate = await context.PlayerHandicapListReporting.Where(p => p.PlayerId == domainEvent.PlayerId && p.GolfClubId == domainEvent.AggregateId)
+                                                   .AnyAsync(cancellationToken);
+                Logger.LogInformation($"Is duplicate is {isDuplicate}");
+                if (!isDuplicate)
+                {
+                    GolfClub golfClub = await context.GolfClub.SingleOrDefaultAsync(g => g.GolfClubId == domainEvent.AggregateId, cancellationToken);
+
+                    if (golfClub == null)
+                    {
+                        throw new NotFoundException($"Golf Club with Id {domainEvent.AggregateId} not found in read model");
+                    }
+
+                    // Get the player
+                    PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(domainEvent.PlayerId, cancellationToken);
+
+                    if (!player.HasBeenRegistered)
+                    {
+                        throw new NotFoundException($"Player with Id {domainEvent.PlayerId} not found");
+                    }
+
+                    PlayerHandicapListReporting playerHandicapListReporting = new PlayerHandicapListReporting
+                    {
+                        GolfClubId = domainEvent.AggregateId,
+                        PlayerId = domainEvent.PlayerId,
+                        PlayerName = domainEvent.PlayerFullName,
+                        HandicapCategory = player.HandicapCategory,
+                        PlayingHandicap = player.PlayingHandicap,
+                        ExactHandicap = player.ExactHandicap
+                    };
+
+                    context.PlayerHandicapListReporting.Add(playerHandicapListReporting);
+
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>
         /// Inserts the player tournament score to read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -792,6 +847,45 @@
                     foreach (GolfClubMembershipReporting golfClubMembershipReporting in playerRecords)
                     {
                         golfClubMembershipReporting.HandicapCategory = playerAggregate.HandicapCategory;
+                    }
+                }
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Updates the player handicap record to reporting.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="NotFoundException">Player not found with Id {domainEvent.AggregateId}</exception>
+        public async Task UpdatePlayerHandicapRecordToReporting(HandicapAdjustedEvent domainEvent,
+                                                                CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Find the record in the reporting table for the player
+                List<PlayerHandicapListReporting> playerRecords =
+                    await context.PlayerHandicapListReporting.Where(r => r.PlayerId == domainEvent.AggregateId).ToListAsync(cancellationToken);
+
+                if (playerRecords.Count > 0)
+                {
+                    // Rehydrate the player to get the latest playing handicap
+                    PlayerAggregate playerAggregate = await this.PlayerRepository.GetLatestVersion(domainEvent.AggregateId, cancellationToken);
+
+                    if (playerAggregate.HasBeenRegistered == false)
+                    {
+                        throw new NotFoundException($"Player not found with Id {domainEvent.AggregateId}");
+                    }
+
+                    foreach (PlayerHandicapListReporting playerHandicapListReporting in playerRecords)
+                    {
+                        playerHandicapListReporting.ExactHandicap = playerAggregate.ExactHandicap;
+                        playerHandicapListReporting.PlayingHandicap = playerAggregate.PlayingHandicap;
+                        playerHandicapListReporting.HandicapCategory = playerAggregate.HandicapCategory;
                     }
                 }
 
