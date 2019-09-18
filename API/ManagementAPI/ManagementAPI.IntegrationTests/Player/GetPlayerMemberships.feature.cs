@@ -81,7 +81,7 @@ namespace ManagementAPI.IntegrationTests.Player
         {
 #line 4
 #line hidden
-            TechTalk.SpecFlow.Table table44 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table59 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "EmailAddress",
                         "GivenName",
@@ -90,7 +90,7 @@ namespace ManagementAPI.IntegrationTests.Player
                         "Password",
                         "ConfirmPassword",
                         "TelephoneNumber"});
-            table44.AddRow(new string[] {
+            table59.AddRow(new string[] {
                         "1",
                         "admin@testgolfclub1.co.uk",
                         "Admin",
@@ -100,9 +100,9 @@ namespace ManagementAPI.IntegrationTests.Player
                         "123456",
                         "01234567890"});
 #line 5
- testRunner.Given("the following golf club administrators have been registered", ((string)(null)), table44, "Given ");
+ testRunner.Given("the following golf club administrators have been registered", ((string)(null)), table59, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table45 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table60 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "GolfClubName",
                         "AddressLine1",
@@ -113,7 +113,7 @@ namespace ManagementAPI.IntegrationTests.Player
                         "TelephoneNumber",
                         "EmailAddress",
                         "WebSite"});
-            table45.AddRow(new string[] {
+            table60.AddRow(new string[] {
                         "1",
                         "Test Golf Club 1",
                         "Test Golf Club Address Line 1",
@@ -125,9 +125,9 @@ namespace ManagementAPI.IntegrationTests.Player
                         "testclub1@testclub1.co.uk",
                         "www.testclub1.co.uk"});
 #line 8
- testRunner.And("the following golf clubs exist", ((string)(null)), table45, "And ");
+ testRunner.And("the following golf clubs exist", ((string)(null)), table60, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table46 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table61 = new TechTalk.SpecFlow.Table(new string[] {
                         "PlayerNumber",
                         "EmailAddress",
                         "GivenName",
@@ -136,7 +136,7 @@ namespace ManagementAPI.IntegrationTests.Player
                         "Age",
                         "Gender",
                         "ExactHandicap"});
-            table46.AddRow(new string[] {
+            table61.AddRow(new string[] {
                         "1",
                         "testplayer1@players.co.uk",
                         "Test",
@@ -146,7 +146,7 @@ namespace ManagementAPI.IntegrationTests.Player
                         "M",
                         "2"});
 #line 11
- testRunner.And("the following players have registered", ((string)(null)), table46, "And ");
+ testRunner.And("the following players have registered", ((string)(null)), table61, "And ");
 #line 14
  testRunner.Given("I am logged in as player number 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 15

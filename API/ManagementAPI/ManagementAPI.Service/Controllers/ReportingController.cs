@@ -6,7 +6,6 @@
     using BusinessLogic.Manager;
     using DataTransferObjects.Responses;
     using Microsoft.AspNetCore.Mvc;
-    using StructureMap.Diagnostics;
 
     /// <summary>
     /// 
@@ -104,6 +103,24 @@
             GetNumberOfMembersReportResponse reportData = await this.ReportingManager.GetNumberOfMembersReport(golfClubId, cancellationToken);
 
             return this.Ok(reportData);
+        }
+
+        /// <summary>
+        /// Gets the player scores.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="numberOfScores">The number of scores.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Player/{playerId}/scores")]
+        public async Task<IActionResult> GetPlayerScores(Guid playerId,
+                                                         [FromQuery] Int32 numberOfScores,
+                                                         CancellationToken cancellationToken)
+        {
+            GetPlayerScoresResponse response = await this.ReportingManager.GetPlayerScoresReport(playerId, numberOfScores, cancellationToken);
+
+            return this.Ok(response);
         }
 
         #endregion

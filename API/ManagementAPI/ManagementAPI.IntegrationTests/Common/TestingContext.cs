@@ -17,6 +17,8 @@
 
         public GetMembersHandicapListReportResponse GetMembersHandicapListReportResponse;
 
+        public GetPlayerScoresResponse GetPlayerScoresResponse;
+
         public TestingContext()
         {
             this.GolfClubAdministratorRequests = new Dictionary<String, RegisterClubAdministratorRequest>();

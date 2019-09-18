@@ -8,6 +8,7 @@
     using Player.DomainEvents;
     using Shared.EventSourcing;
     using Shared.General;
+    using Tournament.DomainEvents;
 
     public class ReportingDomainEventHandler :IDomainEventHandler
     {
@@ -81,6 +82,19 @@
 
             // Not sure yet if/how we want to handle these events. Handler added so nothing is written to log file to prevent them filling up.
             throw new Exception($"No event handler for {domainEvent.GetType()}");
+        }
+
+        /// <summary>
+        /// Handles the specific event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private async Task HandleSpecificDomainEvent(PlayerScorePublishedEvent domainEvent,
+                                         CancellationToken cancellationToken)
+        {
+            await this.Manager.InsertPlayerScoreToReadModel(domainEvent, cancellationToken);
         }
     }
 }

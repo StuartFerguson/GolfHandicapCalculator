@@ -38,8 +38,8 @@ Background:
 	| 1              | 1                    | 18         | 399           | 4   | 9           |
 	Then the measured course is added to the club successfully
 	Given When I create a tournament with the following details
-	| TournamentNumber | TournamentName    | TournamentDate | TournamentFormat | PlayerCategory | MeasuredCourseName | GolfClubNumber |
-	| 1                | Test Tournament 1 | Today          | Strokeplay       | Gents          | Test Course        | 1              |
+	| TournamentNumber | TournamentName    | TournamentMonth | TournamentDay | TournamentFormat | PlayerCategory | MeasuredCourseName | GolfClubNumber |
+	| 1                | Test Tournament 1 | April           | 5             | Strokeplay       | Gents          | Test Course        | 1              |
 	Then tournament number 1 for golf club 1 measured course 'Test Course' will be created
 
 Scenario: Get Tournament List

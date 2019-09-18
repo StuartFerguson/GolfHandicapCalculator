@@ -78,6 +78,7 @@
         /// <summary>
         /// Gets the player memberships.
         /// </summary>
+        /// <param name="playerId">The player identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]

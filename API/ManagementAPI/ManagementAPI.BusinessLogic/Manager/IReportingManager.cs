@@ -59,6 +59,10 @@
         Task<GetMembersHandicapListReportResponse> GetMembersHandicapListReport(Guid golfClubId,
                                                                         CancellationToken cancellationToken);
 
+        Task<GetPlayerScoresResponse> GetPlayerScoresReport(Guid playerId,
+                                   Int32 numberOfScores,
+                                   CancellationToken cancellationToken);
+
         #endregion
     }
 }

@@ -94,6 +94,48 @@
         }
 
         /// <summary>
+        /// Gets the player scores report.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="numberOfScores">The number of scores.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetPlayerScoresResponse> GetPlayerScoresReport(Guid playerId,
+                                                Int32 numberOfScores,
+                                                CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfInvalidGuid(playerId, nameof(playerId));
+            Guard.ThrowIfZero(numberOfScores, nameof(numberOfScores));
+            Guard.ThrowIfNegative(numberOfScores, nameof(numberOfScores));
+
+            GetPlayerScoresResponse response = new GetPlayerScoresResponse();
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                List<PublishedPlayerScore> reportData = await context.PublishedPlayerScores.Where(p => p.PlayerId == playerId).OrderByDescending(p => p.TournamentDate).Take(numberOfScores).ToListAsync(cancellationToken);
+
+                reportData.ForEach(f => response.Scores.Add(new PlayerScoreResponse
+                                                            {
+                                                                TournamentDate = f.TournamentDate,
+                                                                GolfClubId = f.GolfClubId,
+                                                                MeasuredCourseId = f.MeasuredCourseId,
+                                                                PlayerId = f.PlayerId,
+                                                                TournamentId = f.TournamentId,
+                                                                NetScore = f.NetScore,
+                                                                MeasuredCourseName = f.MeasuredCourseName,
+                                                                GolfClubName = f.GolfClubName,
+                                                                MeasuredCourseTeeColour = f.MeasuredCourseTeeColour,
+                                                                TournamentFormat = (TournamentFormat)f.TournamentFormat,
+                                                                GrossScore = f.GrossScore,
+                                                                CSS = f.CSS,
+                                                                TournamentName = f.TournamentName
+                                                            }));
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Gets the number of members by age category report.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>

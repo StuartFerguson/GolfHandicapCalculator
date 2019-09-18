@@ -238,6 +238,15 @@
         Task UpdateTournamentStatusInReadModel(TournamentCompletedEvent domainEvent,
                                                CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Inserts the player score to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerScoreToReadModel(PlayerScorePublishedEvent domainEvent,
+                                          CancellationToken cancellationToken);
+
         #endregion
     }
 }
