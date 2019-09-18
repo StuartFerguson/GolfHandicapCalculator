@@ -66,6 +66,19 @@
                                                                         Guid golfClubId,
                                                                         CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Gets the player scores.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="numberOfScores">The number of scores.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetPlayerScoresResponse> GetPlayerScores(String accessToken,
+                                                      Guid playerId,
+                                                      Int32 numberOfScores,
+                                                      CancellationToken cancellationToken);
+
         #endregion
     }
 }

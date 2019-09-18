@@ -91,7 +91,7 @@ namespace ManagementAPI.IntegrationTests.Player
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table47 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table62 = new TechTalk.SpecFlow.Table(new string[] {
                         "PlayerNumber",
                         "EmailAddress",
                         "GivenName",
@@ -100,7 +100,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "DateOfBirth",
                         "Gender",
                         "ExactHandicap"});
-            table47.AddRow(new string[] {
+            table62.AddRow(new string[] {
                         "1",
                         "testplayer1@players.co.uk",
                         "Test",
@@ -110,7 +110,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "M",
                         "2"});
 #line 8
- testRunner.Given("I register the following details for a player", ((string)(null)), table47, "Given ");
+ testRunner.Given("I register the following details for a player", ((string)(null)), table62, "Given ");
 #line 11
  testRunner.Then("the player registration for player number 1 should be successful", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

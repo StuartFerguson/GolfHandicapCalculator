@@ -14,12 +14,68 @@ namespace ManagementAPI.Service.Tests.General
     using GolfClub;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
+    using Player;
     using Shouldly;
+    using Tournament;
     using Xunit;
     using TimePeriod = DataTransferObjects.Responses.TimePeriod;
 
     public class ReportingManagerTests
     {
+        [Fact]
+        public async Task ReportingManager_GetPlayerScores_ReportDataReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            List<PublishedPlayerScore> reportingData = new List<PublishedPlayerScore>();
+
+            reportingData.Add(new PublishedPlayerScore
+            {
+                TournamentDate = TournamentTestData.TournamentDate,
+                PlayerId = PlayerTestData.AggregateId,
+                TournamentFormat = TournamentTestData.TournamentFormat,
+                GolfClubId = TournamentTestData.GolfClubId,
+                MeasuredCourseId = TournamentTestData.MeasuredCourseId,
+                TournamentId = TournamentTestData.AggregateId,
+                CSS = TournamentTestData.CSS,
+                NetScore = TournamentTestData.NetScore,
+                MeasuredCourseName = GolfClubTestData.MeasuredCourseName,
+                GolfClubName = GolfClubTestData.Name,
+                MeasuredCourseTeeColour = GolfClubTestData.TeeColour,
+                GrossScore = TournamentTestData.GrossScore,
+                TournamentName = TournamentTestData.Name
+            });
+
+            await context.PublishedPlayerScores.AddRangeAsync(reportingData, CancellationToken.None);
+            await context.SaveChangesAsync(CancellationToken.None);
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            ReportingManager reportingManager = new ReportingManager(contextResolver);
+
+            GetPlayerScoresResponse reportData = await reportingManager.GetPlayerScoresReport(PlayerTestData.AggregateId, 10, CancellationToken.None);
+
+            reportData.Scores.Count.ShouldBe(reportingData.Count);
+        }
+
+        [Fact]
+        public async Task ReportingManager_GetPlayerScores_NoMembers_ReportDataReturned()
+        {
+            String databaseName = Guid.NewGuid().ToString("N");
+            ManagementAPIReadModel context = this.GetContext(databaseName);
+
+            List<PublishedPlayerScore> reportingData = new List<PublishedPlayerScore>();
+
+            Func<ManagementAPIReadModel> contextResolver = () => { return context; };
+
+            ReportingManager reportingManager = new ReportingManager(contextResolver);
+
+            GetPlayerScoresResponse reportData = await reportingManager.GetPlayerScoresReport(PlayerTestData.AggregateId, 10, CancellationToken.None);
+
+            reportData.Scores.Count.ShouldBe(reportingData.Count);
+        }
+
         [Fact]
         public async Task ReportingManager_GetNumberOfMembersReport_ReportDataReturned()
         {

@@ -4,6 +4,7 @@ using TechTalk.SpecFlow;
 namespace ManagementAPI.IntegrationTests.Reporting
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
@@ -157,6 +158,43 @@ namespace ManagementAPI.IntegrationTests.Reporting
             this.TestingContext.GetNumberOfMembersByAgeCategoryReportResponse.ShouldNotBeNull();
         }
 
+        [Then(@"I am returned the number of scores report data successfully")]
+        public void ThenIAmReturnedTheNumberOfScoresReportDataSuccessfully()
+        {
+            this.TestingContext.GetPlayerScoresResponse.ShouldNotBeNull();
+        }
+
+        [Then(@"the number of scores count for player number (.*) is (.*)")]
+        public void ThenTheNumberOfScoresCountForPlayerNumberIs(String playerNumber, Int32 numberOfScores)
+        {
+            this.TestingContext.GetPlayerScoresResponse.Scores.Count.ShouldBe(numberOfScores);
+        }
+
+        [Then(@"the following scores are returned for player (.*)")]
+        public async Task ThenTheFollowingScoresAreReturnedForPlayer(String playerNumber, Table table)
+        {
+            await Retry.For(async () =>
+                            {
+                                RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
+
+                                this.TestingContext.GetPlayerScoresResponse = await this.TestingContext.DockerHelper.ReportingClient.GetPlayerScores(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                                                                       registerPlayerResponse.PlayerId,
+                                                                                                                                                                       table.RowCount,
+                                                                                                                                                                       CancellationToken.None).ConfigureAwait(false);
+
+                                this.TestingContext.GetPlayerScoresResponse.Scores.Count.ShouldBe(table.RowCount);
+
+                                foreach (TableRow tableRow in table.Rows)
+                                {
+                                    PlayerScoreResponse score = this.TestingContext.GetPlayerScoresResponse.Scores.SingleOrDefault(x => x.TournamentName == tableRow["TournamentName"] &&
+                                                                                                                                        x.TournamentDate == this.CalculateTournamentDate(tableRow));
+
+                                    score.ShouldNotBeNull();
+                                }
+                            });
+        }
+
+
         [Then(@"the number of members by age category count for club number (.*) age category '(.*)' is (.*)")]
         public async Task ThenTheNumberOfMembersByAgeCategoryCountForClubNumberAgeCategoryIs(String golfClubNumber, String ageCategory, Int32 membersCount)
         {
@@ -227,6 +265,17 @@ namespace ManagementAPI.IntegrationTests.Reporting
             }
         }
 
+        [When(@"I request a number of scores report for player number (.*) with the last (.*) scores")]
+        public async Task WhenIRequestANumberOfScoresReportForPlayerNumberWithTheLastScores(String playerNumber, Int32 numberOfScores)
+        {
+            RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
+
+            this.TestingContext.GetPlayerScoresResponse = await this.TestingContext.DockerHelper.ReportingClient.GetPlayerScores(this.TestingContext.GolfClubAdministratorToken,
+                                                                                                                                                   registerPlayerResponse.PlayerId,
+                                                                                                                                                   numberOfScores,
+                                                                                                                                                   CancellationToken.None).ConfigureAwait(false);
+        }
+
 
         private String GetPeriodFromPeriodString(String periodString)
         {
@@ -246,6 +295,24 @@ namespace ManagementAPI.IntegrationTests.Reporting
             }
 
             throw new Exception($"Period String {periodString} not supported");
+        }
+
+        /// <summary>
+        /// Calculates the tournament date.
+        /// </summary>
+        /// <param name="tableRow">The table row.</param>
+        /// <returns></returns>
+        private DateTime CalculateTournamentDate(TableRow tableRow)
+        {
+            String monthString = tableRow["TournamentMonth"];
+            String dayString = tableRow["TournamentDay"];
+
+            Int32 month = DateTime.ParseExact(monthString, "MMMM", CultureInfo.CurrentCulture).Month;
+            Int32 day = Int32.Parse(dayString);
+
+            DateTime result = new DateTime(DateTime.Now.Year, month, day);
+
+            return result;
         }
     }
 }

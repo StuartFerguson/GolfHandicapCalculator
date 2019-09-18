@@ -100,6 +100,8 @@
         /// </value>
         public DbSet<User> Users { get; set; }
 
+        public DbSet<PublishedPlayerScore> PublishedPlayerScores { get; set; }
+
         #endregion
 
         #region Methods
@@ -165,6 +167,14 @@
                                                                                p.PlayerId,
                                                                                p.GolfClubId
                                                                            });
+
+            modelBuilder.Entity<PublishedPlayerScore>().HasKey(p => new
+                                                                    {
+                                                                        p.PlayerId,
+                                                                        p.GolfClubId,
+                                                                        p.TournamentId,
+                                                                        p.MeasuredCourseId
+                                                                    });
         }
 
         #endregion

@@ -4,6 +4,7 @@ using TechTalk.SpecFlow;
 namespace ManagementAPI.IntegrationTests.Tournament
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -40,19 +41,40 @@ namespace ManagementAPI.IntegrationTests.Tournament
                 TournamentFormat tournamentFormat = Enum.Parse<TournamentFormat>(tableRow["TournamentFormat"], true);
                 PlayerCategory playerCategory = Enum.Parse<PlayerCategory>(tableRow["PlayerCategory"], true);
 
+                // Work out the tournament date
+                DateTime tournamentDate = this.CalculateTournamentDate(tableRow);
+
                 CreateTournamentRequest createTournamentRequest = new CreateTournamentRequest
                                                                   {
                                                                       Format = (Int32)tournamentFormat,
                                                                       Name = tableRow["TournamentName"],
                                                                       MeasuredCourseId = measuredCourse.MeasuredCourseId,
                                                                       MemberCategory = (Int32)playerCategory,
-                                                                      TournamentDate = DateTime.Today
-                                                                  };
+                                                                      TournamentDate = tournamentDate
+                };
 
                 this.TestingContext.CreateTournamentRequests.Add(new Tuple<String, String, String>(tableRow["GolfClubNumber"], tableRow["MeasuredCourseName"],
                                                                                                    tableRow["TournamentNumber"]), createTournamentRequest);
             }
             
+        }
+
+        /// <summary>
+        /// Calculates the tournament date.
+        /// </summary>
+        /// <param name="tableRow">The table row.</param>
+        /// <returns></returns>
+        private DateTime CalculateTournamentDate(TableRow tableRow)
+        {
+            String monthString = tableRow["TournamentMonth"];
+            String dayString = tableRow["TournamentDay"];
+
+            Int32 month = DateTime.ParseExact(monthString, "MMMM", CultureInfo.CurrentCulture).Month;
+            Int32 day = Int32.Parse(dayString);
+
+            DateTime result= new DateTime(DateTime.Now.Year, month, day);
+
+            return result;
         }
 
         [Then(@"tournament number (.*) for golf club (.*) measured course '(.*)' will be created")]

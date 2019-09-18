@@ -20,6 +20,13 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "docker"
       }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "environmentVariables": {},
+      "httpPort": 53372
     }
   }
 }

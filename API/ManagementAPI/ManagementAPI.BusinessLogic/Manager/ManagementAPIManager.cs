@@ -1006,6 +1006,49 @@
         }
 
         /// <summary>
+        /// Inserts the player score to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="NotFoundException">Tournament with Id {domainEvent.AggregateId} not found in read model</exception>
+        public async Task InsertPlayerScoreToReadModel(PlayerScorePublishedEvent domainEvent,
+                                                       CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                Tournament tournament = await context.Tournament.Where(t => t.TournamentId == domainEvent.AggregateId).SingleOrDefaultAsync(cancellationToken);
+
+                if (tournament == null)
+                {
+                    throw new NotFoundException($"Tournament with Id {domainEvent.AggregateId} not found in read model");
+                }
+
+                PublishedPlayerScore publishedPlayerScore = new PublishedPlayerScore
+                                                            {
+                                                                TournamentId = domainEvent.AggregateId,
+                                                                GolfClubId = domainEvent.GolfClubId,
+                                                                PlayerId = domainEvent.PlayerId,
+                                                                MeasuredCourseId = domainEvent.MeasuredCourseId,
+                                                                GrossScore = domainEvent.GrossScore,
+                                                                NetScore = domainEvent.NetScore,
+                                                                TournamentDate = tournament.TournamentDate,
+                                                                TournamentFormat = tournament.Format,
+                                                                CSS = domainEvent.CSS,
+                                                                GolfClubName = tournament.GolfClubName,
+                                                                MeasuredCourseName = tournament.MeasuredCourseName,
+                                                                MeasuredCourseTeeColour = tournament.MeasuredCourseTeeColour,
+                                                                TournamentName = tournament.Name
+                                                            };
+
+                await context.PublishedPlayerScores.AddAsync(publishedPlayerScore, cancellationToken);
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
         /// Updates the tournament status in read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>

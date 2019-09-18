@@ -80,6 +80,14 @@
     <SpecFlowFeatureFiles Include="Tournament\SignUpForTournament.feature" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Reporting\PlayerReports.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PlayerReports.feature</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
   <ItemGroup>                   
     <None Update="GolfClub\AddTournamentDivisionToGolfClub.feature">
       <Generator></Generator>
@@ -100,6 +108,10 @@
     <SpecFlowFeatureFiles Update="GolfClub\RegisterGolfClubAdministrator.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
+    </SpecFlowFeatureFiles>
+    <SpecFlowFeatureFiles Update="Reporting\PlayerReports.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>PlayerReports.feature.cs</LastGenOutput>
     </SpecFlowFeatureFiles>
   </ItemGroup>
 

@@ -713,6 +713,19 @@ namespace ManagementAPI.Service.Tests.Tournament
                                                  TournamentTestData.TournamentFormat);
         }
 
+        public static PlayerScorePublishedEvent GetPlayerScorePublishedEvent()
+        {
+            return PlayerScorePublishedEvent.Create(TournamentTestData.AggregateId,
+                                                    TournamentTestData.PlayerId,
+                                                    TournamentTestData.PlayingHandicap,
+                                                    TournamentTestData.HoleScores,
+                                                    TournamentTestData.GolfClubId,
+                                                    TournamentTestData.MeasuredCourseId,
+                                                    TournamentTestData.GrossScore,
+                                                    TournamentTestData.NetScore,
+                                                    TournamentTestData.CSS);
+        }
+
         public static TournamentResultForPlayerScoreProducedEvent GetTournamentResultForPlayerScoreProducedEvent()
         {
             return TournamentResultForPlayerScoreProducedEvent.Create(TournamentTestData.AggregateId,
