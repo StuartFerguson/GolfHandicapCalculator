@@ -199,8 +199,14 @@
                                                       [FromRoute] Guid tournamentId,
                                                       CancellationToken cancellationToken)
         {
-            // Get the Golf Club Id claim from the user
+            // Get the Player Id claim from the user            
             Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId);
+
+            Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
+            if (validationResult == false)
+            {
+                return this.Forbid();
+            }
 
             // Create the command
             SignUpForTournamentCommand command = SignUpForTournamentCommand.Create(tournamentId, Guid.Parse(playerIdClaim.Value));
@@ -210,6 +216,29 @@
 
             // return the result
             return this.NoContent();
+        }
+
+        [HttpGet]
+        [HttpGet]
+        [SwaggerResponse(200, type: typeof(List<PlayerSignedUpTournamentsResponse>))]
+        [SwaggerResponseExample(200, typeof(PlayerSignedUpTournamentsResponseExample), jsonConverter: typeof(SwaggerJsonConverter))]
+        [Route("{playerId}/Tournament/SignedUp")]
+        public async Task<IActionResult> GetPlayerTournamentSignUps([FromRoute] Guid playerId,
+                                                      CancellationToken cancellationToken)
+        {
+            // Get the Player Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId);
+
+            Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
+            if (validationResult == false)
+            {
+                return this.Forbid();
+            }
+
+            PlayerSignedUpTournamentsResponse result = await this.Manager.GetPlayerSignedUpTournaments(Guid.Parse(playerIdClaim.Value), cancellationToken);
+
+            // return the result
+            return this.Ok(result);
         }
 
         /// <summary>

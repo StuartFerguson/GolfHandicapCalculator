@@ -128,6 +128,8 @@
                                                      CancellationToken cancellationToken)
         {
             await this.Manager.UpdateTournamentInReadModel(domainEvent, cancellationToken);
+
+            await this.Manager.InsertPlayerSignUpForTournamentToReadModel(domainEvent, cancellationToken);
         }
 
         /// <summary>

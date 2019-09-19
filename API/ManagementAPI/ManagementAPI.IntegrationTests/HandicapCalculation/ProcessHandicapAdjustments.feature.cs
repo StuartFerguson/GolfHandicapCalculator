@@ -290,7 +290,8 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
             TechTalk.SpecFlow.Table table55 = new TechTalk.SpecFlow.Table(new string[] {
                         "TournamentNumber",
                         "TournamentName",
-                        "TournamentDate",
+                        "TournamentMonth",
+                        "TournamentDay",
                         "TournamentFormat",
                         "PlayerCategory",
                         "MeasuredCourseName",
@@ -298,7 +299,8 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
             table55.AddRow(new string[] {
                         "1",
                         "Test Tournament 1",
-                        "Today",
+                        "April",
+                        "5",
                         "Strokeplay",
                         "Gents",
                         "Test Course",

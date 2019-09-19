@@ -94,6 +94,17 @@
                                        Guid tournamentId,
                                        CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Gets the tournaments signed up for.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<PlayerSignedUpTournamentsResponse> GetTournamentsSignedUpFor(String accessToken,
+                                                                          Guid playerId,
+                                                                          CancellationToken cancellationToken);
+
         #endregion
     }
 }

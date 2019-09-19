@@ -150,9 +150,6 @@ namespace ManagementAPI.Service
                                       {
                                           // Setup the database
                                           await this.InitialiseDatabase(app, env);
-
-                                          // Setup the security service
-                                          await this.InitialiseSecurityRoles(app);
                                       }));
             //}
 
@@ -178,62 +175,6 @@ namespace ManagementAPI.Service
             else
             {
                 app.PreWarm();
-            }
-        }
-
-        /// <summary>
-        /// Initialises the security roles.
-        /// </summary>
-        /// <param name="app">The application.</param>
-        /// <returns></returns>
-        private async Task InitialiseSecurityRoles(IApplicationBuilder app)
-        {
-            Logger.LogInformation($"In InitialiseSecurityRoles");
-
-            List<String> rolesList = new List<String>();
-
-            rolesList.Add(RoleNames.Developer);
-            rolesList.Add(RoleNames.TestDataGenerator);
-            rolesList.Add(RoleNames.ClubAdministrator);
-            rolesList.Add(RoleNames.MatchSecretary);
-            rolesList.Add(RoleNames.Player);
-
-            using(IServiceScope scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                ISecurityService securityService = scope.ServiceProvider.GetRequiredService<ISecurityService>();
-
-                foreach (String roleName in rolesList)
-                {
-                    Boolean createRole = false;
-                    try
-                    {
-                        Logger.LogInformation($"Getting role {roleName}");
-                        await securityService.GetRoleByName(roleName, CancellationToken.None);
-                    }
-                    catch(Exception nex)
-                    {
-                        Logger.LogError(nex);
-                        if (nex.InnerException != null)
-                        {
-                            Logger.LogError(nex.InnerException);
-                        }
-
-                        Logger.LogInformation($"Role {roleName} not found");
-                        createRole = true;
-                    }
-
-                    if (createRole)
-                    {
-                        Logger.LogInformation($"Creating role {roleName}");
-                        CreateRoleRequest createRoleRequest = new CreateRoleRequest
-                                                              {
-                                                                  RoleName = roleName
-                                                              };
-                        await securityService.CreateRole(createRoleRequest, CancellationToken.None);
-
-                        Logger.LogInformation($"Created role {roleName}");
-                    }
-                }
             }
         }
 

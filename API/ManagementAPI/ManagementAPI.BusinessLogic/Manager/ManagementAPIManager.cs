@@ -922,6 +922,48 @@
         }
 
         /// <summary>
+        /// Inserts the player sign up for tournament to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="NotFoundException">Tournament with Id {domainEvent.AggregateId} not found in read model</exception>
+        public async Task InsertPlayerSignUpForTournamentToReadModel(PlayerSignedUpEvent domainEvent,
+                                                                     CancellationToken cancellationToken)
+        {
+            Guard.ThrowIfNull(domainEvent, typeof(ArgumentNullException), "Domain event cannot be null");
+
+            using (ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                // Check the tournament has not already been added to the read model
+                Tournament tournament = await context.Tournament.Where(t => t.TournamentId == domainEvent.AggregateId).SingleOrDefaultAsync(cancellationToken);
+
+                if (tournament == null)
+                {
+                    throw new NotFoundException($"Tournament with Id {domainEvent.AggregateId} not found in read model");
+                }
+
+                PlayerTournamentSignUp playerTournamentSignUp = new PlayerTournamentSignUp
+                                                                {
+                                                                    GolfClubId = tournament.GolfClubId,
+                                                                    TournamentDate = tournament.TournamentDate,
+                                                                    MeasuredCourseId = tournament.MeasuredCourseId,
+                                                                    TournamentId = domainEvent.AggregateId,
+                                                                    PlayerId = domainEvent.PlayerId,
+                                                                    MeasuredCourseName = tournament.MeasuredCourseName,
+                                                                    GolfClubName = tournament.GolfClubName,
+                                                                    MeasuredCourseTeeColour = tournament.MeasuredCourseTeeColour,
+                                                                    TournamentName = tournament.Name,
+                                                                    TournamentFormat = tournament.Format,
+                                                                    ScoreEntered = false
+                                                                };
+
+                await context.PlayerTournamentSignUps.AddAsync(playerTournamentSignUp);
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
         /// Updates the tournament in read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -1046,6 +1088,46 @@
 
                 await context.SaveChangesAsync(cancellationToken);
             }
+        }
+
+        /// <summary>
+        /// Gets the player signed up tournaments.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<PlayerSignedUpTournamentsResponse> GetPlayerSignedUpTournaments(Guid playerId,
+                                                                                          CancellationToken cancellationToken)
+        {
+            PlayerSignedUpTournamentsResponse result = new PlayerSignedUpTournamentsResponse();
+
+            using(ManagementAPIReadModel context = this.ReadModelResolver())
+            {
+                List<PlayerTournamentSignUp> playerTournamentSignUps =
+                    await context.PlayerTournamentSignUps.Where(p => p.ScoreEntered == false).ToListAsync(cancellationToken);
+
+                foreach (PlayerTournamentSignUp playerTournamentSignUp in playerTournamentSignUps)
+                {
+                    result.PlayerSignedUpTournaments.Add(new PlayerSignedUpTournament
+                                                         {
+                                                             TournamentDate = playerTournamentSignUp.TournamentDate,
+                                                             GolfClubId = playerTournamentSignUp.GolfClubId,
+                                                             MeasuredCourseId = playerTournamentSignUp.MeasuredCourseId,
+                                                             TournamentId = playerTournamentSignUp.TournamentId,
+                                                             TournamentFormat = (TournamentFormat)playerTournamentSignUp.TournamentFormat,
+                                                             PlayerId = playerTournamentSignUp.PlayerId,
+                                                             MeasuredCourseName = playerTournamentSignUp.MeasuredCourseName,
+                                                             GolfClubName = playerTournamentSignUp.GolfClubName,
+                                                             MeasuredCourseTeeColour = playerTournamentSignUp.MeasuredCourseTeeColour,
+                                                             TournamentName = playerTournamentSignUp.TournamentName
+                                                         });
+                }
+
+                // Order the result by name
+                result.PlayerSignedUpTournaments = result.PlayerSignedUpTournaments.OrderByDescending(g => g.TournamentDate).ToList();
+            }
+
+            return result;
         }
 
         /// <summary>

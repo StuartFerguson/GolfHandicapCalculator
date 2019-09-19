@@ -166,6 +166,46 @@
         }
 
         /// <summary>
+        /// Gets the tournaments signed up for.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<PlayerSignedUpTournamentsResponse> GetTournamentsSignedUpFor(String accessToken,
+                                                                                       Guid playerId,
+                                                                                       CancellationToken cancellationToken)
+        {
+            PlayerSignedUpTournamentsResponse response = new PlayerSignedUpTournamentsResponse();
+
+            String requestUri = $"{this.BaseAddress}/api/Player/{playerId}/Tournament/SignedUp";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<PlayerSignedUpTournamentsResponse>(content);
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting signed up tournaments for player {playerId}.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Records the player score.
         /// </summary>
         /// <param name="accessToken">The access token.</param>
@@ -173,7 +213,6 @@
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
         public async Task RecordPlayerScore(String accessToken,
                                             Guid playerId,
                                             Guid tournamentId,
@@ -254,7 +293,6 @@
         /// <param name="playerId">The player identifier.</param>
         /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
         public async Task RequestClubMembership(String accessToken,
                                                 Guid playerId,
                                                 Guid golfClubId,
@@ -293,7 +331,6 @@
         /// <param name="playerId">The player identifier.</param>
         /// <param name="tournamentId">The tournament identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
         public async Task SignUpPlayerForTournament(String accessToken,
                                                     Guid playerId,
                                                     Guid tournamentId,
