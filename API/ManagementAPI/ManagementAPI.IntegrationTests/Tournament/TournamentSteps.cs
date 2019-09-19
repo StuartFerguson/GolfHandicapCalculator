@@ -163,47 +163,25 @@ namespace ManagementAPI.IntegrationTests.Tournament
         }
 
         [Then(@"player number (.*) is recorded as signed up for tournament number (.*) for golf club (.*) measured course '(.*)'")]
-        public void ThenPlayerNumberIsRecordedAsSignedUpForTournamentNumberForGolfClubMeasuredCourse(String playerNumber, String tournamentNumber, String golfClubNumber, String measuredCourseName)
+        public async Task ThenPlayerNumberIsRecordedAsSignedUpForTournamentNumberForGolfClubMeasuredCourse(String playerNumber, String tournamentNumber, String golfClubNumber, String measuredCourseName)
         {
-            // Nothing to check at the moment
+            RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
+
+            CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
+
+            await Retry.For(async () =>
+                            {
+                                PlayerSignedUpTournamentsResponse response = await this
+                                                                                   .TestingContext.DockerHelper.PlayerClient
+                                                                                   .GetTournamentsSignedUpFor(this.TestingContext.PlayerToken,
+                                                                                                              getRegisterPlayerResponse.PlayerId,
+                                                                                                              CancellationToken.None).ConfigureAwait(false);
+
+                                response.PlayerSignedUpTournaments.Count.ShouldBe(1);
+                                response.PlayerSignedUpTournaments.Single().TournamentId.ShouldBe(getCreateTournamentResponse.TournamentId);
+                            });
         }
-
-        //[When(@"player number (.*) records the following score for tournament number (.*) for golf club (.*) measured course '(.*)'")]
-        //public async Task WhenPlayerNumberRecordsTheFollowingScoreForTournamentNumberForGolfClubMeasuredCourse(String tournamentNumber, String golfClubNumber, String measuredCourseName, Table table)
-        //{
-        //    RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
-
-        //    CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
-
-        //    RecordPlayerTournamentScoreRequest recordPlayerTournamentScoreRequest = new RecordPlayerTournamentScoreRequest
-        //                                                                            {
-        //                                                                                HoleScores = new Dictionary<Int32, Int32>()
-        //                                                                            };
-
-        //    TableRow tableRow = table.Rows.Single();
-
-        //    for (Int32 i = 1; i <= 18; i++)
-        //    {
-        //        recordPlayerTournamentScoreRequest.HoleScores.Add(i, Int32.Parse(tableRow[$"Hole{i}"]));
-        //    }
-
-
-        //}
-
-        //[Then(@"the score recorded by player number (.*) is recorded against tournament number (.*) for golf club (.*) measured course '(.*)'")]
-        //public async Task ThenTheScoreRecordedByPlayerNumberIsRecordedAgainstTournamentNumberForGolfClubMeasuredCourse(int p0, int p1, int p2, string p3)
-        //{
-        //    //RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
-
-        //    //CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
-
-        //    //await this.TestingContext.DockerHelper.PlayerClient.RecordPlayerScore(this.TestingContext.PlayerToken,
-        //    //                                                                      getRegisterPlayerResponse.PlayerId,
-        //    //                                                                      getCreateTournamentResponse.TournamentId,
-        //    //                                                                      recordPlayerTournamentScoreRequest,
-        //    //                                                                      CancellationToken.None).ConfigureAwait(false);
-        //}
-
+        
         [When(@"a player records the following score for tournament number (.*) for golf club (.*) measured course '(.*)'")]
         public void WhenAPlayerRecordsTheFollowingScoreForTournamentNumberForGolfClubMeasuredCourse(String tournamentNumber, String golfClubNumber, String measuredCourseName, Table table)
         {

@@ -146,11 +146,11 @@ namespace ManagementAPI.Service
             // Setup the database
             //if (!Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
             //{
-            Task.WaitAll(Task.Run(async () =>
-                                  {
-                                      // Setup the database
-                                      await this.InitialiseDatabase(app, env);
-                                  }));
+                Task.WaitAll(Task.Run(async () =>
+                                      {
+                                          // Setup the database
+                                          await this.InitialiseDatabase(app, env);
+                                      }));
             //}
 
             app.AddExceptionHandler();

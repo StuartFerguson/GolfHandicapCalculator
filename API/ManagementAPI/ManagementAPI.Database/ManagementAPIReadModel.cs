@@ -100,7 +100,21 @@
         /// </value>
         public DbSet<User> Users { get; set; }
 
+        /// <summary>
+        /// Gets or sets the published player scores.
+        /// </summary>
+        /// <value>
+        /// The published player scores.
+        /// </value>
         public DbSet<PublishedPlayerScore> PublishedPlayerScores { get; set; }
+
+        /// <summary>
+        /// Gets or sets the player tournament sign ups.
+        /// </summary>
+        /// <value>
+        /// The player tournament sign ups.
+        /// </value>
+        public DbSet<PlayerTournamentSignUp> PlayerTournamentSignUps { get; set; }
 
         #endregion
 
@@ -174,6 +188,12 @@
                                                                         p.GolfClubId,
                                                                         p.TournamentId,
                                                                         p.MeasuredCourseId
+                                                                    });
+
+            modelBuilder.Entity<PlayerTournamentSignUp>().HasKey(p => new
+                                                                    {
+                                                                        p.PlayerId,
+                                                                        p.TournamentId,
                                                                     });
         }
 
