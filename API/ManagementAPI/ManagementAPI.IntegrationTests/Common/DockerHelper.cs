@@ -278,10 +278,6 @@ namespace ManagementAPI.IntegrationTests.Common
             this.SetupEventStoreContainer(testFolder);
             this.SetupSubscriptionServiceContainer(testFolder);
             this.SetupMessagingService(testFolder);
-
-            // TODO: Temporary hack until code in API for creating roles on start up more resiliant
-            Thread.Sleep(10000);
-
             this.SetupManagementAPIContainer(testFolder);
 
             // Cache the ports
@@ -291,6 +287,7 @@ namespace ManagementAPI.IntegrationTests.Common
             this.MessagingServicePort = this.MessagingServiceContainer.ToHostExposedEndpoint("5002/tcp").Port;
 
             this.SetupSubscriptionServiceConfig();
+            await this.SetupSecurityServiceConfig().ConfigureAwait(false);
 
             // Setup the base address resolver
             Func<String, String> baseAddressResolver = api => $"http://127.0.0.1:{this.ManagementApiPort}";
@@ -304,7 +301,18 @@ namespace ManagementAPI.IntegrationTests.Common
             this.HttpClient = new HttpClient();
             this.HttpClient.BaseAddress = new Uri(baseAddressResolver(String.Empty));
         }
-        
+
+        private async Task SetupSecurityServiceConfig()
+        {
+            String baseUri = $"http://127.0.0.1:{this.SecurityServicePort}";
+            
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.Developer).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.TestDataGenerator).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.ClubAdministrator).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.MatchSecretary).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.Player).ConfigureAwait(false);
+        }
+
         public async Task StopContainersForScenarioRun()
         {
             try
@@ -433,5 +441,37 @@ namespace ManagementAPI.IntegrationTests.Common
 
             return result;
         }
+    }
+
+    public class RoleNames
+    {
+        #region Others
+
+        /// <summary>
+        /// The club administrator
+        /// </summary>
+        public const String ClubAdministrator = "Club Administrator";
+
+        /// <summary>
+        /// The developer
+        /// </summary>
+        public const String Developer = "Developer";
+
+        /// <summary>
+        /// The match secretary
+        /// </summary>
+        public const String MatchSecretary = "Match Secretary";
+
+        /// <summary>
+        /// The player
+        /// </summary>
+        public const String Player = "Player";
+
+        /// <summary>
+        /// The test data generator
+        /// </summary>
+        public const String TestDataGenerator = "Test Data Generator";
+
+        #endregion
     }
 }
