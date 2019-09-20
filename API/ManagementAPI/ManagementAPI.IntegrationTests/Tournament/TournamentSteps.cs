@@ -177,8 +177,10 @@ namespace ManagementAPI.IntegrationTests.Tournament
                                                                                                               getRegisterPlayerResponse.PlayerId,
                                                                                                               CancellationToken.None).ConfigureAwait(false);
 
-                                response.PlayerSignedUpTournaments.Count.ShouldBe(1);
-                                response.PlayerSignedUpTournaments.Single().TournamentId.ShouldBe(getCreateTournamentResponse.TournamentId);
+                                List<PlayerSignedUpTournament> tournamentSignUp = response.PlayerSignedUpTournaments.Where(s => s.TournamentId == getCreateTournamentResponse.TournamentId).ToList();
+                                tournamentSignUp.ShouldNotBeNull();
+                                tournamentSignUp.ShouldNotBeEmpty();
+                                tournamentSignUp.Count.ShouldBe(1);
                             });
         }
         
