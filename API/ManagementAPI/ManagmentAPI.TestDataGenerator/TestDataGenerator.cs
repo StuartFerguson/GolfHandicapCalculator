@@ -109,6 +109,8 @@
                                                       AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest,
                                                       CancellationToken cancellationToken)
         {
+            addMeasuredCourseToClubRequest.MeasuredCourseId = Guid.NewGuid();
+
             await this.GolfClubClient.AddMeasuredCourseToGolfClub(accessToken, golfClubId, addMeasuredCourseToClubRequest, cancellationToken);
         }
 

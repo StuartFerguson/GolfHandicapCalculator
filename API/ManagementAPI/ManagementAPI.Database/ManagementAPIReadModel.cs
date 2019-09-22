@@ -116,6 +116,14 @@
         /// </value>
         public DbSet<PlayerTournamentSignUp> PlayerTournamentSignUps { get; set; }
 
+        /// <summary>
+        /// Gets or sets the measured courses.
+        /// </summary>
+        /// <value>
+        /// The measured courses.
+        /// </value>
+        public DbSet<MeasuredCourse> MeasuredCourses { get; set; }
+
         #endregion
 
         #region Methods
@@ -195,6 +203,12 @@
                                                                         p.PlayerId,
                                                                         p.TournamentId,
                                                                     });
+
+            modelBuilder.Entity<MeasuredCourse>().HasKey(p => new
+                                                                      {
+                                                                          p.GolfClubId,
+                                                                          p.MeasuredCourseId,
+                                                                      });
         }
 
         #endregion
