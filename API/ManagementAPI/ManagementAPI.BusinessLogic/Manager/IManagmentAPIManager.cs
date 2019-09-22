@@ -77,6 +77,15 @@
                                                                      CancellationToken cancellationToken);
 
         /// <summary>
+        /// Gets the player signed up tournaments.
+        /// </summary>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<PlayerSignedUpTournamentsResponse> GetPlayerSignedUpTournaments(Guid playerId,
+                                                                             CancellationToken cancellationToken);
+
+        /// <summary>
         /// Gets the tournament list.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>
@@ -93,6 +102,15 @@
         /// <returns></returns>
         Task InsertGolfClubToReadModel(GolfClubCreatedEvent domainEvent,
                                        CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the measured course to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertMeasuredCourseToReadModel(MeasuredCourseAddedEvent domainEvent,
+                                             CancellationToken cancellationToken);
 
         /// <summary>
         /// Inserts the player handicap record to reporting.
@@ -129,6 +147,24 @@
         /// <returns></returns>
         Task InsertPlayerMembershipToReporting(ClubMembershipRequestAcceptedEvent domainEvent,
                                                CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the player score to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerScoreToReadModel(PlayerScorePublishedEvent domainEvent,
+                                          CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Inserts the player sign up for tournament to read model.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task InsertPlayerSignUpForTournamentToReadModel(PlayerSignedUpEvent domainEvent,
+                                                        CancellationToken cancellationToken);
 
         /// <summary>
         /// Inserts the player tournament score to read model.
@@ -203,15 +239,6 @@
                                          CancellationToken cancellationToken);
 
         /// <summary>
-        /// Inserts the player sign up for tournament to read model.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task InsertPlayerSignUpForTournamentToReadModel(PlayerSignedUpEvent domainEvent,
-                                         CancellationToken cancellationToken);
-
-        /// <summary>
         /// Updates the tournament in read model.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
@@ -247,24 +274,6 @@
         Task UpdateTournamentStatusInReadModel(TournamentCompletedEvent domainEvent,
                                                CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Inserts the player score to read model.
-        /// </summary>
-        /// <param name="domainEvent">The domain event.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task InsertPlayerScoreToReadModel(PlayerScorePublishedEvent domainEvent,
-                                          CancellationToken cancellationToken);
-
         #endregion
-
-        /// <summary>
-        /// Gets the player signed up tournaments.
-        /// </summary>
-        /// <param name="playerId">The player identifier.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task<PlayerSignedUpTournamentsResponse> GetPlayerSignedUpTournaments(Guid playerId,
-                                                                            CancellationToken cancellationToken);
     }
 }

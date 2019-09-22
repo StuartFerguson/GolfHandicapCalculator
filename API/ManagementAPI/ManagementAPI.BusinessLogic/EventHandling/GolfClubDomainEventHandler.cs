@@ -87,6 +87,17 @@
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
+        private async Task HandleSpecificDomainEvent(MeasuredCourseAddedEvent domainEvent,
+                                                     CancellationToken cancellationToken)
+        {
+            await this.Manager.InsertMeasuredCourseToReadModel(domainEvent, cancellationToken);
+        }
+
+        /// <summary>
+        /// Handles the specific domain event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         private async Task HandleSpecificDomainEvent(MatchSecretarySecurityUserCreatedEvent domainEvent,
                                                      CancellationToken cancellationToken)

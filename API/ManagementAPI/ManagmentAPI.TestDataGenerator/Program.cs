@@ -27,7 +27,6 @@
         /// </summary>
         public static AddMeasuredCourseToClubRequest AddMeasuredCourseToClubRequest = new AddMeasuredCourseToClubRequest
                                                                                       {
-                                                                                          MeasuredCourseId = Guid.NewGuid(),
                                                                                           Name = "Test Course",
                                                                                           StandardScratchScore = 70,
                                                                                           TeeColour = "White",
@@ -559,9 +558,9 @@
         /// <returns></returns>
         private static async Task Main(String[] args)
         {
-            const Int32 lastClub = 1;
+            const Int32 lastClub = 5;
             const Int32 clubCount = 1;
-            const Int32 playersPerClub = 1;
+            const Int32 playersPerClub = 37;
 
             // Create the data generator class
             String BaseAddressResolver(String service)
@@ -622,7 +621,7 @@
         /// <summary>
         /// The security service address
         /// </summary>
-        private const String SecurityServiceAddress = "http://localhost:5001";
+        private const String SecurityServiceAddress = "http://192.168.1.132:5001";
 
         #endregion
     }

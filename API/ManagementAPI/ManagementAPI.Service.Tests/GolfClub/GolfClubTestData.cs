@@ -1277,5 +1277,14 @@
         }
 
         #endregion
+
+        public static MeasuredCourseAddedEvent GetMeasuredCourseAddedEvent()
+        {
+            return MeasuredCourseAddedEvent.Create(GolfClubTestData.AggregateId,
+                                                   GolfClubTestData.MeasuredCourseId,
+                                                   GolfClubTestData.MeasuredCourseName,
+                                                   GolfClubTestData.TeeColour,
+                                                   GolfClubTestData.StandardScratchScore);
+        }
     }
 }
