@@ -780,7 +780,8 @@
                                                                 GolfClubName = tournament.GolfClubName,
                                                                 MeasuredCourseName = tournament.MeasuredCourseName,
                                                                 MeasuredCourseTeeColour = tournament.MeasuredCourseTeeColour,
-                                                                TournamentName = tournament.Name
+                                                                TournamentName = tournament.Name,
+                                                                PlayingHandicap =  domainEvent.PlayingHandicap
                                                             };
 
                 await context.PublishedPlayerScores.AddAsync(publishedPlayerScore, cancellationToken);
