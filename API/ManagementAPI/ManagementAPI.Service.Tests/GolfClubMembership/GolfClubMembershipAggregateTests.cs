@@ -90,7 +90,7 @@
             membership.PlayerGender.ShouldBe(GolfClubMembershipTestData.PlayerGender);
             membership.AcceptedDateAndTime.ShouldBe(GolfClubMembershipTestData.RequestDateAndTime);
             membership.AcceptedDateAndTime.ShouldNotBe(DateTime.MinValue);
-            membership.MembershipNumber.ShouldNotBeNullOrEmpty();
+            membership.MembershipNumber.ShouldBe("000001");
             membership.Status.ShouldBe(1);
         }
 

@@ -246,7 +246,7 @@
         private String GenerateMembershipNumber()
         {
             // Get the count of current list (add 1 as this list is base 0)
-            Int32 memberCount = this.MembershipList.Count() + 1;
+            Int32 memberCount = this.MembershipList.Count();
 
             // Increment count by 1 for the new member
             memberCount++;
