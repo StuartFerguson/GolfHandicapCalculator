@@ -79,6 +79,14 @@
         public Guid PlayerId { get; set; }
 
         /// <summary>
+        /// Gets or sets the playing handicap.
+        /// </summary>
+        /// <value>
+        /// The playing handicap.
+        /// </value>
+        public Int32 PlayingHandicap { get; set; }
+
+        /// <summary>
         /// Gets or sets the tournament date.
         /// </summary>
         /// <value>

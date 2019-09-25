@@ -128,7 +128,8 @@
                                                                 TournamentFormat = (TournamentFormat)f.TournamentFormat,
                                                                 GrossScore = f.GrossScore,
                                                                 CSS = f.CSS,
-                                                                TournamentName = f.TournamentName
+                                                                TournamentName = f.TournamentName,
+                                                                PlayingHandicap = f.PlayingHandicap
                                                             }));
             }
 
