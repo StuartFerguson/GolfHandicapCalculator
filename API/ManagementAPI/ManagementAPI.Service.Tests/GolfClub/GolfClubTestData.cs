@@ -1179,9 +1179,9 @@
 
         public static DateTime MembershipRejectionDateTime = new DateTime(2019, 7, 23);
 
-        public static Int32 StatusAccepted= 0;
+        public static Int32 StatusAccepted= 1;
 
-        public static Int32 StatusRejected = 1;
+        public static Int32 StatusRejected = 2;
 
         public static GetGolfClubUserListResponse GetGolfClubUserListResponse = new GetGolfClubUserListResponse
                                                                                 {
