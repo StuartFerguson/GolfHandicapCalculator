@@ -479,6 +479,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             this.TestingContext.GolfClubMembersList.ShouldNotBeNull();
             this.TestingContext.GolfClubMembersList.ShouldNotBeEmpty();
             this.TestingContext.GolfClubMembersList.Count.ShouldBe(numberOfMembers);
+            this.TestingContext.GolfClubMembersList.Count(m => m.MembershipStatus == MembershipStatus.Accepted).ShouldBe(numberOfMembers);
         }
 
         [Given(@"I am logged in as a golf club administrator for golf club (.*)")]

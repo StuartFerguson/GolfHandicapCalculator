@@ -78,6 +78,11 @@
     public enum MembershipStatus
     {
         /// <summary>
+        /// The not set
+        /// </summary>
+        NotSet,
+
+        /// <summary>
         /// The accepted
         /// </summary>
         Accepted,
