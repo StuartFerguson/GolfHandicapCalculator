@@ -391,7 +391,7 @@
             using(ManagementAPIReadModel context = this.ReadModelResolver())
             {
                 List<PlayerTournamentSignUp> playerTournamentSignUps =
-                    await context.PlayerTournamentSignUps.Where(p => p.ScoreEntered == false).ToListAsync(cancellationToken);
+                    await context.PlayerTournamentSignUps.Where(p => p.ScoreEntered == false && p.PlayerId == playerId).ToListAsync(cancellationToken);
 
                 foreach (PlayerTournamentSignUp playerTournamentSignUp in playerTournamentSignUps)
                 {
