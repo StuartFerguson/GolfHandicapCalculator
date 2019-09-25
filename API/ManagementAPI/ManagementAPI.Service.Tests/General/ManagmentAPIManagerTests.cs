@@ -424,6 +424,21 @@
                                                     ScoreEntered = false
                                                 });
 
+            context.PlayerTournamentSignUps.Add(new PlayerTournamentSignUp
+                                                {
+                                                    TournamentFormat = TournamentTestData.TournamentFormat,
+                                                    TournamentDate = TournamentTestData.TournamentDate,
+                                                    GolfClubId = TournamentTestData.GolfClubId,
+                                                    MeasuredCourseId = TournamentTestData.MeasuredCourseId,
+                                                    TournamentId = TournamentTestData.AggregateId,
+                                                    PlayerId = TournamentTestData.PlayerId2,
+                                                    MeasuredCourseName = string.Empty,
+                                                    GolfClubName = TournamentTestData.GolfClubName,
+                                                    MeasuredCourseTeeColour = string.Empty,
+                                                    TournamentName = TournamentTestData.Name,
+                                                    ScoreEntered = false
+                                                });
+
             context.SaveChanges();
 
             Func<ManagementAPIReadModel> contextResolver = () => { return context; };

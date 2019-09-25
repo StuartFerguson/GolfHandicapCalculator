@@ -266,6 +266,8 @@ namespace ManagementAPI.Service.Tests.Tournament
                                                                                               }
                                                                             };
 
+        public static Guid PlayerId2 = Guid.Parse("A3023B3C-8842-4E2C-9A08-1FA3F1378307");
+
         public static CancelTournamentCommand GetCancelTournamentCommand()
         {
             return CancelTournamentCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.AggregateId, TournamentTestData.CancelTournamentRequest);
