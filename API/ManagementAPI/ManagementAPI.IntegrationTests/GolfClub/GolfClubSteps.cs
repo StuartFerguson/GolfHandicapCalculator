@@ -244,8 +244,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                                                                       "123456").ConfigureAwait(false);
         }
 
-        [When(@"I request the list of golf clubs")]
-        public async Task WhenIRequestTheListOfGolfClubs()
+        [When(@"I request the list of golf clubs the list will contain (.*) golf clubs")]
+        public async Task WhenIRequestTheListOfGolfClubsTheListWillContainGolfClubs(Int32 numberOfGolfClubs)
         {
             await Retry.For(async () =>
                             {
@@ -255,21 +255,13 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                                                                                                         this.TestingContext.PlayerId,
                                                                                                         CancellationToken.None).ConfigureAwait(false);
 
-                                if (getGolfClubResponses.Count == 0)
+                                if (getGolfClubResponses.Count != numberOfGolfClubs)
                                 {
                                     throw new Exception();
                                 }
 
                                 this.TestingContext.GetGolfClubResponseList = getGolfClubResponses;
                             }).ConfigureAwait(false);
-
-        }
-
-        [Then(@"a list of golf clubs will be returned")]
-        public void ThenAListOfGolfClubsWillBeReturned()
-        {
-            this.TestingContext.GetGolfClubResponseList.ShouldNotBeNull();
-            this.TestingContext.GetGolfClubResponseList.ShouldNotBeEmpty();
         }
 
         [Then(@"the list will contain (.*) golf clubs")]
