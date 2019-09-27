@@ -7,12 +7,13 @@ using System.Threading;
 using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Services;
 using Ductus.FluentDocker.Services.Extensions;
-using MySql.Data.MySqlClient;
 using Shouldly;
 using TechTalk.SpecFlow;
 
 namespace ManagementAPI.IntegrationTests.Common
 {
+    using System.Data.SqlClient;
+
     [Binding]
     public class Setup
     {
@@ -39,23 +40,23 @@ namespace ManagementAPI.IntegrationTests.Common
 
         private static String StartMySqlContainerWithOpenConnection()
         {
-            String containerName = $"shareddatabasemysql";
+            String containerName = $"shareddatabasesqlserver";
             DatabaseServerContainer = new Ductus.FluentDocker.Builders.Builder()
                 .UseContainer()
                 .WithName(containerName)
                 .WithCredential("https://docker.io", "stuartferguson", "Sc0tland")
-                .UseImage("stuartferguson/subscriptionservicedatabasemysql")
-                .WithEnvironment("MYSQL_ROOT_PASSWORD=Pa55word", "MYSQL_ROOT_HOST=%")
-                .ExposePort(3306)
+                .UseImage("stuartferguson/subscriptionservicedatabasesqlserver")
+                .WithEnvironment("ACCEPT_EULA=Y",$"SA_PASSWORD=thisisalongpassword123!","MSSQL_PID=Express")
+                .ExposePort(1433)
                 .UseNetwork(DatabaseServerNetwork)
                 .KeepContainer()
                 .KeepRunning()
                 .ReuseIfExists()
                 .Build()
                 .Start()
-                .WaitForPort("3306/tcp", 30000);
+                .WaitForPort("1433/tcp", 30000);
 
-            IPEndPoint mysqlEndpoint = DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
+            IPEndPoint sqlServerEndpoint = DatabaseServerContainer.ToHostExposedEndpoint("1433/tcp");
 
             // Try opening a connection
             Int32 maxRetries = 10;
@@ -63,14 +64,13 @@ namespace ManagementAPI.IntegrationTests.Common
 
             String server = "127.0.0.1";
             String database = "SubscriptionServiceConfiguration";
-            String user = "root";
-            String password = "Pa55word";
-            String port = mysqlEndpoint.Port.ToString();
-            String sslM = "none";
+            String user = "sa";
+            String password = "thisisalongpassword123!";
+            String port = sqlServerEndpoint.Port.ToString();
 
-            String connectionString = $"server={server};port={port};user id={user}; password={password}; database={database}; SslMode={sslM}";
+            String connectionString = $"server={server},{port};user id={user}; password={password}; database={database};";
 
-            MySqlConnection connection = new MySqlConnection(connectionString);
+            SqlConnection connection = new SqlConnection(connectionString);
 
             using (StreamWriter sw = new StreamWriter("C:\\Temp\\testlog.log", true))
             {
@@ -83,8 +83,8 @@ namespace ManagementAPI.IntegrationTests.Common
 
                         connection.Open();
 
-                        MySqlCommand command = connection.CreateCommand();
-                        command.CommandText = "SELECT * FROM EndPoints";
+                        SqlCommand command = connection.CreateCommand();
+                        command.CommandText = "SELECT * FROM EventStoreServers";
                         command.ExecuteNonQuery();
 
                         sw.WriteLine("Connection Opened");
@@ -93,7 +93,7 @@ namespace ManagementAPI.IntegrationTests.Common
 
                         break;
                     }
-                    catch (MySqlException ex)
+                    catch (SqlException ex)
                     {
                         if (connection.State == ConnectionState.Open)
                         {

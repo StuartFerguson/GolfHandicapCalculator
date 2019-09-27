@@ -146,7 +146,7 @@
         {
             if (!string.IsNullOrWhiteSpace(this.ConnectionString))
             {
-                optionsBuilder.UseMySql(this.ConnectionString);
+                optionsBuilder.UseSqlServer(this.ConnectionString);
             }
 
             base.OnConfiguring(optionsBuilder);

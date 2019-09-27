@@ -21,7 +21,7 @@ namespace ManagementAPI.Database.SeedData
         {
             try
             {
-                if (managementApiReadModel.Database.IsMySql())
+                if (managementApiReadModel.Database.IsSqlServer())
                 {
                     managementApiReadModel.Database.Migrate();
                 }

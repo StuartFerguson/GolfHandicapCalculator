@@ -24,6 +24,4 @@ Given the following golf club administrators have been registered
 @EndToEnd
 Scenario: Get Golf Club List
 	Given I am logged in as player number 1
-	When I request the list of golf clubs
-	Then a list of golf clubs will be returned
-	And the list will contain 4 golf clubs
+	When I request the list of golf clubs the list will contain 4 golf clubs

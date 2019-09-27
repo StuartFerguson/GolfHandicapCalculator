@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ManagementAPI.IntegrationTests.Common
 {
+    using System.Data.SqlClient;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -15,7 +16,6 @@ namespace ManagementAPI.IntegrationTests.Common
     using Ductus.FluentDocker.Model.Builders;
     using Ductus.FluentDocker.Services;
     using Ductus.FluentDocker.Services.Extensions;
-    using MySql.Data.MySqlClient;
     using Newtonsoft.Json;
     using Service.Client;
     using TechTalk.SpecFlow;
@@ -146,7 +146,7 @@ namespace ManagementAPI.IntegrationTests.Common
                     this.SubscriptionServiceConnectionString,
                     this.EventStoreConnectionString,
                     "EventStoreSettings:HttpPort=2113",
-                    $"ServiceSettings:SubscriptionServiceId={this.SubscriberServiceId}")
+                    $"ServiceSettings:EventStoreServerId={this.SubscriberServiceId}")
                 .WithCredential("https://docker.io", "stuartferguson", "Sc0tland")
                 .UseImage("stuartferguson/subscriptionservice")
                 .UseNetwork(new List<INetworkService> { this.TestNetwork, Setup.DatabaseServerNetwork }.ToArray())
@@ -163,84 +163,72 @@ namespace ManagementAPI.IntegrationTests.Common
 
         protected void SetupSubscriptionServiceConfig()
         {
-            IPEndPoint mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
+            IPEndPoint sqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("1433/tcp");
 
             String server = "127.0.0.1";
             String database = "SubscriptionServiceConfiguration";
-            String user = "root";
-            String password = "Pa55word";
-            String port = mysqlEndpoint.Port.ToString();
-            String sslM = "none";
+            String user = "sa";
+            String password = "thisisalongpassword123!";
+            String port = sqlEndpoint.Port.ToString();
 
-            String connectionString = $"server={server};port={port};user id={user}; password={password}; database={database}; SslMode={sslM}";
+            String connectionString = $"server={server},{port};user id={user}; password={password}; database={database};";
 
-            MySqlConnection connection = new MySqlConnection(connectionString);
+            SqlConnection connection = new SqlConnection(connectionString);
 
             connection.Open();
 
             // Insert the subscription service
-            SubscriptionServiceHelper.CreateSubscriptionService(connection, this.SubscriberServiceId, "Test Service");
+            SubscriptionServiceHelper.CreateEventStoreServer(connection, this.SubscriberServiceId, "Test Service", "Test Service");
 
-            // Create the Endpoints
-            Guid golfClubEndpointId = Guid.NewGuid();
-            String golfClubEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClub";
-            SubscriptionServiceHelper.CreateEndpoint(connection, golfClubEndpointId, "Golf Club Read Model", golfClubEndpointUrl);
+            // Create the Subscription Configurations
+            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+                                                                      this.SubscriberServiceId,
+                                                                      Guid.NewGuid(),
+                                                                      "Golf Club Events",
+                                                                      "$ce-GolfClubAggregate",
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClub");
 
-            Guid golfClubMembershipEndpointId = Guid.NewGuid();
-            String golfClubMembershipEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClubMembership";
-            SubscriptionServiceHelper.CreateEndpoint(connection, golfClubMembershipEndpointId, "Golf Club Membership Read Model", golfClubMembershipEndpointUrl);
+            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+                                                                      this.SubscriberServiceId,
+                                                                      Guid.NewGuid(),
+                                                                      "Golf Club Membership Events",
+                                                                      "$ce-GolfClubMembershipAggregate",
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClubMembership");
 
-            Guid tournamentEndpointId = Guid.NewGuid();
-            String tournamentEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Tournament";
-            SubscriptionServiceHelper.CreateEndpoint(connection, tournamentEndpointId, "Tournament Read Model", tournamentEndpointUrl);
+            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+                                                                      this.SubscriberServiceId,
+                                                                      Guid.NewGuid(),
+                                                                      "Golf Club Membership Events - Reporting",
+                                                                      "$ce-GolfClubMembershipAggregate",
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting");
 
-            Guid handicapCalculatorEndpointId = Guid.NewGuid();
-            String handicapCalculatorEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/HandicapCalculator";
-            SubscriptionServiceHelper.CreateEndpoint(connection, handicapCalculatorEndpointId, "Handicap Calculator", handicapCalculatorEndpointUrl);
+            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+                                                                      this.SubscriberServiceId,
+                                                                      Guid.NewGuid(),
+                                                                      "Handicap Calculator Process Events",
+                                                                      "$ce-HandicapCalculationProcessAggregate",
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/HandicapCalculator");
 
-            Guid reportingEndpointId = Guid.NewGuid();
-            String reportingEndpointUrl = $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting";
-            SubscriptionServiceHelper.CreateEndpoint(connection, reportingEndpointId, "Reporting Read Model", reportingEndpointUrl);
+            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+                                                                      this.SubscriberServiceId,
+                                                                      Guid.NewGuid(),
+                                                                      "Player Events",
+                                                                      "$ce-PlayerAggregate",
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting");
 
-            // Create the Streams
-            Guid categoryGolfClubAggregateStream = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryGolfClubAggregateStream, "$ce-GolfClubAggregate");
+            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+                                                                      this.SubscriberServiceId,
+                                                                      Guid.NewGuid(),
+                                                                      "Tournament Events",
+                                                                      "$ce-TournamentAggregate",
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Tournament");
 
-            Guid categoryGolfClubMembershipAggregateStream = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryGolfClubMembershipAggregateStream, "$ce-GolfClubMembershipAggregate");
-
-            Guid categoryTournamentAggregateStream = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryTournamentAggregateStream, "$ce-TournamentAggregate");
-
-            Guid categoryHandicapCalculationProcessAggregateStream = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionStream(connection, categoryHandicapCalculationProcessAggregateStream, "$ce-HandicapCalculationProcessAggregate");
-
-            // Create the groups
-            Guid subscriptionGroupGolfClubAggregateId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubAggregateId, golfClubEndpointId, "GolfClubAggregate", categoryGolfClubAggregateStream);
-
-            Guid subscriptionGroupGolfClubMembershipAggregateId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubMembershipAggregateId, golfClubMembershipEndpointId, "GolfClubMembershipAggregate", categoryGolfClubMembershipAggregateStream);
-
-            Guid subscriptionGroupGolfClubMembershipAggregateReportingId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupGolfClubMembershipAggregateReportingId, reportingEndpointId, "GolfClubMembershipAggregateReporting", categoryGolfClubMembershipAggregateStream);
-
-            Guid subscriptionGroupTournamentAggregateId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupTournamentAggregateId, tournamentEndpointId, "TournamentAggregate", categoryTournamentAggregateStream);
-
-            Guid subscriptionGroupTournamentAggregateReportingId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionGroupTournamentAggregateReportingId, reportingEndpointId, "TournamentAggregateReporting", categoryTournamentAggregateStream);
-
-            Guid subscriptionHandicapCalculationProcessAggregateId = Guid.NewGuid();
-            SubscriptionServiceHelper.CreateSubscriptionGroup(connection, subscriptionHandicapCalculationProcessAggregateId, handicapCalculatorEndpointId, "HandicapCalculationProcessAggregate", categoryHandicapCalculationProcessAggregateStream);
-
-            // Add the groups to the Subscription Service
-            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubAggregateId, this.SubscriberServiceId);
-            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubMembershipAggregateId, this.SubscriberServiceId);
-            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupTournamentAggregateId, this.SubscriberServiceId);
-            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupTournamentAggregateReportingId, this.SubscriberServiceId);
-            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionHandicapCalculationProcessAggregateId, this.SubscriberServiceId);
-            SubscriptionServiceHelper.AddSubscriptionGroupToSubscriberService(connection, Guid.NewGuid(), subscriptionGroupGolfClubMembershipAggregateReportingId, this.SubscriberServiceId);
+            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+                                                                      this.SubscriberServiceId,
+                                                                      Guid.NewGuid(),
+                                                                      "Tournament Events - Reporting",
+                                                                      "$ce-TournamentAggregate",
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting");
 
             connection.Close();
         }
@@ -317,16 +305,15 @@ namespace ManagementAPI.IntegrationTests.Common
         {
             try
             {
-                IPEndPoint mysqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("3306/tcp");
+                IPEndPoint sqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("1433/tcp");
 
                 String server = "127.0.0.1";
                 String database = $"ManagementAPIReadModel{this.TestId:N}";
-                String user = "root";
-                String password = "Pa55word";
-                String port = mysqlEndpoint.Port.ToString();
-                String sslM = "none";
+                String user = "sa";
+                String password = "thisisalongpassword123!";
+                String port = sqlEndpoint.Port.ToString();
 
-                String connectionString = $"server={server};port={port};user id={user}; password={password}; database={database}; SslMode={sslM}";
+                String connectionString = $"server={server},{port};user id={user}; password={password}; database={database};";
 
                 ManagementAPI.Database.ManagementAPIReadModel context = new ManagementAPIReadModel(connectionString);
                 context.Database.EnsureDeleted();
