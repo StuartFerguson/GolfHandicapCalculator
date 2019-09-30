@@ -8,11 +8,11 @@
     using Swashbuckle.AspNetCore.Filters;
 
     [ExcludeFromCodeCoverage]
-    public class GetGolfClubListResponseExample : IExamplesProvider
+    public class GetGolfClubListResponseExample : IExamplesProvider<List<GetGolfClubResponse>>
     {
         #region Methods
 
-        public Object GetExamples()
+        public List<GetGolfClubResponse> GetExamples()
         {
             return new List<GetGolfClubResponse>
                    {

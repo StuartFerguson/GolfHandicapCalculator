@@ -15,7 +15,6 @@ namespace ManagementAPI.Service
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using System.Linq;
     using System.Net.Sockets;
     using System.Reflection;
     using System.Threading;
@@ -32,12 +31,15 @@ namespace ManagementAPI.Service
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.JsonPatch.Operations;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ApiExplorer;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
     using NLog.Extensions.Logging;
@@ -47,6 +49,7 @@ namespace ManagementAPI.Service
     using StructureMap;
     using Swashbuckle.AspNetCore.Filters;
     using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
 
     [ExcludeFromCodeCoverage]
     public class Startup
@@ -119,7 +122,8 @@ namespace ManagementAPI.Service
         /// <param name="loggerFactory">The logger factory.</param>
         public void Configure(IApplicationBuilder app,
                               IHostingEnvironment env,
-                              ILoggerFactory loggerFactory)
+                              ILoggerFactory loggerFactory,
+                              IApiVersionDescriptionProvider provider)
         {
             String nlogConfigFilename = "nlog.config";
             if (string.Compare(Startup.HostingEnvironment.EnvironmentName, "Development", true) == 0)
@@ -144,14 +148,11 @@ namespace ManagementAPI.Service
             }
 
             // Setup the database
-            //if (!Startup.HostingEnvironment.IsEnvironment("IntegrationTest"))
-            //{
                 Task.WaitAll(Task.Run(async () =>
                                       {
                                           // Setup the database
                                           await this.InitialiseDatabase(app, env);
                                       }));
-            //}
 
             app.AddExceptionHandler();
             app.AddRequestLogging();
@@ -161,9 +162,19 @@ namespace ManagementAPI.Service
 
             app.UseMvc();
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            //app.UseSwaggerUI(c =>
+            //                 {
+            //                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Golf Handicapping API v1");
+            //                 });
+
+            app.UseSwaggerUI(
+                             options =>
                              {
-                                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Golf Handicapping API v1");
+                                 // build a swagger endpoint for each discovered API version
+                                 foreach (var description in provider.ApiVersionDescriptions)
+                                 {
+                                     options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                                 }
                              });
 
             if (String.Compare(ConfigurationReader.GetValue("EventStoreSettings", "START_PROJECTIONS"),
@@ -268,18 +279,37 @@ namespace ManagementAPI.Service
 
             services.AddMvcCore();
 
+            services.AddApiVersioning(
+                                      options =>
+                                      {
+                                          // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
+                                          options.ReportApiVersions = true;
+                                      });
+
+            services.AddVersionedApiExplorer(
+                                             options =>
+                                             {
+                                                 // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                                                 // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                                                 options.GroupNameFormat = "'v'VVV";
+
+                                                 // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+                                                 // can also be used to control the format of the API version in route templates
+                                                 options.SubstituteApiVersionInUrl = true;
+                                             });
+
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
             services.AddSwaggerGen(c =>
                                    {
-                                       c.SwaggerDoc("v1",
-                                                    new Info
-                                                    {
-                                                        Title = "Golf Handicapping API",
-                                                        Version = "v1"
-                                                    });
+                                       // add a custom operation filter which sets default values
+                                       c.OperationFilter<SwaggerDefaultValues>();
                                        c.ExampleFilters();
                                    });
 
             services.AddSwaggerExamplesFromAssemblyOf<SwaggerJsonConverter>();
+
+
         }
 
         /// <summary>

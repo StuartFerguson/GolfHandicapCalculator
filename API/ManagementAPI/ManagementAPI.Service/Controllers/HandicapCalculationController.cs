@@ -17,6 +17,7 @@
     [ExcludeFromCodeCoverage]
     [ApiController]
     [Authorize]
+    [ApiVersion("1.0")]
     public class HandicapCalculationController : ControllerBase
     {
         #region Fields

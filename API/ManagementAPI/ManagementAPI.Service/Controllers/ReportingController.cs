@@ -14,6 +14,7 @@
     //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class ReportingController : ControllerBase
     {
         #region Fields
