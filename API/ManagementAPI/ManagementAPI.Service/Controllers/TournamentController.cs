@@ -21,6 +21,7 @@
     [ApiController]
     [ExcludeFromCodeCoverage]
     [Authorize]
+    [ApiVersion("1.0")]
     public class TournamentController : ControllerBase
     {
         #region Fields

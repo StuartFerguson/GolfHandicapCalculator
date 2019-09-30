@@ -7,9 +7,9 @@
     using Swashbuckle.AspNetCore.Filters;
 
     [ExcludeFromCodeCoverage]
-    public class GetGolfClubUserListResponseExample : IExamplesProvider
+    public class GetGolfClubUserListResponseExample : IExamplesProvider<GetGolfClubUserListResponse>
     {
-        public Object GetExamples()
+        public GetGolfClubUserListResponse GetExamples()
         {
             return new GetGolfClubUserListResponse
                    {

@@ -7,11 +7,11 @@
     using Swashbuckle.AspNetCore.Filters;
 
     [ExcludeFromCodeCoverage]
-    public class GetMeasuredCourseListResponseExample : IExamplesProvider
+    public class GetMeasuredCourseListResponseExample : IExamplesProvider<GetMeasuredCourseListResponse>
     {
         #region Methods
 
-        public Object GetExamples()
+        public GetMeasuredCourseListResponse GetExamples()
         {
             return new GetMeasuredCourseListResponse
                    {

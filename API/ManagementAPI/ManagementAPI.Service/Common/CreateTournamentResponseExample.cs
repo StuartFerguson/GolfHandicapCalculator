@@ -7,11 +7,11 @@
     using Swashbuckle.AspNetCore.Filters;
 
     [ExcludeFromCodeCoverage]
-    public class CreateTournamentResponseExample : IExamplesProvider
+    public class CreateTournamentResponseExample : IExamplesProvider<CreateTournamentResponse>
     {
         #region Methods
 
-        public Object GetExamples()
+        public CreateTournamentResponse GetExamples()
         {
             return new CreateTournamentResponse
                    {

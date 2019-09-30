@@ -21,6 +21,7 @@
     [ApiController]
     [ExcludeFromCodeCoverage]
     [Authorize]
+    [ApiVersion("1.0")]
     public class PlayerController : ControllerBase
     {
         #region Fields

@@ -22,6 +22,7 @@
     [ApiController]
     [ExcludeFromCodeCoverage]
     [Authorize]
+    [ApiVersion("1.0")]
     public class GolfClubController : ControllerBase
     {
         #region Fields

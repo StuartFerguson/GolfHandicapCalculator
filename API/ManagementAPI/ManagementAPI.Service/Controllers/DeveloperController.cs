@@ -34,7 +34,7 @@
     [ApiController]
     [ExcludeFromCodeCoverage]
     [Authorize]
-    //[Authorize(Policy = PolicyNames.DeveloperControllerPolicy)]
+    [ApiVersion("1.0")]
     public class DeveloperController : ControllerBase
     {
         #region Fields
