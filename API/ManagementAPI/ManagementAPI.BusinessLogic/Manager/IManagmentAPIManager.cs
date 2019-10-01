@@ -208,8 +208,8 @@
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task RegisterClubAdministrator(RegisterClubAdministratorRequest request,
-                                       CancellationToken cancellationToken);
+        Task<Guid> RegisterClubAdministrator(RegisterClubAdministratorRequest request,
+                                             CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates the player handicap record to reporting.

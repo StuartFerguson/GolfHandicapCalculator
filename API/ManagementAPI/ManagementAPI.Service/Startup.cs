@@ -284,6 +284,8 @@ namespace ManagementAPI.Service
                                       {
                                           // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
                                           options.ReportApiVersions = true;
+                                          options.DefaultApiVersion = new ApiVersion(1, 0);
+                                          options.AssumeDefaultVersionWhenUnspecified = true;
                                       });
 
             services.AddVersionedApiExplorer(

@@ -965,7 +965,7 @@
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task RegisterClubAdministrator(RegisterClubAdministratorRequest request,
+        public async Task<Guid> RegisterClubAdministrator(RegisterClubAdministratorRequest request,
                                                     CancellationToken cancellationToken)
         {
             // Allocate a new club Id 
@@ -991,7 +991,9 @@
                                                       };
 
             // Create the user
-            await this.SecurityService.RegisterUser(registerUserRequest, cancellationToken);
+            RegisterUserResponse result = await this.SecurityService.RegisterUser(registerUserRequest, cancellationToken);
+
+            return result.UserId;
         }
 
         /// <summary>
