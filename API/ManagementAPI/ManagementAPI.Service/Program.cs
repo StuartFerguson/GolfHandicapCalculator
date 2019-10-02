@@ -6,31 +6,34 @@ using Microsoft.Extensions.Configuration;
 
 namespace ManagementAPI.Service
 {
+    using Microsoft.AspNetCore;
+    using Microsoft.Extensions.Logging;
+
     [ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(String[] args)
         {
-            Console.Title = "Golf Handicapping Management API";
- 
-            BuildWebHost(args).Run();
+            Program.CreateWebHostBuilder(args).Build().Run();
         }
  
-        public static IWebHost BuildWebHost(String[] args)
+        public static IWebHostBuilder CreateWebHostBuilder(String[] args)
         {
+            Console.Title = "Golf Handicapping Management API";
+
             String environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
- 
+
             IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("hosting.json", optional: false)
-                .AddJsonFile($"hosting.{environmentName}.json", optional: true)
-                .Build();
- 
-            IWebHost host = new WebHostBuilder().UseKestrel()
-                .UseConfiguration(config)
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseStartup<Startup>().Build();
- 
-            return host;
+                                                                  .AddJsonFile("hosting.json", optional: false)
+                                                                  .AddJsonFile($"hosting.{environmentName}.json", optional: true)
+                                                                  .AddEnvironmentVariables()
+                                                                  .Build();
+
+            return WebHost.CreateDefaultBuilder()
+                          .UseKestrel()
+                          .UseConfiguration(config)
+                          .UseContentRoot(Directory.GetCurrentDirectory())
+                          .UseStartup<Startup>();
         }
     }
 }

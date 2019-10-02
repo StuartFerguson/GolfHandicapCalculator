@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace ManagementAPI.IntegrationTests.GolfClub
+namespace ManagementAPI.IntegrationTests.GolfClubAdministrator
 {
     using TechTalk.SpecFlow;
     
@@ -18,7 +18,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "base")]
-    [Xunit.TraitAttribute("Category", "golfclub")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class RegisterGolfClubAdministratorFeature : Xunit.IClassFixture<RegisterGolfClubAdministratorFeature.FixtureData>, System.IDisposable
     {
         
@@ -40,7 +40,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Register Golf Club Administrator", null, ProgrammingLanguage.CSharp, new string[] {
                         "base",
-                        "golfclub"});
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -90,7 +90,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line hidden
-            TechTalk.SpecFlow.Table table28 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "EmailAddress",
                         "GivenName",
@@ -99,7 +99,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "Password",
                         "ConfirmPassword",
                         "TelephoneNumber"});
-            table28.AddRow(new string[] {
+            table1.AddRow(new string[] {
                         "1",
                         "admin@testgolfclub1.co.uk",
                         "Admin",
@@ -109,7 +109,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "123456",
                         "01234567890"});
 #line 5
- testRunner.When("I register the following details for a golf club administrator", ((string)(null)), table28, "When ");
+ testRunner.When("I register the following details for a golf club administrator", ((string)(null)), table1, "When ");
 #line 8
  testRunner.Then("the golf club administrator registration should be successful", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

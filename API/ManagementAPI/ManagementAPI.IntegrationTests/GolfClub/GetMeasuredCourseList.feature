@@ -1,4 +1,4 @@
-﻿@base @golfclub
+﻿@base @golfclub @golfclubadministrator
 Feature: GetMeasuredCourseList
 
 Background: 

@@ -19,6 +19,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class CreateGolfClubFeature : Xunit.IClassFixture<CreateGolfClubFeature.FixtureData>, System.IDisposable
     {
         
@@ -41,7 +42,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Create Golf Club", "\tIn order to run a golf club handicapping system\r\n\tAs a club administrator\r\n\tI wa" +
                     "nt to be able to create my golf club", ProgrammingLanguage.CSharp, new string[] {
                         "base",
-                        "golfclub"});
+                        "golfclub",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -80,7 +82,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         {
 #line 7
 #line hidden
-            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "EmailAddress",
                         "GivenName",
@@ -89,7 +91,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Password",
                         "ConfirmPassword",
                         "TelephoneNumber"});
-            table7.AddRow(new string[] {
+            table8.AddRow(new string[] {
                         "1",
                         "admin@testgolfclub1.co.uk",
                         "Admin",
@@ -99,7 +101,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "123456",
                         "01234567890"});
 #line 8
- testRunner.Given("the following golf club administrator has been registered", ((string)(null)), table7, "Given ");
+ testRunner.Given("the following golf club administrator has been registered", ((string)(null)), table8, "Given ");
 #line 11
  testRunner.And("I am logged in as the administrator for golf club 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -122,7 +124,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 7
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "GolfClubName",
                         "AddressLine1",
@@ -133,7 +135,7 @@ this.FeatureBackground();
                         "TelephoneNumber",
                         "EmailAddress",
                         "WebSite"});
-            table8.AddRow(new string[] {
+            table9.AddRow(new string[] {
                         "1",
                         "Test Golf Club 1",
                         "Test Golf Club Address Line 1",
@@ -145,7 +147,7 @@ this.FeatureBackground();
                         "testclub1@testclub1.co.uk",
                         "www.testclub1.co.uk"});
 #line 14
- testRunner.When("I create a golf club with the following details", ((string)(null)), table8, "When ");
+ testRunner.When("I create a golf club with the following details", ((string)(null)), table9, "When ");
 #line 17
  testRunner.Then("the golf club is created successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

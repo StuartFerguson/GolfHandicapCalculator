@@ -1,4 +1,4 @@
-﻿@base @player
+﻿@base @player @golfclubadministrator
 Feature: Register a Player
 	In order to use the golf club handicapping system
 	As a player

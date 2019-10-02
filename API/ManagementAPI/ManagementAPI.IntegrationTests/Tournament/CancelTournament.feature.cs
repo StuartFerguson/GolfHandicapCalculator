@@ -20,6 +20,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
     [Xunit.TraitAttribute("Category", "tournament")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class CancelTournamentFeature : Xunit.IClassFixture<CancelTournamentFeature.FixtureData>, System.IDisposable
     {
         
@@ -43,7 +44,8 @@ namespace ManagementAPI.IntegrationTests.Tournament
                     "ed to be able to cancel tournaments", ProgrammingLanguage.CSharp, new string[] {
                         "base",
                         "golfclub",
-                        "tournament"});
+                        "tournament",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         

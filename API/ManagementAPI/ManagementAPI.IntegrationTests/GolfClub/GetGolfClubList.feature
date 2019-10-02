@@ -1,4 +1,4 @@
-﻿@base @golfclub
+﻿@base @golfclub @golfclubadministrator
 Feature: Get Golf Club List
 	In order to request membership of a golf club
 	As a player

@@ -78,7 +78,8 @@ namespace ManagementAPI.Service.Bootstrapper
                 .Use<AggregateRepository<HandicapCalculationProcessAggregate>>().Singleton();
 
             this.For<IHandicapAdjustmentCalculatorService>().Use<HandicapAdjustmentCalculatorService>();
-            this.For<IManagmentAPIManager>().Use<ManagementAPIManager>().Singleton();
+            //this.For<IManagmentAPIManager>().Use<ManagementAPIManager>().AlwaysUnique().Singleton();
+            this.RegisterType<IManagmentAPIManager, ManagementAPIManager>().Singleton();
             this.For<IReportingManager>().Use<ReportingManager>().Singleton();
             this.For<ISecurityService>().Use<SecurityService>().Singleton();
             this.For<IGolfClubMembershipApplicationService>().Use<GolfClubMembershipApplicationService>().Singleton();
@@ -86,5 +87,17 @@ namespace ManagementAPI.Service.Bootstrapper
 
             this.For<IHandicapCalculationProcessorService>().Use<HandicapCalculationProcessorService>().Transient();
         }
+    }
+
+    public static class StructureMapExtensionMethods
+    {
+        #region Methods
+
+        public static SmartInstance<TConcreteType, TPluginType> RegisterType<TPluginType, TConcreteType>(this Registry container) where TConcreteType : TPluginType
+        {
+            return container.For<TPluginType>().Use<TConcreteType>().AlwaysUnique();
+        }
+
+        #endregion
     }
 }

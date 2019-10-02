@@ -26,7 +26,7 @@
         {
             // add a swagger document for each discovered API version
             // note: you might choose to skip or document deprecated API versions differently
-            foreach (var description in this.provider.ApiVersionDescriptions)
+            foreach (ApiVersionDescription description in this.provider.ApiVersionDescriptions)
             {
                 options.SwaggerDoc(description.GroupName, ConfigureSwaggerOptions.CreateInfoForApiVersion(description));
             }
@@ -34,7 +34,7 @@
 
         static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description)
         {
-            var info = new OpenApiInfo()
+            OpenApiInfo info = new OpenApiInfo()
                        {
                            Title = "Golf Handicapping API",
                            Version = description.ApiVersion.ToString(),

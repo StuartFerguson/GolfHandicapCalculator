@@ -1,4 +1,4 @@
-﻿@base @golfclub @tournament
+﻿@base @golfclub @tournament @golfclubadministrator
 Feature: Get Tournament List
 	In order to run a golf club handicapping system
 	As a club administrator

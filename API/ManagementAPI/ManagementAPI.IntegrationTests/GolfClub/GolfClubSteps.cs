@@ -22,68 +22,11 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     {
         private readonly TestingContext TestingContext;
         
-        [When(@"I register the following details for a golf club administrator")]
-        public void WhenIRegisterTheFollowingDetailsForAGolfClubAdministrator(Table table)
-        {
-            TableRow tableRow = table.Rows.Single();
-
-            RegisterClubAdministratorRequest registerClubAdministratorRequest = new RegisterClubAdministratorRequest
-                                                                                {
-                                                                                    ConfirmPassword = tableRow["ConfirmPassword"],
-                                                                                    FamilyName = tableRow["FamilyName"],
-                                                                                    GivenName = tableRow["GivenName"],
-                                                                                    MiddleName = tableRow["MiddleName"],
-                                                                                    EmailAddress = tableRow["EmailAddress"],
-                                                                                    TelephoneNumber = tableRow["TelephoneNumber"],
-                                                                                    Password = tableRow["Password"]
-                                                                                };
-
-            this.TestingContext.RegisterClubAdministratorRequest = registerClubAdministratorRequest;
-        }
-
-        [Then(@"the golf club administrator registration should be successful")]
-        public void ThenTheGolfClubAdministratorRegistrationShouldBeSuccessful()
-        {
-            Should.NotThrow(async () =>
-                            {
-                                await this.TestingContext.DockerHelper.GolfClubClient.RegisterGolfClubAdministrator(this.TestingContext.RegisterClubAdministratorRequest,
-                                                                                        CancellationToken.None).ConfigureAwait(false);
-                                ;
-                            });
-
-        }
-
         public GolfClubSteps(TestingContext testingContext)
         {
             this.TestingContext = testingContext;
         }
-
-        [Given(@"the following golf club administrator has been registered")]
-        public void GivenTheFollowingGolfClubAdministratorHasBeenRegistered(Table table)
-        {
-            TableRow tableRow = table.Rows.Single();
-
-            RegisterClubAdministratorRequest registerClubAdministratorRequest = new RegisterClubAdministratorRequest
-                                                                                {
-                                                                                    ConfirmPassword = tableRow["ConfirmPassword"],
-                                                                                    FamilyName = tableRow["FamilyName"],
-                                                                                    GivenName = tableRow["GivenName"],
-                                                                                    MiddleName = tableRow["MiddleName"],
-                                                                                    EmailAddress = tableRow["EmailAddress"],
-                                                                                    TelephoneNumber = tableRow["TelephoneNumber"],
-                                                                                    Password = tableRow["Password"]
-                                                                                };
-
-            this.TestingContext.RegisterClubAdministratorRequest = registerClubAdministratorRequest;
-            this.TestingContext.GolfClubAdministratorRequests.Add(tableRow["GolfClubNumber"], registerClubAdministratorRequest);
-
-            Should.NotThrow(async () =>
-                            {
-                                await this.TestingContext.DockerHelper.GolfClubClient.RegisterGolfClubAdministrator(this.TestingContext.RegisterClubAdministratorRequest,
-                                                                                        CancellationToken.None).ConfigureAwait(false);
-                            });
-        }
-
+        
         [Given(@"I am logged in as the administrator for golf club (.*)")]
         public async Task GivenIAmLoggedInAsTheAdministratorForGolfClub(Int32 golfClubNumber)
         {
@@ -144,29 +87,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             response.ShouldNotBeNull();
             response.Name.ShouldBe("Test Golf Club 1");
         }
-
-        [Given(@"the following golf club administrators have been registered")]
-        public async Task GivenTheFollowingGolfClubAdministratorsHaveBeenRegistered(Table table)
-        {
-            foreach (TableRow tableRow in table.Rows)
-            {
-                RegisterClubAdministratorRequest registerClubAdministratorRequest = new RegisterClubAdministratorRequest
-                                                                                    {
-                                                                                        ConfirmPassword = tableRow["ConfirmPassword"],
-                                                                                        FamilyName = tableRow["FamilyName"],
-                                                                                        GivenName = tableRow["GivenName"],
-                                                                                        MiddleName = tableRow["MiddleName"],
-                                                                                        EmailAddress = tableRow["EmailAddress"],
-                                                                                        TelephoneNumber = tableRow["TelephoneNumber"],
-                                                                                        Password = tableRow["Password"]
-                                                                                    };
-
-                await this.TestingContext.DockerHelper.GolfClubClient.RegisterGolfClubAdministrator(registerClubAdministratorRequest, CancellationToken.None).ConfigureAwait(false);
-
-                this.TestingContext.GolfClubAdministratorRequests.Add(tableRow["GolfClubNumber"], registerClubAdministratorRequest);
-            }
-        }
-
+        
         [Given(@"the following golf clubs exist")]
         public async Task GivenTheFollowingGolfClubsExist(Table table)
         {

@@ -1,4 +1,4 @@
-﻿@base @golfclub
+﻿@base @golfclub @golfclubadministrator
 Feature: Create Match Secretary
 	In order to manage tournaments
 	As a club administrator

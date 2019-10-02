@@ -1,9 +1,13 @@
 ﻿namespace ManagementAPI.Service
 {
     using System.Linq;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Abstractions;
     using Microsoft.AspNetCore.Mvc.ApiExplorer;
+    using Microsoft.AspNetCore.Mvc.Versioning;
     using Microsoft.OpenApi.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using static Microsoft.AspNetCore.Mvc.Versioning.ApiVersionMapping;
 
     /// <summary>
     /// Represents the Swagger/Swashbuckle operation filter used to document the implicit API version parameter.
@@ -20,8 +24,10 @@
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             ApiDescription apiDescription = context.ApiDescription;
+            ApiVersion apiVersion = apiDescription.GetApiVersion();
+            ApiVersionModel model = apiDescription.ActionDescriptor.GetApiVersionModel(Explicit | Implicit);
 
-            operation.Deprecated |= apiDescription.IsDeprecated();
+            operation.Deprecated = model.DeprecatedApiVersions.Contains(apiVersion);
 
             if (operation.Parameters == null)
             {
@@ -30,13 +36,14 @@
 
             foreach (OpenApiParameter parameter in operation.Parameters)
             {
-                ApiParameterDescription description = apiDescription.ParameterDescriptions.First(p => p.Name == parameter.Name);
+                ApiParameterDescription description = apiDescription.ParameterDescriptions
+                                                .First(p => p.Name == parameter.Name);
 
                 if (parameter.Description == null)
                 {
                     parameter.Description = description.ModelMetadata?.Description;
                 }
-
+                
                 parameter.Required |= description.IsRequired;
             }
         }

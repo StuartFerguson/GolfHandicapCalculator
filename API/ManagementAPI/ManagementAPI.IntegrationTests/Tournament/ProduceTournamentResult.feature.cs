@@ -21,6 +21,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
     [Xunit.TraitAttribute("Category", "golfclub")]
     [Xunit.TraitAttribute("Category", "player")]
     [Xunit.TraitAttribute("Category", "tournament")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class ProduceTournamentResultFeature : Xunit.IClassFixture<ProduceTournamentResultFeature.FixtureData>, System.IDisposable
     {
         
@@ -45,7 +46,8 @@ namespace ManagementAPI.IntegrationTests.Tournament
                         "base",
                         "golfclub",
                         "player",
-                        "tournament"});
+                        "tournament",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         

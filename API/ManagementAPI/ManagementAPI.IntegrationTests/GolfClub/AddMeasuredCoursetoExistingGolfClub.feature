@@ -1,4 +1,4 @@
-﻿@base @golfclub
+﻿@base @golfclub @golfclubadministrator
 Feature: Add Measured Course to Existing Golf Club
 	In order to run a golf club handicapping system
 	As a club administrator
