@@ -19,6 +19,7 @@ namespace ManagementAPI.IntegrationTests.Player
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "player")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class RegisterAPlayerFeature : Xunit.IClassFixture<RegisterAPlayerFeature.FixtureData>, System.IDisposable
     {
         
@@ -41,7 +42,8 @@ namespace ManagementAPI.IntegrationTests.Player
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Register a Player", "\tIn order to use the golf club handicapping system\r\n\tAs a player\r\n\tI want to be r" +
                     "egister my details on the system", ProgrammingLanguage.CSharp, new string[] {
                         "base",
-                        "player"});
+                        "player",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         

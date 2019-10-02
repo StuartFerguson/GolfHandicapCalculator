@@ -20,6 +20,7 @@ namespace ManagementAPI.IntegrationTests.Reporting
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
     [Xunit.TraitAttribute("Category", "reporting")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class GolfClubReportsFeature : Xunit.IClassFixture<GolfClubReportsFeature.FixtureData>, System.IDisposable
     {
         
@@ -42,7 +43,8 @@ namespace ManagementAPI.IntegrationTests.Reporting
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "GolfClubReports", null, ProgrammingLanguage.CSharp, new string[] {
                         "base",
                         "golfclub",
-                        "reporting"});
+                        "reporting",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         

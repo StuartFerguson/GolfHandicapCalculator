@@ -1,4 +1,4 @@
-﻿@base @golfclub @player @tournament
+﻿@base @golfclub @player @tournament @golfclubadministrator
 Feature: Produce Tournament Result
 	In order to run a golf club handicapping system
 	As a match secretary

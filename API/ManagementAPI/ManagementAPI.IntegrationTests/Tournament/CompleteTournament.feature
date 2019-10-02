@@ -1,4 +1,4 @@
-﻿@base @golfclub @player @tournament
+﻿@base @golfclub @player @tournament @golfclubadministrator
 Feature: Complete Tournament
 	In order to run a golf club handicapping system
 	As a club administrator

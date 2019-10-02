@@ -105,7 +105,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SpecFlowFeatureFiles Update="GolfClub\RegisterGolfClubAdministrator.feature">
+    <SpecFlowFeatureFiles Update="GolfClubAdministrator\RegisterGolfClubAdministrator.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <Generator Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"></Generator>
     </SpecFlowFeatureFiles>

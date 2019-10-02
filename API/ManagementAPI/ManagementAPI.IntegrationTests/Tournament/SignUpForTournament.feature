@@ -1,4 +1,4 @@
-﻿@base @golfclub @player @tournament
+﻿@base @golfclub @player @tournament @golfclubadministrator
 Feature: Sign Up For Tournament
 
 Background: 

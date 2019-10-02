@@ -1,4 +1,4 @@
-﻿@base @golfclub @player @tournament @reporting
+﻿@base @golfclub @player @tournament @reporting @golfclubadministrator
 Feature: PlayerReports
 
 Background: 

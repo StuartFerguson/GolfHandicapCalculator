@@ -1,4 +1,4 @@
-﻿@base @golfclub @player @tournament
+﻿@base @golfclub @player @tournament @golfclubadministrator
 
 Feature: ProcessHandicapAdjustments
 	In order to run a golf club handicapping system

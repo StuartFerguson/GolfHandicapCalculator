@@ -19,6 +19,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class RequestClubMembershipFeature : Xunit.IClassFixture<RequestClubMembershipFeature.FixtureData>, System.IDisposable
     {
         
@@ -40,7 +41,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "RequestClubMembership", null, ProgrammingLanguage.CSharp, new string[] {
                         "base",
-                        "golfclub"});
+                        "golfclub",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         

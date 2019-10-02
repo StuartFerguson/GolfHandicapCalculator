@@ -19,6 +19,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class GetClubMembersListFeature : Xunit.IClassFixture<GetClubMembersListFeature.FixtureData>, System.IDisposable
     {
         
@@ -40,7 +41,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "GetClubMembersList", null, ProgrammingLanguage.CSharp, new string[] {
                         "base",
-                        "golfclub"});
+                        "golfclub",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -79,7 +81,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         {
 #line 4
 #line hidden
-            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "EmailAddress",
                         "GivenName",
@@ -88,7 +90,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Password",
                         "ConfirmPassword",
                         "TelephoneNumber"});
-            table12.AddRow(new string[] {
+            table13.AddRow(new string[] {
                         "1",
                         "admin@testgolfclub1.co.uk",
                         "Admin",
@@ -98,9 +100,9 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "123456",
                         "01234567890"});
 #line 5
- testRunner.Given("the following golf club administrators have been registered", ((string)(null)), table12, "Given ");
+ testRunner.Given("the following golf club administrators have been registered", ((string)(null)), table13, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "GolfClubName",
                         "AddressLine1",
@@ -111,7 +113,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "TelephoneNumber",
                         "EmailAddress",
                         "WebSite"});
-            table13.AddRow(new string[] {
+            table14.AddRow(new string[] {
                         "1",
                         "Test Golf Club 1",
                         "Test Golf Club Address Line 1",
@@ -123,9 +125,9 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "testclub1@testclub1.co.uk",
                         "www.testclub1.co.uk"});
 #line 8
- testRunner.And("the following golf clubs exist", ((string)(null)), table13, "And ");
+ testRunner.And("the following golf clubs exist", ((string)(null)), table14, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
                         "PlayerNumber",
                         "EmailAddress",
                         "GivenName",
@@ -134,7 +136,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Age",
                         "Gender",
                         "ExactHandicap"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "1",
                         "testplayer1@players.co.uk",
                         "Test",
@@ -143,7 +145,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "16",
                         "M",
                         "2"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "2",
                         "testplayer2@players.co.uk",
                         "Test",
@@ -152,7 +154,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "18",
                         "M",
                         "4"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "3",
                         "testplayer3@players.co.uk",
                         "Test",
@@ -161,7 +163,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "18",
                         "M",
                         "10"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "4",
                         "testplayer4@players.co.uk",
                         "Test",
@@ -170,7 +172,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "19",
                         "M",
                         "12"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "5",
                         "testplayer5@players.co.uk",
                         "Test",
@@ -179,7 +181,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "20",
                         "M",
                         "1"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "6",
                         "testplayer6@players.co.uk",
                         "Test",
@@ -188,7 +190,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "22",
                         "M",
                         "28"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "7",
                         "testplayer7@players.co.uk",
                         "Test",
@@ -197,7 +199,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "24",
                         "M",
                         "24"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "8",
                         "testplayer8@players.co.uk",
                         "Test",
@@ -206,7 +208,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "26",
                         "M",
                         "18"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "9",
                         "testplayer9@players.co.uk",
                         "Test",
@@ -215,7 +217,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "35",
                         "M",
                         "18"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "10",
                         "testplayer10@players.co.uk",
                         "Test",
@@ -224,7 +226,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "64",
                         "M",
                         "6"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "11",
                         "testplayer11@players.co.uk",
                         "Test",
@@ -233,7 +235,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "65",
                         "M",
                         "9"});
-            table14.AddRow(new string[] {
+            table15.AddRow(new string[] {
                         "12",
                         "testplayer12@players.co.uk",
                         "Test",
@@ -243,49 +245,49 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "M",
                         "0"});
 #line 11
- testRunner.And("the following players have registered", ((string)(null)), table14, "And ");
+ testRunner.And("the following players have registered", ((string)(null)), table15, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "PlayerNumber"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "1"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "2"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "3"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "4"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "5"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "6"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "7"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "8"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "9"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "10"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "11"});
-            table15.AddRow(new string[] {
+            table16.AddRow(new string[] {
                         "1",
                         "12"});
 #line 25
- testRunner.And("the following players are club members of the following golf clubs", ((string)(null)), table15, "And ");
+ testRunner.And("the following players are club members of the following golf clubs", ((string)(null)), table16, "And ");
 #line hidden
         }
         

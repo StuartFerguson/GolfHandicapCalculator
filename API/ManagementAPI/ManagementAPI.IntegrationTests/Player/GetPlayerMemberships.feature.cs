@@ -20,6 +20,7 @@ namespace ManagementAPI.IntegrationTests.Player
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
     [Xunit.TraitAttribute("Category", "player")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class GetPlayerMembershipsFeature : Xunit.IClassFixture<GetPlayerMembershipsFeature.FixtureData>, System.IDisposable
     {
         
@@ -42,7 +43,8 @@ namespace ManagementAPI.IntegrationTests.Player
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Get Player Memberships", null, ProgrammingLanguage.CSharp, new string[] {
                         "base",
                         "golfclub",
-                        "player"});
+                        "player",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         

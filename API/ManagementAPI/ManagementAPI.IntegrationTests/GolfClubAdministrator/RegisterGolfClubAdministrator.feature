@@ -1,4 +1,4 @@
-﻿@base @golfclub
+﻿@base @golfclubadministrator
 Feature: Register Golf Club Administrator
 
 Scenario: Register Golf Club Administrator

@@ -1,4 +1,4 @@
-﻿@base @golfclub @player
+﻿@base @golfclub @player @golfclubadministrator
 Feature: Get Player
 
 Background:

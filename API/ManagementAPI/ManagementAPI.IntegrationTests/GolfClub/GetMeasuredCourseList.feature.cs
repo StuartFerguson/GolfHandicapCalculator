@@ -19,6 +19,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class GetMeasuredCourseListFeature : Xunit.IClassFixture<GetMeasuredCourseListFeature.FixtureData>, System.IDisposable
     {
         
@@ -40,7 +41,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "GetMeasuredCourseList", null, ProgrammingLanguage.CSharp, new string[] {
                         "base",
-                        "golfclub"});
+                        "golfclub",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -79,7 +81,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         {
 #line 4
 #line hidden
-            TechTalk.SpecFlow.Table table24 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "EmailAddress",
                         "GivenName",
@@ -88,7 +90,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "Password",
                         "ConfirmPassword",
                         "TelephoneNumber"});
-            table24.AddRow(new string[] {
+            table25.AddRow(new string[] {
                         "1",
                         "admin@testgolfclub1.co.uk",
                         "Admin",
@@ -98,11 +100,11 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "123456",
                         "01234567890"});
 #line 5
- testRunner.Given("the following golf club administrator has been registered", ((string)(null)), table24, "Given ");
+ testRunner.Given("the following golf club administrator has been registered", ((string)(null)), table25, "Given ");
 #line 8
  testRunner.And("I am logged in as the administrator for golf club 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "GolfClubName",
                         "AddressLine1",
@@ -113,7 +115,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "TelephoneNumber",
                         "EmailAddress",
                         "WebSite"});
-            table25.AddRow(new string[] {
+            table26.AddRow(new string[] {
                         "1",
                         "Test Golf Club 1",
                         "Test Golf Club Address Line 1",
@@ -125,152 +127,152 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "testclub1@testclub1.co.uk",
                         "www.testclub1.co.uk"});
 #line 9
- testRunner.When("I create a golf club with the following details", ((string)(null)), table25, "When ");
+ testRunner.When("I create a golf club with the following details", ((string)(null)), table26, "When ");
 #line 12
  testRunner.Then("the golf club is created successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-            TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table27 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "MeasuredCourseNumber",
                         "Name",
                         "StandardScratchScore",
                         "TeeColour"});
-            table26.AddRow(new string[] {
+            table27.AddRow(new string[] {
                         "1",
                         "1",
                         "Test Course",
                         "70",
                         "White"});
 #line 13
- testRunner.When("I add a measured course to the club with the following details", ((string)(null)), table26, "When ");
+ testRunner.When("I add a measured course to the club with the following details", ((string)(null)), table27, "When ");
 #line hidden
-            TechTalk.SpecFlow.Table table27 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table28 = new TechTalk.SpecFlow.Table(new string[] {
                         "GolfClubNumber",
                         "MeasuredCourseNumber",
                         "HoleNumber",
                         "LengthInYards",
                         "Par",
                         "StrokeIndex"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "1",
                         "348",
                         "4",
                         "10"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "2",
                         "402",
                         "4",
                         "4"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "3",
                         "207",
                         "3",
                         "14"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "4",
                         "405",
                         "4",
                         "8"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "5",
                         "428",
                         "4",
                         "2"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "6",
                         "477",
                         "5",
                         "12"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "7",
                         "186",
                         "3",
                         "16"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "8",
                         "397",
                         "4",
                         "6"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "9",
                         "130",
                         "3",
                         "18"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "10",
                         "399",
                         "4",
                         "3"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "11",
                         "401",
                         "4",
                         "13"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "12",
                         "421",
                         "4",
                         "1"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "13",
                         "530",
                         "5",
                         "11"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "14",
                         "196",
                         "3",
                         "5"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "15",
                         "355",
                         "4",
                         "7"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "16",
                         "243",
                         "4",
                         "15"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "17",
                         "286",
                         "4",
                         "17"});
-            table27.AddRow(new string[] {
+            table28.AddRow(new string[] {
                         "1",
                         "1",
                         "18",
@@ -278,7 +280,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                         "4",
                         "9"});
 #line 16
- testRunner.And("with the following holes", ((string)(null)), table27, "And ");
+ testRunner.And("with the following holes", ((string)(null)), table28, "And ");
 #line 36
  testRunner.Then("the measured course is added to the club successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

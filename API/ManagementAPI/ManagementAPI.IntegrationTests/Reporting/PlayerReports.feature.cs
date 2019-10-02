@@ -22,6 +22,7 @@ namespace ManagementAPI.IntegrationTests.Reporting
     [Xunit.TraitAttribute("Category", "player")]
     [Xunit.TraitAttribute("Category", "tournament")]
     [Xunit.TraitAttribute("Category", "reporting")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class PlayerReportsFeature : Xunit.IClassFixture<PlayerReportsFeature.FixtureData>, System.IDisposable
     {
         
@@ -46,7 +47,8 @@ namespace ManagementAPI.IntegrationTests.Reporting
                         "golfclub",
                         "player",
                         "tournament",
-                        "reporting"});
+                        "reporting",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         

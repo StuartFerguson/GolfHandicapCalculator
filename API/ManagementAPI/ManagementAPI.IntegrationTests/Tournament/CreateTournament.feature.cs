@@ -20,6 +20,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
     [Xunit.TraitAttribute("Category", "base")]
     [Xunit.TraitAttribute("Category", "golfclub")]
     [Xunit.TraitAttribute("Category", "tournament")]
+    [Xunit.TraitAttribute("Category", "golfclubadministrator")]
     public partial class CreateTournamentFeature : Xunit.IClassFixture<CreateTournamentFeature.FixtureData>, System.IDisposable
     {
         
@@ -43,7 +44,8 @@ namespace ManagementAPI.IntegrationTests.Tournament
                     "nt to be able to create club tournaments", ProgrammingLanguage.CSharp, new string[] {
                         "base",
                         "golfclub",
-                        "tournament"});
+                        "tournament",
+                        "golfclubadministrator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         

@@ -1,7 +1,7 @@
 ﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
 {
     using System;
-
+    
     public class RegisterClubAdministratorRequest
     {
         /// <summary>

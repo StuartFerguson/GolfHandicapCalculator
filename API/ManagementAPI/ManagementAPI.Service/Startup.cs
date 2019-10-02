@@ -34,6 +34,7 @@ namespace ManagementAPI.Service
     using Microsoft.AspNetCore.JsonPatch.Operations;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ApiExplorer;
+    using Microsoft.AspNetCore.Mvc.Versioning;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Configuration;
@@ -162,16 +163,12 @@ namespace ManagementAPI.Service
 
             app.UseMvc();
             app.UseSwagger();
-            //app.UseSwaggerUI(c =>
-            //                 {
-            //                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Golf Handicapping API v1");
-            //                 });
 
             app.UseSwaggerUI(
                              options =>
                              {
                                  // build a swagger endpoint for each discovered API version
-                                 foreach (var description in provider.ApiVersionDescriptions)
+                                 foreach (ApiVersionDescription description in provider.ApiVersionDescriptions)
                                  {
                                      options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                                  }
@@ -196,7 +193,7 @@ namespace ManagementAPI.Service
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            Startup.ConfigureMiddlewareServices(services);
+            this.ConfigureMiddlewareServices(services);
 
             IContainer container = Startup.GetConfiguredContainer(services, Startup.HostingEnvironment);
 
@@ -239,20 +236,20 @@ namespace ManagementAPI.Service
                                     //{
                                     //    config.AddRegistry<DevelopmentRegistry>();
                                     //}
-
-                                    config.Populate(services);
                                 });
+
+            container.Populate(services);
 
             Startup.Container = container;
 
-            return container;
+            return Startup.Container;
         }
 
         /// <summary>
         /// Configures the middleware services.
         /// </summary>
         /// <param name="services">The services.</param>
-        private static void ConfigureMiddlewareServices(IServiceCollection services)
+        private void ConfigureMiddlewareServices(IServiceCollection services)
         {
             services.AddMvc().AddJsonOptions(options =>
                                              {
@@ -277,13 +274,14 @@ namespace ManagementAPI.Service
                                                                                      options.ApiName = ConfigurationReader.GetValue("SecurityConfiguration", "ApiName");
                                                                                  });
 
-            services.AddMvcCore();
-
             services.AddApiVersioning(
                                       options =>
                                       {
                                           // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
                                           options.ReportApiVersions = true;
+                                          options.DefaultApiVersion = new ApiVersion(1, 0);
+                                          options.AssumeDefaultVersionWhenUnspecified = true;
+                                          options.ApiVersionReader = new HeaderApiVersionReader("api-version");
                                       });
 
             services.AddVersionedApiExplorer(
@@ -308,8 +306,6 @@ namespace ManagementAPI.Service
                                    });
 
             services.AddSwaggerExamplesFromAssemblyOf<SwaggerJsonConverter>();
-
-
         }
 
         /// <summary>

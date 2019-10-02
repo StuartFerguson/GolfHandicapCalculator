@@ -18,6 +18,7 @@ namespace ManagementAPI.IntegrationTests.Common
     using Ductus.FluentDocker.Services.Extensions;
     using Newtonsoft.Json;
     using Service.Client;
+    using Service.Client.v2;
     using TechTalk.SpecFlow;
     using TokenType = Gherkin.TokenType;
 
@@ -53,6 +54,8 @@ namespace ManagementAPI.IntegrationTests.Common
         private String MessagingServiceAddress;
 
         public IPlayerClient PlayerClient;
+
+        public IGolfClubAdministratorClient GolfClubAdministratorClient;
 
         public IGolfClubClient GolfClubClient;
 
@@ -281,7 +284,9 @@ namespace ManagementAPI.IntegrationTests.Common
             Func<String, String> baseAddressResolver = api => $"http://127.0.0.1:{this.ManagementApiPort}";
 
             HttpClient httpClient = new HttpClient();
+            HttpClient httpClientv2 = new HttpClient();
 
+            this.GolfClubAdministratorClient = new GolfClubAdministratorClient(baseAddressResolver, httpClientv2);
             this.GolfClubClient = new GolfClubClient(baseAddressResolver, httpClient);
             this.PlayerClient = new PlayerClient(baseAddressResolver, httpClient);
             this.ReportingClient = new ReportingClient(baseAddressResolver, httpClient);

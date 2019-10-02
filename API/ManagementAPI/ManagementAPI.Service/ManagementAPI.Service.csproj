@@ -22,8 +22,8 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.5.4" />
     <PackageReference Include="Shared" Version="1.0.15.22" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc3" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.0.0-rc3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.0.0-rc4" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="5.0.0-rc8" />
   </ItemGroup>
 
@@ -40,9 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="appsettings.docker.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
