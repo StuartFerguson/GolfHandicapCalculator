@@ -46,7 +46,7 @@ namespace ManagementAPI.IntegrationTests.Common
                 .WithName(containerName)
                 .WithCredential("https://docker.io", "stuartferguson", "Sc0tland")
                 .UseImage("stuartferguson/subscriptionservicedatabasesqlserver")
-                .WithEnvironment("ACCEPT_EULA=Y",$"SA_PASSWORD=thisisalongpassword123!","MSSQL_PID=Express")
+                .WithEnvironment("ACCEPT_EULA=Y",$"SA_PASSWORD=thisisalongpassword123!")
                 .ExposePort(1433)
                 .UseNetwork(DatabaseServerNetwork)
                 .KeepContainer()
