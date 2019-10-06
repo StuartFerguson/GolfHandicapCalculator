@@ -15,6 +15,11 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     using Service.Client;
     using Service.DataTransferObjects.Responses;
     using Shouldly;
+    using CreateGolfClubResponse = Service.DataTransferObjects.Responses.v2.CreateGolfClubResponse;
+    using GetGolfClubResponse = Service.DataTransferObjects.Responses.v2.GetGolfClubResponse;
+    using GolfClubUserResponse = Service.DataTransferObjects.Responses.v2.GolfClubUserResponse;
+    using MeasuredCourseListResponse = Service.DataTransferObjects.Responses.v2.MeasuredCourseListResponse;
+    using MembershipStatus = Service.DataTransferObjects.Responses.v2.MembershipStatus;
 
     [Binding]
     [Scope(Tag = "golfclub")]
@@ -74,7 +79,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [When(@"I request the details of the golf club (.*)")]
         public async Task WhenIRequestTheDetailsOfTheGolfClub(Int32 golfClubNumber)
         {
-            this.TestingContext.GetGolfClubResponse = await this.TestingContext.DockerHelper.GolfClubClient.GetSingleGolfClub(this.TestingContext.GolfClubAdministratorToken,
+            this.TestingContext.GetGolfClubResponse = await this.TestingContext.DockerHelper.GolfClubClient.GetGolfClub(this.TestingContext.GolfClubAdministratorToken,
                                                                                                           this.TestingContext.CreateGolfClubResponse.GolfClubId,
                                                                                                           CancellationToken.None).ConfigureAwait(false);
         }
@@ -171,7 +176,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
             await Retry.For(async () =>
                             {
                                 List<GetGolfClubResponse> getGolfClubResponses = await this
-                                                                                       .TestingContext.DockerHelper.PlayerClient
+                                                                                       .TestingContext.DockerHelper.GolfClubClient
                                                                                        .GetGolfClubList(this.TestingContext.PlayerToken,
                                                                                                         this.TestingContext.PlayerId,
                                                                                                         CancellationToken.None).ConfigureAwait(false);
@@ -256,7 +261,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
 
             await Retry.For(async () =>
                       {
-                          GetMeasuredCourseListResponse response = await this.TestingContext.DockerHelper.GolfClubClient.GetMeasuredCourses(this.TestingContext.GolfClubAdministratorToken,
+                          List<MeasuredCourseListResponse> response = await this.TestingContext.DockerHelper.GolfClubClient.GetMeasuredCourses(this.TestingContext.GolfClubAdministratorToken,
                                                                                                                 createGolfClubResponse.GolfClubId,
                                                                                                                 CancellationToken.None).ConfigureAwait(false);
                           
@@ -269,9 +274,8 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         public void ThenTheListOfMeasuredCoursesShouldBeReturned(Int32 numberOfMeasuredCourses)
         {
             this.TestingContext.MeasuredCourseList.ShouldNotBeNull();
-            this.TestingContext.MeasuredCourseList.MeasuredCourses.ShouldNotBeNull();
-            this.TestingContext.MeasuredCourseList.MeasuredCourses.ShouldNotBeEmpty();
-            this.TestingContext.MeasuredCourseList.MeasuredCourses.Count.ShouldBe(numberOfMeasuredCourses);
+            this.TestingContext.MeasuredCourseList.ShouldNotBeEmpty();
+            this.TestingContext.MeasuredCourseList.Count.ShouldBe(numberOfMeasuredCourses);
         }
 
         [When(@"I add tournament division (.*) with a start handicap of (.*) and and end handicap of (.*)")]
@@ -420,7 +424,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Then(@"(.*) users details are returned for golf club (.*)")]
         public async Task ThenUsersDetailsAreReturnedForGolfClub(Int32 numberOfUsers,String golfClubNumber)
         {
-            if (this.TestingContext.GetGolfClubUserListResponse.Users.Count != numberOfUsers)
+            if (this.TestingContext.GetGolfClubUserListResponse.Count != numberOfUsers)
             {
                 CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
 
@@ -434,16 +438,16 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                                                                                                                          createGolfClubResponse.GolfClubId,
                                                                                                                          CancellationToken.None).ConfigureAwait(false);
 
-                                    if (this.TestingContext.GetGolfClubUserListResponse.Users.Count != numberOfUsers)
+                                    if (this.TestingContext.GetGolfClubUserListResponse.Count != numberOfUsers)
                                     {
                                         throw new Exception();
                                     }
                                 });
             }
 
-            this.TestingContext.GetGolfClubUserListResponse.Users.ShouldNotBeNull();
-            this.TestingContext.GetGolfClubUserListResponse.Users.ShouldNotBeEmpty();
-            this.TestingContext.GetGolfClubUserListResponse.Users.Count.ShouldBe(numberOfUsers);
+            this.TestingContext.GetGolfClubUserListResponse.ShouldNotBeNull();
+            this.TestingContext.GetGolfClubUserListResponse.ShouldNotBeEmpty();
+            this.TestingContext.GetGolfClubUserListResponse.Count.ShouldBe(numberOfUsers);
         }
 
         [Then(@"the golf club administrators details are returned for golf club (.*)")]
@@ -451,8 +455,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         {
             RegisterClubAdministratorRequest registerClubAdministratorRequest = this.TestingContext.GetRegisterClubAdministratorRequest(golfClubNumber);
 
-            GolfClubUserResponse user = this.TestingContext.GetGolfClubUserListResponse.Users
-                                            .SingleOrDefault(u => u.Email == registerClubAdministratorRequest.EmailAddress);
+            GolfClubUserResponse user = this.TestingContext.GetGolfClubUserListResponse.SingleOrDefault(u => u.Email == registerClubAdministratorRequest.EmailAddress);
 
             user.ShouldNotBeNull();
         }
@@ -460,8 +463,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
         [Then(@"the match secretarys details are returned for golf club (.*)")]
         public void ThenTheMatchSecretarysDetailsAreReturnedForGolfClub(String golfClubNumber)
         {
-            GolfClubUserResponse user = this.TestingContext.GetGolfClubUserListResponse.Users
-                                            .SingleOrDefault(u => u.Email == this.TestingContext.CreateMatchSecretaryRequest.EmailAddress);
+            GolfClubUserResponse user = this.TestingContext.GetGolfClubUserListResponse.SingleOrDefault(u => u.Email == this.TestingContext.CreateMatchSecretaryRequest.EmailAddress);
 
             user.ShouldNotBeNull();
         }

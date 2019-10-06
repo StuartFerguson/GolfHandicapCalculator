@@ -81,7 +81,7 @@
             }
 
             // Create the command
-            AddMeasuredCourseToClubCommand command = AddMeasuredCourseToClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
+            AddMeasuredCourseToClubCommand command = AddMeasuredCourseToClubCommand.Create(Guid.Parse(golfClubIdClaim.Value), request.MeasuredCourseId,  request);
 
             // Route the command
             await this.CommandRouter.Route(command, cancellationToken);

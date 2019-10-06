@@ -1,10 +1,14 @@
-﻿namespace ManagementAPI.Service.DataTransferObjects.Requests
+﻿namespace ManagementAPI.Service.DataTransferObjects.Responses.v2
 {
     using System;
-    using System.Collections.Generic;
 
-    public class AddMeasuredCourseToClubRequest
+    /// <summary>
+    /// 
+    /// </summary>
+    public class MeasuredCourseListResponse
     {
+        #region Properties
+
         /// <summary>
         /// Gets or sets the measured course identifier.
         /// </summary>
@@ -12,25 +16,17 @@
         /// The measured course identifier.
         /// </value>
         public Guid MeasuredCourseId { get; set; }
-        
+
         /// <summary>
-        /// Gets the name.
+        /// Gets or sets the name.
         /// </summary>
         /// <value>
         /// The name.
         /// </value>
         public String Name { get; set; }
-        
-        /// <summary>
-        /// Gets the tee colour.
-        /// </summary>
-        /// <value>
-        /// The tee colour.
-        /// </value>
-        public String TeeColour { get; set; }
 
         /// <summary>
-        /// Gets the standard scratch score.
+        /// Gets or sets the standard scratch score.
         /// </summary>
         /// <value>
         /// The standard scratch score.
@@ -38,11 +34,13 @@
         public Int32 StandardScratchScore { get; set; }
 
         /// <summary>
-        /// Gets the holes.
+        /// Gets or sets the tee colour.
         /// </summary>
         /// <value>
-        /// The holes.
+        /// The tee colour.
         /// </value>
-        public List<HoleDataTransferObjectRequest> Holes { get; set; }
+        public String TeeColour { get; set; }
+
+        #endregion
     }
 }

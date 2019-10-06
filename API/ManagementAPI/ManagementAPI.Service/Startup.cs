@@ -25,6 +25,7 @@ namespace ManagementAPI.Service
     using Controllers;
     using Database;
     using Database.SeedData;
+    using GolfClub.DomainEvents;
     using ManagementAPI.BusinessLogic.EventHandling;
     using ManagementAPI.BusinessLogic.Services.ExternalServices;
     using ManagementAPI.BusinessLogic.Services.ExternalServices.DataTransferObjects;

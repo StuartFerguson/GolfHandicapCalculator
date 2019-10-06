@@ -1,5 +1,6 @@
 ﻿namespace ManagementAPI.Service
 {
+    using System;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -21,7 +22,8 @@
         /// </summary>
         /// <param name="operation">The operation to apply the filter to.</param>
         /// <param name="context">The current operation filter context.</param>
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        public void Apply(OpenApiOperation operation,
+                          OperationFilterContext context)
         {
             ApiDescription apiDescription = context.ApiDescription;
             ApiVersion apiVersion = apiDescription.GetApiVersion();
@@ -36,14 +38,13 @@
 
             foreach (OpenApiParameter parameter in operation.Parameters)
             {
-                ApiParameterDescription description = apiDescription.ParameterDescriptions
-                                                .First(p => p.Name == parameter.Name);
+                ApiParameterDescription description = apiDescription.ParameterDescriptions.First(p => p.Name == parameter.Name);
 
                 if (parameter.Description == null)
                 {
                     parameter.Description = description.ModelMetadata?.Description;
                 }
-                
+
                 parameter.Required |= description.IsRequired;
             }
         }

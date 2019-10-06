@@ -17,6 +17,8 @@ namespace ManagementAPI.Service.IntegrationTests.Common
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.Extensions.DependencyInjection;
     using Moq;
+    using Service.Common;
+    using Shared.CommandHandling;
     using Xunit;
 
     public class ManagmentApiWebFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
@@ -25,12 +27,18 @@ namespace ManagementAPI.Service.IntegrationTests.Common
         {
             // Setup my mocks in here
             Mock<IManagmentAPIManager> managmentApiManagerMock = this.CreateManagmentAPIManagerMock();
+            Mock<ICommandRouter> commandRouterMock = this.CreateCommandRouterMock();
             
             builder.ConfigureServices((builderContext, services) =>
                                                             {
                                                                 if (managmentApiManagerMock != null)
                                                                 {
                                                                     services.AddSingleton(managmentApiManagerMock.Object);
+                                                                }
+
+                                                                if (commandRouterMock != null)
+                                                                {
+                                                                    services.AddSingleton(commandRouterMock.Object);
                                                                 }
 
                                                                 services.AddMvc(options =>
@@ -42,12 +50,28 @@ namespace ManagementAPI.Service.IntegrationTests.Common
             ;
         }
 
+        private Mock<ICommandRouter> CreateCommandRouterMock()
+        {
+            Mock<ICommandRouter> commandRouterMock=new Mock<ICommandRouter>(MockBehavior.Strict);
+
+            commandRouterMock.Setup(c => c.Route(It.IsAny<ICommand>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+            
+            return commandRouterMock;
+        }
+
         private Mock<IManagmentAPIManager> CreateManagmentAPIManagerMock()
         {
             Mock<IManagmentAPIManager> managmentApiManagerMock = new Mock<IManagmentAPIManager>(MockBehavior.Strict);
 
             managmentApiManagerMock.Setup(m => m.RegisterClubAdministrator(It.IsAny<RegisterClubAdministratorRequest>(), It.IsAny<CancellationToken>()))
                                    .ReturnsAsync(TestData.GolfClubAdministratorUserId);
+            managmentApiManagerMock.Setup(m => m.GetGolfClub(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetGolfClubResponse);
+            managmentApiManagerMock.Setup(m => m.GetGolfClubMembersList(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                                   .ReturnsAsync(TestData.GetGolfClubMembersListResponse);
+            managmentApiManagerMock.Setup(m => m.GetMeasuredCourseList(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                                   .ReturnsAsync(TestData.GetMeasuredCourseListResponse);
+            managmentApiManagerMock.Setup(m => m.GetGolfClubUsers(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetGolfClubUserListResponse);
+            managmentApiManagerMock.Setup(m => m.GetGolfClubList(It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetGolfClubListResponse);
 
             return managmentApiManagerMock;
         }
@@ -70,7 +94,8 @@ namespace ManagementAPI.Service.IntegrationTests.Common
             context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                                                                               {
                                                                                   new Claim(JwtClaimTypes.Subject, "194A2B1E-E10B-47D9-927F-A8A1CF3C9138"),
-                                                                                  new Claim(ClaimTypes.Role, "Golf Club Administrator")
+                                                                                  new Claim(ClaimTypes.Role, "Golf Club Administrator"),
+                                                                                  new Claim(CustomClaims.GolfClubId, TestData.GolfClubId.ToString())
                                                                               }));
 
             await next();

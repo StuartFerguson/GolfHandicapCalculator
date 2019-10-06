@@ -12,7 +12,10 @@ namespace ManagementAPI.IntegrationTests.Tournament
     using GolfClub;
     using Service.DataTransferObjects.Requests;
     using Service.DataTransferObjects.Responses;
+    using Service.DataTransferObjects.Responses.v2;
     using Shouldly;
+    using CreateGolfClubResponse = Service.DataTransferObjects.Responses.v2.CreateGolfClubResponse;
+    using MeasuredCourseListResponse = Service.DataTransferObjects.Responses.v2.MeasuredCourseListResponse;
 
     [Binding]
     [Scope(Tag = "tournament")]
@@ -32,11 +35,11 @@ namespace ManagementAPI.IntegrationTests.Tournament
             {
                 CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(tableRow["GolfClubNumber"]);
 
-                GetMeasuredCourseListResponse measuredCourseList = await this.TestingContext.DockerHelper.GolfClubClient.GetMeasuredCourses(this.TestingContext.GolfClubAdministratorToken,
+                List<MeasuredCourseListResponse> measuredCourseList = await this.TestingContext.DockerHelper.GolfClubClient.GetMeasuredCourses(this.TestingContext.GolfClubAdministratorToken,
                                                                                                             createGolfClubResponse.GolfClubId,
                                                                                                             CancellationToken.None).ConfigureAwait(false);
 
-                MeasuredCourseListResponse measuredCourse = measuredCourseList.MeasuredCourses.Single(m => m.Name == tableRow["MeasuredCourseName"]);
+                MeasuredCourseListResponse measuredCourse = measuredCourseList.Single(m => m.Name == tableRow["MeasuredCourseName"]);
 
                 TournamentFormat tournamentFormat = Enum.Parse<TournamentFormat>(tableRow["TournamentFormat"], true);
                 PlayerCategory playerCategory = Enum.Parse<PlayerCategory>(tableRow["PlayerCategory"], true);

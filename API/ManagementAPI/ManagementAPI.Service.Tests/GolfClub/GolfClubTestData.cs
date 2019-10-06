@@ -404,7 +404,7 @@
 
         public static AddMeasuredCourseToClubCommand GetAddMeasuredCourseToClubCommand()
         {
-            return AddMeasuredCourseToClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest);
+            return AddMeasuredCourseToClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.MeasuredCourseId, GolfClubTestData.AddMeasuredCourseToClubRequest);
         }
 
         public static AddTournamentDivisionToGolfClubCommand GetAddTournamentDivisionToGolfClubCommand()

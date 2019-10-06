@@ -6,6 +6,11 @@
     using Common;
     using Service.DataTransferObjects.Requests;
     using Service.DataTransferObjects.Responses;
+    using Service.DataTransferObjects.Responses.v2;
+    using CreateGolfClubResponse = Service.DataTransferObjects.Responses.v2.CreateGolfClubResponse;
+    using GetGolfClubResponse = Service.DataTransferObjects.Responses.v2.GetGolfClubResponse;
+    using GolfClubUserResponse = Service.DataTransferObjects.Responses.v2.GolfClubUserResponse;
+    using MeasuredCourseListResponse = Service.DataTransferObjects.Responses.v2.MeasuredCourseListResponse;
 
     public class TestingContext
     {
@@ -60,7 +65,7 @@
                                                                                         String measuredCourseName,
                                                                                         String tournamentNumber)
         {
-            var request = this.RecordPlayerTournamentScoreRequests
+            RecordPlayerTournamentScoreRequest request = this.RecordPlayerTournamentScoreRequests
                 .Where(x => x.Key.Item1 == tournamentNumber && x.Key.Item2 == golfClubNumber && x.Key.Item3 == measuredCourseName).Select(x => x.Value).Single();
 
             return request;
@@ -141,15 +146,15 @@
 
         public List<GetGolfClubResponse> GetGolfClubResponseList { get; set; }
 
-        public GetMeasuredCourseListResponse MeasuredCourseList { get; set; }
+        public List<MeasuredCourseListResponse> MeasuredCourseList { get; set; }
 
         public AddTournamentDivisionToGolfClubRequest AddTournamentDivisionToGolfClubRequest { get; set; }
 
         public CreateMatchSecretaryRequest CreateMatchSecretaryRequest { get; set; }
 
-        public List<GetGolfClubMembershipDetailsResponse> GolfClubMembersList { get; set; }
+        public List<GolfClubMembershipDetailsResponse> GolfClubMembersList { get; set; }
 
-        public GetGolfClubUserListResponse GetGolfClubUserListResponse { get; set; }
+        public List<GolfClubUserResponse> GetGolfClubUserListResponse { get; set; }
 
         public RegisterPlayerRequest RegisterPlayerRequest { get; set; }
 

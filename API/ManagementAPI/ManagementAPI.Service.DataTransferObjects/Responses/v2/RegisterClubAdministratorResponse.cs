@@ -1,4 +1,4 @@
-﻿namespace ManagementAPI.Service.DataTransferObjects.Responses
+﻿namespace ManagementAPI.Service.DataTransferObjects.Responses.v2
 {
     using System;
 
