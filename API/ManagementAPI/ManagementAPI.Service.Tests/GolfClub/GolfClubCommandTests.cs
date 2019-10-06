@@ -12,12 +12,13 @@
         [Fact]
         public void AddMeasuredCourseToClubCommand_CanBeCreated_IsCreated()
         {
-            AddMeasuredCourseToClubCommand command = AddMeasuredCourseToClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.AddMeasuredCourseToClubRequest);
+            AddMeasuredCourseToClubCommand command = AddMeasuredCourseToClubCommand.Create(GolfClubTestData.AggregateId, GolfClubTestData.MeasuredCourseId, GolfClubTestData.AddMeasuredCourseToClubRequest);
 
             command.ShouldNotBeNull();
             command.CommandId.ShouldNotBe(Guid.Empty);
             command.AddMeasuredCourseToClubRequest.ShouldNotBeNull();
             command.GolfClubId.ShouldBe(GolfClubTestData.AggregateId);
+            command.MeasuredCourseId.ShouldBe(GolfClubTestData.MeasuredCourseId);
             command.AddMeasuredCourseToClubRequest.ShouldBe(GolfClubTestData.AddMeasuredCourseToClubRequest);
         }
 

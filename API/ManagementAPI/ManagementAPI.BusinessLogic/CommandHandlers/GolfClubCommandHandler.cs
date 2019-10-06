@@ -167,7 +167,7 @@
             // Translate the request to the input for AddMeasuredCourse
             MeasuredCourseDataTransferObject measuredCourse = new MeasuredCourseDataTransferObject
                                                               {
-                                                                  MeasuredCourseId = command.AddMeasuredCourseToClubRequest.MeasuredCourseId,
+                                                                  MeasuredCourseId = command.MeasuredCourseId,
                                                                   Name = command.AddMeasuredCourseToClubRequest.Name,
                                                                   StandardScratchScore = command.AddMeasuredCourseToClubRequest.StandardScratchScore,
                                                                   TeeColour = command.AddMeasuredCourseToClubRequest.TeeColour,

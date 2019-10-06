@@ -9,32 +9,33 @@
     using Common;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
+    using DataTransferObjects.Responses.v2;
     using Newtonsoft.Json.Linq;
     using Shouldly;
     using Xunit;
 
     [Collection("TestCollection")]
-    public class GolfClubAdministratorClientAndControllerTests : IClassFixture<ManagmentApiWebFactory<Startup>>
+    public class GolfClubAdministratorClientTests : IClassFixture<ManagmentApiWebFactory<Startup>>
     {
         private readonly ManagmentApiWebFactory<Startup> WebApplicationFactory;
 
-        public GolfClubAdministratorClientAndControllerTests(ManagmentApiWebFactory<Startup> webApplicationFactory)
+        public GolfClubAdministratorClientTests(ManagmentApiWebFactory<Startup> webApplicationFactory)
         {
             this.WebApplicationFactory = webApplicationFactory;
         }
 
         [Fact]
-        public async Task GolfClubAdministratorController_POST_GolfClubAdministrator_GolfClubAdministratorIsReturned()
+        public async Task GolfClubAdministratorClient_RegisterGolfClubAdministrator_GolfClubAdministratorIsCreated()
         {
             // 1. Arrange
             HttpClient client = this.WebApplicationFactory.CreateClient();
             Func<String, String> resolver = api => "http://localhost";
-            IGolfClubAdministratorClient golfdGolfClubAdministratorClient = new GolfClubAdministratorClient(resolver, client);
+            IGolfClubAdministratorClient golfClubAdministratorClient = new GolfClubAdministratorClient(resolver, client);
 
             RegisterClubAdministratorRequest registerClubAdministratorRequest = TestData.RegisterClubAdministratorRequest;
 
             // 2. Act
-            RegisterClubAdministratorResponse registerClubAdministratorResponse = await golfdGolfClubAdministratorClient.RegisterGolfClubAdministrator(registerClubAdministratorRequest, CancellationToken.None);
+            RegisterClubAdministratorResponse registerClubAdministratorResponse = await golfClubAdministratorClient.RegisterGolfClubAdministrator(registerClubAdministratorRequest, CancellationToken.None);
 
             // 3. Assert
             registerClubAdministratorResponse.GolfClubAdministratorId.ShouldBe(TestData.GolfClubAdministratorUserId);

@@ -47,7 +47,6 @@ namespace ManagementAPI.IntegrationTests.GolfClubAdministrator
             {
                 await this.TestingContext.DockerHelper.GolfClubAdministratorClient.RegisterGolfClubAdministrator(this.TestingContext.RegisterClubAdministratorRequest,
                                                                         CancellationToken.None).ConfigureAwait(false);
-                ;
             });
 
         }

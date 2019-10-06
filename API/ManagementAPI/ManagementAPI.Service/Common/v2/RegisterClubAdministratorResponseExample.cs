@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using DataTransferObjects.Responses;
+    using DataTransferObjects.Responses.v2;
     using Swashbuckle.AspNetCore.Filters;
 
     [ExcludeFromCodeCoverage]

@@ -29,7 +29,7 @@
         }
 
         [Fact]
-        public void ClaimsHelper_GetUserClaim_ClaimNotFound_ExceptionThrown()
+        public void ClaimsHelper_GetUserClaim_ClaimNotFound_DefaultReturned()
         {
             List<Claim> claims = new List<Claim>
                                  {
@@ -40,7 +40,8 @@
 
             ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            Should.Throw<InvalidOperationException>(() => { ClaimsHelper.GetUserClaim(claimsPrincipal, "testclaim"); });
+            Claim result = ClaimsHelper.GetUserClaim(claimsPrincipal, "testclaim", Guid.Empty.ToString());
+            result.Value.ShouldBe(Guid.Empty.ToString());
         }
     }
 }

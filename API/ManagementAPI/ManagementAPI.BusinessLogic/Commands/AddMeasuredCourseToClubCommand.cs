@@ -1,8 +1,8 @@
 ﻿namespace ManagementAPI.BusinessLogic.Commands
 {
-    using System;
     using Service.DataTransferObjects.Requests;
     using Shared.CommandHandling;
+    using System;
 
     public class AddMeasuredCourseToClubCommand : Command<String>
     {
@@ -24,6 +24,14 @@
         /// </value>
         public Guid GolfClubId { get; private set; }
 
+        /// <summary>
+        /// Gets the measured course identifier.
+        /// </summary>
+        /// <value>
+        /// The measured course identifier.
+        /// </value>
+        public Guid MeasuredCourseId { get; private set; }
+
         #endregion
 
         #region Constructor
@@ -31,11 +39,13 @@
         /// Initializes a new instance of the <see cref="CreateGolfClubCommand" /> class.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="measuredCourseId">The measured course identifier.</param>
         /// <param name="addMeasuredCourseToClubRequest">The add measured course to club request.</param>
         /// <param name="commandId">The command identifier.</param>
-        private AddMeasuredCourseToClubCommand(Guid golfClubId, AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest, Guid commandId) : base(commandId)
+        private AddMeasuredCourseToClubCommand(Guid golfClubId, Guid measuredCourseId, AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest, Guid commandId) : base(commandId)
         {
             this.GolfClubId = golfClubId;
+            this.MeasuredCourseId = measuredCourseId;
             this.AddMeasuredCourseToClubRequest = addMeasuredCourseToClubRequest;
         }
         #endregion
@@ -45,11 +55,12 @@
         /// Creates this instance.
         /// </summary>
         /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="measuredCourseId">The measured course identifier.</param>
         /// <param name="addMeasuredCourseToClubRequest">The add measured course to club request.</param>
         /// <returns></returns>
-        public static AddMeasuredCourseToClubCommand Create(Guid golfClubId, AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest)
+        public static AddMeasuredCourseToClubCommand Create(Guid golfClubId, Guid measuredCourseId, AddMeasuredCourseToClubRequest addMeasuredCourseToClubRequest)
         {
-            return new AddMeasuredCourseToClubCommand(golfClubId, addMeasuredCourseToClubRequest, Guid.NewGuid());
+            return new AddMeasuredCourseToClubCommand(golfClubId, measuredCourseId, addMeasuredCourseToClubRequest, Guid.NewGuid());
         }
         #endregion
     }

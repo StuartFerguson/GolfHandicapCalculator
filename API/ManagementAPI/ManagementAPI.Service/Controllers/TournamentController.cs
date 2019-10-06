@@ -69,7 +69,7 @@
                                                         CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user            
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId);
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(golfClubId, golfClubIdClaim);
             if (validationResult == false)
@@ -104,7 +104,7 @@
                                                   CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user            
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId);
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(golfClubId, golfClubIdClaim);
             if (validationResult == false)
@@ -139,7 +139,7 @@
                                                        CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user            
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId);
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(golfClubId, golfClubIdClaim);
             if (validationResult == false)
@@ -172,7 +172,7 @@
                                                                     CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user            
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId);
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(golfClubId, golfClubIdClaim);
             if (validationResult == false)
@@ -197,7 +197,7 @@
         public async Task<IActionResult> GetTournamentList([FromRoute] Guid golfClubId, CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user            
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId);
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(golfClubId, golfClubIdClaim);
             if (validationResult == false)

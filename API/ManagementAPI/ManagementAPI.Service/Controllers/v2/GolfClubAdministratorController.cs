@@ -6,7 +6,7 @@
     using BusinessLogic.Manager;
     using Common;
     using DataTransferObjects.Requests;
-    using DataTransferObjects.Responses;
+    using DataTransferObjects.Responses.v2;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Swashbuckle.AspNetCore.Annotations;
@@ -34,7 +34,7 @@
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GolfClubAdministratorController"/> class.
+        /// Initializes a new instance of the <see cref="GolfClubAdministratorController" /> class.
         /// </summary>
         /// <param name="manager">The manager.</param>
         public GolfClubAdministratorController(IManagmentAPIManager manager)
