@@ -63,7 +63,7 @@
         public async Task<IActionResult> GetPlayer([FromRoute] Guid playerId, CancellationToken cancellationToken)
         {
             // Get the Player Id claim from the user            
-            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId);
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
             if (validationResult == false)
@@ -89,7 +89,7 @@
         public async Task<IActionResult> GetPlayerMemberships([FromRoute] Guid playerId, CancellationToken cancellationToken)
         {
             // Get the Player Id claim from the user            
-            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId);
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
             if (validationResult == false)
@@ -140,7 +140,7 @@
                                                                CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user            
-            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId);
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
             if (validationResult == false)
@@ -175,7 +175,7 @@
                                                            CancellationToken cancellationToken)
         {
             // Get the Player Id claim from the user            
-            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId);
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
             if (validationResult == false)
@@ -201,7 +201,7 @@
                                                       CancellationToken cancellationToken)
         {
             // Get the Player Id claim from the user            
-            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId);
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
             if (validationResult == false)
@@ -228,7 +228,7 @@
                                                       CancellationToken cancellationToken)
         {
             // Get the Player Id claim from the user            
-            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId);
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
 
             Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
             if (validationResult == false)

@@ -18,26 +18,23 @@ namespace ManagementAPI.Service.Common
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">No claim [{customClaimType}] found for user id [{userIdClaim.Value}</exception>
-        public static Claim GetUserClaim(ClaimsPrincipal user, String customClaimType, Guid defaultValue = new Guid())
+        public static Claim GetUserClaim(ClaimsPrincipal user, String customClaimType, String defaultValue = "")
         {
             Claim userClaim = null;
 
             if (ClaimsHelper.IsPasswordToken(user))
             {
-                // Get the user id (subject claim). Note: This will ALWAYS be present
-                Claim userIdClaim = user.Claims.Single(c => c.Type == JwtClaimTypes.Subject);
-
                 // Get the claim from the token
                 userClaim = user.Claims.SingleOrDefault(c => c.Type == customClaimType);
 
                 if (userClaim == null)
                 {
-                    userClaim = new Claim(customClaimType, defaultValue.ToString());
+                    userClaim = new Claim(customClaimType, defaultValue);
                 }
             }
             else
             {
-                userClaim=new Claim(customClaimType, defaultValue.ToString());
+                userClaim =new Claim(customClaimType, defaultValue);
             }
 
             return userClaim;
