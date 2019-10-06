@@ -285,10 +285,11 @@ namespace ManagementAPI.IntegrationTests.Common
             Func<String, String> baseAddressResolver = api => $"http://127.0.0.1:{this.ManagementApiPort}";
 
             HttpClient httpClient = new HttpClient();
-            HttpClient httpClientv2 = new HttpClient();
+            HttpClient golfClubAdministratorClientHttpClient = new HttpClient();
+            HttpClient golfClubClientHttpClient = new HttpClient();
 
-            this.GolfClubAdministratorClient = new GolfClubAdministratorClient(baseAddressResolver, httpClientv2);
-            this.GolfClubClient = new Service.Client.v2.GolfClubClient(baseAddressResolver, httpClientv2);
+            this.GolfClubAdministratorClient = new GolfClubAdministratorClient(baseAddressResolver, golfClubAdministratorClientHttpClient);
+            this.GolfClubClient = new Service.Client.v2.GolfClubClient(baseAddressResolver, golfClubClientHttpClient);
             this.PlayerClient = new PlayerClient(baseAddressResolver, httpClient);
             this.ReportingClient = new ReportingClient(baseAddressResolver, httpClient);
             this.TournamentClient = new TournamentClient(baseAddressResolver, httpClient);
