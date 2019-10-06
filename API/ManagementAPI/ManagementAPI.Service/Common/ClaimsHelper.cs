@@ -15,6 +15,7 @@ namespace ManagementAPI.Service.Common
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="customClaimType">Type of the custom claim.</param>
+        /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">No claim [{customClaimType}] found for user id [{userIdClaim.Value}</exception>
         public static Claim GetUserClaim(ClaimsPrincipal user, String customClaimType, Guid defaultValue = new Guid())
@@ -27,13 +28,11 @@ namespace ManagementAPI.Service.Common
                 Claim userIdClaim = user.Claims.Single(c => c.Type == JwtClaimTypes.Subject);
 
                 // Get the claim from the token
-                try
+                userClaim = user.Claims.SingleOrDefault(c => c.Type == customClaimType);
+
+                if (userClaim == null)
                 {
-                    userClaim = user.Claims.Single(c => c.Type == customClaimType);
-                }
-                catch(InvalidOperationException e)
-                {
-                    throw new InvalidOperationException($"No claim [{customClaimType}] found for user id [{userIdClaim.Value}");
+                    userClaim = new Claim(customClaimType, defaultValue.ToString());
                 }
             }
             else

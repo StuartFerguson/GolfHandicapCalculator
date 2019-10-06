@@ -178,7 +178,7 @@ namespace ManagementAPI.Service.Controllers.v2
                                                      CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user
-            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
+            Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, Guid.Empty);
 
             if (golfClubIdClaim.Value != Guid.Empty.ToString())
             {
