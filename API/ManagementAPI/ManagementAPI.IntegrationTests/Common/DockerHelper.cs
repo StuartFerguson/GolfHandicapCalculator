@@ -165,7 +165,7 @@ namespace ManagementAPI.IntegrationTests.Common
             this.TestNetwork = new Builder().UseNetwork($"testnetwork{Guid.NewGuid()}").Build();
         }
 
-        protected void SetupSubscriptionServiceConfig()
+        protected async Task SetupSubscriptionServiceConfig(CancellationToken cancellationToken)
         {
             IPEndPoint sqlEndpoint = Setup.DatabaseServerContainer.ToHostExposedEndpoint("1433/tcp");
 
@@ -179,60 +179,60 @@ namespace ManagementAPI.IntegrationTests.Common
 
             SqlConnection connection = new SqlConnection(connectionString);
 
-            connection.Open();
+            await connection.OpenAsync(cancellationToken);
 
             // Insert the subscription service
-            SubscriptionServiceHelper.CreateEventStoreServer(connection, this.SubscriberServiceId, "Test Service", "Test Service");
+            await SubscriptionServiceHelper.CreateEventStoreServer(connection, this.SubscriberServiceId, "Test Service", "Test Service", cancellationToken).ConfigureAwait(false);
 
             // Create the Subscription Configurations
-            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+            await SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
                                                                       this.SubscriberServiceId,
                                                                       Guid.NewGuid(),
                                                                       "Golf Club Events",
                                                                       "$ce-GolfClubAggregate",
-                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClub");
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClub", cancellationToken).ConfigureAwait(false);
 
-            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+            await SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
                                                                       this.SubscriberServiceId,
                                                                       Guid.NewGuid(),
                                                                       "Golf Club Membership Events",
                                                                       "$ce-GolfClubMembershipAggregate",
-                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClubMembership");
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClubMembership", cancellationToken).ConfigureAwait(false);
 
-            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+            await SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
                                                                       this.SubscriberServiceId,
                                                                       Guid.NewGuid(),
                                                                       "Golf Club Membership Events - Reporting",
                                                                       "$ce-GolfClubMembershipAggregate",
-                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting");
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting", cancellationToken).ConfigureAwait(false);
 
-            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+            await SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
                                                                       this.SubscriberServiceId,
                                                                       Guid.NewGuid(),
                                                                       "Handicap Calculator Process Events",
                                                                       "$ce-HandicapCalculationProcessAggregate",
-                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/HandicapCalculator");
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/HandicapCalculator", cancellationToken).ConfigureAwait(false);
 
-            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+            await SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
                                                                       this.SubscriberServiceId,
                                                                       Guid.NewGuid(),
                                                                       "Player Events",
                                                                       "$ce-PlayerAggregate",
-                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting");
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting", cancellationToken).ConfigureAwait(false);
 
-            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+            await SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
                                                                       this.SubscriberServiceId,
                                                                       Guid.NewGuid(),
                                                                       "Tournament Events",
                                                                       "$ce-TournamentAggregate",
-                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Tournament");
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Tournament", cancellationToken).ConfigureAwait(false);
 
-            SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
+            await SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
                                                                       this.SubscriberServiceId,
                                                                       Guid.NewGuid(),
                                                                       "Tournament Events - Reporting",
                                                                       "$ce-TournamentAggregate",
-                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting");
+                                                                      $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/Reporting", cancellationToken).ConfigureAwait(false);
 
             connection.Close();
         }
@@ -266,20 +266,20 @@ namespace ManagementAPI.IntegrationTests.Common
             this.MessagingServiceAddress = $"ServiceAddresses:MessagingService=http://{this.MessagingServiceContainerName}:5002";
 
             this.SetupTestNetwork();
+            this.SetupManagementAPIContainer(testFolder);
             this.SetupSecurityServiceContainer(testFolder);
             this.SetupEventStoreContainer(testFolder);
             this.SetupSubscriptionServiceContainer(testFolder);
             this.SetupMessagingService(testFolder);
-            this.SetupManagementAPIContainer(testFolder);
-
+            
             // Cache the ports
             this.ManagementApiPort = this.ManagementAPIContainer.ToHostExposedEndpoint("5000/tcp").Port;
             this.EventStorePort = this.EventStoreContainer.ToHostExposedEndpoint("2113/tcp").Port;
             this.SecurityServicePort = this.SecurityServiceContainer.ToHostExposedEndpoint("5001/tcp").Port;
             this.MessagingServicePort = this.MessagingServiceContainer.ToHostExposedEndpoint("5002/tcp").Port;
 
-            this.SetupSubscriptionServiceConfig();
-            await this.SetupSecurityServiceConfig().ConfigureAwait(false);
+            await this.SetupSubscriptionServiceConfig(CancellationToken.None).ConfigureAwait(false);
+            await this.SetupSecurityServiceConfig(CancellationToken.None).ConfigureAwait(false);
 
             // Setup the base address resolver
             Func<String, String> baseAddressResolver = api => $"http://127.0.0.1:{this.ManagementApiPort}";
@@ -297,15 +297,15 @@ namespace ManagementAPI.IntegrationTests.Common
             this.HttpClient.BaseAddress = new Uri(baseAddressResolver(String.Empty));
         }
 
-        private async Task SetupSecurityServiceConfig()
+        private async Task SetupSecurityServiceConfig(CancellationToken cancellationToken)
         {
             String baseUri = $"http://127.0.0.1:{this.SecurityServicePort}";
             
-            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.Developer).ConfigureAwait(false);
-            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.TestDataGenerator).ConfigureAwait(false);
-            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.ClubAdministrator).ConfigureAwait(false);
-            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.MatchSecretary).ConfigureAwait(false);
-            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.Player).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.Developer, cancellationToken).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.TestDataGenerator, cancellationToken).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.ClubAdministrator, cancellationToken).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.MatchSecretary, cancellationToken).ConfigureAwait(false);
+            await SecurityServiceHelper.CreateSecurityRole(baseUri, RoleNames.Player, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task StopContainersForScenarioRun()

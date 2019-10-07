@@ -12,7 +12,7 @@ namespace ManagementAPI.IntegrationTests.Common
 
     public static class SecurityServiceHelper
     {
-        public static async Task CreateSecurityRole(String baseUri, String roleName)
+        public static async Task CreateSecurityRole(String baseUri, String roleName, CancellationToken cancellationToken)
         {
             var request = new { RoleName = roleName };
 
@@ -23,7 +23,7 @@ namespace ManagementAPI.IntegrationTests.Common
             {
                 String uri = $"{baseUri}/api/role";
 
-                HttpResponseMessage httpResponse = await client.PostAsync(uri, content, CancellationToken.None).ConfigureAwait(false);
+                HttpResponseMessage httpResponse = await client.PostAsync(uri, content, cancellationToken).ConfigureAwait(false);
 
                 if (httpResponse.IsSuccessStatusCode == false)
                 {
