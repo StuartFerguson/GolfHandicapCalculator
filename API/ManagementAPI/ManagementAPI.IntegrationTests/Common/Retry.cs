@@ -16,7 +16,7 @@
         /// <summary>
         /// The default retry interval
         /// </summary>
-        private static readonly TimeSpan DefaultRetryInterval = TimeSpan.FromMilliseconds(200);
+        private static readonly TimeSpan DefaultRetryInterval = TimeSpan.FromSeconds(5);
 
         #endregion
 
