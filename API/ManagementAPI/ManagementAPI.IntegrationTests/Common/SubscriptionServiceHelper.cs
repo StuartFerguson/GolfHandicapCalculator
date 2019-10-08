@@ -5,6 +5,7 @@ using System.Text;
 namespace ManagementAPI.IntegrationTests.Common
 {
     using System.Data.SqlClient;
+    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
     using Service.DataTransferObjects;

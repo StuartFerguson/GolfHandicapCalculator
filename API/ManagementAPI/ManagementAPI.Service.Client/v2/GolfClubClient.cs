@@ -274,14 +274,12 @@
         /// Gets the golf club list.
         /// </summary>
         /// <param name="accessToken">The access token.</param>
-        /// <param name="golfClubId">The golf club identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="includeMembers">if set to <c>true</c> [include members].</param>
         /// <param name="includeMeasuredCourses">if set to <c>true</c> [include measured courses].</param>
         /// <param name="includeUsers">if set to <c>true</c> [include users].</param>
         /// <returns></returns>
         public async Task<List<GetGolfClubResponse>> GetGolfClubList(String accessToken,
-                                                                     Guid golfClubId,
                                                                      CancellationToken cancellationToken,
                                                                      Boolean includeMembers = false,
                                                                      Boolean includeMeasuredCourses = false,

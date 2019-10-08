@@ -178,12 +178,11 @@ namespace ManagementAPI.IntegrationTests.GolfClub
                                 List<GetGolfClubResponse> getGolfClubResponses = await this
                                                                                        .TestingContext.DockerHelper.GolfClubClient
                                                                                        .GetGolfClubList(this.TestingContext.PlayerToken,
-                                                                                                        this.TestingContext.PlayerId,
                                                                                                         CancellationToken.None).ConfigureAwait(false);
 
                                 if (getGolfClubResponses.Count != numberOfGolfClubs)
                                 {
-                                    throw new Exception();
+                                    throw new Exception($"Expected count of clubs [{numberOfGolfClubs}] Actual Count [{getGolfClubResponses.Count}]");
                                 }
 
                                 this.TestingContext.GetGolfClubResponseList = getGolfClubResponses;
