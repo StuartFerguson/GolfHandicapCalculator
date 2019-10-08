@@ -191,7 +191,7 @@ namespace ManagementAPI.IntegrationTests.Common
                                                                       "Golf Club Events",
                                                                       "$ce-GolfClubAggregate",
                                                                       $"http://{this.ManagementAPIContainer.Name}:5000/api/DomainEvent/GolfClub", cancellationToken).ConfigureAwait(false);
-
+            
             await SubscriptionServiceHelper.CreateSubscriptionConfiguration(connection,
                                                                       this.SubscriberServiceId,
                                                                       Guid.NewGuid(),

@@ -86,7 +86,6 @@
         /// <param name="includeUsers">if set to <c>true</c> [include users].</param>
         /// <returns></returns>
         Task<List<GetGolfClubResponse>> GetGolfClubList(String accessToken,
-                                                        Guid golfClubId,
                                                         CancellationToken cancellationToken,
                                                         Boolean includeMembers = false,
                                                         Boolean includeMeasuredCourses = false,
