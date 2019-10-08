@@ -46,7 +46,7 @@ namespace ManagementAPI.IntegrationTests.Common
         [AfterScenario()]
         public async Task StopSystem()
         {
-            await this.TestingContext.DockerHelper.StopContainersForScenarioRun().ConfigureAwait(false);
+            //await this.TestingContext.DockerHelper.StopContainersForScenarioRun().ConfigureAwait(false);
         }
     }
 }
