@@ -268,5 +268,33 @@
             responseObject.GolfClubId.ShouldBe(TestData.GolfClubId);
             responseObject.TournamentDivision.ShouldBe(addTournamentDivisionToGolfClubRequest.Division);
         }
+
+        [Fact]
+        public async Task GolfClubController_POST_RequestClubMembership_MembershipIdReturned()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddPlayer().CreateClient();
+
+            CreateMatchSecretaryRequest createMatchSecretaryRequest = TestData.CreateMatchSecretaryRequest;
+            String uri = $"api/golfclubs/{TestData.GolfClubId}/players/{TestData.PlayerId}";
+
+            client.DefaultRequestHeaders.Add("api-version", "2.0");
+            StringContent content = new StringContent(String.Empty);
+
+            // 2. Act
+            HttpResponseMessage response = await client.PostAsync(uri, content, CancellationToken.None);
+
+            // 3. Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.Created);
+
+            String responseAsJson = await response.Content.ReadAsStringAsync();
+
+            responseAsJson.ShouldNotBeNullOrEmpty();
+
+            RequestClubMembershipResponse responseObject = JsonConvert.DeserializeObject<RequestClubMembershipResponse>(responseAsJson);
+            responseObject.GolfClubId.ShouldBe(TestData.GolfClubId);
+            responseObject.PlayerId.ShouldBe(TestData.PlayerId);
+            responseObject.MembershipId.ShouldBe(Guid.Empty);
+        }
     }
 }

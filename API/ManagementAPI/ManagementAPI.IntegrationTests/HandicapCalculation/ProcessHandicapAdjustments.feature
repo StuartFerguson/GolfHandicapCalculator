@@ -55,7 +55,8 @@ Background:
 	Then the scores recorded by the players are recorded against tournament number 1 for golf club 1 measured course 'Test Course'
 	When I request to complete the tournament number 1 for golf club 1 measured course 'Test Course' the tournament is completed
 	When I request to produce a tournament result for tournament number 1 for golf club 1 measured course 'Test Course' the results are produced
-	
+
+@ignore - awaiting tournament controller refactor	
 Scenario: Start Calculation Process with a Single Score
 	When I start the handicap calculation process for tournament number 1 for golf club 1 measured course 'Test Course'
 	And the process completes successfully for tournament number 1 for golf club 1 measured course 'Test Course'

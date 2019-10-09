@@ -402,20 +402,31 @@ namespace ManagementAPI.IntegrationTests.Tournament
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Produce Tournament Result")]
+        [Xunit.FactAttribute(DisplayName="Produce Tournament Result", Skip="Ignored")]
         [Xunit.TraitAttribute("FeatureTitle", "Produce Tournament Result")]
         [Xunit.TraitAttribute("Description", "Produce Tournament Result")]
         [Xunit.TraitAttribute("Category", "EndToEnd")]
+        [Xunit.TraitAttribute("Category", "-")]
+        [Xunit.TraitAttribute("Category", "awaiting")]
+        [Xunit.TraitAttribute("Category", "tournament")]
+        [Xunit.TraitAttribute("Category", "controller")]
+        [Xunit.TraitAttribute("Category", "refactor")]
         public virtual void ProduceTournamentResult()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Produce Tournament Result", null, new string[] {
-                        "EndToEnd"});
-#line 58
+                        "EndToEnd",
+                        "ignore",
+                        "-",
+                        "awaiting",
+                        "tournament",
+                        "controller",
+                        "refactor"});
+#line 59
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
-#line 59
+#line 60
  testRunner.When("I request to produce a tournament result for tournament number 1 for golf club 1 " +
                     "measured course \'Test Course\' the results are produced", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden

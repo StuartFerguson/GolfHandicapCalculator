@@ -18,6 +18,7 @@ namespace ManagementAPI.IntegrationTests.Reporting
     using Service.DataTransferObjects.Responses.v2;
     using Shouldly;
     using CreateGolfClubResponse = Service.DataTransferObjects.Responses.v2.CreateGolfClubResponse;
+    using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
 
     [Binding]
     [Scope(Tag = "reporting")]

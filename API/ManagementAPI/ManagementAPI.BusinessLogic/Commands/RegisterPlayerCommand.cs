@@ -17,19 +17,29 @@
         /// </value>
         public RegisterPlayerRequest RegisterPlayerRequest { get; private set; }
 
+        /// <summary>
+        /// Gets the player identifier.
+        /// </summary>
+        /// <value>
+        /// The player identifier.
+        /// </value>
+        public Guid PlayerId { get; private set; }
+
         #endregion
 
         #region Constructor
         /// <summary>
         /// Gets the add measured course to club request.
         /// </summary>
+        /// <param name="playerId">The player identifier.</param>
         /// <param name="registerPlayerRequest">The register player request.</param>
         /// <param name="commandId">The command identifier.</param>
         /// <value>
         /// The add measured course to club request.
         /// </value>
-        private RegisterPlayerCommand(RegisterPlayerRequest registerPlayerRequest, Guid commandId) : base(commandId)
+        private RegisterPlayerCommand(Guid playerId, RegisterPlayerRequest registerPlayerRequest, Guid commandId) : base(commandId)
         {
+            this.PlayerId = playerId;
             this.RegisterPlayerRequest = registerPlayerRequest;
         }
         #endregion
@@ -38,11 +48,12 @@
         /// <summary>
         /// Creates this instance.
         /// </summary>
+        /// <param name="playerId">The player identifier.</param>
         /// <param name="registerPlayerRequest">The register player request.</param>
         /// <returns></returns>
-        public static RegisterPlayerCommand Create(RegisterPlayerRequest registerPlayerRequest)
+        public static RegisterPlayerCommand Create(Guid playerId, RegisterPlayerRequest registerPlayerRequest)
         {
-            return new RegisterPlayerCommand(registerPlayerRequest, Guid.NewGuid());
+            return new RegisterPlayerCommand(playerId, registerPlayerRequest, Guid.NewGuid());
         }
         #endregion
     }

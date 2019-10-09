@@ -903,22 +903,33 @@ namespace ManagementAPI.IntegrationTests.Reporting
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Player Scores Report")]
+        [Xunit.FactAttribute(DisplayName="Player Scores Report", Skip="Ignored")]
         [Xunit.TraitAttribute("FeatureTitle", "PlayerReports")]
         [Xunit.TraitAttribute("Description", "Player Scores Report")]
+        [Xunit.TraitAttribute("Category", "-")]
+        [Xunit.TraitAttribute("Category", "awaiting")]
+        [Xunit.TraitAttribute("Category", "tournament")]
+        [Xunit.TraitAttribute("Category", "controller")]
+        [Xunit.TraitAttribute("Category", "refactor")]
         public virtual void PlayerScoresReport()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Player Scores Report", null, ((string[])(null)));
-#line 144
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Player Scores Report", null, new string[] {
+                        "ignore",
+                        "-",
+                        "awaiting",
+                        "tournament",
+                        "controller",
+                        "refactor"});
+#line 145
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 146
- testRunner.When("I request a number of scores report for player number 1 with the last 5 scores", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 147
- testRunner.Then("I am returned the number of scores report data successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.When("I request a number of scores report for player number 1 with the last 5 scores", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 148
+ testRunner.Then("I am returned the number of scores report data successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 149
  testRunner.And("the number of scores count for player number 1 is 5", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table50 = new TechTalk.SpecFlow.Table(new string[] {
@@ -945,7 +956,7 @@ this.FeatureBackground();
                         "Test Tournament 8",
                         "September",
                         "1"});
-#line 149
+#line 150
  testRunner.And("the following scores are returned for player 1", ((string)(null)), table50, "And ");
 #line hidden
             this.ScenarioCleanup();

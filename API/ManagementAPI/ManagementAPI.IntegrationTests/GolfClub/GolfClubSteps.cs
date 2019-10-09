@@ -20,6 +20,7 @@ namespace ManagementAPI.IntegrationTests.GolfClub
     using GolfClubUserResponse = Service.DataTransferObjects.Responses.v2.GolfClubUserResponse;
     using MeasuredCourseListResponse = Service.DataTransferObjects.Responses.v2.MeasuredCourseListResponse;
     using MembershipStatus = Service.DataTransferObjects.Responses.v2.MembershipStatus;
+    using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
 
     [Binding]
     [Scope(Tag = "golfclub")]

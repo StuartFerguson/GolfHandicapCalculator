@@ -352,13 +352,24 @@ namespace ManagementAPI.IntegrationTests.Tournament
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Record Player Score for Tournament")]
+        [Xunit.FactAttribute(DisplayName="Record Player Score for Tournament", Skip="Ignored")]
         [Xunit.TraitAttribute("FeatureTitle", "Record Player Score For Tournament")]
         [Xunit.TraitAttribute("Description", "Record Player Score for Tournament")]
+        [Xunit.TraitAttribute("Category", "-")]
+        [Xunit.TraitAttribute("Category", "awaiting")]
+        [Xunit.TraitAttribute("Category", "tournament")]
+        [Xunit.TraitAttribute("Category", "controller")]
+        [Xunit.TraitAttribute("Category", "refactor")]
         public virtual void RecordPlayerScoreForTournament()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Record Player Score for Tournament", null, ((string[])(null)));
-#line 52
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Record Player Score for Tournament", null, new string[] {
+                        "ignore",
+                        "-",
+                        "awaiting",
+                        "tournament",
+                        "controller",
+                        "refactor"});
+#line 53
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
@@ -404,10 +415,10 @@ this.FeatureBackground();
                         "4",
                         "4",
                         "4"});
-#line 53
+#line 54
  testRunner.When("a player records the following score for tournament number 1 for golf club 1 meas" +
                     "ured course \'Test Course\'", ((string)(null)), table98, "When ");
-#line 56
+#line 57
  testRunner.Then("the scores recorded by the players are recorded against tournament number 1 for g" +
                     "olf club 1 measured course \'Test Course\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

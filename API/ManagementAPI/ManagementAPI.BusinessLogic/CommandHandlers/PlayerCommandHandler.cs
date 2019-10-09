@@ -80,10 +80,8 @@
         /// <returns></returns>
         private async Task HandleCommand(RegisterPlayerCommand command, CancellationToken cancellationToken)
         {
-            Guid playerAggregateId = Guid.NewGuid();
-
             // Rehydrate the aggregate
-            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(playerAggregateId, cancellationToken);
+            PlayerAggregate player = await this.PlayerRepository.GetLatestVersion(command.PlayerId, cancellationToken);
 
             // Call the aggregate method
             player.Register(command.RegisterPlayerRequest.GivenName, 
@@ -100,7 +98,7 @@
                 EmailAddress = command.RegisterPlayerRequest.EmailAddress,
                 Claims = new Dictionary<String, String>
                 {
-                    {"PlayerId", playerAggregateId.ToString()}
+                    {"PlayerId", command.PlayerId.ToString()}
                 },
                 Password = "123456",
                 PhoneNumber = "123456789",
@@ -121,7 +119,7 @@
             await this.PlayerRepository.SaveChanges(player, cancellationToken);
 
             // Setup the response
-            command.Response = new RegisterPlayerResponse {PlayerId = playerAggregateId };
+            command.Response = new RegisterPlayerResponse {PlayerId = command.PlayerId };
         }
         #endregion
         

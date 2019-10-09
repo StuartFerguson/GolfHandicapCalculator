@@ -31,6 +31,21 @@
                                               });
         }
 
+        public static WebApplicationFactory<Startup> AddPlayer(this WebApplicationFactory<Startup> factory)
+        {
+            return factory.WithWebHostBuilder(builder =>
+                                              {
+                                                  builder.ConfigureServices(services =>
+                                                                            {
+                                                                                services.AddMvc(options =>
+                                                                                                {
+                                                                                                    options.Filters.Add(new AllowAnonymousFilter());
+                                                                                                    options.Filters.Add(new FakePlayerUserFilter());
+                                                                                                });
+                                                                            });
+                                              });
+        }
+
         #endregion
     }
 }

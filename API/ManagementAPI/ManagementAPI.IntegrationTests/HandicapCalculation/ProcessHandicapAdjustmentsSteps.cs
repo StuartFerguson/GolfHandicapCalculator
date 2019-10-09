@@ -12,7 +12,9 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
     using GolfClub;
     using Service.Client;
     using Service.DataTransferObjects.Responses;
+    using Service.DataTransferObjects.Responses.v2;
     using Shouldly;
+    using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
 
     [Binding]
     public class ProcessHandicapAdjustmentsSteps
@@ -66,7 +68,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
         {
             RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
 
-            GetPlayerDetailsResponse player = await this.TestingContext.DockerHelper.PlayerClient.GetPlayer(this.TestingContext.PlayerToken, 
+            GetPlayerResponse player = await this.TestingContext.DockerHelper.PlayerClient.GetPlayer(this.TestingContext.PlayerToken, 
                                                                                                             registerPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
 
             player.PlayingHandicap.ShouldBe(playingHandicap);
@@ -77,7 +79,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
         {
             RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
 
-            GetPlayerDetailsResponse player = await this.TestingContext.DockerHelper.PlayerClient.GetPlayer(this.TestingContext.PlayerToken,
+            GetPlayerResponse player = await this.TestingContext.DockerHelper.PlayerClient.GetPlayer(this.TestingContext.PlayerToken,
                                                                                                             registerPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
 
             player.ExactHandicap.ShouldBe(exactHandicap);

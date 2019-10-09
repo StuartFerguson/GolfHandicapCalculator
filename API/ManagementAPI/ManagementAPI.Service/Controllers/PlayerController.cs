@@ -115,14 +115,20 @@
         public async Task<IActionResult> PostPlayer([FromBody] RegisterPlayerRequest request,
                                                     CancellationToken cancellationToken)
         {
+            Guid playerId = Guid.NewGuid();
+
             // Create the command
-            RegisterPlayerCommand command = RegisterPlayerCommand.Create(request);
+            RegisterPlayerCommand command = RegisterPlayerCommand.Create(playerId, request);
 
             // Route the command
             await this.CommandRouter.Route(command, cancellationToken);
 
             // return the result
-            return this.Created(String.Empty, command.Response);
+            return this.Created(String.Empty,
+                                new RegisterPlayerResponse
+                                {
+                                    PlayerId = playerId
+                                });
         }
 
         /// <summary>

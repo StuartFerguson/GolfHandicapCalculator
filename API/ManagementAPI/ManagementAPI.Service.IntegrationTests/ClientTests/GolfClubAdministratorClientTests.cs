@@ -1,16 +1,13 @@
-﻿namespace ManagementAPI.Service.IntegrationTests.ClientAndControllerTests
+﻿namespace ManagementAPI.Service.IntegrationTests.ClientTests
 {
     using System;
-    using System.Net;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using Client.v2;
     using Common;
     using DataTransferObjects.Requests;
-    using DataTransferObjects.Responses;
     using DataTransferObjects.Responses.v2;
-    using Newtonsoft.Json.Linq;
     using Shouldly;
     using Xunit;
 

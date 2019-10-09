@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using BusinessLogic.Manager;
     using Common;
+    using Common.v2;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses.v2;
     using Microsoft.AspNetCore.Authorization;

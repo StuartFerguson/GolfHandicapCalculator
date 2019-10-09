@@ -180,7 +180,7 @@ namespace ManagementAPI.Service.Controllers.v2
             // Get the Golf Club Id claim from the user
             Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId);
 
-            if (golfClubIdClaim.Value != null)
+            if (String.IsNullOrEmpty(golfClubIdClaim.Value) == false)
             {
                 // A golf club user cannot be calling this method
                 return this.Forbid();
@@ -306,6 +306,39 @@ namespace ManagementAPI.Service.Controllers.v2
                                 {
                                     GolfClubId = golfClubId,
                                     TournamentDivision = request.Division
+                                });
+        }
+
+        [HttpPost]
+        [Route("{golfClubId}/players/{playerId}")]
+        [SwaggerResponse(201, type: typeof(RequestClubMembershipResponse))]
+        [SwaggerResponseExample(201, typeof(RequestClubMembershipResponseExample), jsonConverter: typeof(SwaggerJsonConverter))]
+        public async Task<IActionResult> RequestClubMembership([FromRoute] Guid golfClubId,
+                                                               [FromRoute] Guid playerId,
+                                                               CancellationToken cancellationToken)
+        {
+            // Get the Player Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
+
+            Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
+            if (validationResult == false)
+            {
+                return this.Forbid();
+            }
+
+            // Create the command
+            RequestClubMembershipCommand command = RequestClubMembershipCommand.Create(Guid.Parse(playerIdClaim.Value), golfClubId);
+
+            // Route the command
+            await this.CommandRouter.Route(command, cancellationToken);
+
+            // return the result
+            return this.Created($"api/players/{playerId}",
+                                new RequestClubMembershipResponse
+                                {
+                                    GolfClubId = golfClubId,
+                                    PlayerId = playerId,
+                                    MembershipId = Guid.Empty
                                 });
         }
 
