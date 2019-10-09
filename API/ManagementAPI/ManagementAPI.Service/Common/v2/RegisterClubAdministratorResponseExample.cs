@@ -1,4 +1,4 @@
-﻿namespace ManagementAPI.Service.Common
+﻿namespace ManagementAPI.Service.Common.v2
 {
     using System;
     using System.Diagnostics.CodeAnalysis;

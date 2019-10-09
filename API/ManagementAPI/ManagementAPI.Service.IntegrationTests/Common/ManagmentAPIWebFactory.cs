@@ -72,6 +72,9 @@ namespace ManagementAPI.Service.IntegrationTests.Common
                                    .ReturnsAsync(TestData.GetMeasuredCourseListResponse);
             managmentApiManagerMock.Setup(m => m.GetGolfClubUsers(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetGolfClubUserListResponse);
             managmentApiManagerMock.Setup(m => m.GetGolfClubList(It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetGolfClubListResponse);
+            managmentApiManagerMock.Setup(m => m.GetPlayerDetails(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetPlayerDetailsResponse);
+            managmentApiManagerMock.Setup(m => m.GetPlayerSignedUpTournaments(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.PlayerSignedUpTournamentsResponse);
+            managmentApiManagerMock.Setup(m => m.GetPlayersClubMemberships(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetPlayersClubMembershipsResponse);
 
             return managmentApiManagerMock;
         }
@@ -96,6 +99,22 @@ namespace ManagementAPI.Service.IntegrationTests.Common
                                                                                   new Claim(JwtClaimTypes.Subject, "194A2B1E-E10B-47D9-927F-A8A1CF3C9138"),
                                                                                   new Claim(ClaimTypes.Role, "Golf Club Administrator"),
                                                                                   new Claim(CustomClaims.GolfClubId, TestData.GolfClubId.ToString())
+                                                                              }));
+
+            await next();
+        }
+    }
+
+    public class FakePlayerUserFilter : IAsyncActionFilter
+    {
+        public async Task OnActionExecutionAsync(ActionExecutingContext context,
+                                                 ActionExecutionDelegate next)
+        {
+            context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+                                                                              {
+                                                                                  new Claim(JwtClaimTypes.Subject, "194A2B1E-E10B-47D9-927F-A8A1CF3C9138"),
+                                                                                  new Claim(ClaimTypes.Role, "Player"),
+                                                                                  new Claim(CustomClaims.PlayerId, TestData.PlayerId.ToString())
                                                                               }));
 
             await next();

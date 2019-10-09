@@ -225,7 +225,7 @@
 
         public static RegisterPlayerCommand GetRegisterPlayerCommand()
         {
-            return RegisterPlayerCommand.Create(PlayerTestData.RegisterPlayerRequest);
+            return RegisterPlayerCommand.Create(PlayerTestData.AggregateId, PlayerTestData.RegisterPlayerRequest);
         }
 
         public static RegisterUserResponse GetRegisterUserResponse()

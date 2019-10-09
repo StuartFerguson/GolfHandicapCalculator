@@ -15,6 +15,8 @@ namespace ManagementAPI.IntegrationTests
     using Service.DataTransferObjects.Requests;
     using Service.DataTransferObjects.Responses;
     using Shouldly;
+    using ClubMembershipResponse = Service.DataTransferObjects.Responses.v2.ClubMembershipResponse;
+    using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
 
     [Binding]
     [Scope(Tag = "player")]
@@ -65,13 +67,13 @@ namespace ManagementAPI.IntegrationTests
         {
             RegisterPlayerResponse registerPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(playerNumber);
 
-            this.TestingContext.GetPlayerDetailsResponse = await this.TestingContext.DockerHelper.PlayerClient.GetPlayer(this.TestingContext.PlayerToken, registerPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
+            this.TestingContext.GetPlayerResponse = await this.TestingContext.DockerHelper.PlayerClient.GetPlayer(this.TestingContext.PlayerToken, registerPlayerResponse.PlayerId, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Then(@"the player details will be returned")]
         public void ThenThePlayerDetailsWillBeReturned()
         {
-            this.TestingContext.GetPlayerDetailsResponse.ShouldNotBeNull();
+            this.TestingContext.GetPlayerResponse.ShouldNotBeNull();
         }
 
         [When(@"I request a list of my memberships as player (.*)")]

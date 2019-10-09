@@ -11,6 +11,8 @@
     using GetGolfClubResponse = Service.DataTransferObjects.Responses.v2.GetGolfClubResponse;
     using GolfClubUserResponse = Service.DataTransferObjects.Responses.v2.GolfClubUserResponse;
     using MeasuredCourseListResponse = Service.DataTransferObjects.Responses.v2.MeasuredCourseListResponse;
+    using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
+    using ClubMembershipResponse = Service.DataTransferObjects.Responses.v2.ClubMembershipResponse;
 
     public class TestingContext
     {
@@ -162,7 +164,7 @@
 
         public GetNumberOfMembersReportResponse GetNumberOfMembersReportResponse { get; set; }
 
-        public GetPlayerDetailsResponse GetPlayerDetailsResponse { get; set; }
+        public GetPlayerResponse GetPlayerResponse { get; set; }
 
         public List<ClubMembershipResponse> GetGolfClubMembershipResponseList { get; set; }
 

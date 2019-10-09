@@ -53,5 +53,6 @@ Background:
 	| 1            | 4     | 4     | 3     | 4     | 4     | 5     | 3     | 4     | 3     | 4      | 4      | 4      | 5      | 3      | 4      | 4      | 4      | 4      |
 	Then the scores recorded by the players are recorded against tournament number 1 for golf club 1 measured course 'Test Course'
 
+@ignore - awaiting tournament controller refactor
 Scenario: Complete Tournament
 When I request to complete the tournament number 1 for golf club 1 measured course 'Test Course' the tournament is completed

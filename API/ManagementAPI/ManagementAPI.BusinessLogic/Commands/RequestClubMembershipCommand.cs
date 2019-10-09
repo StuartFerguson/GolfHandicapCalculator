@@ -45,6 +45,7 @@
         /// </summary>
         /// <param name="playerId">The player identifier.</param>
         /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="membershipId">The membership identifier.</param>
         /// <returns></returns>
         public static RequestClubMembershipCommand Create(Guid playerId, Guid golfClubId)
         {

@@ -21,6 +21,7 @@ namespace ManagementAPI.IntegrationTests.Common
     using Service.Client.v2;
     using TechTalk.SpecFlow;
     using IGolfClubClient = Service.Client.v2.IGolfClubClient;
+    using IPlayerClient = Service.Client.v2.IPlayerClient;
     using TokenType = Gherkin.TokenType;
 
     public class DockerHelper
@@ -287,10 +288,11 @@ namespace ManagementAPI.IntegrationTests.Common
             HttpClient httpClient = new HttpClient();
             HttpClient golfClubAdministratorClientHttpClient = new HttpClient();
             HttpClient golfClubClientHttpClient = new HttpClient();
+            HttpClient playerClientHttpClient = new HttpClient();
 
             this.GolfClubAdministratorClient = new GolfClubAdministratorClient(baseAddressResolver, golfClubAdministratorClientHttpClient);
             this.GolfClubClient = new Service.Client.v2.GolfClubClient(baseAddressResolver, golfClubClientHttpClient);
-            this.PlayerClient = new PlayerClient(baseAddressResolver, httpClient);
+            this.PlayerClient = new Service.Client.v2.PlayerClient(baseAddressResolver, playerClientHttpClient);
             this.ReportingClient = new ReportingClient(baseAddressResolver, httpClient);
             this.TournamentClient = new TournamentClient(baseAddressResolver, httpClient);
             this.HttpClient = new HttpClient();
