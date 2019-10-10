@@ -15,8 +15,11 @@ namespace ManagementAPI.IntegrationTests.Tournament
     using Service.DataTransferObjects.Responses.v2;
     using Shouldly;
     using CreateGolfClubResponse = Service.DataTransferObjects.Responses.v2.CreateGolfClubResponse;
+    using CreateTournamentResponse = Service.DataTransferObjects.Responses.v2.CreateTournamentResponse;
     using MeasuredCourseListResponse = Service.DataTransferObjects.Responses.v2.MeasuredCourseListResponse;
+    using PlayerCategory = Service.DataTransferObjects.Responses.v2.PlayerCategory;
     using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
+    using TournamentFormat = Service.DataTransferObjects.Responses.v2.TournamentFormat;
 
     [Binding]
     [Scope(Tag = "tournament")]
@@ -88,7 +91,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
 
-            CreateTournamentResponse createTournamentResponse = await this.TestingContext.DockerHelper.TournamentClient
+            CreateTournamentResponse createTournamentResponse = await this.TestingContext.DockerHelper.GolfClubClient
                 .CreateTournament(this.TestingContext.GolfClubAdministratorToken, createGolfClubResponse.GolfClubId, createTournamentRequest, CancellationToken.None)
                 .ConfigureAwait(false);
 
@@ -103,8 +106,8 @@ namespace ManagementAPI.IntegrationTests.Tournament
         {
             CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
 
-            GetTournamentListResponse tournamentList = await this.TestingContext.DockerHelper.TournamentClient
-                .GetTournamentList(this.TestingContext.GolfClubAdministratorToken, createGolfClubResponse.GolfClubId, CancellationToken.None).ConfigureAwait(false);
+            List<TournamentResponse> tournamentList = await this.TestingContext.DockerHelper.GolfClubClient
+                .GetGolfClubTournamentList(this.TestingContext.GolfClubAdministratorToken, createGolfClubResponse.GolfClubId, CancellationToken.None).ConfigureAwait(false);
 
             this.TestingContext.GetTournamentListResponses.Add(golfClubNumber, tournamentList);
         }
@@ -114,16 +117,14 @@ namespace ManagementAPI.IntegrationTests.Tournament
         {
             CreateGolfClubResponse createGolfClubResponse = this.TestingContext.GetCreateGolfClubResponse(golfClubNumber);
 
-            GetTournamentListResponse getTournamentListResponse = this.TestingContext.GetTournamentListResponse(golfClubNumber);
-
             await Retry.For(async () =>
                             {
-                                GetTournamentListResponse tournamentList = await this.TestingContext.DockerHelper.TournamentClient
-                                                                                     .GetTournamentList(this.TestingContext.GolfClubAdministratorToken,
+                                List<TournamentResponse> tournamentList = await this.TestingContext.DockerHelper.GolfClubClient
+                                                                                     .GetGolfClubTournamentList(this.TestingContext.GolfClubAdministratorToken,
                                                                                                         createGolfClubResponse.GolfClubId,
                                                                                                         CancellationToken.None).ConfigureAwait(false);
 
-                                tournamentList.Tournaments.Count.ShouldBe(numberOfTournaments);
+                                tournamentList.Count.ShouldBe(numberOfTournaments);
 
                                 this.TestingContext.GetTournamentListResponses.Remove(golfClubNumber);
                                 this.TestingContext.GetTournamentListResponses.Add(golfClubNumber, tournamentList);
@@ -144,7 +145,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             Should.NotThrow(async () =>
                             {
-                                await this.TestingContext.DockerHelper.TournamentClient.CancelTournament(this.TestingContext.GolfClubAdministratorToken,
+                                await this.TestingContext.DockerHelper.GolfClubClient.CancelTournament(this.TestingContext.GolfClubAdministratorToken,
                                                                                                           createGolfClubResponse.GolfClubId,
                                                                                                           createTournamentResponse.TournamentId,
                                                                                                           cancelTournamentRequest,
@@ -159,12 +160,11 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             CreateTournamentResponse getCreateTournamentResponse = this.TestingContext.GetCreateTournamentResponse(golfClubNumber, measuredCourseName, tournamentNumber);
 
-            //await this.TestingContext.DockerHelper.PlayerClient
-            //    .SignUpPlayerForTournament(this.TestingContext.PlayerToken,
-            //                               getRegisterPlayerResponse.PlayerId,
-            //                               getCreateTournamentResponse.TournamentId,
-            //                               CancellationToken.None).ConfigureAwait(false);
-            ScenarioContext.Current.Pending();
+            await this.TestingContext.DockerHelper.PlayerClient
+                .SignInForTournament(this.TestingContext.PlayerToken,
+                                           getRegisterPlayerResponse.PlayerId,
+                                           getCreateTournamentResponse.TournamentId,
+                                           CancellationToken.None).ConfigureAwait(false);
         }
 
         [Then(@"player number (.*) is recorded as signed up for tournament number (.*) for golf club (.*) measured course '(.*)'")]
@@ -225,16 +225,15 @@ namespace ManagementAPI.IntegrationTests.Tournament
             {
                 RegisterPlayerResponse getRegisterPlayerResponse = this.TestingContext.GetRegisterPlayerResponse(keyValuePair.Key.Item4);
 
-                //Should.NotThrow(async () =>
-                //                {
-                //                    await this.TestingContext.DockerHelper.PlayerClient
-                //                        .RecordPlayerScore(this.TestingContext.PlayerToken,
-                //                                           getRegisterPlayerResponse.PlayerId,
-                //                                           getCreateTournamentResponse.TournamentId,
-                //                                           keyValuePair.Value,
-                //                                           CancellationToken.None).ConfigureAwait(false);
-                //                });
-                ScenarioContext.Current.Pending();
+                Should.NotThrow(async () =>
+                                {
+                                    await this.TestingContext.DockerHelper.PlayerClient
+                                        .RecordPlayerScore(this.TestingContext.PlayerToken,
+                                                           getRegisterPlayerResponse.PlayerId,
+                                                           getCreateTournamentResponse.TournamentId,
+                                                           keyValuePair.Value,
+                                                           CancellationToken.None).ConfigureAwait(false);
+                                });
             }
             
         }
@@ -248,7 +247,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             Should.NotThrow(async () =>
                             {
-                                await this.TestingContext.DockerHelper.TournamentClient.CompleteTournament(this.TestingContext.GolfClubAdministratorToken,
+                                await this.TestingContext.DockerHelper.GolfClubClient.CompleteTournament(this.TestingContext.GolfClubAdministratorToken,
                                                                                                          createGolfClubResponse.GolfClubId,
                                                                                                          createTournamentResponse.TournamentId,
                                                                                                          CancellationToken.None).ConfigureAwait(false);
@@ -264,7 +263,7 @@ namespace ManagementAPI.IntegrationTests.Tournament
 
             Should.NotThrow(async () =>
                             {
-                                await this.TestingContext.DockerHelper.TournamentClient
+                                await this.TestingContext.DockerHelper.GolfClubClient
                                       .ProduceTournamentResult(this.TestingContext.GolfClubAdministratorToken, createGolfClubResponse.GolfClubId, createTournamentResponse.TournamentId, CancellationToken.None)
                                       .ConfigureAwait(false);
                             });

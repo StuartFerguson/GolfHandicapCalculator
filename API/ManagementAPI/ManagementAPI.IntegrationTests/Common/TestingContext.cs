@@ -13,6 +13,7 @@
     using MeasuredCourseListResponse = Service.DataTransferObjects.Responses.v2.MeasuredCourseListResponse;
     using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
     using ClubMembershipResponse = Service.DataTransferObjects.Responses.v2.ClubMembershipResponse;
+    using CreateTournamentResponse = Service.DataTransferObjects.Responses.v2.CreateTournamentResponse;
 
     public class TestingContext
     {
@@ -36,11 +37,11 @@
             this.AddMeasuredCourseToClubRequests = new Dictionary<KeyValuePair<String, String>, AddMeasuredCourseToClubRequest>();
             this.CreateTournamentRequests =new Dictionary<Tuple<String, String, String>, CreateTournamentRequest>();
             this.CreateTournamentResponses = new Dictionary<Tuple<String, String, String>, CreateTournamentResponse>();
-            this.GetTournamentListResponses = new Dictionary<String, GetTournamentListResponse>();
+            this.GetTournamentListResponses = new Dictionary<String, List<TournamentResponse>>();
             this.RecordPlayerTournamentScoreRequests = new Dictionary<Tuple<String, String, String, String>, RecordPlayerTournamentScoreRequest>();
         }
 
-        public GetTournamentListResponse GetTournamentListResponse(String golfClubNumber)
+        public List<TournamentResponse> GetTournamentListResponse(String golfClubNumber)
         {
             return this.GetTournamentListResponses[golfClubNumber];
         }
@@ -168,6 +169,6 @@
 
         public List<ClubMembershipResponse> GetGolfClubMembershipResponseList { get; set; }
 
-        public Dictionary<String, GetTournamentListResponse> GetTournamentListResponses { get; set; }
+        public Dictionary<String, List<TournamentResponse>> GetTournamentListResponses { get; set; }
     }
 }

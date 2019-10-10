@@ -22,6 +22,7 @@ namespace ManagementAPI.Service.Controllers.v2
     using ClubMembershipResponse = DataTransferObjects.Responses.ClubMembershipResponse;
     using RegisterPlayerResponse = DataTransferObjects.Responses.v2.RegisterPlayerResponse;
     using RegisterPlayerResponseExample = Common.v2.RegisterPlayerResponseExample;
+    using TournamentFormat = DataTransferObjects.Responses.v2.TournamentFormat;
 
     [Route(PlayerController.ControllerRoute)]
     [Authorize]
@@ -133,6 +134,59 @@ namespace ManagementAPI.Service.Controllers.v2
             return this.Ok(playerResponse);
         }
 
+        [HttpPut]
+        [SwaggerResponse(200)]
+        [Route("{playerId}/tournaments/{tournamentId}")]
+        public async Task<IActionResult> SignInForTournament([FromRoute] Guid playerId,
+                                                             [FromRoute] Guid tournamentId,
+                                                             CancellationToken cancellationToken)
+        {
+            // Get the Player Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
+
+            Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
+            if (validationResult == false)
+            {
+                return this.Forbid();
+            }
+
+            // Create the command
+            SignUpForTournamentCommand command = SignUpForTournamentCommand.Create(tournamentId, Guid.Parse(playerIdClaim.Value));
+
+            // Route the command
+            await this.CommandRouter.Route(command, cancellationToken);
+
+            // return the result
+            return this.Ok();
+        }
+
+        [HttpPut]
+        [SwaggerResponse(200)]
+        [Route("{playerId}/tournaments/{tournamentId}/scores")]
+        public async Task<IActionResult> RecordPlayerScore([FromRoute] Guid playerId,
+                                                           [FromRoute] Guid tournamentId,
+                                                           [FromBody] RecordPlayerTournamentScoreRequest request,
+                                                           CancellationToken cancellationToken)
+        {
+            // Get the Player Id claim from the user            
+            Claim playerIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.PlayerId, playerId.ToString());
+
+            Boolean validationResult = ClaimsHelper.ValidateRouteParameter(playerId, playerIdClaim);
+            if (validationResult == false)
+            {
+                return this.Forbid();
+            }
+
+            // Create the command
+            RecordPlayerTournamentScoreCommand command = RecordPlayerTournamentScoreCommand.Create(Guid.Parse(playerIdClaim.Value), tournamentId, request);
+
+            // Route the command
+            await this.CommandRouter.Route(command, cancellationToken);
+
+            // return the result
+            return this.Ok();
+        }
+
         /// <summary>
         /// Converts the get player details response.
         /// </summary>
@@ -188,7 +242,7 @@ namespace ManagementAPI.Service.Controllers.v2
                                                    {
                                                        GolfClubId = playerSignedUpTournament.GolfClubId,
                                                        MeasuredCourseId = playerSignedUpTournament.MeasuredCourseId,
-                                                       TournamentFormat = playerSignedUpTournament.TournamentFormat,
+                                                       TournamentFormat = (TournamentFormat)playerSignedUpTournament.TournamentFormat,
                                                        PlayerId = playerSignedUpTournament.PlayerId,
                                                        TournamentDate = playerSignedUpTournament.TournamentDate,
                                                        MeasuredCourseName = playerSignedUpTournament.MeasuredCourseName,

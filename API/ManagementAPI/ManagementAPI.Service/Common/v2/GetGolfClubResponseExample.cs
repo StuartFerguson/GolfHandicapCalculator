@@ -3,8 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using DataTransferObjects.Responses;
     using DataTransferObjects.Responses.v2;
     using Swashbuckle.AspNetCore.Filters;
+    using GetGolfClubResponse = DataTransferObjects.Responses.v2.GetGolfClubResponse;
+    using GolfClubUserResponse = DataTransferObjects.Responses.v2.GolfClubUserResponse;
+    using MeasuredCourseListResponse = DataTransferObjects.Responses.v2.MeasuredCourseListResponse;
+    using MembershipStatus = DataTransferObjects.Responses.v2.MembershipStatus;
+    using PlayerCategory = DataTransferObjects.Responses.v2.PlayerCategory;
+    using TournamentFormat = DataTransferObjects.Responses.TournamentFormat;
 
     [ExcludeFromCodeCoverage]
     public class GetGolfClubResponseExample : IExamplesProvider<GetGolfClubResponse>
@@ -62,7 +69,25 @@
                                                                        PlayerFullName = "Test Player"
 
                                                                    }
-                                                               }
+                                                               },
+                       Tournaments = new List<TournamentResponse>
+                                     {
+                                         new TournamentResponse
+                                         {
+                                             HasResultBeenProduced = false,
+                                             MeasuredCourseId = Guid.Parse("ED6AFEA6-CE03-46D4-9304-9CE3064606EB"),
+                                             MeasuredCourseSSS = 70,
+                                             TournamentFormat = (DataTransferObjects.Responses.v2.TournamentFormat)TournamentFormat.StrokePlay,
+                                             TournamentDate = new DateTime(2019, 7, 25),
+                                             PlayersSignedUpCount = 5,
+                                             TournamentId = Guid.Parse("030FAA48-AB63-4486-9A47-2C5B5E723A6A"),
+                                             PlayerCategory = PlayerCategory.Gents,
+                                             PlayersScoresRecordedCount = 4,
+                                             MeasuredCourseName = "Test Course",
+                                             MeasuredCourseTeeColour = "White",
+                                             TournamentName = "Test Tournament"
+                                         }
+                                     }
                    };
         }
 

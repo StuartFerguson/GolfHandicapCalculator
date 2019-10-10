@@ -255,6 +255,86 @@
             return response;
         }
 
+        /// <summary>
+        /// Signs up player for tournament.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public async Task SignInForTournament(String accessToken,
+                                                    Guid playerId,
+                                                    Guid tournamentId,
+                                                    CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/players/{playerId}/tournaments/{tournamentId}";
+
+            try
+            {
+                StringContent httpContent = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful, no response data to deserialise
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error signing player up for tournament {tournamentId}.", ex);
+
+                throw exception;
+            }
+        }
+
+        /// <summary>
+        /// Records the player score.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public async Task RecordPlayerScore(String accessToken,
+                                            Guid playerId,
+                                            Guid tournamentId,
+                                            RecordPlayerTournamentScoreRequest request,
+                                            CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/players/{playerId}/tournaments/{tournamentId}/scores";
+
+            try
+            {
+                String requestSerialised = JsonConvert.SerializeObject(request);
+
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.PutAsync(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful, no response data to deserialise
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error recording tournament {tournamentId} score for player.", ex);
+
+                throw exception;
+            }
+        }
+
         #endregion
     }
 }

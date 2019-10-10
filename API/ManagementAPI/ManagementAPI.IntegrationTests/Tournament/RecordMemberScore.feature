@@ -49,7 +49,6 @@ Background:
 	When player number 1 signs up to play in tournament number 1 for golf club 1 measured course 'Test Course'
 	Then player number 1 is recorded as signed up for tournament number 1 for golf club 1 measured course 'Test Course'
 
-@ignore - awaiting tournament controller refactor
 Scenario: Record Player Score for Tournament
 	When a player records the following score for tournament number 1 for golf club 1 measured course 'Test Course'
 	| PlayerNumber | Hole1 | Hole2 | Hole3 | Hole4 | Hole5 | Hole6 | Hole7 | Hole8 | Hole9 | Hole10 | Hole11 | Hole12 | Hole13 | Hole14 | Hole15 | Hole16 | Hole17 | Hole18 |

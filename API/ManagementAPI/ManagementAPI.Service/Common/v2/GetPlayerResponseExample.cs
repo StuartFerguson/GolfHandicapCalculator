@@ -10,6 +10,7 @@ namespace ManagementAPI.Service.Common.v2
     using Swashbuckle.AspNetCore.Filters;
     using ClubMembershipResponse = DataTransferObjects.Responses.v2.ClubMembershipResponse;
     using MembershipStatus = DataTransferObjects.Responses.v2.MembershipStatus;
+    using TournamentFormat = DataTransferObjects.Responses.v2.TournamentFormat;
 
     public class GetPlayerResponseExample : IExamplesProvider<GetPlayerResponse>
     {

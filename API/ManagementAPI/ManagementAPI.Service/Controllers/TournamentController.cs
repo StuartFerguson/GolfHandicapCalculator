@@ -68,6 +68,8 @@
         public async Task<IActionResult> CreateTournament([FromRoute] Guid golfClubId, [FromBody] CreateTournamentRequest request,
                                                         CancellationToken cancellationToken)
         {
+            Guid tournamentId = Guid.NewGuid();
+
             // Get the Golf Club Id claim from the user            
             Claim golfClubIdClaim = ClaimsHelper.GetUserClaim(this.User, CustomClaims.GolfClubId, golfClubId.ToString());
 
@@ -78,7 +80,7 @@
             }
 
             // Create the command
-            CreateTournamentCommand command = CreateTournamentCommand.Create(Guid.Parse(golfClubIdClaim.Value), request);
+            CreateTournamentCommand command = CreateTournamentCommand.Create(tournamentId, Guid.Parse(golfClubIdClaim.Value), request);
 
             // Route the command
             await this.CommandRouter.Route(command, cancellationToken);
