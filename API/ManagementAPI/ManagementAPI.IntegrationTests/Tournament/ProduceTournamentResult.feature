@@ -55,6 +55,5 @@ Background:
 	When I request to complete the tournament number 1 for golf club 1 measured course 'Test Course' the tournament is completed
 
 @EndToEnd
-@ignore - awaiting tournament controller refactor
 Scenario: Produce Tournament Result
 	When I request to produce a tournament result for tournament number 1 for golf club 1 measured course 'Test Course' the results are produced

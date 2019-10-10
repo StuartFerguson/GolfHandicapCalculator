@@ -44,7 +44,6 @@ Background:
 	Given I am logged in as player number 1
 	When I request membership of club number 1 for player number 1 the request is successful
 
-@ignore - awaiting tournament controller refactor
 Scenario: Sign Up For Tournament
 	When player number 1 signs up to play in tournament number 1 for golf club 1 measured course 'Test Course'
 	Then player number 1 is recorded as signed up for tournament number 1 for golf club 1 measured course 'Test Course'

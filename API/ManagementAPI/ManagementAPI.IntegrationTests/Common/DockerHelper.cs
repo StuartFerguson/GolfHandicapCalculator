@@ -61,8 +61,6 @@ namespace ManagementAPI.IntegrationTests.Common
 
         public IGolfClubClient GolfClubClient;
 
-        public ITournamentClient TournamentClient;
-
         public IReportingClient ReportingClient;
 
         public HttpClient HttpClient;
@@ -294,7 +292,6 @@ namespace ManagementAPI.IntegrationTests.Common
             this.GolfClubClient = new Service.Client.v2.GolfClubClient(baseAddressResolver, golfClubClientHttpClient);
             this.PlayerClient = new Service.Client.v2.PlayerClient(baseAddressResolver, playerClientHttpClient);
             this.ReportingClient = new ReportingClient(baseAddressResolver, httpClient);
-            this.TournamentClient = new TournamentClient(baseAddressResolver, httpClient);
             this.HttpClient = new HttpClient();
             this.HttpClient.BaseAddress = new Uri(baseAddressResolver(String.Empty));
         }

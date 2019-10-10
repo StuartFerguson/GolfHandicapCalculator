@@ -69,6 +69,34 @@
                                                                   Guid golfClubId,
                                                                   CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Signs up player for tournament.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task SignInForTournament(String accessToken,
+                                       Guid playerId,
+                                       Guid tournamentId,
+                                       CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Records the player score.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="playerId">The player identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task RecordPlayerScore(String accessToken,
+                               Guid playerId,
+                               Guid tournamentId,
+                               RecordPlayerTournamentScoreRequest request,
+                               CancellationToken cancellationToken);
+
         #endregion
     }
 }

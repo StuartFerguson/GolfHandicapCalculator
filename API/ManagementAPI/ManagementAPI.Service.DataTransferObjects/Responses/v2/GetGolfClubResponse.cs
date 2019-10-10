@@ -108,5 +108,13 @@
         /// The measured courses.
         /// </value>
         public List<MeasuredCourseListResponse> MeasuredCourses { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tournaments.
+        /// </summary>
+        /// <value>
+        /// The tournaments.
+        /// </value>
+        public List<TournamentResponse> Tournaments { get; set; }
     }
 }

@@ -122,5 +122,41 @@
             responseObject.SignedUpTournaments.ShouldNotBeNull();
             responseObject.SignedUpTournaments.ShouldNotBeEmpty();
         }
+
+        [Fact]
+        public async Task PlayerController_PUT_SignInForTournament_Successful()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.CreateClient();
+
+            String uri = $"api/players/{TestData.PlayerId}/tournaments/{TestData.TournamentId}";
+
+            StringContent content = new StringContent(String.Empty);
+
+            client.DefaultRequestHeaders.Add("api-version", "2.0");
+            // 2. Act
+            HttpResponseMessage response = await client.PutAsync(uri, content, CancellationToken.None);
+
+            // 3. Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task PlayerController_PUT_RecordPlayerScore_Successful()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.CreateClient();
+            RecordPlayerTournamentScoreRequest registerPlayerTournamentScoreRequest = TestData.RecordPlayerTournamentScoreRequest;
+            String uri = $"api/players/{TestData.PlayerId}/tournaments/{TestData.TournamentId}/scores";
+
+            StringContent content = Helpers.CreateStringContent(registerPlayerTournamentScoreRequest);
+
+            client.DefaultRequestHeaders.Add("api-version", "2.0");
+            // 2. Act
+            HttpResponseMessage response = await client.PutAsync(uri, content, CancellationToken.None);
+
+            // 3. Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
     }
 }

@@ -399,29 +399,18 @@ namespace ManagementAPI.IntegrationTests.Tournament
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Complete Tournament", Skip="Ignored")]
+        [Xunit.FactAttribute(DisplayName="Complete Tournament")]
         [Xunit.TraitAttribute("FeatureTitle", "Complete Tournament")]
         [Xunit.TraitAttribute("Description", "Complete Tournament")]
-        [Xunit.TraitAttribute("Category", "-")]
-        [Xunit.TraitAttribute("Category", "awaiting")]
-        [Xunit.TraitAttribute("Category", "tournament")]
-        [Xunit.TraitAttribute("Category", "controller")]
-        [Xunit.TraitAttribute("Category", "refactor")]
         public virtual void CompleteTournament()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Complete Tournament", null, new string[] {
-                        "ignore",
-                        "-",
-                        "awaiting",
-                        "tournament",
-                        "controller",
-                        "refactor"});
-#line 57
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Complete Tournament", null, ((string[])(null)));
+#line 56
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 7
 this.FeatureBackground();
-#line 58
+#line 57
 testRunner.When("I request to complete the tournament number 1 for golf club 1 measured course \'Te" +
                     "st Course\' the tournament is completed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden

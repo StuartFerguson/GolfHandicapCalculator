@@ -376,6 +376,86 @@
                                                                         ExactHandicap = TestData.PlayerExactHandicap
                                                                     };
 
+        public static PlayerCategory PlayerCategoryGents = PlayerCategory.Gents;
+
+        public static Boolean TournamentHasResultBeenProduced = false;
+
+        public static Boolean TournamentHasBeenCompleted = true;
+        public static Int32 TournamentPlayersScoresRecordedCount=50;
+        public static Int32 TournamentPlayersSignedUpCount = 50;
+
+        public static Boolean TournamentHasBeenCancelled = false;
+
+        public static GetTournamentListResponse GetTournamentListResponse = new GetTournamentListResponse
+                                                                            {
+                                                                                Tournaments = new List<GetTournamentResponse>
+                                                                                              {
+                                                                                                  new GetTournamentResponse
+                                                                                                  {
+                                                                                                      TournamentFormat = TestData.TournamentFormatStrokeplay,
+                                                                                                      MeasuredCourseId = TestData.MeasuredCourseId,
+                                                                                                      TournamentDate = TestData.TournamentDate,
+                                                                                                      MeasuredCourseName = TestData.MeasuredCourseName,
+                                                                                                      TournamentId = TestData.TournamentId,
+                                                                                                      MeasuredCourseTeeColour = TestData.TeeColour,
+                                                                                                      TournamentName = TestData.TournamentName,
+                                                                                                      PlayerCategory = TestData.PlayerCategoryGents,
+                                                                                                      HasResultBeenProduced = TestData.TournamentHasResultBeenProduced,
+                                                                                                      HasBeenCompleted = TestData.TournamentHasBeenCompleted,
+                                                                                                      PlayersScoresRecordedCount =
+                                                                                                          TestData.TournamentPlayersScoresRecordedCount,
+                                                                                                      PlayersSignedUpCount = TestData.TournamentPlayersSignedUpCount,
+                                                                                                      HasBeenCancelled = TestData.TournamentHasBeenCancelled,
+                                                                                                      MeasuredCourseSSS = TestData.StandardScratchScore
+                                                                                                  }
+                                                                                              }
+                                                                            };
+
+        public static TournamentPatchRequest TournamentPatchRequestCompleteTournament = new TournamentPatchRequest
+                                                                                        {
+                                                                                            Status = TournamentStatusUpdate.Complete
+                                                                                        };
+
+        public static String TournamentCancellationReason = "Cancelled";
+
+        public static TournamentPatchRequest TournamentPatchRequestCancelTournament = new TournamentPatchRequest
+                                                                                        {
+                                                                                            Status = TournamentStatusUpdate.Cancel,
+                                                                                            CancellationReason = TestData.TournamentCancellationReason
+        };
+
+        public static TournamentPatchRequest TournamentPatchRequestProduceTournamentResult = new TournamentPatchRequest
+                                                                                        {
+                                                                                            Status = TournamentStatusUpdate.ProduceResult
+                                                                                        };
+
+        public static Int32 TournamentMemberCategory = 1;
+
+        public static CreateTournamentRequest CreateTournamentRequest = new CreateTournamentRequest
+                                                                        {
+                                                                            Format = (Int32)TestData.TournamentFormatStrokeplay,
+                                                                            MeasuredCourseId = TestData.MeasuredCourseId,
+                                                                            TournamentDate = TestData.TournamentDate,
+                                                                            Name = TestData.TournamentName,
+                                                                            MemberCategory = TournamentMemberCategory
+                                                                        };
+
+        public static CancelTournamentRequest CancelTournamentRequest = new CancelTournamentRequest
+                                                                        {
+                                                                            CancellationReason = TestData.TournamentCancellationReason
+                                                                        };
+
+        public static Dictionary<Int32, Int32> HoleScores = new Dictionary<Int32, Int32>()
+                                                            {
+                                                                {1, 4}, {2, 4}, {3, 3}, {4, 4}, {5, 4}, {6, 5}, {7, 3}, {8, 4}, {9, 3},
+                                                                {10, 4}, {11, 4}, {12, 4}, {13, 5}, {14, 3}, {15, 4}, {16, 4}, {17, 4}, {18, 4}
+                                                            };
+
+        public static RecordPlayerTournamentScoreRequest RecordPlayerTournamentScoreRequest = new RecordPlayerTournamentScoreRequest
+                                                                                              {
+                                                                                                  HoleScores = TestData.HoleScores
+                                                                                              };
+
         #endregion
 
         #region Methods

@@ -15,6 +15,7 @@
     /// <summary>
     /// 
     /// </summary>
+    /// <seealso cref="ClientProxyBase.ClientProxyBase" />
     /// <seealso cref="ClientProxyBase" />
     /// <seealso cref="ManagementAPI.Service.Client.v2.IGolfClubClient" />
     public class GolfClubClient : ClientProxyBase, IGolfClubClient
@@ -141,6 +142,101 @@
         }
 
         /// <summary>
+        /// Cancels the tournament.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public async Task CancelTournament(String accessToken,
+                                           Guid golfClubId,
+                                           Guid tournamentId,
+                                           CancelTournamentRequest request,
+                                           CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/golfclubs/{golfClubId}/tournaments/{tournamentId}";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Create the patch request
+                TournamentPatchRequest tournamentPatchRequest = new TournamentPatchRequest
+                                                                {
+                                                                    CancellationReason = request.CancellationReason,
+                                                                    Status = TournamentStatusUpdate.Cancel
+                                                                };
+
+                String requestSerialised = JsonConvert.SerializeObject(tournamentPatchRequest);
+
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.Patch(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful there is no response object
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error cancelling tournament {tournamentId}.", ex);
+
+                throw exception;
+            }
+        }
+
+        /// <summary>
+        /// Completes the tournament.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public async Task CompleteTournament(String accessToken,
+                                             Guid golfClubId,
+                                             Guid tournamentId,
+                                             CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/golfclubs/{golfClubId}/tournaments/{tournamentId}";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Create the patch request
+                TournamentPatchRequest tournamentPatchRequest = new TournamentPatchRequest
+                                                                {
+                                                                    Status = TournamentStatusUpdate.Complete
+                                                                };
+
+                String requestSerialised = JsonConvert.SerializeObject(tournamentPatchRequest);
+
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.Patch(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful there is no response object
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error completing tournament {tournamentId}.", ex);
+
+                throw exception;
+            }
+        }
+
+        /// <summary>
         /// Creates the golf club.
         /// </summary>
         /// <param name="accessToken">The access token.</param>
@@ -222,6 +318,52 @@
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception("Error creating the new match secretary.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Creates the tournament.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<CreateTournamentResponse> CreateTournament(String accessToken,
+                                                                     Guid golfClubId,
+                                                                     CreateTournamentRequest request,
+                                                                     CancellationToken cancellationToken)
+        {
+            CreateTournamentResponse response = null;
+
+            String requestUri = $"{this.BaseAddress}/api/golfclubs/{golfClubId}/tournaments";
+
+            try
+            {
+                String requestSerialised = JsonConvert.SerializeObject(request);
+
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.PostAsync(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<CreateTournamentResponse>(content);
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error creating the new tournament {request.Name}.", ex);
 
                 throw exception;
             }
@@ -357,6 +499,48 @@
         }
 
         /// <summary>
+        /// Gets the golf club membership list.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<List<TournamentResponse>> GetGolfClubTournamentList(String accessToken,
+                                                                              Guid golfClubId,
+                                                                              CancellationToken cancellationToken)
+        {
+            List<TournamentResponse> response = null;
+
+            String requestUri = $"{this.BaseAddress}/api/golfclubs/{golfClubId}?includeTournaments=true";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                GetGolfClubResponse getGolfClubResponse = JsonConvert.DeserializeObject<GetGolfClubResponse>(content);
+
+                response = getGolfClubResponse.Tournaments;
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception("Error getting a golf club tournaments list.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Gets the golf club user list.
         /// </summary>
         /// <param name="accessToken">The access token.</param>
@@ -438,6 +622,73 @@
             }
 
             return response;
+        }
+
+        /// <summary>
+        /// Produces the tournament result.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="golfClubId">The golf club identifier.</param>
+        /// <param name="tournamentId">The tournament identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public async Task ProduceTournamentResult(String accessToken,
+                                                  Guid golfClubId,
+                                                  Guid tournamentId,
+                                                  CancellationToken cancellationToken)
+        {
+            String requestUri = $"{this.BaseAddress}/api/golfclubs/{golfClubId}/tournaments/{tournamentId}";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Create the patch request
+                TournamentPatchRequest tournamentPatchRequest = new TournamentPatchRequest
+                                                                {
+                                                                    Status = TournamentStatusUpdate.ProduceResult
+                                                                };
+
+                String requestSerialised = JsonConvert.SerializeObject(tournamentPatchRequest);
+
+                StringContent httpContent = new StringContent(requestSerialised, Encoding.UTF8, "application/json");
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.Patch(requestUri, httpContent, cancellationToken);
+
+                // Process the response
+                await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful there is no response object
+            }
+            catch(Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error producing result for tournament {tournamentId}.", ex);
+
+                throw exception;
+            }
+        }
+
+        /// <summary>
+        /// Patches the specified URI.
+        /// </summary>
+        /// <param name="uri">The URI.</param>
+        /// <param name="content">The content.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task<HttpResponseMessage> Patch(String uri,
+                                                      HttpContent content,
+                                                      CancellationToken cancellationToken)
+        {
+            HttpMethod patchMethod = new HttpMethod("PATCH");
+
+            HttpRequestMessage requestMessage = new HttpRequestMessage(patchMethod, uri);
+            requestMessage.Content = content;
+
+            HttpResponseMessage responseMessage = await this.HttpClient.SendAsync(requestMessage, cancellationToken);
+
+            return responseMessage;
         }
 
         #endregion

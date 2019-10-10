@@ -345,32 +345,21 @@ namespace ManagementAPI.IntegrationTests.Tournament
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Sign Up For Tournament", Skip="Ignored")]
+        [Xunit.FactAttribute(DisplayName="Sign Up For Tournament")]
         [Xunit.TraitAttribute("FeatureTitle", "Sign Up For Tournament")]
         [Xunit.TraitAttribute("Description", "Sign Up For Tournament")]
-        [Xunit.TraitAttribute("Category", "-")]
-        [Xunit.TraitAttribute("Category", "awaiting")]
-        [Xunit.TraitAttribute("Category", "tournament")]
-        [Xunit.TraitAttribute("Category", "controller")]
-        [Xunit.TraitAttribute("Category", "refactor")]
         public virtual void SignUpForTournament()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sign Up For Tournament", null, new string[] {
-                        "ignore",
-                        "-",
-                        "awaiting",
-                        "tournament",
-                        "controller",
-                        "refactor"});
-#line 48
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Sign Up For Tournament", null, ((string[])(null)));
+#line 47
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 4
 this.FeatureBackground();
-#line 49
+#line 48
  testRunner.When("player number 1 signs up to play in tournament number 1 for golf club 1 measured " +
                     "course \'Test Course\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 50
+#line 49
  testRunner.Then("player number 1 is recorded as signed up for tournament number 1 for golf club 1 " +
                     "measured course \'Test Course\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

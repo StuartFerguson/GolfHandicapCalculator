@@ -14,6 +14,7 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
     using Service.DataTransferObjects.Responses;
     using Service.DataTransferObjects.Responses.v2;
     using Shouldly;
+    using CreateTournamentResponse = Service.DataTransferObjects.Responses.v2.CreateTournamentResponse;
     using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
 
     [Binding]

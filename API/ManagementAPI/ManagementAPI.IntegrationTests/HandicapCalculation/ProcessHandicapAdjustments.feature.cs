@@ -405,37 +405,26 @@ namespace ManagementAPI.IntegrationTests.HandicapCalculation
             this.ScenarioTearDown();
         }
         
-        [Xunit.FactAttribute(DisplayName="Start Calculation Process with a Single Score", Skip="Ignored")]
+        [Xunit.FactAttribute(DisplayName="Start Calculation Process with a Single Score")]
         [Xunit.TraitAttribute("FeatureTitle", "ProcessHandicapAdjustments")]
         [Xunit.TraitAttribute("Description", "Start Calculation Process with a Single Score")]
-        [Xunit.TraitAttribute("Category", "-")]
-        [Xunit.TraitAttribute("Category", "awaiting")]
-        [Xunit.TraitAttribute("Category", "tournament")]
-        [Xunit.TraitAttribute("Category", "controller")]
-        [Xunit.TraitAttribute("Category", "refactor")]
         public virtual void StartCalculationProcessWithASingleScore()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Start Calculation Process with a Single Score", null, new string[] {
-                        "ignore",
-                        "-",
-                        "awaiting",
-                        "tournament",
-                        "controller",
-                        "refactor"});
-#line 60
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Start Calculation Process with a Single Score", null, ((string[])(null)));
+#line 59
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
 this.FeatureBackground();
-#line 61
+#line 60
  testRunner.When("I start the handicap calculation process for tournament number 1 for golf club 1 " +
                     "measured course \'Test Course\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 62
+#line 61
  testRunner.And("the process completes successfully for tournament number 1 for golf club 1 measur" +
                     "ed course \'Test Course\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 63
+#line 62
  testRunner.Then("the new playing handicap for player number 1 is adjusted to 5", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 64
+#line 63
  testRunner.And("the new exact handicap for player number 1 is adjusted to 5.0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

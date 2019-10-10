@@ -190,6 +190,26 @@
         }
 
         [Fact]
+        public async Task GolfClubClient_GetGolfClubTournaments_TournamentListReturned()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddGolfClubAdministrator().CreateClient();
+            Func<String, String> resolver = api => "http://localhost";
+            IGolfClubClient golfClubClient = new GolfClubClient(resolver, client);
+
+            String token =
+                "eyJhbGciOiJSUzI1NiIsImtpZCI6ImVhZDQyNGJjNjI5MzU0NGM4MGFmZThhMDk2MzEyNjU2IiwidHlwIjoiSldUIn0.eyJuYmYiOjE1NzAyODk3MDksImV4cCI6MTU3MDI5MzMwOSwiaXNzIjoiaHR0cDovLzE5Mi4xNjguMS4xMzI6NTAwMSIsImF1ZCI6WyJodHRwOi8vMTkyLjE2OC4xLjEzMjo1MDAxL3Jlc291cmNlcyIsIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl0sImNsaWVudF9pZCI6ImdvbGZoYW5kaWNhcC50ZXN0ZGF0YWdlbmVyYXRvciIsInNjb3BlIjpbIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl19.vLfs2bOMXshW93nw5TTOqd6NPGNYpcrhcom8yZoYc9WGSuYH48VqM5BdbodEukNNJmgbV9wUVgoj1uGztlFfHGFA_q6IQfd3xZln_LIxju6ZNZs8qUyRXDTGxu0dlfF8STLfBUq469SsY9eNi1hBYFyNxl963OfKqDSHAdeBg9yNlwnbky1Tnsxobu9W33fLcjH0KoutlwTFV51UFUEKCBk0w1zsjaDVZacETn74t56y0CvMS7ZSN2_yyunq4JvoUsh3xM5lQ-gl23eQyo6l4QE4wukCS7U_Zr2dg8-EF63VKiCH-ZD49M76TD9kIIge-XIgHqa2Xf3S-FpLxXfEqw";
+
+            // 2. Act
+            List<TournamentResponse> tournamentList = await golfClubClient.GetGolfClubTournamentList(token, TestData.GolfClubId, CancellationToken.None);
+
+            // 3. Assert
+            tournamentList.ShouldNotBeNull();
+            tournamentList.ShouldNotBeEmpty();
+            tournamentList.Count.ShouldBe(1);
+        }
+
+        [Fact]
         public async Task GolfClubClient_GetGolfClubList_GolfClubListReturned()
         {
             // 1. Arrange
@@ -275,6 +295,69 @@
             getGolfClubListResponse.First().Users.ShouldNotBeNull();
             getGolfClubListResponse.First().MeasuredCourses.ShouldBeNull();
             getGolfClubListResponse.First().GolfClubMembershipDetailsResponseList.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task GolfClubClient_CreateTournament_TournamentIsCreated()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddGolfClubAdministrator().CreateClient();
+            Func<String, String> resolver = api => "http://localhost";
+            IGolfClubClient golfClubClient = new GolfClubClient(resolver, client);
+
+            String token =
+                "eyJhbGciOiJSUzI1NiIsImtpZCI6ImVhZDQyNGJjNjI5MzU0NGM4MGFmZThhMDk2MzEyNjU2IiwidHlwIjoiSldUIn0.eyJuYmYiOjE1NzAyODk3MDksImV4cCI6MTU3MDI5MzMwOSwiaXNzIjoiaHR0cDovLzE5Mi4xNjguMS4xMzI6NTAwMSIsImF1ZCI6WyJodHRwOi8vMTkyLjE2OC4xLjEzMjo1MDAxL3Jlc291cmNlcyIsIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl0sImNsaWVudF9pZCI6ImdvbGZoYW5kaWNhcC50ZXN0ZGF0YWdlbmVyYXRvciIsInNjb3BlIjpbIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl19.vLfs2bOMXshW93nw5TTOqd6NPGNYpcrhcom8yZoYc9WGSuYH48VqM5BdbodEukNNJmgbV9wUVgoj1uGztlFfHGFA_q6IQfd3xZln_LIxju6ZNZs8qUyRXDTGxu0dlfF8STLfBUq469SsY9eNi1hBYFyNxl963OfKqDSHAdeBg9yNlwnbky1Tnsxobu9W33fLcjH0KoutlwTFV51UFUEKCBk0w1zsjaDVZacETn74t56y0CvMS7ZSN2_yyunq4JvoUsh3xM5lQ-gl23eQyo6l4QE4wukCS7U_Zr2dg8-EF63VKiCH-ZD49M76TD9kIIge-XIgHqa2Xf3S-FpLxXfEqw";
+
+            // 2. Act
+            CreateTournamentResponse createTournamentResponse = await golfClubClient.CreateTournament(token, TestData.GolfClubId, TestData.CreateTournamentRequest, CancellationToken.None);
+
+            // 3. Assert
+            createTournamentResponse.TournamentId.ShouldNotBe(Guid.Empty);
+        }
+
+        [Fact]
+        public async Task GolfClubClient_CancelTournament_TournamentIsCancelled()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddGolfClubAdministrator().CreateClient();
+            Func<String, String> resolver = api => "http://localhost";
+            IGolfClubClient golfClubClient = new GolfClubClient(resolver, client);
+
+            String token =
+                "eyJhbGciOiJSUzI1NiIsImtpZCI6ImVhZDQyNGJjNjI5MzU0NGM4MGFmZThhMDk2MzEyNjU2IiwidHlwIjoiSldUIn0.eyJuYmYiOjE1NzAyODk3MDksImV4cCI6MTU3MDI5MzMwOSwiaXNzIjoiaHR0cDovLzE5Mi4xNjguMS4xMzI6NTAwMSIsImF1ZCI6WyJodHRwOi8vMTkyLjE2OC4xLjEzMjo1MDAxL3Jlc291cmNlcyIsIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl0sImNsaWVudF9pZCI6ImdvbGZoYW5kaWNhcC50ZXN0ZGF0YWdlbmVyYXRvciIsInNjb3BlIjpbIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl19.vLfs2bOMXshW93nw5TTOqd6NPGNYpcrhcom8yZoYc9WGSuYH48VqM5BdbodEukNNJmgbV9wUVgoj1uGztlFfHGFA_q6IQfd3xZln_LIxju6ZNZs8qUyRXDTGxu0dlfF8STLfBUq469SsY9eNi1hBYFyNxl963OfKqDSHAdeBg9yNlwnbky1Tnsxobu9W33fLcjH0KoutlwTFV51UFUEKCBk0w1zsjaDVZacETn74t56y0CvMS7ZSN2_yyunq4JvoUsh3xM5lQ-gl23eQyo6l4QE4wukCS7U_Zr2dg8-EF63VKiCH-ZD49M76TD9kIIge-XIgHqa2Xf3S-FpLxXfEqw";
+
+            // 2. Act
+            await golfClubClient.CancelTournament(token, TestData.GolfClubId, TestData.TournamentId, TestData.CancelTournamentRequest, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task GolfClubClient_CompleteTournament_TournamentIsCompleted()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddGolfClubAdministrator().CreateClient();
+            Func<String, String> resolver = api => "http://localhost";
+            IGolfClubClient golfClubClient = new GolfClubClient(resolver, client);
+
+            String token =
+                "eyJhbGciOiJSUzI1NiIsImtpZCI6ImVhZDQyNGJjNjI5MzU0NGM4MGFmZThhMDk2MzEyNjU2IiwidHlwIjoiSldUIn0.eyJuYmYiOjE1NzAyODk3MDksImV4cCI6MTU3MDI5MzMwOSwiaXNzIjoiaHR0cDovLzE5Mi4xNjguMS4xMzI6NTAwMSIsImF1ZCI6WyJodHRwOi8vMTkyLjE2OC4xLjEzMjo1MDAxL3Jlc291cmNlcyIsIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl0sImNsaWVudF9pZCI6ImdvbGZoYW5kaWNhcC50ZXN0ZGF0YWdlbmVyYXRvciIsInNjb3BlIjpbIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl19.vLfs2bOMXshW93nw5TTOqd6NPGNYpcrhcom8yZoYc9WGSuYH48VqM5BdbodEukNNJmgbV9wUVgoj1uGztlFfHGFA_q6IQfd3xZln_LIxju6ZNZs8qUyRXDTGxu0dlfF8STLfBUq469SsY9eNi1hBYFyNxl963OfKqDSHAdeBg9yNlwnbky1Tnsxobu9W33fLcjH0KoutlwTFV51UFUEKCBk0w1zsjaDVZacETn74t56y0CvMS7ZSN2_yyunq4JvoUsh3xM5lQ-gl23eQyo6l4QE4wukCS7U_Zr2dg8-EF63VKiCH-ZD49M76TD9kIIge-XIgHqa2Xf3S-FpLxXfEqw";
+
+            // 2. Act
+            await golfClubClient.CompleteTournament(token, TestData.GolfClubId, TestData.TournamentId, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task GolfClubClient_ProduceTournamentResult_TournamentResultIsProduced()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddGolfClubAdministrator().CreateClient();
+            Func<String, String> resolver = api => "http://localhost";
+            IGolfClubClient golfClubClient = new GolfClubClient(resolver, client);
+
+            String token =
+                "eyJhbGciOiJSUzI1NiIsImtpZCI6ImVhZDQyNGJjNjI5MzU0NGM4MGFmZThhMDk2MzEyNjU2IiwidHlwIjoiSldUIn0.eyJuYmYiOjE1NzAyODk3MDksImV4cCI6MTU3MDI5MzMwOSwiaXNzIjoiaHR0cDovLzE5Mi4xNjguMS4xMzI6NTAwMSIsImF1ZCI6WyJodHRwOi8vMTkyLjE2OC4xLjEzMjo1MDAxL3Jlc291cmNlcyIsIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl0sImNsaWVudF9pZCI6ImdvbGZoYW5kaWNhcC50ZXN0ZGF0YWdlbmVyYXRvciIsInNjb3BlIjpbIm1hbmFnZW1lbnRhcGkiLCJzZWN1cmlydHlzZXJ2aWNlYXBpIl19.vLfs2bOMXshW93nw5TTOqd6NPGNYpcrhcom8yZoYc9WGSuYH48VqM5BdbodEukNNJmgbV9wUVgoj1uGztlFfHGFA_q6IQfd3xZln_LIxju6ZNZs8qUyRXDTGxu0dlfF8STLfBUq469SsY9eNi1hBYFyNxl963OfKqDSHAdeBg9yNlwnbky1Tnsxobu9W33fLcjH0KoutlwTFV51UFUEKCBk0w1zsjaDVZacETn74t56y0CvMS7ZSN2_yyunq4JvoUsh3xM5lQ-gl23eQyo6l4QE4wukCS7U_Zr2dg8-EF63VKiCH-ZD49M76TD9kIIge-XIgHqa2Xf3S-FpLxXfEqw";
+
+            // 2. Act
+            await golfClubClient.ProduceTournamentResult(token, TestData.GolfClubId, TestData.TournamentId, CancellationToken.None);
         }
     }
 }

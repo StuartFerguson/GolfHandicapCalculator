@@ -141,7 +141,6 @@ Background:
 	When I request to complete the tournament number 8 for golf club 1 measured course 'Test Course' the tournament is completed
 	When I request to produce a tournament result for tournament number 8 for golf club 1 measured course 'Test Course' the results are produced
 
-@ignore - awaiting tournament controller refactor
 Scenario: Player Scores Report
 	
 	When I request a number of scores report for player number 1 with the last 5 scores

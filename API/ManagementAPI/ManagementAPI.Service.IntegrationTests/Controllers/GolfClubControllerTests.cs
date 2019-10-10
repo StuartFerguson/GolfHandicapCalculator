@@ -15,6 +15,7 @@
     using Shouldly;
     using Xunit;
     using CreateGolfClubResponse = DataTransferObjects.Responses.v2.CreateGolfClubResponse;
+    using CreateTournamentResponse = DataTransferObjects.Responses.v2.CreateTournamentResponse;
     using GetGolfClubResponse = DataTransferObjects.Responses.v2.GetGolfClubResponse;
 
     /// <summary>
@@ -167,6 +168,34 @@
         }
 
         [Fact]
+        public async Task GolfClubController_GET_GetGolfClub_IncludeTournaments_GolfClubIsReturned()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddGolfClubAdministrator().CreateClient();
+
+            String uri = $"api/golfclubs/{TestData.GolfClubId.ToString()}?includeTournaments=true";
+            client.DefaultRequestHeaders.Add("api-version", "2.0");
+
+            // 2. Act
+            HttpResponseMessage response = await client.GetAsync(uri, CancellationToken.None);
+
+            // 3. Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            String responseAsJson = await response.Content.ReadAsStringAsync();
+
+            responseAsJson.ShouldNotBeNullOrEmpty();
+
+            GetGolfClubResponse responseObject = JsonConvert.DeserializeObject<GetGolfClubResponse>(responseAsJson);
+            responseObject.ShouldNotBeNull();
+            responseObject.Id.ShouldBe(TestData.GolfClubId);
+            responseObject.GolfClubMembershipDetailsResponseList.ShouldBeNull();
+            responseObject.MeasuredCourses.ShouldBeNull();
+            responseObject.Users.ShouldBeNull();
+            responseObject.Tournaments.ShouldNotBeNull();
+        }
+
+        [Fact]
         public async Task GolfClubController_GET_GetGolfClubList_GolfClubIsReturned()
         {
             // 1. Arrange
@@ -244,7 +273,7 @@
         }
 
         [Fact]
-        public async Task GolfClubController_POST_AddTournamentDivision_MatchSecretaryIsReturned()
+        public async Task GolfClubController_POST_AddTournamentDivision_TournamentDivisionIsReturned()
         {
             // 1. Arrange
             HttpClient client = this.WebApplicationFactory.AddGolfClubAdministrator().CreateClient();
@@ -275,7 +304,6 @@
             // 1. Arrange
             HttpClient client = this.WebApplicationFactory.AddPlayer().CreateClient();
 
-            CreateMatchSecretaryRequest createMatchSecretaryRequest = TestData.CreateMatchSecretaryRequest;
             String uri = $"api/golfclubs/{TestData.GolfClubId}/players/{TestData.PlayerId}";
 
             client.DefaultRequestHeaders.Add("api-version", "2.0");
@@ -295,6 +323,89 @@
             responseObject.GolfClubId.ShouldBe(TestData.GolfClubId);
             responseObject.PlayerId.ShouldBe(TestData.PlayerId);
             responseObject.MembershipId.ShouldBe(Guid.Empty);
+        }
+
+        [Fact]
+        public async Task GolfClubController_PATCH_CompleteTournament_Successful()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddPlayer().CreateClient();
+
+            TournamentPatchRequest tournamentPatchRequest = TestData.TournamentPatchRequestCompleteTournament;
+            String uri = $"api/golfclubs/{TestData.GolfClubId}/tournaments/{TestData.TournamentId}";
+
+            client.DefaultRequestHeaders.Add("api-version", "2.0");
+            StringContent content = Helpers.CreateStringContent(tournamentPatchRequest);
+
+            // 2. Act
+            HttpResponseMessage response = await client.PatchAsync(uri, content, CancellationToken.None);
+
+            // 3. Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task GolfClubController_POST_CreateTournament_TournamentIsCreated()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddPlayer().CreateClient();
+
+            CreateTournamentRequest createTournamentRequest = TestData.CreateTournamentRequest;
+            String uri = $"api/golfclubs/{TestData.GolfClubId}/tournaments";
+
+            client.DefaultRequestHeaders.Add("api-version", "2.0");
+            StringContent content = Helpers.CreateStringContent(createTournamentRequest);
+
+            // 2. Act
+            HttpResponseMessage response = await client.PostAsync(uri, content, CancellationToken.None);
+
+            // 3. Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.Created);
+
+            String responseAsJson = await response.Content.ReadAsStringAsync();
+
+            responseAsJson.ShouldNotBeNullOrEmpty();
+
+            CreateTournamentResponse responseObject = JsonConvert.DeserializeObject<CreateTournamentResponse>(responseAsJson);
+            responseObject.TournamentId.ShouldNotBe(Guid.Empty);
+        }
+
+        [Fact]
+        public async Task GolfClubController_PATCH_CancelTournament_Successful()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddPlayer().CreateClient();
+
+            TournamentPatchRequest tournamentPatchRequest = TestData.TournamentPatchRequestCancelTournament;
+            String uri = $"api/golfclubs/{TestData.GolfClubId}/tournaments/{TestData.TournamentId}";
+
+            client.DefaultRequestHeaders.Add("api-version", "2.0");
+            StringContent content = Helpers.CreateStringContent(tournamentPatchRequest);
+
+            // 2. Act
+            HttpResponseMessage response = await client.PatchAsync(uri, content, CancellationToken.None);
+
+            // 3. Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task GolfClubController_PATCH_ProduceTournamentResult_Successful()
+        {
+            // 1. Arrange
+            HttpClient client = this.WebApplicationFactory.AddPlayer().CreateClient();
+
+            TournamentPatchRequest tournamentPatchRequest = TestData.TournamentPatchRequestProduceTournamentResult;
+            String uri = $"api/golfclubs/{TestData.GolfClubId}/tournaments/{TestData.TournamentId}";
+
+            client.DefaultRequestHeaders.Add("api-version", "2.0");
+            StringContent content = Helpers.CreateStringContent(tournamentPatchRequest);
+
+            // 2. Act
+            HttpResponseMessage response = await client.PatchAsync(uri, content, CancellationToken.None);
+
+            // 3. Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
     }
 }

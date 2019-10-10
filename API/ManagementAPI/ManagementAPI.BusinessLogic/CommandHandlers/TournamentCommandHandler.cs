@@ -78,10 +78,8 @@
         private async Task HandleCommand(CreateTournamentCommand command,
                                          CancellationToken cancellationToken)
         {
-            Guid tournamentAggregateId = Guid.NewGuid();
-
             // Rehydrate the aggregate
-            TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(tournamentAggregateId, cancellationToken);
+            TournamentAggregate tournament = await this.TournamentRepository.GetLatestVersion(command.TournamentId, cancellationToken);
 
             // Get the club to validate the input
             GolfClubAggregate club = await this.GolfClubRepository.GetLatestVersion(command.GolfClubId, cancellationToken);
@@ -109,7 +107,7 @@
             // Setup the response
             command.Response = new CreateTournamentResponse
                                {
-                                   TournamentId = tournamentAggregateId
+                                   TournamentId = command.TournamentId
                                };
         }
 

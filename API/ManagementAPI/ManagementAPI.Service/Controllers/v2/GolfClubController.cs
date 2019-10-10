@@ -29,6 +29,9 @@ namespace ManagementAPI.Service.Controllers.v2
     using MembershipStatusv2 = DataTransferObjects.Responses.v2.MembershipStatus;
     using GetGolfClubResponseExamplev2 = Common.v2.GetGolfClubResponseExample;
     using CreateGolfClubResponseExamplev2 = Common.v2.CreateGolfClubResponseExample;
+    using TournamentResponse = DataTransferObjects.Responses.v2.TournamentResponse;
+    using PlayerCategory = DataTransferObjects.Responses.v2.PlayerCategory;
+    using TournamentFormat = DataTransferObjects.Responses.v2.TournamentFormat;
 
     [Route(GolfClubController.ControllerRoute)]
     [Authorize]
@@ -113,6 +116,7 @@ namespace ManagementAPI.Service.Controllers.v2
         /// <param name="includeMembers">if set to <c>true</c> [include members].</param>
         /// <param name="includeMeasuredCourses">if set to <c>true</c> [include measured courses].</param>
         /// <param name="includeUsers">if set to <c>true</c> [include users].</param>
+        /// <param name="includeTournaments">if set to <c>true</c> [include tournaments].</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
@@ -123,6 +127,7 @@ namespace ManagementAPI.Service.Controllers.v2
                                                      [FromQuery] Boolean includeMembers,
                                                      [FromQuery] Boolean includeMeasuredCourses,
                                                      [FromQuery] Boolean includeUsers,
+                                                     [FromQuery] Boolean includeTournaments,
                                                      CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user
@@ -155,7 +160,13 @@ namespace ManagementAPI.Service.Controllers.v2
                 users = await this.Manager.GetGolfClubUsers(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
             }
 
-            GetGolfClubResponsev2 getGolfClubResponsev2 = this.ConvertGetGolfClubResponse(getGolfClubResponsev1, membersList, measuredCourseList, users);
+            GetTournamentListResponse tournamentList = null;
+            if (includeTournaments)
+            {
+                tournamentList = await this.Manager.GetTournamentList(Guid.Parse(golfClubIdClaim.Value), cancellationToken);
+            }
+
+            GetGolfClubResponsev2 getGolfClubResponsev2 = this.ConvertGetGolfClubResponse(getGolfClubResponsev1, membersList, measuredCourseList, users, tournamentList);
 
             return this.Ok(getGolfClubResponsev2);
         }
@@ -166,6 +177,7 @@ namespace ManagementAPI.Service.Controllers.v2
         /// <param name="includeMembers">if set to <c>true</c> [include members].</param>
         /// <param name="includeMeasuredCourses">if set to <c>true</c> [include measured courses].</param>
         /// <param name="includeUsers">if set to <c>true</c> [include users].</param>
+        /// <param name="includeTournaments">if set to <c>true</c> [include tournaments].</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
@@ -175,6 +187,7 @@ namespace ManagementAPI.Service.Controllers.v2
         public async Task<IActionResult> GetGolfClubList([FromQuery] Boolean includeMembers,
                                                      [FromQuery] Boolean includeMeasuredCourses,
                                                      [FromQuery] Boolean includeUsers,
+                                                     [FromQuery] Boolean includeTournaments,
                                                      CancellationToken cancellationToken)
         {
             // Get the Golf Club Id claim from the user
@@ -191,7 +204,7 @@ namespace ManagementAPI.Service.Controllers.v2
             List< GetGolfClubResponsev2> response = new List<GetGolfClubResponsev2>();
             foreach (GetGolfClubResponsev1 getGolfClubResponse in golfClubList)
             {
-                GetGolfClubResponsev2 getGolfClubResponsev2 = this.ConvertGetGolfClubResponse(getGolfClubResponse, null, null, null);
+                GetGolfClubResponsev2 getGolfClubResponsev2 = this.ConvertGetGolfClubResponse(getGolfClubResponse);
                 response.Add(getGolfClubResponsev2);
             }
             
@@ -342,10 +355,13 @@ namespace ManagementAPI.Service.Controllers.v2
                                 });
         }
 
+        
+
         private GetGolfClubResponsev2 ConvertGetGolfClubResponse(GetGolfClubResponsev1 getGolfClubResponsev1,
-                                                  List<GetGolfClubMembershipDetailsResponse> membersList,
-                                                  GetMeasuredCourseListResponse measuredCourseList,
-                                                  GetGolfClubUserListResponse users)
+                                                  List<GetGolfClubMembershipDetailsResponse> membersList = null,
+                                                  GetMeasuredCourseListResponse measuredCourseList = null,
+                                                  GetGolfClubUserListResponse users = null,
+                                                  GetTournamentListResponse tournamentList = null)
         {
             GetGolfClubResponsev2 response = new GetGolfClubResponsev2
                                              {
@@ -413,6 +429,32 @@ namespace ManagementAPI.Service.Controllers.v2
                         UserName = user.UserName,
                         UserType = user.UserType
                                        });
+                }
+            }
+
+            if (tournamentList != null)
+            {
+                response.Tournaments = new List<TournamentResponse>();
+
+                foreach (DataTransferObjects.Responses.GetTournamentResponse tournamentListTournament in tournamentList.Tournaments)
+                {
+                    response.Tournaments.Add(new TournamentResponse
+                               {
+                                   MeasuredCourseId = tournamentListTournament.MeasuredCourseId,
+                                   TournamentFormat = (TournamentFormat)tournamentListTournament.TournamentFormat,
+                                   TournamentDate = tournamentListTournament.TournamentDate,
+                                   MeasuredCourseName = tournamentListTournament.MeasuredCourseName,
+                                   TournamentId = tournamentListTournament.TournamentId,
+                                   MeasuredCourseTeeColour = tournamentListTournament.MeasuredCourseTeeColour,
+                                   TournamentName = tournamentListTournament.TournamentName,
+                                   HasBeenCancelled = tournamentListTournament.HasBeenCancelled,
+                                   HasBeenCompleted = tournamentListTournament.HasBeenCompleted,
+                                   HasResultBeenProduced = tournamentListTournament.HasResultBeenProduced,
+                                   MeasuredCourseSSS = tournamentListTournament.MeasuredCourseSSS,
+                                   PlayerCategory = (PlayerCategory)tournamentListTournament.PlayerCategory,
+                                   PlayersScoresRecordedCount = tournamentListTournament.PlayersScoresRecordedCount,
+                                   PlayersSignedUpCount = tournamentListTournament.PlayersSignedUpCount
+                               });
                 }
             }
 

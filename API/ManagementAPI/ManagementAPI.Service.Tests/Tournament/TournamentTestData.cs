@@ -213,7 +213,7 @@ namespace ManagementAPI.Service.Tests.Tournament
 
         public static CreateTournamentCommand GetCreateTournamentCommand()
         {
-            return CreateTournamentCommand.Create(TournamentTestData.GolfClubId, TournamentTestData.CreateTournamentRequest);
+            return CreateTournamentCommand.Create( TournamentTestData.AggregateId, TournamentTestData.GolfClubId, TournamentTestData.CreateTournamentRequest);
         }
 
         public static RecordPlayerTournamentScoreRequest RecordMemberTournamentScoreRequest = new RecordPlayerTournamentScoreRequest

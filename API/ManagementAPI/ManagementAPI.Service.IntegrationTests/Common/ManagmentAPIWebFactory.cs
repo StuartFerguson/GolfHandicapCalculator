@@ -10,6 +10,7 @@ namespace ManagementAPI.Service.IntegrationTests.Common
     using BusinessLogic.Manager;
     using Controllers;
     using DataTransferObjects.Requests;
+    using DataTransferObjects.Responses;
     using IdentityModel;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Authorization;
@@ -75,6 +76,7 @@ namespace ManagementAPI.Service.IntegrationTests.Common
             managmentApiManagerMock.Setup(m => m.GetPlayerDetails(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetPlayerDetailsResponse);
             managmentApiManagerMock.Setup(m => m.GetPlayerSignedUpTournaments(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.PlayerSignedUpTournamentsResponse);
             managmentApiManagerMock.Setup(m => m.GetPlayersClubMemberships(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetPlayersClubMembershipsResponse);
+            managmentApiManagerMock.Setup(m => m.GetTournamentList(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetTournamentListResponse);
 
             return managmentApiManagerMock;
         }
