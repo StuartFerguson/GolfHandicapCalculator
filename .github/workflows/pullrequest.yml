@@ -26,9 +26,3 @@ jobs:
 
     - name: run integration tests
       run: dotnet test API/ManagementAPI/ManagementAPI.Service.IntegrationTests/ManagementAPI.Service.IntegrationTests.csproj
-      
-    - name: buld docker image
-      run: docker docker build -t managementapi:latest --pull -f Dockerfile ../
-    
-    - name: run specflow tests
-      run: dotnet test API/ManagementAPI/ManagementAPI.IntegrationTests/ManagementAPI.IntegrationTests.csproj --filter Category=EndToEnd
