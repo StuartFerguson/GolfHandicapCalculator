@@ -150,11 +150,16 @@ namespace ManagementAPI.Service
             }
 
             // Setup the database
+            if (String.Compare(ConfigurationReader.GetValue("DatabaseSettings", "MigrateDatabase"),
+                               Boolean.TrueString,
+                               StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
                 Task.WaitAll(Task.Run(async () =>
                                       {
                                           // Setup the database
                                           await this.InitialiseDatabase(app, env);
                                       }));
+            }
 
             app.AddExceptionHandler();
             app.AddRequestLogging();
