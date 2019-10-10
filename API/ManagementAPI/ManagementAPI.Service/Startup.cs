@@ -150,7 +150,7 @@ namespace ManagementAPI.Service
             }
 
             // Setup the database
-            if (String.Compare(ConfigurationReader.GetValue("DatabaseSettings", "MigrateDatabase"),
+            if (String.Compare(ConfigurationReader.GetValue("AppSettings", "MigrateDatabase"),
                                Boolean.TrueString,
                                StringComparison.InvariantCultureIgnoreCase) == 0)
             {
