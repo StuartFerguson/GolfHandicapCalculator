@@ -128,10 +128,10 @@ namespace ManagementAPI.Service
                               IApiVersionDescriptionProvider provider)
         {
             String nlogConfigFilename = "nlog.config";
-            //if (string.Compare(Startup.HostingEnvironment.EnvironmentName, "Development", true) == 0)
-            //{
-            //    nlogConfigFilename = $"nlog.{Startup.HostingEnvironment.EnvironmentName}.config";
-            //}
+            if (string.Compare(Startup.HostingEnvironment.EnvironmentName, "Development", true) == 0)
+            {
+                nlogConfigFilename = $"nlog.{Startup.HostingEnvironment.EnvironmentName}.config";
+            }
 
             loggerFactory.AddConsole();
             loggerFactory.ConfigureNLog(Path.Combine(Startup.HostingEnvironment.ContentRootPath, nlogConfigFilename));
