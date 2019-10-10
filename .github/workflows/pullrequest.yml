@@ -17,7 +17,7 @@ jobs:
       with:
         dotnet-version: 2.2.108
     - name: restore packages
-      run: dotnet restore API/ManagementAPI/ManagementAPI.sln
+      run: dotnet restore API/ManagementAPI/ManagementAPI.sln --source https://api.nuget.org/v3/index.json --source https://www.myget.org/F/golfhandicapping/api/v3/index.json
     
     - name: rebuild code
       run: dotnet build --configuration Release API/ManagementAPI/ManagementAPI.sln
