@@ -21,6 +21,7 @@ namespace ManagementAPI.Service.IntegrationTests.Common
     using Service.Common;
     using Shared.CommandHandling;
     using Xunit;
+    using TimePeriod = BusinessLogic.Manager.TimePeriod;
 
     public class ManagmentApiWebFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
@@ -28,6 +29,7 @@ namespace ManagementAPI.Service.IntegrationTests.Common
         {
             // Setup my mocks in here
             Mock<IManagmentAPIManager> managmentApiManagerMock = this.CreateManagmentAPIManagerMock();
+            Mock<IReportingManager> reportingManagerMock = this.CreateReportingManagerMock();
             Mock<ICommandRouter> commandRouterMock = this.CreateCommandRouterMock();
             
             builder.ConfigureServices((builderContext, services) =>
@@ -35,6 +37,11 @@ namespace ManagementAPI.Service.IntegrationTests.Common
                                                                 if (managmentApiManagerMock != null)
                                                                 {
                                                                     services.AddSingleton(managmentApiManagerMock.Object);
+                                                                }
+
+                                                                if (reportingManagerMock != null)
+                                                                {
+                                                                    services.AddSingleton(reportingManagerMock.Object);
                                                                 }
 
                                                                 if (commandRouterMock != null)
@@ -49,6 +56,30 @@ namespace ManagementAPI.Service.IntegrationTests.Common
                                                                         .AddApplicationPart(typeof(Startup).Assembly);
                                                             }).UseStartup<Startup>();
             ;
+        }
+
+        private Mock<IReportingManager> CreateReportingManagerMock()
+        {
+            Mock<IReportingManager> reportingManagerMock = new Mock<IReportingManager>(MockBehavior.Strict);
+
+            reportingManagerMock.Setup(r => r.GetMembersHandicapListReport(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                                .ReturnsAsync(TestData.GetMembersHandicapListReportResponse);
+            reportingManagerMock.Setup(r => r.GetNumberOfMembersByAgeCategoryReport(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                                .ReturnsAsync(TestData.GetNumberOfMembersByAgeCategoryReportResponse);
+            reportingManagerMock.Setup(r => r.GetNumberOfMembersByHandicapCategoryReport(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                                .ReturnsAsync(TestData.GetNumberOfMembersByHandicapCategoryReportResponse);
+            reportingManagerMock.Setup(r => r.GetNumberOfMembersByTimePeriodReport(It.IsAny<Guid>(), TimePeriod.Day.ToString().ToLower(), It.IsAny<CancellationToken>()))
+                                .ReturnsAsync(TestData.GetNumberOfMembersByTimePeriodReportDayResponse);
+            reportingManagerMock.Setup(r => r.GetNumberOfMembersByTimePeriodReport(It.IsAny<Guid>(), TimePeriod.Month.ToString().ToLower(), It.IsAny<CancellationToken>()))
+                                .ReturnsAsync(TestData.GetNumberOfMembersByTimePeriodReportMonthResponse);
+            reportingManagerMock.Setup(r => r.GetNumberOfMembersByTimePeriodReport(It.IsAny<Guid>(), TimePeriod.Year.ToString().ToLower(), It.IsAny<CancellationToken>()))
+                                .ReturnsAsync(TestData.GetNumberOfMembersByTimePeriodReportYearResponse);
+            reportingManagerMock.Setup(r => r.GetNumberOfMembersReport(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                                .ReturnsAsync(TestData.GetNumberOfMembersReportResponse);
+            reportingManagerMock.Setup(r => r.GetPlayerScoresReport(It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>()))
+                                .ReturnsAsync(TestData.GetPlayerScoresResponse);
+
+            return reportingManagerMock;
         }
 
         private Mock<ICommandRouter> CreateCommandRouterMock()

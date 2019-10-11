@@ -14,6 +14,12 @@
     using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
     using ClubMembershipResponse = Service.DataTransferObjects.Responses.v2.ClubMembershipResponse;
     using CreateTournamentResponse = Service.DataTransferObjects.Responses.v2.CreateTournamentResponse;
+    using GetMembersHandicapListReportResponse = Service.DataTransferObjects.Responses.v2.GetMembersHandicapListReportResponse;
+    using GetNumberOfMembersByAgeCategoryReportResponse = Service.DataTransferObjects.Responses.v2.GetNumberOfMembersByAgeCategoryReportResponse;
+    using GetNumberOfMembersByHandicapCategoryReportResponse = Service.DataTransferObjects.Responses.v2.GetNumberOfMembersByHandicapCategoryReportResponse;
+    using GetNumberOfMembersByTimePeriodReportResponse = Service.DataTransferObjects.Responses.v2.GetNumberOfMembersByTimePeriodReportResponse;
+    using GetNumberOfMembersReportResponse = Service.DataTransferObjects.Responses.v2.GetNumberOfMembersReportResponse;
+    using GetPlayerScoresResponse = Service.DataTransferObjects.Responses.v2.GetPlayerScoresResponse;
 
     public class TestingContext
     {

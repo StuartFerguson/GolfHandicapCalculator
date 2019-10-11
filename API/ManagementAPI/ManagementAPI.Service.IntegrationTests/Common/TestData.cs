@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using DataTransferObjects.Requests;
     using DataTransferObjects.Responses;
 
@@ -456,7 +457,33 @@
                                                                                                   HoleScores = TestData.HoleScores
                                                                                               };
 
+        private static Int32 CSS = 70;
+
+        private static Int32 NetScore = 71;
+
+        private static Int32 GrossScore = 82;
+
         #endregion
+
+        public static GetMembersHandicapListReportResponse GetMembersHandicapListReportResponse()
+        {
+            return new GetMembersHandicapListReportResponse
+                   {
+                       GolfClubId = TestData.GolfClubId,
+                       MembersHandicapListReportResponse = new List<MembersHandicapListReportResponse>
+                                                           {
+                                                               new MembersHandicapListReportResponse
+                                                               {
+                                                                   GolfClubId = TestData.GolfClubId,
+                                                                   PlayerId = TestData.PlayerId,
+                                                                   PlayingHandicap = TestData.PlayerPlayingHandicap,
+                                                                   HandicapCategory = TestData.PlayerHandicapCategory,
+                                                                   ExactHandicap = TestData.PlayerExactHandicap,
+                                                                   PlayerName = TestData.PlayerFullName,
+                                                               }
+                                                           }
+                   };
+        }
 
         #region Methods
 
@@ -561,5 +588,129 @@
         }
 
         #endregion
+
+        public static GetNumberOfMembersByAgeCategoryReportResponse GetNumberOfMembersByAgeCategoryReportResponse()
+        {
+            return new GetNumberOfMembersByAgeCategoryReportResponse
+                   {
+                       GolfClubId = TestData.GolfClubId,
+                       MembersByAgeCategoryResponse = new List<MembersByAgeCategoryResponse>
+                                                      {
+                                                          new MembersByAgeCategoryResponse
+                                                          {
+                                                              NumberOfMembers = 100,
+                                                              AgeCategory = "Gents"
+                                                          }
+                                                      }
+                   };
+        }
+
+        public static GetNumberOfMembersByHandicapCategoryReportResponse GetNumberOfMembersByHandicapCategoryReportResponse()
+        {
+            return new GetNumberOfMembersByHandicapCategoryReportResponse
+                   {
+                       GolfClubId = TestData.GolfClubId,
+                       MembersByHandicapCategoryResponse = new List<MembersByHandicapCategoryResponse>
+                                                           {
+                                                               new MembersByHandicapCategoryResponse
+                                                               {
+                                                                   NumberOfMembers = 10,
+                                                                   HandicapCategory = 1
+                                                               },
+                                                               new MembersByHandicapCategoryResponse
+                                                               {
+                                                                   NumberOfMembers = 20,
+                                                                   HandicapCategory = 2
+                                                               }
+                                                           }
+                   };
+        }
+
+        public static GetNumberOfMembersByTimePeriodReportResponse GetNumberOfMembersByTimePeriodReportDayResponse()
+        {
+            return new GetNumberOfMembersByTimePeriodReportResponse
+                   {
+                GolfClubId = TestData.GolfClubId,
+                TimePeriod = TimePeriod.Day,
+                MembersByTimePeriodResponse = new List<MembersByTimePeriodResponse>
+                                              {
+                                                  new MembersByTimePeriodResponse
+                                                  {
+                                                      NumberOfMembers = 100,
+                                                      Period = "2019-10-11"
+                                                  }
+                                              }
+                   };
+        }
+
+        public static GetNumberOfMembersByTimePeriodReportResponse GetNumberOfMembersByTimePeriodReportMonthResponse()
+        {
+            return new GetNumberOfMembersByTimePeriodReportResponse
+                   {
+                       GolfClubId = TestData.GolfClubId,
+                       TimePeriod = TimePeriod.Month,
+                       MembersByTimePeriodResponse = new List<MembersByTimePeriodResponse>
+                                                     {
+                                                         new MembersByTimePeriodResponse
+                                                         {
+                                                             NumberOfMembers = 100,
+                                                             Period = "2019-10"
+                                                         }
+                                                     }
+                   };
+        }
+
+        public static GetNumberOfMembersByTimePeriodReportResponse GetNumberOfMembersByTimePeriodReportYearResponse()
+        {
+            return new GetNumberOfMembersByTimePeriodReportResponse
+                   {
+                       GolfClubId = TestData.GolfClubId,
+                       TimePeriod = TimePeriod.Year,
+                       MembersByTimePeriodResponse = new List<MembersByTimePeriodResponse>
+                                                     {
+                                                         new MembersByTimePeriodResponse
+                                                         {
+                                                             NumberOfMembers = 100,
+                                                             Period = "2019"
+                                                         }
+                                                     }
+                   };
+        }
+
+        public static GetNumberOfMembersReportResponse GetNumberOfMembersReportResponse()
+        {
+            return new GetNumberOfMembersReportResponse
+                   {
+                       GolfClubId = TestData.GolfClubId,
+                       NumberOfMembers = 100
+                   };
+        }
+
+        public static GetPlayerScoresResponse GetPlayerScoresResponse()
+        {
+            return new GetPlayerScoresResponse
+            {
+                Scores = new List<PlayerScoreResponse>
+                         {
+                             new PlayerScoreResponse
+                             {
+                                 MeasuredCourseId = TestData.MeasuredCourseId,
+                                 TournamentFormat = TestData.TournamentFormatStrokeplay,
+                                 TournamentDate = TestData.TournamentDate,
+                                 GolfClubId = TestData.GolfClubId,
+                                 TournamentName = TestData.TournamentName,
+                                 MeasuredCourseName = TestData.MeasuredCourseName,
+                                 TournamentId = TestData.TournamentId,
+                                 MeasuredCourseTeeColour = TestData.TeeColour,
+                                 PlayerId = TestData.PlayerId,
+                                 GolfClubName = TestData.GolfClubName,
+                                 CSS = TestData.CSS,
+                                 NetScore = TestData.NetScore,
+                                 GrossScore = TestData.GrossScore,
+                                 PlayingHandicap = TestData.PlayerPlayingHandicap
+                             }
+                         }
+            };
+        }
     }
 }

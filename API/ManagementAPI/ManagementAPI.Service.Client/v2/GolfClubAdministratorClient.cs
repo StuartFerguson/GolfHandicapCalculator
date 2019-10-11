@@ -39,7 +39,10 @@
             this.BaseAddress = baseAddressResolver("ManagementAPI");
 
             // Add the API version header
-            this.HttpClient.DefaultRequestHeaders.Add("api-version", "2.0");
+            if (this.HttpClient.DefaultRequestHeaders.Contains("api-version") == false)
+            {
+                this.HttpClient.DefaultRequestHeaders.Add("api-version", "2.0");
+            }
         }
 
         #endregion
