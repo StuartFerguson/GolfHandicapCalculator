@@ -18,6 +18,11 @@ namespace ManagementAPI.IntegrationTests.Reporting
     using Service.DataTransferObjects.Responses.v2;
     using Shouldly;
     using CreateGolfClubResponse = Service.DataTransferObjects.Responses.v2.CreateGolfClubResponse;
+    using MembersByAgeCategoryResponse = Service.DataTransferObjects.Responses.v2.MembersByAgeCategoryResponse;
+    using MembersByHandicapCategoryResponse = Service.DataTransferObjects.Responses.v2.MembersByHandicapCategoryResponse;
+    using MembersByTimePeriodResponse = Service.DataTransferObjects.Responses.v2.MembersByTimePeriodResponse;
+    using MembersHandicapListReportResponse = Service.DataTransferObjects.Responses.v2.MembersHandicapListReportResponse;
+    using PlayerScoreResponse = Service.DataTransferObjects.Responses.v2.PlayerScoreResponse;
     using RegisterPlayerResponse = Service.DataTransferObjects.Responses.v2.RegisterPlayerResponse;
 
     [Binding]

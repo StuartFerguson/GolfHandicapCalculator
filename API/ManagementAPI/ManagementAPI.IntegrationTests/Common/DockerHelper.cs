@@ -22,6 +22,7 @@ namespace ManagementAPI.IntegrationTests.Common
     using TechTalk.SpecFlow;
     using IGolfClubClient = Service.Client.v2.IGolfClubClient;
     using IPlayerClient = Service.Client.v2.IPlayerClient;
+    using IReportingClient = Service.Client.v2.IReportingClient;
     using TokenType = Gherkin.TokenType;
 
     public class DockerHelper
@@ -97,6 +98,7 @@ namespace ManagementAPI.IntegrationTests.Common
                     this.SecurityServiceAddress,
                     this.ManagementAPISeedingType,
                     this.AuthorityAddress,
+                    "AppSettings:MigrateDatabase=true",
                     "EventStoreSettings:START_PROJECTIONS=true",
                     "EventStoreSettings:ContinuousProjectionsFolder=/app/projections/continuous")
                 .UseImage("managementapiservice")
@@ -284,14 +286,12 @@ namespace ManagementAPI.IntegrationTests.Common
             Func<String, String> baseAddressResolver = api => $"http://127.0.0.1:{this.ManagementApiPort}";
 
             HttpClient httpClient = new HttpClient();
-            HttpClient golfClubAdministratorClientHttpClient = new HttpClient();
-            HttpClient golfClubClientHttpClient = new HttpClient();
-            HttpClient playerClientHttpClient = new HttpClient();
+            
 
-            this.GolfClubAdministratorClient = new GolfClubAdministratorClient(baseAddressResolver, golfClubAdministratorClientHttpClient);
-            this.GolfClubClient = new Service.Client.v2.GolfClubClient(baseAddressResolver, golfClubClientHttpClient);
-            this.PlayerClient = new Service.Client.v2.PlayerClient(baseAddressResolver, playerClientHttpClient);
-            this.ReportingClient = new ReportingClient(baseAddressResolver, httpClient);
+            this.GolfClubAdministratorClient = new GolfClubAdministratorClient(baseAddressResolver, httpClient);
+            this.GolfClubClient = new Service.Client.v2.GolfClubClient(baseAddressResolver, httpClient);
+            this.PlayerClient = new Service.Client.v2.PlayerClient(baseAddressResolver, httpClient);
+            this.ReportingClient = new Service.Client.v2.ReportingClient(baseAddressResolver, httpClient);
             this.HttpClient = new HttpClient();
             this.HttpClient.BaseAddress = new Uri(baseAddressResolver(String.Empty));
         }
